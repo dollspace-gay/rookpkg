@@ -1,0 +1,88 @@
+[package]
+name = "make"
+version = "4.4.1"
+release = 1
+summary = "GNU make utility"
+description = """
+GNU Make is a tool which controls the generation of executables and other
+non-source files of a program from the program's source files. Make gets its
+knowledge of how to build your program from a file called the makefile.
+"""
+homepage = "https://www.gnu.org/software/make/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/make-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/make-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/make-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/make-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/make-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/make" = { mode = 755 }
+"usr/include/gnumake.h" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "4.4.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["make", "build", "automation"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

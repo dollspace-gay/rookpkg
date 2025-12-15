@@ -1,0 +1,99 @@
+[package]
+name = "nano"
+version = "8.3"
+release = 1
+summary = "GNU Nano text editor"
+description = """
+GNU Nano is an easy-to-use, lightweight text editor originally designed as a
+replacement for Pico. It features syntax highlighting, search and replace,
+undo/redo, and a helpful command guide at the bottom of the screen.
+"""
+homepage = "https://www.nano-editor.org/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.nano-editor.org/dist/v8/nano-8.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+ncurses = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nano-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/nano-*
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --enable-utf8 \
+            --docdir=/usr/share/doc/nano-8.3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nano-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/nano-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nano-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install documentation
+install -v -m644 doc/{nano.html,sample.nanorc} $ROOKPKG_DESTDIR/usr/share/doc/nano-8.3 2>/dev/null || true
+"""
+
+[files]
+"usr/bin/nano" = { mode = 755 }
+"usr/bin/rnano" = { mode = 755 }
+"usr/share/nano/" = {}
+
+[config_files]
+"etc/nanorc" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "8.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "UTF-8 support enabled"
+]
+
+[metadata]
+keywords = ["nano", "editor", "text"]
+categories = ["editors"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,124 @@
+[package]
+name = "shadow"
+version = "4.18.0"
+release = 1
+summary = "Password and login management utilities"
+description = """
+Shadow provides utilities for managing user accounts and authentication,
+including useradd, userdel, usermod, groupadd, passwd, login, su, and
+shadow password support for secure authentication.
+"""
+homepage = "https://github.com/shadow-maint/shadow"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/shadow-maint/shadow/releases/download/4.18.0/shadow-4.18.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxcrypt = ">= 4.4"
+
+[depends]
+glibc = ">= 2.39"
+libxcrypt = ">= 4.4"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/shadow-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/shadow-*
+touch /usr/bin/passwd 2>/dev/null || true
+
+./configure --sysconfdir=/etc \
+            --disable-static \
+            --with-{b,yes}crypt \
+            --without-libbsd \
+            --with-group-name-max-length=32
+"""
+
+build = """
+cd $ROOKPKG_BUILD/shadow-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Shadow tests require root and system modifications
+"""
+
+install = """
+cd $ROOKPKG_BUILD/shadow-*
+make exec_prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
+make -C man DESTDIR=$ROOKPKG_DESTDIR install-man
+"""
+
+[files]
+"usr/bin/passwd" = { mode = 4755 }
+"usr/bin/chage" = { mode = 755 }
+"usr/bin/chfn" = { mode = 4755 }
+"usr/bin/chsh" = { mode = 4755 }
+"usr/bin/expiry" = { mode = 755 }
+"usr/bin/gpasswd" = { mode = 4755 }
+"usr/bin/login" = { mode = 4755 }
+"usr/bin/newgrp" = { mode = 4755 }
+"usr/bin/sg" = { mode = 4755 }
+"usr/bin/su" = { mode = 4755 }
+"usr/sbin/useradd" = { mode = 755 }
+"usr/sbin/userdel" = { mode = 755 }
+"usr/sbin/usermod" = { mode = 755 }
+"usr/sbin/groupadd" = { mode = 755 }
+"usr/sbin/groupdel" = { mode = 755 }
+"usr/sbin/groupmod" = { mode = 755 }
+"usr/sbin/pwconv" = { mode = 755 }
+"usr/sbin/pwunconv" = { mode = 755 }
+"usr/sbin/grpconv" = { mode = 755 }
+"usr/sbin/grpunconv" = { mode = 755 }
+"usr/sbin/chpasswd" = { mode = 755 }
+"usr/sbin/newusers" = { mode = 755 }
+
+[config_files]
+"etc/login.defs" = {}
+"etc/default/useradd" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+# Enable shadowed passwords
+pwconv
+grpconv
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "4.18.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "bcrypt and yescrypt password hashing enabled"
+]
+
+[metadata]
+keywords = ["shadow", "passwd", "login", "authentication"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

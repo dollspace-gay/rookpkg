@@ -1,0 +1,109 @@
+[package]
+name = "gettext"
+version = "0.26"
+release = 1
+summary = "GNU internationalization utilities"
+description = """
+GNU gettext is designed to minimize the impact of internationalization on
+program sources, keeping this impact as small and isolated as possible.
+It provides tools to help create and manage translations for programs.
+"""
+homepage = "https://www.gnu.org/software/gettext/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gettext/gettext-0.26.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gettext-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gettext-*
+./configure --prefix=/usr \
+            --disable-static \
+            --docdir=/usr/share/doc/gettext-0.26
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gettext-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gettext-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gettext-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Ensure correct permissions on the preloadable library
+chmod -v 0755 $ROOKPKG_DESTDIR/usr/lib/preloadable_libintl.so
+"""
+
+[files]
+"usr/bin/gettext" = { mode = 755 }
+"usr/bin/msgfmt" = { mode = 755 }
+"usr/bin/msgmerge" = { mode = 755 }
+"usr/bin/xgettext" = { mode = 755 }
+"usr/bin/envsubst" = { mode = 755 }
+"usr/bin/ngettext" = { mode = 755 }
+"usr/lib/libgettextlib.so" = { mode = 755 }
+"usr/lib/libgettextsrc.so" = { mode = 755 }
+"usr/lib/libintl.so" = { mode = 755 }
+"usr/lib/libasprintf.so.0" = { mode = 755 }
+"usr/lib/libasprintf.so" = {}
+"usr/lib/preloadable_libintl.so" = { mode = 755 }
+"usr/include/gettext-po.h" = { mode = 644 }
+"usr/include/libintl.h" = { mode = 644 }
+"usr/share/gettext/" = {}
+"usr/share/aclocal/gettext.m4" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.26"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["gettext", "i18n", "internationalization", "translation"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

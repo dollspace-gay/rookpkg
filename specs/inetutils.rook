@@ -1,0 +1,112 @@
+[package]
+name = "inetutils"
+version = "2.6"
+release = 1
+summary = "GNU network utilities"
+description = """
+Inetutils is a collection of common network programs including hostname, ping,
+telnet, ftp, and traceroute. These are essential utilities for network
+diagnostics and communication.
+"""
+homepage = "https://www.gnu.org/software/inetutils/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+ncurses = ">= 6.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/inetutils-*.tar.xz
+cd inetutils-*
+
+# Fix for gcc-14.1 or later
+sed -i 's/def HAVE_TERMCAP_TGETENT/ 1/' telnet/telnet.c
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/inetutils-*
+./configure --prefix=/usr \
+            --bindir=/usr/bin \
+            --localstatedir=/var \
+            --disable-logger \
+            --disable-whois \
+            --disable-rcp \
+            --disable-rexec \
+            --disable-rlogin \
+            --disable-rsh \
+            --disable-servers \
+            --disable-ifconfig
+"""
+
+build = """
+cd $ROOKPKG_BUILD/inetutils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/inetutils-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/inetutils-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/hostname" = { mode = 755 }
+"usr/bin/ping" = { mode = 4755 }
+"usr/bin/ping6" = { mode = 4755 }
+"usr/bin/traceroute" = { mode = 755 }
+"usr/bin/telnet" = { mode = 755 }
+"usr/bin/ftp" = { mode = 755 }
+"usr/bin/dnsdomainname" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Server components disabled",
+    "r* utilities disabled for security",
+    "GCC 14+ compatibility fix applied"
+]
+
+[metadata]
+keywords = ["inetutils", "networking", "ping", "hostname", "ftp"]
+categories = ["system", "networking"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

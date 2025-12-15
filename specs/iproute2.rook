@@ -1,0 +1,106 @@
+[package]
+name = "iproute2"
+version = "6.13.0"
+release = 1
+summary = "Linux networking utilities"
+description = """
+Iproute2 is a collection of utilities for controlling TCP/IP networking and
+traffic control in Linux. It includes the ip command for network configuration,
+ss for socket statistics, and tc for traffic control.
+"""
+homepage = "https://wiki.linuxfoundation.org/networking/iproute2"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-6.13.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/iproute2-*.tar.xz
+cd iproute2-*
+
+# Remove arpd (requires Berkeley DB)
+sed -i /ARPD/d Makefile
+rm -fv man/man8/arpd.8
+"""
+
+configure = """
+# iproute2 doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/iproute2-*
+make NETNS_RUN_DIR=/run/netns -j$ROOKPKG_JOBS
+"""
+
+check = """
+# iproute2 doesn't have a test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/iproute2-*
+make SBINDIR=/usr/sbin DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install documentation
+mkdir -pv $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.13.0
+cp -v COPYING README* $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.13.0
+"""
+
+[files]
+"usr/sbin/ip" = { mode = 755 }
+"usr/sbin/ss" = { mode = 755 }
+"usr/sbin/tc" = { mode = 755 }
+"usr/sbin/bridge" = { mode = 755 }
+"usr/sbin/rtmon" = { mode = 755 }
+"usr/sbin/nstat" = { mode = 755 }
+"usr/sbin/ifstat" = { mode = 755 }
+"usr/sbin/devlink" = { mode = 755 }
+"usr/sbin/rdma" = { mode = 755 }
+"usr/share/iproute2/" = {}
+
+[config_files]
+"etc/iproute2/" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.13.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "arpd removed (requires Berkeley DB)"
+]
+
+[metadata]
+keywords = ["iproute2", "networking", "ip", "ss", "tc"]
+categories = ["system", "networking"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

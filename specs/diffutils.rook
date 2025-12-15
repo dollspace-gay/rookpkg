@@ -1,0 +1,91 @@
+[package]
+name = "diffutils"
+version = "3.12"
+release = 1
+summary = "GNU file comparison utilities"
+description = """
+GNU Diffutils contains programs that show the differences between files or
+directories. The diff command compares files line by line, while diff3
+compares three files and sdiff merges two files interactively.
+"""
+homepage = "https://www.gnu.org/software/diffutils/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/diffutils-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/diffutils-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/diffutils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/diffutils-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/diffutils-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/diff" = { mode = 755 }
+"usr/bin/diff3" = { mode = 755 }
+"usr/bin/sdiff" = { mode = 755 }
+"usr/bin/cmp" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["diffutils", "diff", "compare", "files"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

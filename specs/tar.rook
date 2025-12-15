@@ -1,0 +1,91 @@
+[package]
+name = "tar"
+version = "1.35"
+release = 1
+summary = "GNU tape archiver"
+description = """
+GNU Tar provides the ability to create tar archives, as well as various other
+kinds of manipulation. For example, you can use tar on previously created
+archives to extract files, store additional files, or update or list files.
+"""
+homepage = "https://www.gnu.org/software/tar/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/tar/tar-1.35.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/tar-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/tar-*
+FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/usr --without-ncurses
+"""
+
+build = """
+cd $ROOKPKG_BUILD/tar-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/tar-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/tar-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install HTML documentation if available
+make -C doc install-html docdir=/usr/share/doc/tar-1.35 2>/dev/null || true
+"""
+
+[files]
+"usr/bin/tar" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.35"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["tar", "archive", "tape"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

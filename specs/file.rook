@@ -1,0 +1,93 @@
+[package]
+name = "file"
+version = "5.46"
+release = 1
+summary = "File type identification utility"
+description = """
+File is a utility that classifies files according to their contents. It reads
+a file and uses magic numbers and patterns to identify the file type. The
+libmagic library is also provided for programmatic file type detection.
+"""
+homepage = "https://www.darwinsys.com/file/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://astron.com/pub/file/file-5.46.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/file-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/file-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/file-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/file-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/file-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/file" = { mode = 755 }
+"usr/lib/libmagic.so.1" = { mode = 755 }
+"usr/lib/libmagic.so" = {}
+"usr/include/magic.h" = { mode = 644 }
+"usr/lib/pkgconfig/libmagic.pc" = { mode = 644 }
+"usr/share/misc/magic.mgc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.46"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["file", "magic", "type", "identification"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,101 @@
+[package]
+name = "pkgconf"
+version = "2.5.1"
+release = 1
+summary = "Package compiler and linker metadata toolkit"
+description = """
+pkgconf is a program which helps to configure compiler and linker flags for
+development libraries. It is similar to pkg-config but is designed to be
+more permissive and consistent in its handling of packages.
+"""
+homepage = "https://pkgconf.org/"
+license = "ISC"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://distfiles.ariadne.space/pkgconf/pkgconf-2.5.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pkgconf-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pkgconf-*
+./configure --prefix=/usr \
+            --disable-static \
+            --docdir=/usr/share/doc/pkgconf-2.5.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pkgconf-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pkgconf-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pkgconf-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Create pkg-config compatibility symlinks
+ln -sv pkgconf $ROOKPKG_DESTDIR/usr/bin/pkg-config
+ln -sv pkgconf.1 $ROOKPKG_DESTDIR/usr/share/man/man1/pkg-config.1
+"""
+
+[files]
+"usr/bin/pkgconf" = { mode = 755 }
+"usr/bin/pkg-config" = {}
+"usr/lib/libpkgconf.so.5" = { mode = 755 }
+"usr/lib/libpkgconf.so" = {}
+"usr/include/pkgconf/" = {}
+"usr/lib/pkgconfig/libpkgconf.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.5.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "pkg-config compatibility symlinks included",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["pkgconf", "pkg-config", "build-system"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,108 @@
+[package]
+name = "procps-ng"
+version = "4.0.5"
+release = 1
+summary = "Utilities for monitoring system resources"
+description = """
+Procps-ng provides utilities for monitoring and controlling processes in Linux.
+It includes essential tools like ps, top, free, pgrep, pkill, vmstat, and more.
+"""
+homepage = "https://gitlab.com/procps-ng/procps"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-4.0.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+ncurses = ">= 6.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/procps-ng-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/procps-ng-*
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/procps-ng-4.0.5 \
+            --disable-static \
+            --disable-kill \
+            --without-ncurses
+"""
+
+build = """
+cd $ROOKPKG_BUILD/procps-ng-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/procps-ng-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/procps-ng-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/ps" = { mode = 755 }
+"usr/bin/top" = { mode = 755 }
+"usr/bin/free" = { mode = 755 }
+"usr/bin/pgrep" = { mode = 755 }
+"usr/bin/pkill" = { mode = 755 }
+"usr/bin/pmap" = { mode = 755 }
+"usr/bin/pwdx" = { mode = 755 }
+"usr/bin/vmstat" = { mode = 755 }
+"usr/bin/w" = { mode = 755 }
+"usr/bin/watch" = { mode = 755 }
+"usr/bin/uptime" = { mode = 755 }
+"usr/sbin/sysctl" = { mode = 755 }
+"usr/lib/libproc2.so.0" = { mode = 755 }
+"usr/lib/libproc2.so" = {}
+"usr/lib/pkgconfig/libproc2.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.0.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "kill disabled (provided by util-linux)",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["procps", "process", "monitoring", "ps", "top"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

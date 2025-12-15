@@ -1,0 +1,94 @@
+[package]
+name = "psmisc"
+version = "23.7"
+release = 1
+summary = "Utilities for managing processes"
+description = """
+Psmisc provides utilities for managing processes, including fuser (identify
+processes using files or sockets), killall (kill processes by name), and
+pstree (display a tree of processes).
+"""
+homepage = "https://gitlab.com/psmisc/psmisc"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceforge.net/projects/psmisc/files/psmisc/psmisc-23.7.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+ncurses = ">= 6.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/psmisc-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/psmisc-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/psmisc-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/psmisc-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/psmisc-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/fuser" = { mode = 755 }
+"usr/bin/killall" = { mode = 755 }
+"usr/bin/peekfd" = { mode = 755 }
+"usr/bin/prtstat" = { mode = 755 }
+"usr/bin/pslog" = { mode = 755 }
+"usr/bin/pstree" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "23.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["psmisc", "process", "fuser", "killall", "pstree"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

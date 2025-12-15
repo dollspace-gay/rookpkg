@@ -1,0 +1,130 @@
+[package]
+name = "coreutils"
+version = "9.7"
+release = 1
+summary = "GNU core utilities"
+description = """
+GNU Coreutils provides the basic file, shell and text manipulation utilities
+which are expected to exist on every operating system. These include commands
+like ls, cp, mv, rm, cat, echo, and many others.
+"""
+homepage = "https://www.gnu.org/software/coreutils/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/coreutils/coreutils-9.7.tar.xz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-upstream_fix-1.patch", sha256 = "FIXME" }
+patch1 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-i18n-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+autoconf = ">= 2.69"
+automake = ">= 1.15"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/coreutils-*.tar.xz
+cd coreutils-*
+
+# Apply patches
+patch -N -p1 -i $ROOKPKG_SOURCES/coreutils-9.7-upstream_fix-1.patch || true
+patch -N -p1 -i $ROOKPKG_SOURCES/coreutils-9.7-i18n-1.patch || true
+
+# Regenerate build system
+autoreconf -fv
+automake -af
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/coreutils-*
+FORCE_UNSAFE_CONFIGURE=1 ./configure \
+    --prefix=/usr \
+    --enable-no-install-program=kill,uptime
+"""
+
+build = """
+cd $ROOKPKG_BUILD/coreutils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/coreutils-*
+make -k RUN_EXPENSIVE_TESTS=yes check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/coreutils-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Move chroot to sbin
+mv -v $ROOKPKG_DESTDIR/usr/bin/chroot $ROOKPKG_DESTDIR/usr/sbin/
+mv -v $ROOKPKG_DESTDIR/usr/share/man/man1/chroot.1 $ROOKPKG_DESTDIR/usr/share/man/man8/chroot.8
+sed -i 's/"1"/"8"/' $ROOKPKG_DESTDIR/usr/share/man/man8/chroot.8
+"""
+
+[files]
+"usr/bin/ls" = { mode = 755 }
+"usr/bin/cp" = { mode = 755 }
+"usr/bin/mv" = { mode = 755 }
+"usr/bin/rm" = { mode = 755 }
+"usr/bin/cat" = { mode = 755 }
+"usr/bin/echo" = { mode = 755 }
+"usr/bin/chmod" = { mode = 755 }
+"usr/bin/chown" = { mode = 755 }
+"usr/bin/mkdir" = { mode = 755 }
+"usr/bin/touch" = { mode = 755 }
+"usr/bin/head" = { mode = 755 }
+"usr/bin/tail" = { mode = 755 }
+"usr/bin/sort" = { mode = 755 }
+"usr/bin/uniq" = { mode = 755 }
+"usr/bin/wc" = { mode = 755 }
+"usr/bin/cut" = { mode = 755 }
+"usr/bin/tr" = { mode = 755 }
+"usr/bin/pwd" = { mode = 755 }
+"usr/bin/date" = { mode = 755 }
+"usr/bin/ln" = { mode = 755 }
+"usr/sbin/chroot" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "9.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Upstream and i18n patches applied",
+    "kill and uptime excluded (provided by other packages)"
+]
+
+[metadata]
+keywords = ["coreutils", "core", "utilities", "shell"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

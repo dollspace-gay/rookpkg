@@ -35,7 +35,8 @@
       "Bash(for pkg in xdg-desktop-portal appstream bubblewrap libproxy iso-codes libical lmdb libqrencode aspell power-profiles-daemon accountsservice sddm ibus)",
       "Bash(for pkg in cmake llvm rust cargo-c boost nodejs libuv nspr nss cups lua duktape brotli libdisplay-info libxcvt taglib sassc libsass zxing-cpp opencv libqalculate)",
       "Bash(for pkg in pycairo pygobject pytest pluggy iniconfig pathspec trove-classifiers hatchling hatch-vcs setuptools-scm editables pygments pygdbmi html5lib)",
-      "Bash(for pkg in which socat 7zip xdotool libdaemon xcursor-themes xbitmaps xinit xkeyboard-config xf86-input-evdev xf86-input-libinput xf86-input-wacom)"
+      "Bash(for pkg in which socat 7zip xdotool libdaemon xcursor-themes xbitmaps xinit xkeyboard-config xf86-input-evdev xf86-input-libinput xf86-input-wacom)",
+      "Bash(powershell -Command \"(Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs'' -Filter ''*.rook'').Count\")"
     ]
   }
 }

@@ -1,0 +1,112 @@
+[package]
+name = "man-db"
+version = "2.13.1"
+release = 1
+summary = "Manual page database utilities"
+description = """
+Man-DB contains utilities for viewing, searching, and managing manual pages.
+It provides the man command used to read documentation for programs, as well
+as tools for maintaining the manual page database.
+"""
+homepage = "https://man-db.gitlab.io/man-db/"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.savannah.gnu.org/releases/man-db/man-db-2.13.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+groff = ">= 1.20"
+libpipeline = ">= 1.5"
+
+[depends]
+glibc = ">= 2.39"
+groff = ">= 1.20"
+libpipeline = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/man-db-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/man-db-*
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/man-db-2.13.1 \
+            --sysconfdir=/etc \
+            --disable-setuid \
+            --enable-cache-owner=bin \
+            --with-browser=/usr/bin/lynx \
+            --with-vgrind=/usr/bin/vgrind \
+            --with-grap=/usr/bin/grap \
+            --with-systemdtmpfilesdir= \
+            --with-systemdsystemunitdir=
+"""
+
+build = """
+cd $ROOKPKG_BUILD/man-db-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/man-db-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/man-db-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/man" = { mode = 755 }
+"usr/bin/apropos" = { mode = 755 }
+"usr/bin/whatis" = { mode = 755 }
+"usr/bin/manpath" = { mode = 755 }
+"usr/bin/catman" = { mode = 755 }
+"usr/bin/lexgrog" = { mode = 755 }
+"usr/sbin/accessdb" = { mode = 755 }
+"usr/lib/libman.so" = { mode = 755 }
+"usr/lib/libmandb.so" = { mode = 755 }
+
+[config_files]
+"etc/man_db.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.13.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "setuid disabled for security",
+    "systemd integration disabled"
+]
+
+[metadata]
+keywords = ["man-db", "man", "manual", "documentation"]
+categories = ["system", "documentation"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

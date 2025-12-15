@@ -1,0 +1,100 @@
+[package]
+name = "gzip"
+version = "1.13"
+release = 1
+summary = "GNU compression utility"
+description = """
+GNU Gzip is a popular data compression program that uses the deflate algorithm.
+It is commonly used to compress single files, and is the compression method
+used by gzip and gunzip utilities.
+"""
+homepage = "https://www.gnu.org/software/gzip/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gzip/gzip-1.13.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gzip-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gzip-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gzip-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gzip-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gzip-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/gzip" = { mode = 755 }
+"usr/bin/gunzip" = { mode = 755 }
+"usr/bin/gzexe" = { mode = 755 }
+"usr/bin/zcat" = { mode = 755 }
+"usr/bin/zcmp" = { mode = 755 }
+"usr/bin/zdiff" = { mode = 755 }
+"usr/bin/zegrep" = { mode = 755 }
+"usr/bin/zfgrep" = { mode = 755 }
+"usr/bin/zforce" = { mode = 755 }
+"usr/bin/zgrep" = { mode = 755 }
+"usr/bin/zless" = { mode = 755 }
+"usr/bin/zmore" = { mode = 755 }
+"usr/bin/znew" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.13"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gzip", "compression", "deflate"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

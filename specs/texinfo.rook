@@ -1,0 +1,100 @@
+[package]
+name = "texinfo"
+version = "7.2"
+release = 1
+summary = "GNU documentation system"
+description = """
+Texinfo is the official documentation format of the GNU project. It uses a
+single source file to produce output in several formats, including online
+formats (HTML, Info, XML) and printed formats (DVI, PDF).
+"""
+homepage = "https://www.gnu.org/software/texinfo/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+perl = ">= 5.6"
+
+[depends]
+glibc = ">= 2.39"
+perl = ">= 5.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/texinfo-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/texinfo-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/texinfo-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/texinfo-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/texinfo-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/makeinfo" = { mode = 755 }
+"usr/bin/texi2any" = { mode = 755 }
+"usr/bin/texi2dvi" = { mode = 755 }
+"usr/bin/texi2pdf" = { mode = 755 }
+"usr/bin/texindex" = { mode = 755 }
+"usr/bin/info" = { mode = 755 }
+"usr/bin/install-info" = { mode = 755 }
+"usr/bin/pdftexi2dvi" = { mode = 755 }
+"usr/bin/pod2texi" = { mode = 755 }
+"usr/share/texinfo/" = {}
+"usr/share/info/dir" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "7.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["texinfo", "documentation", "info", "makeinfo"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

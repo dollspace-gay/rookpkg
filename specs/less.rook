@@ -1,0 +1,90 @@
+[package]
+name = "less"
+version = "679"
+release = 1
+summary = "File pager program"
+description = """
+Less is a terminal pager program that allows backward and forward navigation
+through text files. It is similar to more, but has more advanced features
+including searching and navigation.
+"""
+homepage = "https://www.greenwoodsoftware.com/less/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.greenwoodsoftware.com/less/less-679.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+ncurses = ">= 6.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/less-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/less-*
+./configure --prefix=/usr --sysconfdir=/etc
+"""
+
+build = """
+cd $ROOKPKG_BUILD/less-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# less doesn't have a test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/less-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/less" = { mode = 755 }
+"usr/bin/lessecho" = { mode = 755 }
+"usr/bin/lesskey" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "679"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["less", "pager", "viewer"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

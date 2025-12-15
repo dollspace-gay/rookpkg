@@ -1,0 +1,124 @@
+[package]
+name = "e2fsprogs"
+version = "1.47.3"
+release = 1
+summary = "Ext2/3/4 filesystem utilities"
+description = """
+E2fsprogs provides utilities for creating, checking, and managing ext2, ext3,
+and ext4 filesystems. It includes tools like mkfs.ext4, e2fsck, tune2fs, and
+dumpe2fs.
+"""
+homepage = "http://e2fsprogs.sourceforge.net/"
+license = "GPL-2.0-only AND LGPL-2.0-only AND MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/e2fsprogs/e2fsprogs-1.47.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/e2fsprogs-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/e2fsprogs-*
+rm -rf build
+mkdir -v build
+cd build
+../configure --prefix=/usr \
+             --sysconfdir=/etc \
+             --enable-elf-shlibs \
+             --disable-libblkid \
+             --disable-libuuid \
+             --disable-uuidd \
+             --disable-fsck
+"""
+
+build = """
+cd $ROOKPKG_BUILD/e2fsprogs-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/e2fsprogs-*/build
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/e2fsprogs-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Remove static libraries
+rm -fv $ROOKPKG_DESTDIR/usr/lib/{libcom_err,libe2p,libext2fs,libss}.a
+"""
+
+[files]
+"usr/sbin/mkfs.ext2" = { mode = 755 }
+"usr/sbin/mkfs.ext3" = { mode = 755 }
+"usr/sbin/mkfs.ext4" = { mode = 755 }
+"usr/sbin/mke2fs" = { mode = 755 }
+"usr/sbin/e2fsck" = { mode = 755 }
+"usr/sbin/fsck.ext2" = { mode = 755 }
+"usr/sbin/fsck.ext3" = { mode = 755 }
+"usr/sbin/fsck.ext4" = { mode = 755 }
+"usr/sbin/tune2fs" = { mode = 755 }
+"usr/sbin/dumpe2fs" = { mode = 755 }
+"usr/sbin/resize2fs" = { mode = 755 }
+"usr/sbin/debugfs" = { mode = 755 }
+"usr/bin/chattr" = { mode = 755 }
+"usr/bin/lsattr" = { mode = 755 }
+"usr/lib/libcom_err.so.2" = { mode = 755 }
+"usr/lib/libcom_err.so" = {}
+"usr/lib/libe2p.so.2" = { mode = 755 }
+"usr/lib/libe2p.so" = {}
+"usr/lib/libext2fs.so.2" = { mode = 755 }
+"usr/lib/libext2fs.so" = {}
+"usr/lib/libss.so.2" = { mode = 755 }
+"usr/lib/libss.so" = {}
+
+[config_files]
+"etc/mke2fs.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.47.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "libblkid/libuuid disabled (provided by util-linux)",
+    "Static libraries removed"
+]
+
+[metadata]
+keywords = ["e2fsprogs", "ext4", "ext3", "ext2", "filesystem"]
+categories = ["system", "filesystem"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

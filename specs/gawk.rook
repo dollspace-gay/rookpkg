@@ -1,0 +1,100 @@
+[package]
+name = "gawk"
+version = "5.3.2"
+release = 1
+summary = "GNU awk text processing language"
+description = """
+GNU Awk is a pattern-directed scanning and processing language. It is used for
+text processing, data extraction, and report generation. Gawk implements the
+POSIX awk specification plus many extensions.
+"""
+homepage = "https://www.gnu.org/software/gawk/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gawk/gawk-5.3.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gawk-*.tar.xz
+cd gawk-*
+
+# Remove extras directory (not needed)
+sed -i 's/extras//' Makefile.in
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gawk-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gawk-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gawk-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gawk-*
+make LN='ln -sf' DESTDIR=$ROOKPKG_DESTDIR install
+
+# Create awk symlink
+ln -sf gawk $ROOKPKG_DESTDIR/usr/bin/awk
+"""
+
+[files]
+"usr/bin/gawk" = { mode = 755 }
+"usr/bin/awk" = {}
+"usr/bin/gawk-5.3.2" = { mode = 755 }
+"usr/libexec/awk/" = {}
+"usr/share/awk/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "5.3.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Awk compatibility symlink included"
+]
+
+[metadata]
+keywords = ["gawk", "awk", "text-processing", "scripting"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

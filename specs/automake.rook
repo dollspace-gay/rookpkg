@@ -1,0 +1,94 @@
+[package]
+name = "automake"
+version = "1.18.1"
+release = 1
+summary = "Tool for generating Makefile.in files"
+description = """
+Automake is a tool for automatically generating Makefile.in files compliant
+with the GNU Coding Standards. Automake requires the use of GNU Autoconf.
+"""
+homepage = "https://www.gnu.org/software/automake/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/automake/automake-1.18.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+autoconf = ">= 2.65"
+perl = ">= 5.6"
+
+[depends]
+glibc = ">= 2.39"
+autoconf = ">= 2.65"
+perl = ">= 5.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/automake-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/automake-*
+./configure --prefix=/usr --docdir=/usr/share/doc/automake-1.18.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/automake-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/automake-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/automake-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/automake" = { mode = 755 }
+"usr/bin/aclocal" = { mode = 755 }
+"usr/share/automake-1.18/" = {}
+"usr/share/aclocal-1.18/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.18.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["automake", "makefile", "build-system"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

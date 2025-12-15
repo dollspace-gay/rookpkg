@@ -1,0 +1,90 @@
+[package]
+name = "man-pages"
+version = "6.12"
+release = 1
+summary = "Linux manual pages"
+description = """
+The Linux man-pages project documents the Linux kernel and C library interfaces
+employed by user-space programs. It provides manual pages for system calls,
+library functions, file formats, and other programming interfaces.
+"""
+homepage = "https://www.kernel.org/doc/man-pages/"
+license = "GPL-2.0-or-later AND BSD-3-Clause AND MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/docs/man-pages/man-pages-6.12.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+
+[depends]
+man-db = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/man-pages-*.tar.xz
+"""
+
+configure = """
+# man-pages doesn't use configure
+"""
+
+build = """
+# man-pages doesn't require building
+"""
+
+check = """
+# man-pages doesn't have tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/man-pages-*
+make prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/share/man/man1/" = {}
+"usr/share/man/man2/" = {}
+"usr/share/man/man3/" = {}
+"usr/share/man/man4/" = {}
+"usr/share/man/man5/" = {}
+"usr/share/man/man6/" = {}
+"usr/share/man/man7/" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["man-pages", "manual", "documentation", "linux"]
+categories = ["system", "documentation"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

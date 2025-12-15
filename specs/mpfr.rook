@@ -1,0 +1,99 @@
+[package]
+name = "mpfr"
+version = "4.2.2"
+release = 1
+summary = "Multiple precision floating-point library"
+description = """
+MPFR is a portable library for arbitrary-precision floating-point computation
+with correct rounding. It is based on GMP and provides IEEE-754-style semantics.
+MPFR is required for building GCC.
+"""
+homepage = "https://www.mpfr.org/"
+license = "LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+gmp = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+gmp = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/mpfr-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/mpfr-*
+./configure --prefix=/usr \
+            --disable-static \
+            --enable-thread-safe \
+            --docdir=/usr/share/doc/mpfr-4.2.2
+"""
+
+build = """
+cd $ROOKPKG_BUILD/mpfr-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/mpfr-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/mpfr-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libmpfr.so.6" = { mode = 755 }
+"usr/lib/libmpfr.so" = {}
+"usr/include/mpfr.h" = { mode = 644 }
+"usr/include/mpf2mpfr.h" = { mode = 644 }
+"usr/lib/pkgconfig/mpfr.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.2.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Thread safety enabled",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["mpfr", "math", "floating-point", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
