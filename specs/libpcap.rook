@@ -1,0 +1,99 @@
+[package]
+name = "libpcap"
+version = "1.10.5"
+release = 1
+summary = "Packet capture library"
+description = """
+libpcap is a system-independent interface for user-level packet capture. It
+provides a portable framework for low-level network monitoring. It is used by
+tcpdump, Wireshark, and many other network tools.
+"""
+homepage = "https://www.tcpdump.org/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.tcpdump.org/release/libpcap-1.10.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+flex = ">= 2.6"
+bison = ">= 3.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+bluez = ">= 5.0"
+libnl = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libpcap-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libpcap-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libpcap-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# libpcap tests require root
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libpcap-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/pcap-config" = { mode = 755 }
+"usr/lib/libpcap.so" = { mode = 755 }
+"usr/include/pcap.h" = {}
+"usr/include/pcap/" = {}
+"usr/lib/pkgconfig/libpcap.pc" = {}
+"usr/share/man/man3/pcap.3pcap" = {}
+"usr/share/man/man7/pcap-filter.7" = {}
+"usr/share/man/man7/pcap-linktype.7" = {}
+"usr/share/man/man7/pcap-tstamp.7" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.10.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libpcap", "pcap", "packet-capture", "network", "tcpdump"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

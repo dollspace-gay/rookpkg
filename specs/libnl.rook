@@ -1,0 +1,108 @@
+[package]
+name = "libnl"
+version = "3.11.0"
+release = 1
+summary = "Netlink protocol library"
+description = """
+libnl is a collection of libraries providing APIs to netlink protocol based
+Linux kernel interfaces. It is used by NetworkManager, wpa_supplicant, and
+other programs.
+"""
+homepage = "https://github.com/thom311/libnl"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/thom311/libnl/releases/download/libnl3_11_0/libnl-3.11.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libnl-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libnl-*
+./configure --prefix=/usr       \
+            --sysconfdir=/etc   \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libnl-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libnl-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libnl-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libnl-3.so" = { mode = 755 }
+"usr/lib/libnl-cli-3.so" = { mode = 755 }
+"usr/lib/libnl-genl-3.so" = { mode = 755 }
+"usr/lib/libnl-idiag-3.so" = { mode = 755 }
+"usr/lib/libnl-nf-3.so" = { mode = 755 }
+"usr/lib/libnl-route-3.so" = { mode = 755 }
+"usr/lib/libnl-xfrm-3.so" = { mode = 755 }
+"usr/include/libnl3/" = {}
+"usr/lib/pkgconfig/libnl-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-cli-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-genl-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-idiag-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-nf-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-route-3.0.pc" = {}
+"usr/lib/pkgconfig/libnl-xfrm-3.0.pc" = {}
+"usr/sbin/nl-class-add" = { mode = 755 }
+"usr/sbin/nl-class-delete" = { mode = 755 }
+"usr/sbin/nl-class-list" = { mode = 755 }
+
+[config_files]
+"etc/libnl/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.11.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libnl", "netlink", "network", "linux"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

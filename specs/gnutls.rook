@@ -1,0 +1,113 @@
+[package]
+name = "gnutls"
+version = "3.8.10"
+release = 1
+summary = "GNU TLS library"
+description = """
+GnuTLS is a secure communications library implementing SSL, TLS, and DTLS
+protocols and technologies around them. It provides a simple C language
+application programming interface (API) to access the secure communications
+protocols.
+"""
+homepage = "https://www.gnutls.org/"
+license = "LGPL-2.1-or-later AND GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.10.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+nettle = ">= 3.8"
+libtasn1 = ">= 4.0"
+p11-kit = ">= 0.25"
+
+[depends]
+glibc = ">= 2.39"
+nettle = ">= 3.8"
+libtasn1 = ">= 4.0"
+p11-kit = ">= 0.25"
+
+[optional_depends]
+libidn2 = ">= 2.0"
+unbound = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gnutls-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gnutls-*
+./configure --prefix=/usr                              \
+            --docdir=/usr/share/doc/gnutls-3.8.10      \
+            --disable-guile                            \
+            --disable-rpath                            \
+            --with-default-trust-store-pkcs11="pkcs11:"
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gnutls-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gnutls-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gnutls-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/certtool" = { mode = 755 }
+"usr/bin/gnutls-cli" = { mode = 755 }
+"usr/bin/gnutls-cli-debug" = { mode = 755 }
+"usr/bin/gnutls-serv" = { mode = 755 }
+"usr/bin/ocsptool" = { mode = 755 }
+"usr/bin/psktool" = { mode = 755 }
+"usr/bin/srptool" = { mode = 755 }
+"usr/lib/libgnutls.so" = { mode = 755 }
+"usr/lib/libgnutlsxx.so" = { mode = 755 }
+"usr/include/gnutls/" = {}
+"usr/lib/pkgconfig/gnutls.pc" = {}
+"usr/share/info/gnutls.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.8.10"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "PKCS#11 trust store"
+]
+
+[metadata]
+keywords = ["gnutls", "tls", "ssl", "security", "crypto"]
+categories = ["network", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

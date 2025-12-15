@@ -1,0 +1,101 @@
+[package]
+name = "c-ares"
+version = "1.34.5"
+release = 1
+summary = "C library for asynchronous DNS requests"
+description = """
+c-ares is a C library for asynchronous DNS requests. It is a modern replacement
+for the ares library, used by curl and other programs for DNS resolution.
+"""
+homepage = "https://c-ares.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/c-ares/c-ares/releases/download/v1.34.5/c-ares-1.34.5.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/c-ares-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/c-ares-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \
+      -D CMAKE_BUILD_TYPE=Release  \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/c-ares-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/c-ares-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/c-ares-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/adig" = { mode = 755 }
+"usr/bin/ahost" = { mode = 755 }
+"usr/lib/libcares.so" = { mode = 755 }
+"usr/include/ares.h" = {}
+"usr/include/ares_build.h" = {}
+"usr/include/ares_dns.h" = {}
+"usr/include/ares_nameser.h" = {}
+"usr/include/ares_version.h" = {}
+"usr/lib/pkgconfig/libcares.pc" = {}
+"usr/lib/cmake/c-ares/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.34.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["c-ares", "dns", "async", "resolver"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

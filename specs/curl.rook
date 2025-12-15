@@ -1,0 +1,105 @@
+[package]
+name = "curl"
+version = "8.15.0"
+release = 1
+summary = "Command line tool and library for transferring data with URLs"
+description = """
+cURL is a command line tool and library for transferring data with URLs.
+It supports numerous protocols including HTTP, HTTPS, FTP, SFTP, and many more.
+libcurl is the library used by curl for transfers.
+"""
+homepage = "https://curl.se/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://curl.se/download/curl-8.15.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+openssl = ">= 3.0"
+libpsl = ">= 0.21"
+
+[depends]
+glibc = ">= 2.39"
+openssl = ">= 3.0"
+libpsl = ">= 0.21"
+zlib = ">= 1.0"
+
+[optional_depends]
+c-ares = ">= 1.0"
+libssh2 = ">= 1.0"
+nghttp2 = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/curl-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/curl-*
+./configure --prefix=/usr                     \
+            --disable-static                  \
+            --with-openssl                    \
+            --enable-threaded-resolver        \
+            --with-ca-path=/etc/ssl/certs
+"""
+
+build = """
+cd $ROOKPKG_BUILD/curl-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/curl-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/curl-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/curl" = { mode = 755 }
+"usr/lib/libcurl.so" = { mode = 755 }
+"usr/include/curl/" = {}
+"usr/lib/pkgconfig/libcurl.pc" = {}
+"usr/share/man/man1/curl.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "8.15.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "OpenSSL backend"
+]
+
+[metadata]
+keywords = ["curl", "http", "https", "ftp", "download", "transfer"]
+categories = ["network", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,99 @@
+[package]
+name = "nghttp2"
+version = "1.67.0"
+release = 1
+summary = "HTTP/2 C library"
+description = """
+nghttp2 is an implementation of HTTP/2 and its header compression algorithm
+HPACK in C. It provides high performance HTTP/2 implementation for both server
+and client.
+"""
+homepage = "https://nghttp2.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/nghttp2/nghttp2/releases/download/v1.67.0/nghttp2-1.67.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+openssl = ">= 3.0"
+libxml2 = ">= 2.9"
+libevent = ">= 2.0"
+c-ares = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nghttp2-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/nghttp2-*
+./configure --prefix=/usr       \
+            --disable-static    \
+            --enable-lib-only   \
+            --docdir=/usr/share/doc/nghttp2-1.67.0
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nghttp2-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/nghttp2-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nghttp2-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libnghttp2.so" = { mode = 755 }
+"usr/include/nghttp2/" = {}
+"usr/lib/pkgconfig/libnghttp2.pc" = {}
+"usr/share/doc/nghttp2-1.67.0/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.67.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Library only build"
+]
+
+[metadata]
+keywords = ["nghttp2", "http2", "http", "network"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

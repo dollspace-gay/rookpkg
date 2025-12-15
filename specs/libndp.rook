@@ -1,0 +1,98 @@
+[package]
+name = "libndp"
+version = "1.9"
+release = 1
+summary = "Neighbor Discovery Protocol library"
+description = """
+libndp is a library for Neighbor Discovery Protocol (NDP). It is used by
+NetworkManager for IPv6 neighbor discovery.
+"""
+homepage = "https://github.com/jpirko/libndp"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/jpirko/libndp/archive/v1.9/libndp-1.9.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+autoconf = ">= 2.69"
+automake = ">= 1.15"
+libtool = ">= 2.4"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libndp-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libndp-*
+# GitHub source needs autoreconf
+autoreconf -fiv
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --localstatedir=/var   \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libndp-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libndp-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libndp-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/ndptool" = { mode = 755 }
+"usr/lib/libndp.so" = { mode = 755 }
+"usr/include/ndp.h" = {}
+"usr/lib/pkgconfig/libndp.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.9"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libndp", "ndp", "ipv6", "neighbor-discovery"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

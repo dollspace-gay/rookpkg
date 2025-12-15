@@ -1,0 +1,100 @@
+[package]
+name = "wget"
+version = "1.25.0"
+release = 1
+summary = "Network downloader"
+description = """
+GNU Wget is a free utility for non-interactive download of files from the Web.
+It supports HTTP, HTTPS, and FTP protocols, as well as retrieval through
+HTTP proxies.
+"""
+homepage = "https://www.gnu.org/software/wget/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/wget/wget-1.25.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+openssl = ">= 3.0"
+libpsl = ">= 0.21"
+
+[depends]
+glibc = ">= 2.39"
+openssl = ">= 3.0"
+libpsl = ">= 0.21"
+
+[optional_depends]
+libproxy = ">= 0.5"
+libidn2 = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/wget-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/wget-*
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --with-ssl=openssl
+"""
+
+build = """
+cd $ROOKPKG_BUILD/wget-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/wget-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/wget-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/wget" = { mode = 755 }
+"usr/share/info/wget.info" = {}
+"usr/share/man/man1/wget.1" = {}
+
+[config_files]
+"etc/wgetrc" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.25.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "OpenSSL backend"
+]
+
+[metadata]
+keywords = ["wget", "download", "http", "ftp"]
+categories = ["network", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

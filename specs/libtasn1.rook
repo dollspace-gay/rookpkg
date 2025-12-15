@@ -1,0 +1,93 @@
+[package]
+name = "libtasn1"
+version = "4.20.0"
+release = 1
+summary = "ASN.1 library"
+description = """
+Libtasn1 is a highly portable C library that encodes and decodes DER/BER data
+following an ASN.1 schema. It is used by GnuTLS for ASN.1 parsing.
+"""
+homepage = "https://www.gnu.org/software/libtasn1/"
+license = "LGPL-2.1-or-later AND GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.20.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libtasn1-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libtasn1-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libtasn1-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libtasn1-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libtasn1-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/asn1Coding" = { mode = 755 }
+"usr/bin/asn1Decoding" = { mode = 755 }
+"usr/bin/asn1Parser" = { mode = 755 }
+"usr/lib/libtasn1.so" = { mode = 755 }
+"usr/include/libtasn1.h" = {}
+"usr/lib/pkgconfig/libtasn1.pc" = {}
+"usr/share/info/libtasn1.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.20.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libtasn1", "asn1", "der", "ber", "encoding"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

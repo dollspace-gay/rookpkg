@@ -1,0 +1,94 @@
+[package]
+name = "libidn2"
+version = "2.3.8"
+release = 1
+summary = "Internationalized Domain Names library"
+description = """
+Libidn2 is a library for internationalized domain names (IDN). It implements
+the IDNA2008, TR46 and IDNA2003 specifications. It is used for domain name
+handling in applications.
+"""
+homepage = "https://www.gnu.org/software/libidn/"
+license = "GPL-2.0-or-later AND LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/libidn/libidn2-2.3.8.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libunistring = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+libunistring = ">= 1.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libidn2-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libidn2-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libidn2-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libidn2-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libidn2-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/idn2" = { mode = 755 }
+"usr/lib/libidn2.so" = { mode = 755 }
+"usr/include/idn2.h" = {}
+"usr/lib/pkgconfig/libidn2.pc" = {}
+"usr/share/info/libidn2.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.3.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libidn2", "idn", "internationalization", "domain"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

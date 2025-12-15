@@ -1,0 +1,104 @@
+[package]
+name = "libevent"
+version = "2.1.12"
+release = 1
+summary = "Event notification library"
+description = """
+Libevent is an event notification library. It provides a mechanism to execute
+a callback function when a specific event occurs on a file descriptor or after
+a timeout has been reached.
+"""
+homepage = "https://libevent.org/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+openssl = ">= 3.0"
+
+[depends]
+glibc = ">= 2.39"
+openssl = ">= 3.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libevent-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libevent-*
+# Fix for Python 3
+sed -i 's/python/python3/' event_rpcgen.py
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libevent-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libevent-*
+make verify || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libevent-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/event_rpcgen.py" = { mode = 755 }
+"usr/lib/libevent.so" = { mode = 755 }
+"usr/lib/libevent_core.so" = { mode = 755 }
+"usr/lib/libevent_extra.so" = { mode = 755 }
+"usr/lib/libevent_openssl.so" = { mode = 755 }
+"usr/lib/libevent_pthreads.so" = { mode = 755 }
+"usr/include/event.h" = {}
+"usr/include/event2/" = {}
+"usr/lib/pkgconfig/libevent.pc" = {}
+"usr/lib/pkgconfig/libevent_core.pc" = {}
+"usr/lib/pkgconfig/libevent_extra.pc" = {}
+"usr/lib/pkgconfig/libevent_openssl.pc" = {}
+"usr/lib/pkgconfig/libevent_pthreads.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.1.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libevent", "event", "async", "io"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

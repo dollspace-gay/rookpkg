@@ -1,0 +1,100 @@
+[package]
+name = "nettle"
+version = "3.10.2"
+release = 1
+summary = "Low-level cryptographic library"
+description = """
+Nettle is a cryptographic library that is designed to fit easily in more or
+less any context. It can be used in C++ applications, Python modules, etc.
+"""
+homepage = "https://www.lysator.liu.se/~nisse/nettle/"
+license = "GPL-2.0-or-later AND LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/nettle/nettle-3.10.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+gmp = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+gmp = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nettle-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/nettle-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nettle-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/nettle-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nettle-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+chmod -v 755 $ROOKPKG_DESTDIR/usr/lib/lib{hogweed,nettle}.so
+"""
+
+[files]
+"usr/bin/nettle-hash" = { mode = 755 }
+"usr/bin/nettle-lfib-stream" = { mode = 755 }
+"usr/bin/nettle-pbkdf2" = { mode = 755 }
+"usr/bin/pkcs1-conv" = { mode = 755 }
+"usr/bin/sexp-conv" = { mode = 755 }
+"usr/lib/libnettle.so" = { mode = 755 }
+"usr/lib/libhogweed.so" = { mode = 755 }
+"usr/include/nettle/" = {}
+"usr/lib/pkgconfig/nettle.pc" = {}
+"usr/lib/pkgconfig/hogweed.pc" = {}
+"usr/share/info/nettle.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.10.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["nettle", "cryptography", "crypto", "library"]
+categories = ["development", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
