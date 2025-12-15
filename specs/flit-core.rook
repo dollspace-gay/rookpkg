@@ -1,0 +1,85 @@
+[package]
+name = "flit-core"
+version = "3.12.0"
+release = 1
+summary = "PEP 517 build backend for packages using Flit"
+description = """
+Flit-core is the build backend for Flit, a simple way to put Python packages
+and modules on PyPI. It provides the minimal functionality needed to build
+packages using the Flit build system.
+"""
+homepage = "https://flit.pypa.io/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/f/flit_core/flit_core-3.12.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.6"
+
+[depends]
+python = ">= 3.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/flit_core-*.tar.gz
+"""
+
+configure = """
+# flit-core doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/flit_core-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# flit-core tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/flit_core-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR flit_core
+"""
+
+[files]
+"usr/lib/python3.13/site-packages/flit_core*/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.12.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["flit", "python", "packaging", "build"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

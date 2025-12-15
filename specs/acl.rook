@@ -1,0 +1,99 @@
+[package]
+name = "acl"
+version = "2.3.2"
+release = 1
+summary = "Access Control List utilities"
+description = """
+ACL is a library and set of utilities for manipulating POSIX Access Control Lists.
+Access control lists provide a more fine-grained mechanism for controlling
+access to files and directories than standard Unix permissions.
+"""
+homepage = "https://savannah.nongnu.org/projects/acl"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.savannah.gnu.org/releases/acl/acl-2.3.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+attr = ">= 2.5"
+
+[depends]
+glibc = ">= 2.39"
+attr = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/acl-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/acl-*
+./configure --prefix=/usr         \
+            --disable-static      \
+            --docdir=/usr/share/doc/acl-2.3.2
+"""
+
+build = """
+cd $ROOKPKG_BUILD/acl-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/acl-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/acl-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/chacl" = { mode = 755 }
+"usr/bin/getfacl" = { mode = 755 }
+"usr/bin/setfacl" = { mode = 755 }
+"usr/lib/libacl.so" = { mode = 755 }
+"usr/include/acl/" = {}
+"usr/include/sys/acl.h" = {}
+"usr/lib/pkgconfig/libacl.pc" = {}
+"usr/share/doc/acl-2.3.2/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.3.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["acl", "access-control", "permissions", "security"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

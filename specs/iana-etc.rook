@@ -1,0 +1,84 @@
+[package]
+name = "iana-etc"
+version = "20250807"
+release = 1
+summary = "Network services and protocol data files"
+description = """
+The iana-etc package provides data for network services and protocols.
+It contains the /etc/services and /etc/protocols files which are essential
+for the proper functioning of many network applications.
+"""
+homepage = "https://www.iana.org/protocols"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "any"
+
+[sources]
+source0 = { url = "https://github.com/Mic92/iana-etc/releases/download/20250807/iana-etc-20250807.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/iana-etc-*.tar.gz
+"""
+
+configure = """
+# iana-etc doesn't need configuration
+"""
+
+build = """
+# iana-etc doesn't need building
+"""
+
+check = """
+# iana-etc doesn't have tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/iana-etc-*
+mkdir -p $ROOKPKG_DESTDIR/etc
+cp -fv services protocols $ROOKPKG_DESTDIR/etc/
+"""
+
+[files]
+
+[config_files]
+"etc/services" = {}
+"etc/protocols" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "20250807"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["iana", "services", "protocols", "network"]
+categories = ["system", "network"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

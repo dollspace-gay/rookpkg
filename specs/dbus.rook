@@ -1,0 +1,137 @@
+[package]
+name = "dbus"
+version = "1.16.2"
+release = 1
+summary = "Message bus system for inter-process communication"
+description = """
+D-Bus is a message bus system, a simple way for applications to talk to
+one another. D-Bus supplies both a system daemon and a per-user-login-session
+daemon. It provides a message bus architecture for applications to communicate.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/dbus/"
+license = "GPL-2.0-or-later OR AFL-2.1"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://dbus.freedesktop.org/releases/dbus/dbus-1.16.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+expat = ">= 2.0"
+
+[optional_depends]
+systemd = ">= 250"
+libcap = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/dbus-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/dbus-*
+mkdir -p build
+cd build
+meson setup ..                    \
+      --prefix=/usr               \
+      --buildtype=release         \
+      --wrap-mode=nofallback      \
+      -D runtime_dir=/run
+"""
+
+build = """
+cd $ROOKPKG_BUILD/dbus-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# D-Bus tests require running system
+"""
+
+install = """
+cd $ROOKPKG_BUILD/dbus-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Create sysusers.d config for messagebus
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/sysusers.d
+cat > $ROOKPKG_DESTDIR/usr/lib/sysusers.d/dbus.conf << "EOF"
+# D-Bus message bus user
+u messagebus 18 "D-Bus Message Daemon User" /run/dbus
+EOF
+
+# Create var directories
+mkdir -p $ROOKPKG_DESTDIR/var/lib/dbus
+"""
+
+[files]
+"usr/bin/dbus-daemon" = { mode = 755 }
+"usr/bin/dbus-launch" = { mode = 755 }
+"usr/bin/dbus-monitor" = { mode = 755 }
+"usr/bin/dbus-send" = { mode = 755 }
+"usr/bin/dbus-cleanup-sockets" = { mode = 755 }
+"usr/bin/dbus-run-session" = { mode = 755 }
+"usr/bin/dbus-test-tool" = { mode = 755 }
+"usr/bin/dbus-update-activation-environment" = { mode = 755 }
+"usr/bin/dbus-uuidgen" = { mode = 755 }
+"usr/lib/libdbus-1.so" = { mode = 755 }
+"usr/lib/sysusers.d/dbus.conf" = {}
+"usr/share/dbus-1/" = {}
+
+[config_files]
+"etc/dbus-1/" = {}
+
+[scripts]
+pre_install = """
+# Ensure messagebus user exists
+if ! grep -q "^messagebus:" /etc/passwd 2>/dev/null; then
+    echo "messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/usr/bin/false" >> /etc/passwd
+fi
+if ! grep -q "^messagebus:" /etc/group 2>/dev/null; then
+    echo "messagebus:x:18:" >> /etc/group
+fi
+"""
+post_install = """
+# Create runtime directory
+mkdir -p /run/dbus
+chown messagebus:messagebus /run/dbus
+# Create machine-id symlink
+ln -sfv /etc/machine-id /var/lib/dbus/machine-id 2>/dev/null || true
+/sbin/ldconfig
+"""
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = """
+/sbin/ldconfig
+"""
+
+[[changelog]]
+version = "1.16.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Meson build system used"
+]
+
+[metadata]
+keywords = ["dbus", "message-bus", "ipc", "inter-process"]
+categories = ["system", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

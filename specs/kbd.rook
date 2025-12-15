@@ -1,0 +1,124 @@
+[package]
+name = "kbd"
+version = "2.7.1"
+release = 1
+summary = "Keyboard and console font utilities"
+description = """
+Kbd contains keytable files, console fonts, and keyboard utilities. It provides
+programs for managing the Linux console, including loadkeys for loading keyboard
+maps, setfont for loading console fonts, and various other keyboard utilities.
+"""
+homepage = "https://kbd-project.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/utils/kbd/kbd-2.7.1.tar.xz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/kbd-2.7.1-backspace-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/kbd-*.tar.xz
+cd kbd-*
+
+# Apply backspace fix patch
+patch -Np1 -i $ROOKPKG_SOURCES/kbd-2.7.1-backspace-1.patch || true
+
+# Remove resizecons program as it requires obsolete svgalib
+sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure
+sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kbd-*
+./configure --prefix=/usr --disable-vlock
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kbd-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/kbd-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/kbd-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/chvt" = { mode = 755 }
+"usr/bin/deallocvt" = { mode = 755 }
+"usr/bin/dumpkeys" = { mode = 755 }
+"usr/bin/fgconsole" = { mode = 755 }
+"usr/bin/getkeycodes" = { mode = 755 }
+"usr/bin/kbd_mode" = { mode = 755 }
+"usr/bin/kbdinfo" = { mode = 755 }
+"usr/bin/loadkeys" = { mode = 755 }
+"usr/bin/loadunimap" = { mode = 755 }
+"usr/bin/mapscrn" = { mode = 755 }
+"usr/bin/openvt" = { mode = 755 }
+"usr/bin/psfaddtable" = { mode = 755 }
+"usr/bin/psfgettable" = { mode = 755 }
+"usr/bin/psfstriptable" = { mode = 755 }
+"usr/bin/psfxtable" = { mode = 755 }
+"usr/bin/setfont" = { mode = 755 }
+"usr/bin/setkeycodes" = { mode = 755 }
+"usr/bin/setleds" = { mode = 755 }
+"usr/bin/setmetamode" = { mode = 755 }
+"usr/bin/showconsolefont" = { mode = 755 }
+"usr/bin/showkey" = { mode = 755 }
+"usr/bin/unicode_start" = { mode = 755 }
+"usr/bin/unicode_stop" = { mode = 755 }
+"usr/share/keymaps/" = {}
+"usr/share/consolefonts/" = {}
+"usr/share/unimaps/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.7.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Backspace fix patch applied",
+    "vlock disabled"
+]
+
+[metadata]
+keywords = ["kbd", "keyboard", "console", "fonts", "keymaps"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

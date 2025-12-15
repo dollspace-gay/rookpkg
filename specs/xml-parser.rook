@@ -1,0 +1,91 @@
+[package]
+name = "xml-parser"
+version = "2.47"
+release = 1
+summary = "Perl module for parsing XML documents"
+description = """
+XML::Parser is a Perl module that provides ways to parse XML documents. It is
+built on top of XML::Parser::Expat, which is a lower level interface to James
+Clark's expat library. This module is required by many other Perl modules and
+applications that process XML.
+"""
+homepage = "https://metacpan.org/pod/XML::Parser"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://cpan.metacpan.org/authors/id/T/TO/TODDR/XML-Parser-2.47.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+perl = ">= 5.0"
+make = ">= 4.0"
+expat = ">= 2.0"
+
+[depends]
+perl = ">= 5.0"
+expat = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/XML-Parser-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/XML-Parser-*
+perl Makefile.PL
+"""
+
+build = """
+cd $ROOKPKG_BUILD/XML-Parser-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/XML-Parser-*
+make test
+"""
+
+install = """
+cd $ROOKPKG_BUILD/XML-Parser-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/perl5/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.47"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xml", "parser", "perl", "module"]
+categories = ["development", "perl-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

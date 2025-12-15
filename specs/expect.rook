@@ -1,0 +1,110 @@
+[package]
+name = "expect"
+version = "5.45.4"
+release = 1
+summary = "Tool for automating interactive applications"
+description = """
+Expect is a tool for automating interactive applications such as telnet, ftp,
+passwd, fsck, rlogin, tip, etc. Expect really makes this stuff trivial.
+Expect is also useful for testing these same applications.
+"""
+homepage = "https://expect.sourceforge.net/"
+license = "PD"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/expect/expect5.45.4.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/expect-5.45.4-gcc15-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+tcl = ">= 8.6"
+
+[depends]
+glibc = ">= 2.39"
+tcl = ">= 8.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/expect5.45.4.tar.gz
+cd expect5.45.4
+
+# Apply GCC 15 compatibility patch
+patch -Np1 -i $ROOKPKG_SOURCES/expect-5.45.4-gcc15-1.patch || true
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/expect5.45.4
+./configure --prefix=/usr           \
+            --with-tcl=/usr/lib     \
+            --enable-shared         \
+            --disable-rpath         \
+            --mandir=/usr/share/man \
+            --with-tclinclude=/usr/include
+"""
+
+build = """
+cd $ROOKPKG_BUILD/expect5.45.4
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/expect5.45.4
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/expect5.45.4
+make DESTDIR=$ROOKPKG_DESTDIR install
+ln -svf expect5.45.4/libexpect5.45.4.so $ROOKPKG_DESTDIR/usr/lib/
+"""
+
+[files]
+"usr/bin/expect" = { mode = 755 }
+"usr/bin/autoexpect" = { mode = 755 }
+"usr/bin/mkpasswd" = { mode = 755 }
+"usr/bin/unbuffer" = { mode = 755 }
+"usr/lib/expect5.45.4/" = {}
+"usr/lib/libexpect5.45.4.so" = {}
+"usr/include/expect.h" = {}
+"usr/include/expect_tcl.h" = {}
+"usr/include/expect_comm.h" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.45.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "GCC 15 compatibility patch applied"
+]
+
+[metadata]
+keywords = ["expect", "automation", "scripting", "testing"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

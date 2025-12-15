@@ -1,0 +1,120 @@
+[package]
+name = "python"
+version = "3.13.7"
+release = 1
+summary = "Python programming language"
+description = """
+Python is a powerful, dynamic programming language that emphasizes code
+readability. It supports multiple programming paradigms including procedural,
+object-oriented, and functional programming. Python includes an extensive
+standard library and is widely used for web development, scientific computing,
+data analysis, and system administration.
+"""
+homepage = "https://www.python.org/"
+license = "Python-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+expat = ">= 2.0"
+libffi = ">= 3.0"
+zlib = ">= 1.0"
+bzip2 = ">= 1.0"
+xz = ">= 5.0"
+openssl = ">= 3.0"
+
+[depends]
+glibc = ">= 2.39"
+expat = ">= 2.0"
+libffi = ">= 3.0"
+zlib = ">= 1.0"
+bzip2 = ">= 1.0"
+xz = ">= 5.0"
+openssl = ">= 3.0"
+
+[optional_depends]
+readline = ">= 8.0"
+ncurses = ">= 6.0"
+sqlite = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/Python-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/Python-*
+./configure --prefix=/usr \
+            --enable-shared \
+            --with-system-expat \
+            --enable-optimizations
+"""
+
+build = """
+cd $ROOKPKG_BUILD/Python-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/Python-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/Python-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/python3" = { mode = 755 }
+"usr/bin/python3.13" = { mode = 755 }
+"usr/bin/pip3" = { mode = 755 }
+"usr/bin/pydoc3" = { mode = 755 }
+"usr/bin/idle3" = { mode = 755 }
+"usr/lib/libpython3.13.so.1.0" = { mode = 755 }
+"usr/lib/libpython3.13.so" = {}
+"usr/lib/python3.13/" = {}
+"usr/include/python3.13/" = {}
+"usr/lib/pkgconfig/python3.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.13.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Shared library enabled",
+    "PGO optimizations enabled",
+    "System expat used"
+]
+
+[metadata]
+keywords = ["python", "programming", "scripting", "interpreter"]
+categories = ["development", "interpreters"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,100 @@
+[package]
+name = "gdbm"
+version = "1.26"
+release = 1
+summary = "GNU database manager"
+description = """
+GDBM is a library of database functions that use extensible hashing and work
+similar to the standard UNIX dbm functions. GDBM provides routines for storing
+key/data pairs in a file and retrieving the data by key.
+"""
+homepage = "https://www.gnu.org/software/gdbm/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gdbm/gdbm-1.26.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+readline = ">= 8.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gdbm-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gdbm-*
+./configure --prefix=/usr         \
+            --disable-static      \
+            --enable-libgdbm-compat
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gdbm-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gdbm-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gdbm-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/gdbmtool" = { mode = 755 }
+"usr/bin/gdbm_dump" = { mode = 755 }
+"usr/bin/gdbm_load" = { mode = 755 }
+"usr/lib/libgdbm.so" = { mode = 755 }
+"usr/lib/libgdbm_compat.so" = { mode = 755 }
+"usr/include/gdbm.h" = {}
+"usr/include/dbm.h" = {}
+"usr/include/ndbm.h" = {}
+"usr/share/info/gdbm.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.26"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "libgdbm_compat enabled for dbm/ndbm compatibility"
+]
+
+[metadata]
+keywords = ["gdbm", "database", "dbm", "hash"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

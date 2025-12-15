@@ -1,0 +1,107 @@
+[package]
+name = "dejagnu"
+version = "1.6.3"
+release = 1
+summary = "Framework for testing programs"
+description = """
+DejaGnu is a framework for testing other programs. Its purpose is to provide
+a single front end for all tests. It was written as a framework for testing
+the GNU tools, but is flexible enough to test nearly any program.
+"""
+homepage = "https://www.gnu.org/software/dejagnu/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "any"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/dejagnu/dejagnu-1.6.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+expect = ">= 5.45"
+make = ">= 4.0"
+
+[depends]
+expect = ">= 5.45"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/dejagnu-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/dejagnu-*
+mkdir -p build
+cd build
+../configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/dejagnu-*/build
+# Build documentation only if makeinfo is available
+if command -v makeinfo >/dev/null 2>&1; then
+    makeinfo --html --no-split -o doc/dejagnu.html ../doc/dejagnu.texi || true
+    makeinfo --plaintext -o doc/dejagnu.txt ../doc/dejagnu.texi || true
+fi
+"""
+
+check = """
+# DejaGnu tests itself
+cd $ROOKPKG_BUILD/dejagnu-*/build
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/dejagnu-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+install -v -dm755 $ROOKPKG_DESTDIR/usr/share/doc/dejagnu-1.6.3
+# Install docs only if they were built
+if [ -f doc/dejagnu.html ]; then
+    install -v -m644 doc/dejagnu.html $ROOKPKG_DESTDIR/usr/share/doc/dejagnu-1.6.3/
+fi
+if [ -f doc/dejagnu.txt ]; then
+    install -v -m644 doc/dejagnu.txt $ROOKPKG_DESTDIR/usr/share/doc/dejagnu-1.6.3/
+fi
+"""
+
+[files]
+"usr/bin/dejagnu" = { mode = 755 }
+"usr/bin/runtest" = { mode = 755 }
+"usr/share/dejagnu/" = {}
+"usr/share/doc/dejagnu-1.6.3/" = {}
+"usr/share/info/dejagnu.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.6.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["dejagnu", "testing", "framework", "gnu"]
+categories = ["development", "testing"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

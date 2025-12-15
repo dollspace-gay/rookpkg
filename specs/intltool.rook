@@ -1,0 +1,99 @@
+[package]
+name = "intltool"
+version = "0.51.0"
+release = 1
+summary = "Internationalization tool collection"
+description = """
+Intltool is a set of tools to centralize translation of many different file
+formats using GNU gettext-compatible PO files. The intltool package contains
+scripts for internationalizing various kinds of data files.
+"""
+homepage = "https://launchpad.net/intltool"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+perl = ">= 5.10"
+make = ">= 4.0"
+xml-parser = ">= 2.40"
+
+[depends]
+perl = ">= 5.10"
+xml-parser = ">= 2.40"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/intltool-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/intltool-*
+sed -i 's:\\${prefix}:/usr:' intltool-update.in
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/intltool-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/intltool-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/intltool-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+install -v -Dm644 doc/I18N-HOWTO $ROOKPKG_DESTDIR/usr/share/doc/intltool-0.51.0/I18N-HOWTO
+"""
+
+[files]
+"usr/bin/intltool-extract" = { mode = 755 }
+"usr/bin/intltool-merge" = { mode = 755 }
+"usr/bin/intltool-prepare" = { mode = 755 }
+"usr/bin/intltool-update" = { mode = 755 }
+"usr/bin/intltoolize" = { mode = 755 }
+"usr/share/intltool/" = {}
+"usr/share/aclocal/intltool.m4" = {}
+"usr/share/doc/intltool-0.51.0/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.51.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["intltool", "i18n", "internationalization", "translation"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,122 @@
+[package]
+name = "tcl"
+version = "8.6.16"
+release = 1
+summary = "Tool Command Language scripting language"
+description = """
+Tcl (Tool Command Language) is a very powerful but easy to learn dynamic
+programming language, suitable for a wide range of uses, including web and
+desktop applications, networking, administration, testing and many more.
+"""
+homepage = "https://www.tcl.tk/"
+license = "TCL"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/tcl/tcl8.6.16-src.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/tcl8.6.16-src.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/tcl8.6.16/unix
+SRCDIR=$(pwd)/..
+./configure --prefix=/usr           \
+            --mandir=/usr/share/man \
+            --disable-rpath
+"""
+
+build = """
+cd $ROOKPKG_BUILD/tcl8.6.16/unix
+make -j$ROOKPKG_JOBS
+
+# Fix tclConfig.sh paths
+SRCDIR=$(cd .. && pwd)
+sed -e "s|$SRCDIR/unix|/usr/lib|" \
+    -e "s|$SRCDIR|/usr/include|" \
+    -i tclConfig.sh
+
+sed -e "s|$SRCDIR/unix/pkgs/tdbc1.1.10|/usr/lib/tdbc1.1.10|" \
+    -e "s|$SRCDIR/pkgs/tdbc1.1.10/generic|/usr/include|" \
+    -e "s|$SRCDIR/pkgs/tdbc1.1.10/library|/usr/lib/tcl8.6|" \
+    -e "s|$SRCDIR/pkgs/tdbc1.1.10|/usr/include|" \
+    -i pkgs/tdbc1.1.10/tdbcConfig.sh
+
+sed -e "s|$SRCDIR/unix/pkgs/itcl4.3.2|/usr/lib/itcl4.3.2|" \
+    -e "s|$SRCDIR/pkgs/itcl4.3.2/generic|/usr/include|" \
+    -e "s|$SRCDIR/pkgs/itcl4.3.2|/usr/include|" \
+    -i pkgs/itcl4.3.2/itclConfig.sh
+"""
+
+check = """
+cd $ROOKPKG_BUILD/tcl8.6.16/unix
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/tcl8.6.16/unix
+make DESTDIR=$ROOKPKG_DESTDIR install
+chmod 644 $ROOKPKG_DESTDIR/usr/lib/libtclstub8.6.a
+chmod -v u+w $ROOKPKG_DESTDIR/usr/lib/libtcl8.6.so
+make DESTDIR=$ROOKPKG_DESTDIR install-private-headers
+ln -sfv tclsh8.6 $ROOKPKG_DESTDIR/usr/bin/tclsh
+mv $ROOKPKG_DESTDIR/usr/share/man/man3/Thread.3 $ROOKPKG_DESTDIR/usr/share/man/man3/Tcl_Thread.3
+"""
+
+[files]
+"usr/bin/tclsh8.6" = { mode = 755 }
+"usr/bin/tclsh" = {}
+"usr/lib/libtcl8.6.so" = { mode = 755 }
+"usr/lib/libtclstub8.6.a" = {}
+"usr/lib/tcl8.6/" = {}
+"usr/lib/tcl8/" = {}
+"usr/include/tcl*.h" = {}
+"usr/lib/tclConfig.sh" = {}
+"usr/lib/pkgconfig/tcl.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "8.6.16"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["tcl", "scripting", "programming", "language"]
+categories = ["development", "languages"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

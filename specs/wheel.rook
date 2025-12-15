@@ -1,0 +1,87 @@
+[package]
+name = "wheel"
+version = "0.46.1"
+release = 1
+summary = "Python wheel packaging format"
+description = """
+Wheel is a built-package format for Python. A wheel is a ZIP-format archive
+with a specially formatted filename and the .whl extension. It was designed
+to replace eggs and provide a simpler, faster installation format.
+"""
+homepage = "https://wheel.readthedocs.io/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/w/wheel/wheel-0.46.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.8"
+flit-core = ">= 3.0"
+
+[depends]
+python = ">= 3.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/wheel-*.tar.gz
+"""
+
+configure = """
+# wheel doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/wheel-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# wheel tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/wheel-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR wheel
+"""
+
+[files]
+"usr/bin/wheel" = { mode = 755 }
+"usr/lib/python3.13/site-packages/wheel*/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.46.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["wheel", "python", "packaging"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

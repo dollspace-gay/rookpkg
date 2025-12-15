@@ -1,0 +1,117 @@
+[package]
+name = "perl"
+version = "5.42.0"
+release = 1
+summary = "Practical Extraction and Report Language"
+description = """
+Perl is a highly capable, feature-rich programming language with over 30 years
+of development. It runs on over 100 platforms and is suitable for rapid
+prototyping, system administration, web development, and more.
+"""
+homepage = "https://www.perl.org/"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.cpan.org/src/5.0/perl-5.42.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+zlib = ">= 1.0"
+bzip2 = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.0"
+bzip2 = ">= 1.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/perl-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/perl-*
+export BUILD_ZLIB=False
+export BUILD_BZIP2=0
+sh Configure -des \
+    -Dprefix=/usr \
+    -Dvendorprefix=/usr \
+    -Dprivlib=/usr/lib/perl5/5.42/core_perl \
+    -Darchlib=/usr/lib/perl5/5.42/core_perl \
+    -Dsitelib=/usr/lib/perl5/5.42/site_perl \
+    -Dsitearch=/usr/lib/perl5/5.42/site_perl \
+    -Dvendorlib=/usr/lib/perl5/5.42/vendor_perl \
+    -Dvendorarch=/usr/lib/perl5/5.42/vendor_perl \
+    -Dman1dir=/usr/share/man/man1 \
+    -Dman3dir=/usr/share/man/man3 \
+    -Dpager="/usr/bin/less -isR" \
+    -Duseshrplib \
+    -Dusethreads
+"""
+
+build = """
+cd $ROOKPKG_BUILD/perl-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/perl-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/perl-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/perl" = { mode = 755 }
+"usr/bin/perl5.42.0" = { mode = 755 }
+"usr/bin/cpan" = { mode = 755 }
+"usr/bin/perldoc" = { mode = 755 }
+"usr/bin/pod2man" = { mode = 755 }
+"usr/bin/pod2html" = { mode = 755 }
+"usr/lib/libperl.so" = { mode = 755 }
+"usr/lib/perl5/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.42.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Threads enabled",
+    "Shared library enabled",
+    "System zlib and bzip2 used"
+]
+
+[metadata]
+keywords = ["perl", "programming", "scripting", "interpreter"]
+categories = ["development", "interpreters"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,86 @@
+[package]
+name = "packaging"
+version = "25.0"
+release = 1
+summary = "Core utilities for Python packages"
+description = """
+Packaging is a core Python library that provides utilities for parsing and
+comparing versions, markers, requirements, specifiers, and other packaging
+related functionality. It is used by pip, setuptools, and many other tools.
+"""
+homepage = "https://packaging.pypa.io/"
+license = "Apache-2.0 OR BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/p/packaging/packaging-25.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.8"
+flit-core = ">= 3.0"
+
+[depends]
+python = ">= 3.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/packaging-*.tar.gz
+"""
+
+configure = """
+# packaging doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/packaging-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# packaging tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/packaging-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR packaging
+"""
+
+[files]
+"usr/lib/python3.13/site-packages/packaging*/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "25.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["packaging", "python", "versions", "specifiers"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

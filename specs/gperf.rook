@@ -1,0 +1,91 @@
+[package]
+name = "gperf"
+version = "3.1"
+release = 1
+summary = "Perfect hash function generator"
+description = """
+GNU gperf is a perfect hash function generator. For a given list of strings,
+it produces a hash function and hash table, in form of C or C++ code, for
+looking up a value depending on the input string. The hash function is perfect,
+meaning that the hash table has no collisions.
+"""
+homepage = "https://www.gnu.org/software/gperf/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gperf/gperf-3.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gperf-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gperf-*
+./configure --prefix=/usr --docdir=/usr/share/doc/gperf-3.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gperf-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gperf-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gperf-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/gperf" = { mode = 755 }
+"usr/share/info/gperf.info" = {}
+"usr/share/doc/gperf-3.1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gperf", "hash", "generator", "compiler"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

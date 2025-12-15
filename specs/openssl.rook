@@ -1,0 +1,109 @@
+[package]
+name = "openssl"
+version = "3.5.2"
+release = 1
+summary = "Cryptography and SSL/TLS toolkit"
+description = """
+OpenSSL is a robust, commercial-grade, full-featured toolkit for general-purpose
+cryptography and secure communication. It implements the SSL and TLS protocols,
+and provides a general cryptography library.
+"""
+homepage = "https://www.openssl.org/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.openssl.org/source/openssl-3.5.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+perl = ">= 5.10"
+zlib = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/openssl-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/openssl-*
+./config --prefix=/usr         \
+         --openssldir=/etc/ssl \
+         --libdir=lib          \
+         shared                \
+         zlib-dynamic
+"""
+
+build = """
+cd $ROOKPKG_BUILD/openssl-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/openssl-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/openssl-*
+make DESTDIR=$ROOKPKG_DESTDIR MANSUFFIX=ssl install
+mv -v $ROOKPKG_DESTDIR/usr/share/doc/openssl $ROOKPKG_DESTDIR/usr/share/doc/openssl-3.5.2 || true
+"""
+
+[files]
+"usr/bin/openssl" = { mode = 755 }
+"usr/bin/c_rehash" = { mode = 755 }
+"usr/lib/libssl.so" = { mode = 755 }
+"usr/lib/libcrypto.so" = { mode = 755 }
+"usr/lib/engines-3/" = {}
+"usr/lib/ossl-modules/" = {}
+"usr/include/openssl/" = {}
+"usr/lib/pkgconfig/openssl.pc" = {}
+"usr/lib/pkgconfig/libssl.pc" = {}
+"usr/lib/pkgconfig/libcrypto.pc" = {}
+
+[config_files]
+"etc/ssl/openssl.cnf" = {}
+"etc/ssl/ct_log_list.cnf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.5.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Shared libraries enabled",
+    "Dynamic zlib linking"
+]
+
+[metadata]
+keywords = ["openssl", "ssl", "tls", "cryptography", "security"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

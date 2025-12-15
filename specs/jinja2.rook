@@ -1,0 +1,87 @@
+[package]
+name = "jinja2"
+version = "3.1.6"
+release = 1
+summary = "Python template engine"
+description = """
+Jinja2 is a modern and designer-friendly templating language for Python. It is
+fast, widely used, and secure. Jinja2 is used by many frameworks including
+Flask, Django, and Ansible.
+"""
+homepage = "https://palletsprojects.com/p/jinja/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/j/jinja2/jinja2-3.1.6.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.7"
+flit-core = ">= 3.0"
+
+[depends]
+python = ">= 3.7"
+markupsafe = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/jinja2-*.tar.gz
+"""
+
+configure = """
+# jinja2 doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/jinja2-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# jinja2 tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/jinja2-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR jinja2
+"""
+
+[files]
+"usr/lib/python3.13/site-packages/jinja2*/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.1.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["jinja2", "python", "template", "templating"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

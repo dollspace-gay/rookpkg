@@ -1,0 +1,95 @@
+[package]
+name = "meson"
+version = "1.8.3"
+release = 1
+summary = "High performance build system"
+description = """
+Meson is an open source build system meant to be both extremely fast, and, even
+more importantly, as user friendly as possible. It uses Python 3 and Ninja as
+its backend. Meson is used by many projects including GNOME, systemd, and Mesa.
+"""
+homepage = "https://mesonbuild.com/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/mesonbuild/meson/releases/download/1.8.3/meson-1.8.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.7"
+ninja = ">= 1.8"
+
+[depends]
+python = ">= 3.7"
+ninja = ">= 1.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/meson-*.tar.gz
+"""
+
+configure = """
+# meson doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/meson-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# meson tests require installed packages
+"""
+
+install = """
+cd $ROOKPKG_BUILD/meson-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR meson
+
+# Install shell completions
+install -vDm644 data/shell-completions/bash/meson $ROOKPKG_DESTDIR/usr/share/bash-completion/completions/meson
+install -vDm644 data/shell-completions/zsh/_meson $ROOKPKG_DESTDIR/usr/share/zsh/site-functions/_meson
+"""
+
+[files]
+"usr/bin/meson" = { mode = 755 }
+"usr/lib/python3.13/site-packages/meson*/" = {}
+"usr/share/bash-completion/completions/meson" = { mode = 644 }
+"usr/share/zsh/site-functions/_meson" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.8.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Shell completions included"
+]
+
+[metadata]
+keywords = ["meson", "build-system", "ninja"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

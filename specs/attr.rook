@@ -1,0 +1,97 @@
+[package]
+name = "attr"
+version = "2.5.2"
+release = 1
+summary = "Extended attribute support library and utilities"
+description = """
+Attr is a library and utilities for manipulating filesystem extended attributes.
+Extended attributes are name:value pairs associated permanently with files and
+directories, similar to environment variables.
+"""
+homepage = "https://savannah.nongnu.org/projects/attr"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.savannah.gnu.org/releases/attr/attr-2.5.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/attr-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/attr-*
+./configure --prefix=/usr         \
+            --disable-static      \
+            --sysconfdir=/etc     \
+            --docdir=/usr/share/doc/attr-2.5.2
+"""
+
+build = """
+cd $ROOKPKG_BUILD/attr-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/attr-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/attr-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/attr" = { mode = 755 }
+"usr/bin/getfattr" = { mode = 755 }
+"usr/bin/setfattr" = { mode = 755 }
+"usr/lib/libattr.so" = { mode = 755 }
+"usr/include/attr/" = {}
+"usr/lib/pkgconfig/libattr.pc" = {}
+"usr/share/doc/attr-2.5.2/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.5.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["attr", "xattr", "extended-attributes", "filesystem"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

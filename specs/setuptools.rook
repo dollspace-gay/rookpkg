@@ -1,0 +1,86 @@
+[package]
+name = "setuptools"
+version = "80.9.0"
+release = 1
+summary = "Python package development utilities"
+description = """
+Setuptools is a collection of enhancements to the Python distutils that allow
+developers to more easily build and distribute Python packages, especially
+those with dependencies on other packages.
+"""
+homepage = "https://setuptools.pypa.io/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/s/setuptools/setuptools-80.9.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.8"
+
+[depends]
+python = ">= 3.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/setuptools-*.tar.gz
+"""
+
+configure = """
+# setuptools doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/setuptools-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# setuptools tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/setuptools-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR setuptools
+"""
+
+[files]
+"usr/lib/python3.13/site-packages/setuptools*/" = {}
+"usr/lib/python3.13/site-packages/pkg_resources/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "80.9.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["setuptools", "python", "packaging"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

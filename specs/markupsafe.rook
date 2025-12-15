@@ -1,0 +1,89 @@
+[package]
+name = "markupsafe"
+version = "3.0.2"
+release = 1
+summary = "Safely add untrusted strings to HTML/XML markup"
+description = """
+MarkupSafe implements a text object that escapes characters so it is safe to
+use in HTML and XML. Characters that have special meanings are replaced so that
+they display as the actual characters. This is essential for preventing XSS
+attacks.
+"""
+homepage = "https://palletsprojects.com/p/markupsafe/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://pypi.org/packages/source/m/markupsafe/markupsafe-3.0.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.9"
+gcc = ">= 10.0"
+setuptools = ">= 70.0"
+
+[depends]
+python = ">= 3.9"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/markupsafe-*.tar.gz
+"""
+
+configure = """
+# markupsafe doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/markupsafe-*
+pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
+"""
+
+check = """
+# markupsafe tests require additional dependencies
+"""
+
+install = """
+cd $ROOKPKG_BUILD/markupsafe-*
+pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR markupsafe
+"""
+
+[files]
+"usr/lib/python3.13/site-packages/markupsafe*/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.0.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "C extension compiled for performance"
+]
+
+[metadata]
+keywords = ["markupsafe", "python", "html", "escape", "xss"]
+categories = ["development", "python-modules"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

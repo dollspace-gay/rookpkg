@@ -1,0 +1,130 @@
+[package]
+name = "grub"
+version = "2.12"
+release = 1
+summary = "Grand Unified Bootloader"
+description = """
+GRUB (GRand Unified Bootloader) is a multiboot boot loader. It is derived from
+PUPA which was a research project to develop the next generation of GNU GRUB.
+It provides a menu-based boot selection and supports both BIOS and UEFI systems.
+"""
+homepage = "https://www.gnu.org/software/grub/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/grub/grub-2.12.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+flex = ">= 2.6"
+bison = ">= 3.0"
+python = ">= 3.6"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+xz = ">= 5.0"
+lvm2 = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/grub-*.tar.xz
+cd grub-*
+
+# Fix for GRUB 2.12 build issue - create missing extra_deps.lst
+echo "depends bli part_gpt" > grub-core/extra_deps.lst
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/grub-*
+./configure --prefix=/usr         \
+            --sysconfdir=/etc     \
+            --disable-efiemu      \
+            --disable-werror
+"""
+
+build = """
+cd $ROOKPKG_BUILD/grub-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# GRUB tests require special setup
+"""
+
+install = """
+cd $ROOKPKG_BUILD/grub-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+mv -v $ROOKPKG_DESTDIR/etc/grub.d/README $ROOKPKG_DESTDIR/usr/share/doc/grub-2.12/ || true
+"""
+
+[files]
+"usr/bin/grub-editenv" = { mode = 755 }
+"usr/bin/grub-file" = { mode = 755 }
+"usr/bin/grub-fstest" = { mode = 755 }
+"usr/bin/grub-glue-efi" = { mode = 755 }
+"usr/bin/grub-kbdcomp" = { mode = 755 }
+"usr/bin/grub-menulst2cfg" = { mode = 755 }
+"usr/bin/grub-mkimage" = { mode = 755 }
+"usr/bin/grub-mklayout" = { mode = 755 }
+"usr/bin/grub-mknetdir" = { mode = 755 }
+"usr/bin/grub-mkpasswd-pbkdf2" = { mode = 755 }
+"usr/bin/grub-mkrelpath" = { mode = 755 }
+"usr/bin/grub-mkrescue" = { mode = 755 }
+"usr/bin/grub-mkstandalone" = { mode = 755 }
+"usr/bin/grub-mount" = { mode = 755 }
+"usr/bin/grub-render-label" = { mode = 755 }
+"usr/bin/grub-script-check" = { mode = 755 }
+"usr/bin/grub-syslinux2cfg" = { mode = 755 }
+"usr/sbin/grub-bios-setup" = { mode = 755 }
+"usr/sbin/grub-install" = { mode = 755 }
+"usr/sbin/grub-macbless" = { mode = 755 }
+"usr/sbin/grub-mkconfig" = { mode = 755 }
+"usr/sbin/grub-ofpathname" = { mode = 755 }
+"usr/sbin/grub-probe" = { mode = 755 }
+"usr/sbin/grub-reboot" = { mode = 755 }
+"usr/sbin/grub-set-default" = { mode = 755 }
+"usr/sbin/grub-sparc64-setup" = { mode = 755 }
+"usr/lib/grub/" = {}
+"usr/share/grub/" = {}
+
+[config_files]
+"etc/grub.d/" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "EFI emulation disabled",
+    "Build fix for missing extra_deps.lst"
+]
+
+[metadata]
+keywords = ["grub", "bootloader", "boot", "bios", "uefi"]
+categories = ["system", "boot"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

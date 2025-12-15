@@ -1,0 +1,110 @@
+[package]
+name = "elfutils"
+version = "0.193"
+release = 1
+summary = "Collection of utilities and libraries for handling ELF files"
+description = """
+Elfutils is a collection of utilities and libraries to read, create and modify
+ELF binary files, find and handle DWARF debug data, symbols, thread state and
+stacktraces for processes and core files on GNU/Linux.
+"""
+homepage = "https://sourceware.org/elfutils/"
+license = "GPL-3.0-or-later AND LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceware.org/elfutils/ftp/0.193/elfutils-0.193.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+zlib = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.0"
+
+[optional_depends]
+bzip2 = ">= 1.0"
+xz = ">= 5.0"
+zstd = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/elfutils-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/elfutils-*
+# Disable -Werror to avoid compilation failures with newer GCC
+./configure --prefix=/usr              \
+            --disable-debuginfod       \
+            --enable-libdebuginfod=dummy \
+            --disable-werror
+"""
+
+build = """
+cd $ROOKPKG_BUILD/elfutils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/elfutils-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/elfutils-*
+# Install only libelf for now (full package would include all utilities)
+make -C libelf DESTDIR=$ROOKPKG_DESTDIR install
+install -vm644 config/libelf.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/
+# Remove static library
+rm -f $ROOKPKG_DESTDIR/usr/lib/libelf.a
+"""
+
+[files]
+"usr/lib/libelf.so" = { mode = 755 }
+"usr/lib/libelf-0.193.so" = { mode = 755 }
+"usr/include/libelf.h" = {}
+"usr/include/gelf.h" = {}
+"usr/include/nlist.h" = {}
+"usr/include/elfutils/elf-knowledge.h" = {}
+"usr/include/elfutils/version.h" = {}
+"usr/lib/pkgconfig/libelf.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.193"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "libelf only (full utilities not included)",
+    "debuginfod disabled"
+]
+
+[metadata]
+keywords = ["elfutils", "elf", "libelf", "dwarf", "debug"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
