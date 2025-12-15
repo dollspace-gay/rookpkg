@@ -11,7 +11,7 @@ rookpkg is the official package manager for Rookery OS. Features include:
 - SQLite package database
 - Zstd-compressed package archives
 """
-homepage = "https://github.com/dollspace-gay/RookeryOS/tree/main/rookpkg"
+homepage = "https://github.com/dollspace-gay/rookpkg"
 license = "MIT"
 maintainer = "dollspacegay@gmail.com"
 arch = "x86_64"
