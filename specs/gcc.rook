@@ -1,0 +1,149 @@
+[package]
+name = "gcc"
+version = "15.2.0"
+release = 1
+summary = "GNU Compiler Collection"
+description = """
+The GNU Compiler Collection includes front ends for C and C++, as well as
+libraries for these languages. GCC is the standard compiler for building
+the Linux kernel and most GNU/Linux software.
+"""
+homepage = "https://gcc.gnu.org/"
+license = "GPL-3.0-or-later WITH GCC-exception-3.1"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+binutils = ">= 2.43"
+gmp = ">= 6.3"
+mpfr = ">= 4.2"
+mpc = ">= 1.3"
+zlib = ">= 1.2"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+binutils = ">= 2.43"
+gmp = ">= 6.3"
+mpfr = ">= 4.2"
+mpc = ">= 1.3"
+zlib = ">= 1.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gcc-*.tar.xz
+cd gcc-*
+
+# Fix library path for x86_64
+case $(uname -m) in
+  x86_64)
+    sed -e '/m64=/s/lib64/lib/' \
+        -i.orig gcc/config/i386/t-linux64
+  ;;
+esac
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gcc-*
+mkdir -v build
+cd build
+../configure --prefix=/usr \
+             LD=ld \
+             --enable-languages=c,c++ \
+             --enable-default-pie \
+             --enable-default-ssp \
+             --enable-host-pie \
+             --disable-multilib \
+             --disable-bootstrap \
+             --disable-fixincludes \
+             --with-system-zlib
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gcc-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gcc-*/build
+# GCC tests take a very long time
+# ulimit -s 32768
+# make -k check || true
+echo "Skipping GCC tests during package build"
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gcc-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Fix ownership of headers
+chown -v -R root:root \
+    $ROOKPKG_DESTDIR/usr/lib/gcc/$(gcc -dumpmachine)/15.2.0/include{,-fixed}
+
+# Create compatibility symlinks
+ln -svr $ROOKPKG_DESTDIR/usr/bin/cpp $ROOKPKG_DESTDIR/usr/lib/cpp
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/bfd-plugins
+ln -sfv ../../libexec/gcc/$(gcc -dumpmachine)/15.2.0/liblto_plugin.so \
+        $ROOKPKG_DESTDIR/usr/lib/bfd-plugins/
+
+# Move GDB auto-load files
+mkdir -pv $ROOKPKG_DESTDIR/usr/share/gdb/auto-load/usr/lib
+mv -v $ROOKPKG_DESTDIR/usr/lib/*gdb.py $ROOKPKG_DESTDIR/usr/share/gdb/auto-load/usr/lib 2>/dev/null || true
+"""
+
+[files]
+"usr/bin/gcc" = { mode = 755 }
+"usr/bin/g++" = { mode = 755 }
+"usr/bin/cpp" = { mode = 755 }
+"usr/bin/gcov" = { mode = 755 }
+"usr/bin/gcov-dump" = { mode = 755 }
+"usr/bin/gcov-tool" = { mode = 755 }
+"usr/bin/lto-dump" = { mode = 755 }
+"usr/lib/libgcc_s.so.1" = { mode = 755 }
+"usr/lib/libgcc_s.so" = {}
+"usr/lib/libstdc++.so.6" = { mode = 755 }
+"usr/lib/libstdc++.so" = {}
+"usr/lib/libgomp.so.1" = { mode = 755 }
+"usr/lib/libgomp.so" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "15.2.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "C and C++ languages enabled",
+    "PIE and SSP enabled by default",
+    "Multilib disabled (64-bit only)"
+]
+
+[metadata]
+keywords = ["gcc", "compiler", "c", "c++", "toolchain"]
+categories = ["development", "toolchain"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

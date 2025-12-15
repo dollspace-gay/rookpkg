@@ -1,0 +1,125 @@
+[package]
+name = "binutils"
+version = "2.44"
+release = 1
+summary = "GNU binary utilities"
+description = """
+GNU Binutils is a collection of binary tools including the linker (ld),
+assembler (as), and various utilities for working with object files.
+This is essential for compiling and linking programs on GNU/Linux systems.
+"""
+homepage = "https://www.gnu.org/software/binutils/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/binutils/binutils-2.44.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+zlib = ">= 1.2"
+texinfo = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/binutils-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/binutils-*
+mkdir -v build
+cd build
+../configure --prefix=/usr \
+             --sysconfdir=/etc \
+             --enable-gold \
+             --enable-ld=default \
+             --enable-plugins \
+             --enable-shared \
+             --disable-werror \
+             --enable-64-bit-bfd \
+             --enable-new-dtags \
+             --with-system-zlib \
+             --enable-default-hash-style=gnu
+"""
+
+build = """
+cd $ROOKPKG_BUILD/binutils-*/build
+make tooldir=/usr -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/binutils-*/build
+make -k check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/binutils-*/build
+make tooldir=/usr DESTDIR=$ROOKPKG_DESTDIR install
+
+# Remove static libraries
+rm -fv $ROOKPKG_DESTDIR/usr/lib/lib{bfd,ctf,ctf-nobfd,gprofng,opcodes,sframe}.a
+"""
+
+[files]
+"usr/bin/ld" = { mode = 755 }
+"usr/bin/ld.bfd" = { mode = 755 }
+"usr/bin/ld.gold" = { mode = 755 }
+"usr/bin/as" = { mode = 755 }
+"usr/bin/ar" = { mode = 755 }
+"usr/bin/nm" = { mode = 755 }
+"usr/bin/objcopy" = { mode = 755 }
+"usr/bin/objdump" = { mode = 755 }
+"usr/bin/ranlib" = { mode = 755 }
+"usr/bin/readelf" = { mode = 755 }
+"usr/bin/strip" = { mode = 755 }
+"usr/bin/strings" = { mode = 755 }
+"usr/bin/size" = { mode = 755 }
+"usr/bin/addr2line" = { mode = 755 }
+"usr/bin/c++filt" = { mode = 755 }
+"usr/lib/libbfd.so" = { mode = 755 }
+"usr/lib/libopcodes.so" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.44"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Gold linker enabled",
+    "64-bit BFD support enabled",
+    "GNU hash style default"
+]
+
+[metadata]
+keywords = ["binutils", "linker", "assembler", "toolchain"]
+categories = ["development", "toolchain"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

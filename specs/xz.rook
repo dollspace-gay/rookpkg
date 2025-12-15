@@ -1,0 +1,105 @@
+[package]
+name = "xz"
+version = "5.8.1"
+release = 1
+summary = "XZ Utils - LZMA compression utilities"
+description = """
+XZ Utils is a set of free command-line lossless data compressors, including
+xz and lzma, which use the LZMA and LZMA2 compression algorithms. These formats
+are commonly used for compressing tarballs and are the standard for kernel and
+many source archives.
+"""
+homepage = "https://tukaani.org/xz/"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://tukaani.org/xz/xz-5.8.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xz-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xz-*
+./configure --prefix=/usr \
+            --disable-static \
+            --docdir=/usr/share/doc/xz-5.8.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xz-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xz-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xz-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/xz" = { mode = 755 }
+"usr/bin/unxz" = {}
+"usr/bin/xzcat" = {}
+"usr/bin/lzma" = {}
+"usr/bin/unlzma" = {}
+"usr/bin/lzcat" = {}
+"usr/bin/xzdiff" = { mode = 755 }
+"usr/bin/xzgrep" = { mode = 755 }
+"usr/bin/xzmore" = { mode = 755 }
+"usr/bin/xzless" = { mode = 755 }
+"usr/lib/liblzma.so.5" = { mode = 755 }
+"usr/lib/liblzma.so" = {}
+"usr/include/lzma.h" = { mode = 644 }
+"usr/lib/pkgconfig/liblzma.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.8.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["compression", "xz", "lzma", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

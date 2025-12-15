@@ -1,0 +1,143 @@
+[package]
+name = "ncurses"
+version = "6.5"
+release = 1
+summary = "Terminal handling library with wide character support"
+description = """
+The ncurses (new curses) library is a free software emulation of curses.
+It uses terminfo format, supports pads and color and multiple highlights
+and forms characters and function-key mapping. This build provides wide
+character support (ncursesw) for proper Unicode/UTF-8 handling.
+"""
+homepage = "https://invisible-island.net/ncurses/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/ncurses-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/ncurses-*
+./configure --prefix=/usr \
+            --mandir=/usr/share/man \
+            --with-shared \
+            --without-debug \
+            --without-normal \
+            --with-cxx-shared \
+            --enable-pc-files \
+            --with-pkg-config-libdir=/usr/lib/pkgconfig
+"""
+
+build = """
+cd $ROOKPKG_BUILD/ncurses-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# ncurses doesn't have a standard test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/ncurses-*
+
+# Install to temporary destination first
+make DESTDIR=$PWD/dest install
+
+# Install the wide-character library with correct permissions
+install -vm755 dest/usr/lib/libncursesw.so.6.5 $ROOKPKG_DESTDIR/usr/lib/
+rm -v dest/usr/lib/libncursesw.so.6.5
+
+# Fix curses.h for maximum compatibility
+sed -e 's/^#if.*XOPEN.*$/#if 1/' -i dest/usr/include/curses.h
+
+# Copy everything else
+cp -av dest/* $ROOKPKG_DESTDIR/
+
+# Create compatibility symlinks for non-wide libraries
+for lib in ncurses form panel menu; do
+    ln -sfv lib${lib}w.so $ROOKPKG_DESTDIR/usr/lib/lib${lib}.so
+    ln -sfv ${lib}w.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/${lib}.pc
+done
+
+# Create traditional curses symlink
+ln -sfv libncursesw.so $ROOKPKG_DESTDIR/usr/lib/libcurses.so
+"""
+
+[files]
+"usr/lib/libncursesw.so.6.5" = { mode = 755 }
+"usr/lib/libncursesw.so.6" = {}
+"usr/lib/libncursesw.so" = {}
+"usr/lib/libncurses.so" = {}
+"usr/lib/libcurses.so" = {}
+"usr/lib/libformw.so.6" = { mode = 755 }
+"usr/lib/libformw.so" = {}
+"usr/lib/libform.so" = {}
+"usr/lib/libpanelw.so.6" = { mode = 755 }
+"usr/lib/libpanelw.so" = {}
+"usr/lib/libpanel.so" = {}
+"usr/lib/libmenuw.so.6" = { mode = 755 }
+"usr/lib/libmenuw.so" = {}
+"usr/lib/libmenu.so" = {}
+"usr/bin/clear" = { mode = 755 }
+"usr/bin/reset" = { mode = 755 }
+"usr/bin/tput" = { mode = 755 }
+"usr/bin/tset" = { mode = 755 }
+"usr/bin/infocmp" = { mode = 755 }
+"usr/bin/tic" = { mode = 755 }
+"usr/bin/toe" = { mode = 755 }
+"usr/include/curses.h" = { mode = 644 }
+"usr/include/ncurses.h" = { mode = 644 }
+"usr/lib/pkgconfig/ncursesw.pc" = { mode = 644 }
+"usr/lib/pkgconfig/ncurses.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Wide character (Unicode) support enabled",
+    "C++ bindings included",
+    "Compatibility symlinks for non-wide libraries"
+]
+
+[metadata]
+keywords = ["ncurses", "terminal", "curses", "library", "tui"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

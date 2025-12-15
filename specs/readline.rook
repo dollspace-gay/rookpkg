@@ -1,0 +1,114 @@
+[package]
+name = "readline"
+version = "8.3"
+release = 1
+summary = "GNU readline library for command-line editing"
+description = """
+The GNU Readline library provides a set of functions for use by applications
+that allow users to edit command lines as they are typed in. Both Emacs and vi
+editing modes are available. The Readline library includes additional functions
+for maintaining a list of previously-entered command lines, and for recalling
+and re-editing those lines.
+"""
+homepage = "https://tiswww.case.edu/php/chet/readline/rltop.html"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/readline/readline-8.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+ncurses = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+ncurses = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/readline-*.tar.gz
+cd readline-*
+
+# Remove MV telecon reference that can cause issues
+sed -i '/MV.*telecon/d' Makefile.in
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/readline-*
+./configure --prefix=/usr \
+            --disable-static \
+            --with-curses \
+            --docdir=/usr/share/doc/readline-8.3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/readline-*
+make SHLIB_LIBS="-lncursesw" -j$ROOKPKG_JOBS
+"""
+
+check = """
+# readline doesn't have a standard test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/readline-*
+make SHLIB_LIBS="-lncursesw" DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install documentation if available
+install -v -m644 doc/*.{ps,pdf,html,dvi} $ROOKPKG_DESTDIR/usr/share/doc/readline-8.3 2>/dev/null || true
+"""
+
+[files]
+"usr/lib/libreadline.so.8" = { mode = 755 }
+"usr/lib/libreadline.so" = {}
+"usr/lib/libhistory.so.8" = { mode = 755 }
+"usr/lib/libhistory.so" = {}
+"usr/include/readline/readline.h" = { mode = 644 }
+"usr/include/readline/history.h" = { mode = 644 }
+"usr/include/readline/rlconf.h" = { mode = 644 }
+"usr/include/readline/rltypedefs.h" = { mode = 644 }
+"usr/include/readline/keymaps.h" = { mode = 644 }
+"usr/include/readline/chardefs.h" = { mode = 644 }
+"usr/include/readline/tilde.h" = { mode = 644 }
+"usr/lib/pkgconfig/readline.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "8.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Built with ncurses support",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["readline", "commandline", "editing", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

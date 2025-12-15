@@ -1,0 +1,91 @@
+[package]
+name = "bc"
+version = "7.0.3"
+release = 1
+summary = "Arbitrary precision calculator language"
+description = """
+bc is an arbitrary precision numeric processing language. It includes an
+interactive environment with built-in mathematical functions. bc is required
+for building the Linux kernel.
+"""
+homepage = "https://git.gavinhoward.com/gavin/bc"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/gavinhoward/bc/releases/download/7.0.3/bc-7.0.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/bc-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/bc-*
+# Use C99 standard to avoid GCC 15 C23 true/false keyword conflicts
+CC="gcc -std=c99" ./configure --prefix=/usr -G -O3 -r
+"""
+
+build = """
+cd $ROOKPKG_BUILD/bc-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/bc-*
+make test
+"""
+
+install = """
+cd $ROOKPKG_BUILD/bc-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/bc" = { mode = 755 }
+"usr/bin/dc" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "7.0.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Built with C99 for GCC 15 compatibility"
+]
+
+[metadata]
+keywords = ["bc", "dc", "calculator", "math"]
+categories = ["utilities", "math"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

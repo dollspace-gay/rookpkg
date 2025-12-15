@@ -1,0 +1,98 @@
+[package]
+name = "lz4"
+version = "1.10.0"
+release = 1
+summary = "Extremely fast compression algorithm"
+description = """
+LZ4 is a lossless data compression algorithm that is focused on compression
+and decompression speed. It belongs to the LZ77 family of byte-oriented
+compression schemes. LZ4 is used by the Linux kernel for initramfs compression
+and by many other applications requiring fast compression.
+"""
+homepage = "https://lz4.github.io/lz4/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/lz4/lz4/archive/v1.10.0/lz4-1.10.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/lz4-*.tar.gz
+"""
+
+configure = """
+# lz4 doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/lz4-*
+make BUILD_STATIC=no PREFIX=/usr -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/lz4-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/lz4-*
+make BUILD_STATIC=no PREFIX=/usr DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/lz4" = { mode = 755 }
+"usr/bin/lz4c" = {}
+"usr/bin/lz4cat" = {}
+"usr/bin/unlz4" = {}
+"usr/lib/liblz4.so.1" = { mode = 755 }
+"usr/lib/liblz4.so" = {}
+"usr/include/lz4.h" = { mode = 644 }
+"usr/include/lz4hc.h" = { mode = 644 }
+"usr/include/lz4frame.h" = { mode = 644 }
+"usr/lib/pkgconfig/liblz4.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.10.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["compression", "lz4", "library", "fast"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

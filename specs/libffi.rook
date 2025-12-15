@@ -1,0 +1,97 @@
+[package]
+name = "libffi"
+version = "3.4.6"
+release = 1
+summary = "Foreign Function Interface library"
+description = """
+libffi is a portable, high level programming interface to various calling
+conventions. This allows a programmer to call any function specified by a
+call interface description at run time. libffi is used by Python, Ruby,
+and many other language implementations for calling C functions.
+"""
+homepage = "https://sourceware.org/libffi/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libffi-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libffi-*
+./configure --prefix=/usr \
+            --disable-static \
+            --with-gcc-arch=native
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libffi-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libffi-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libffi-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libffi.so.8" = { mode = 755 }
+"usr/lib/libffi.so" = {}
+"usr/include/ffi.h" = { mode = 644 }
+"usr/include/ffitarget.h" = { mode = 644 }
+"usr/lib/pkgconfig/libffi.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.4.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Native architecture optimizations enabled",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["ffi", "foreign-function-interface", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

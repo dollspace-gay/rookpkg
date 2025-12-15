@@ -1,0 +1,100 @@
+[package]
+name = "expat"
+version = "2.7.1"
+release = 1
+summary = "XML parsing library"
+description = """
+Expat is an XML parser library written in C. It is a stream-oriented parser
+in which an application registers handlers for things the parser might find
+in the XML document. Expat is used by Python, D-Bus, and many other applications.
+"""
+homepage = "https://libexpat.github.io/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libexpat/libexpat/releases/download/R_2_7_1/expat-2.7.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/expat-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/expat-*
+./configure --prefix=/usr \
+            --disable-static \
+            --docdir=/usr/share/doc/expat-2.7.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/expat-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/expat-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/expat-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install documentation
+install -v -m644 doc/*.{html,css} $ROOKPKG_DESTDIR/usr/share/doc/expat-2.7.1 2>/dev/null || true
+"""
+
+[files]
+"usr/lib/libexpat.so.1" = { mode = 755 }
+"usr/lib/libexpat.so" = {}
+"usr/bin/xmlwf" = { mode = 755 }
+"usr/include/expat.h" = { mode = 644 }
+"usr/include/expat_config.h" = { mode = 644 }
+"usr/include/expat_external.h" = { mode = 644 }
+"usr/lib/pkgconfig/expat.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.7.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["xml", "parser", "expat", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

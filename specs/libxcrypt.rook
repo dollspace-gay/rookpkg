@@ -1,0 +1,100 @@
+[package]
+name = "libxcrypt"
+version = "4.4.37"
+release = 1
+summary = "Modern library for one-way hashing of passwords"
+description = """
+libxcrypt is a modern library for one-way hashing of passwords. It supports
+DES, MD5, NTHASH, SHA-256, SHA-512, and yescrypt hashing methods. This library
+replaces the legacy crypt function in glibc with a more secure implementation.
+"""
+homepage = "https://github.com/besser82/libxcrypt"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.37/libxcrypt-4.4.37.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+perl = ">= 5.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxcrypt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxcrypt-*
+./configure --prefix=/usr \
+            --enable-hashes=strong,glibc \
+            --enable-obsolete-api=no \
+            --disable-static \
+            --disable-failure-tokens
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxcrypt-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxcrypt-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxcrypt-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libcrypt.so.2" = { mode = 755 }
+"usr/lib/libcrypt.so" = {}
+"usr/include/crypt.h" = { mode = 644 }
+"usr/lib/pkgconfig/libcrypt.pc" = { mode = 644 }
+"usr/lib/pkgconfig/libxcrypt.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.4.37"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Strong hashes enabled (SHA-256, SHA-512, yescrypt)",
+    "Obsolete API disabled",
+    "Failure tokens disabled for security"
+]
+
+[metadata]
+keywords = ["crypt", "password", "hashing", "library", "security"]
+categories = ["system", "libraries", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

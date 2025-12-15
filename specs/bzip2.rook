@@ -1,0 +1,130 @@
+[package]
+name = "bzip2"
+version = "1.0.8"
+release = 1
+summary = "High-quality block-sorting file compressor"
+description = """
+bzip2 is a freely available, patent-free, high-quality data compressor.
+It typically compresses files to within 10% to 15% of the best available
+techniques (the PPM family of statistical compressors), whilst being around
+twice as fast at compression and six times faster at decompression.
+"""
+homepage = "https://sourceware.org/bzip2/"
+license = "bzip2-1.0.6"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/development/bzip2-1.0.8-install_docs-1.patch", sha256 = "FIXME" }
+
+[patches]
+patch0 = { file = "bzip2-1.0.8-install_docs-1.patch", strip = 1 }
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/bzip2-*.tar.gz
+cd bzip2-*
+patch -Np1 -i $ROOKPKG_SOURCES/bzip2-1.0.8-install_docs-1.patch
+
+# Fix Makefile for proper symlink creation
+sed -i 's@\\(ln -s -f \\)$(PREFIX)/bin/@\\1@' Makefile
+
+# Use share/man instead of man
+sed -i 's@(PREFIX)/man@(PREFIX)/share/man@g' Makefile
+"""
+
+configure = """
+# bzip2 doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/bzip2-*
+
+# Build shared library first
+make -f Makefile-libbz2_so
+
+# Clean and build static library and tools
+make clean
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/bzip2-*
+make test
+"""
+
+install = """
+cd $ROOKPKG_BUILD/bzip2-*
+
+# Install static version
+make PREFIX=$ROOKPKG_DESTDIR/usr install
+
+# Install shared library
+cp -av libbz2.so.* $ROOKPKG_DESTDIR/usr/lib/
+ln -sv libbz2.so.1.0.8 $ROOKPKG_DESTDIR/usr/lib/libbz2.so
+
+# Replace static bzip2 with shared version
+cp -v bzip2-shared $ROOKPKG_DESTDIR/usr/bin/bzip2
+
+# Create symlinks for compatibility
+ln -sfv bzip2 $ROOKPKG_DESTDIR/usr/bin/bunzip2
+ln -sfv bzip2 $ROOKPKG_DESTDIR/usr/bin/bzcat
+"""
+
+[files]
+"usr/bin/bzip2" = { mode = 755 }
+"usr/bin/bunzip2" = {}
+"usr/bin/bzcat" = {}
+"usr/bin/bzip2recover" = { mode = 755 }
+"usr/bin/bzmore" = { mode = 755 }
+"usr/bin/bzless" = { mode = 755 }
+"usr/bin/bzdiff" = { mode = 755 }
+"usr/bin/bzgrep" = { mode = 755 }
+"usr/lib/libbz2.so.1.0.8" = { mode = 755 }
+"usr/lib/libbz2.so.1.0" = {}
+"usr/lib/libbz2.so" = {}
+"usr/include/bzlib.h" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Shared library enabled",
+    "Documentation installed to share/man"
+]
+
+[metadata]
+keywords = ["compression", "bzip2", "library"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

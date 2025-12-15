@@ -1,0 +1,103 @@
+[package]
+name = "flex"
+version = "2.6.4"
+release = 1
+summary = "Fast lexical analyzer generator"
+description = """
+Flex is a tool for generating scanners: programs which recognize lexical
+patterns in text. Flex reads the given input files for a description of a
+scanner to generate. The description is in the form of pairs of regular
+expressions and C code, called rules.
+"""
+homepage = "https://github.com/westes/flex"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+m4 = ">= 1.4"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/flex-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/flex-*
+./configure --prefix=/usr \
+            --docdir=/usr/share/doc/flex-2.6.4 \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/flex-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/flex-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/flex-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Create lex compatibility symlinks
+ln -sv flex $ROOKPKG_DESTDIR/usr/bin/lex
+ln -sv flex.1 $ROOKPKG_DESTDIR/usr/share/man/man1/lex.1
+"""
+
+[files]
+"usr/bin/flex" = { mode = 755 }
+"usr/bin/flex++" = { mode = 755 }
+"usr/bin/lex" = {}
+"usr/lib/libfl.so.2" = { mode = 755 }
+"usr/lib/libfl.so" = {}
+"usr/include/FlexLexer.h" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.6.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions",
+    "Lex compatibility symlinks included",
+    "Static library disabled"
+]
+
+[metadata]
+keywords = ["flex", "lexer", "scanner", "generator"]
+categories = ["development", "build-tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

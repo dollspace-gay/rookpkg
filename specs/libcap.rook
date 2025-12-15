@@ -1,0 +1,103 @@
+[package]
+name = "libcap"
+version = "2.73"
+release = 1
+summary = "POSIX capabilities library"
+description = """
+libcap implements the user-space interface to the POSIX 1003.1e capabilities
+available in Linux kernels. These capabilities are a partitioning of the all
+powerful root privilege into a set of distinct privileges. This package also
+includes utilities for inspecting and setting capabilities.
+"""
+homepage = "https://sites.google.com/site/fullycapable/"
+license = "BSD-3-Clause OR GPL-2.0-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.73.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+attr = ">= 2.5"
+
+[depends]
+glibc = ">= 2.39"
+attr = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libcap-*.tar.xz
+cd libcap-*
+
+# Fix library installation path
+sed -i '/^lib=/s/lib64/lib/' Make.Rules
+"""
+
+configure = """
+# libcap doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libcap-*
+make prefix=/usr lib=lib -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libcap-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libcap-*
+make prefix=/usr lib=lib DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libcap.so.2" = { mode = 755 }
+"usr/lib/libcap.so" = {}
+"usr/lib/libpsx.so.2" = { mode = 755 }
+"usr/lib/libpsx.so" = {}
+"usr/sbin/getcap" = { mode = 755 }
+"usr/sbin/setcap" = { mode = 755 }
+"usr/sbin/getpcaps" = { mode = 755 }
+"usr/sbin/capsh" = { mode = 755 }
+"usr/include/sys/capability.h" = { mode = 644 }
+"usr/lib/pkgconfig/libcap.pc" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.73"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on LFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["capabilities", "posix", "security", "library"]
+categories = ["system", "libraries", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
