@@ -1,0 +1,111 @@
+[package]
+name = "iptables"
+version = "1.8.11"
+release = 1
+summary = "Linux kernel packet filtering framework"
+description = """
+iptables is the userspace command line program used to configure the Linux
+kernel firewall implemented within the Netfilter project. It is used to set up,
+maintain, and inspect the tables of IP packet filter rules.
+"""
+homepage = "https://www.netfilter.org/projects/iptables/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.netfilter.org/projects/iptables/files/iptables-1.8.11.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libmnl = ">= 1.0"
+libnftnl = ">= 1.2"
+
+[depends]
+glibc = ">= 2.39"
+libmnl = ">= 1.0"
+libnftnl = ">= 1.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/iptables-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/iptables-*
+./configure --prefix=/usr          \
+            --disable-nftables     \
+            --enable-libipq
+"""
+
+build = """
+cd $ROOKPKG_BUILD/iptables-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/iptables-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/iptables-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/sbin/iptables" = { mode = 755 }
+"usr/sbin/iptables-save" = { mode = 755 }
+"usr/sbin/iptables-restore" = { mode = 755 }
+"usr/sbin/ip6tables" = { mode = 755 }
+"usr/sbin/ip6tables-save" = { mode = 755 }
+"usr/sbin/ip6tables-restore" = { mode = 755 }
+"usr/lib/libip4tc.so" = { mode = 755 }
+"usr/lib/libip6tc.so" = { mode = 755 }
+"usr/lib/libipq.so" = { mode = 755 }
+"usr/lib/libxtables.so" = { mode = 755 }
+"usr/include/libiptc/" = {}
+"usr/include/libipq/" = {}
+"usr/include/xtables.h" = {}
+"usr/lib/pkgconfig/libip4tc.pc" = {}
+"usr/lib/pkgconfig/libip6tc.pc" = {}
+"usr/lib/pkgconfig/xtables.pc" = {}
+"usr/share/man/man8/iptables.8" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.8.11"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Legacy iptables mode (nftables disabled)"
+]
+
+[metadata]
+keywords = ["iptables", "firewall", "netfilter", "packet-filter"]
+categories = ["network", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

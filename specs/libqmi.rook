@@ -1,0 +1,109 @@
+[package]
+name = "libqmi"
+version = "1.36.0"
+release = 1
+summary = "QMI protocol library"
+description = """
+libqmi is a glib-based library for talking to WWAN modems and devices which
+speak the Qualcomm MSM Interface (QMI) protocol. QMI is used by many Qualcomm
+based cellular modems.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/libqmi/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/libqmi/libqmi-1.36.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib = ">= 2.70"
+libgudev = ">= 230"
+
+[depends]
+glibc = ">= 2.39"
+glib = ">= 2.70"
+libgudev = ">= 230"
+
+[optional_depends]
+libmbim = ">= 1.28"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libqmi-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libqmi-*
+mkdir -p build
+cd build
+meson setup ..                 \
+      --prefix=/usr            \
+      --buildtype=release      \
+      -D introspection=false   \
+      -D bash_completion=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libqmi-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libqmi-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libqmi-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/qmicli" = { mode = 755 }
+"usr/bin/qmi-network" = { mode = 755 }
+"usr/bin/qmi-firmware-update" = { mode = 755 }
+"usr/lib/libqmi-glib.so" = { mode = 755 }
+"usr/include/libqmi-glib/" = {}
+"usr/lib/pkgconfig/qmi-glib.pc" = {}
+"usr/share/man/man1/qmicli.1" = {}
+"usr/share/man/man1/qmi-network.1" = {}
+"usr/share/man/man1/qmi-firmware-update.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.36.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "QMI protocol support for Qualcomm modems"
+]
+
+[metadata]
+keywords = ["libqmi", "qmi", "qualcomm", "modem", "cellular"]
+categories = ["network", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

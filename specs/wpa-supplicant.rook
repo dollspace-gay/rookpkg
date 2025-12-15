@@ -1,0 +1,134 @@
+[package]
+name = "wpa-supplicant"
+version = "2.11"
+release = 1
+summary = "Wi-Fi Protected Access client"
+description = """
+wpa_supplicant is a Wi-Fi Protected Access (WPA) client and IEEE 802.1X
+supplicant. It implements WPA and WPA2 key negotiation with a WPA authenticator
+and Extensible Authentication Protocol (EAP) authentication with an
+authentication server.
+"""
+homepage = "https://w1.fi/wpa_supplicant/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://w1.fi/releases/wpa_supplicant-2.11.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+openssl = ">= 3.0"
+libnl = ">= 3.0"
+readline = ">= 8.0"
+
+[depends]
+glibc = ">= 2.39"
+openssl = ">= 3.0"
+libnl = ">= 3.0"
+readline = ">= 8.0"
+
+[optional_depends]
+dbus = ">= 1.12"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/wpa_supplicant-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/wpa_supplicant-*/wpa_supplicant
+
+# Create configuration file
+cat > .config << "EOF"
+CONFIG_BACKEND=file
+CONFIG_CTRL_IFACE=y
+CONFIG_DEBUG_FILE=y
+CONFIG_DEBUG_SYSLOG=y
+CONFIG_DEBUG_SYSLOG_FACILITY=LOG_DAEMON
+CONFIG_DRIVER_NL80211=y
+CONFIG_DRIVER_WEXT=y
+CONFIG_DRIVER_WIRED=y
+CONFIG_EAP_GTC=y
+CONFIG_EAP_LEAP=y
+CONFIG_EAP_MD5=y
+CONFIG_EAP_MSCHAPV2=y
+CONFIG_EAP_OTP=y
+CONFIG_EAP_PEAP=y
+CONFIG_EAP_TLS=y
+CONFIG_EAP_TTLS=y
+CONFIG_IEEE8021X_EAPOL=y
+CONFIG_IPV6=y
+CONFIG_LIBNL32=y
+CONFIG_PEERKEY=y
+CONFIG_PKCS12=y
+CONFIG_READLINE=y
+CONFIG_SMARTCARD=y
+CONFIG_WPS=y
+CFLAGS += -I/usr/include/libnl3
+EOF
+"""
+
+build = """
+cd $ROOKPKG_BUILD/wpa_supplicant-*/wpa_supplicant
+make BINDIR=/usr/sbin LIBDIR=/usr/lib -j$ROOKPKG_JOBS
+"""
+
+check = """
+# wpa_supplicant tests require hardware
+"""
+
+install = """
+cd $ROOKPKG_BUILD/wpa_supplicant-*/wpa_supplicant
+install -v -m755 wpa_{cli,passphrase,supplicant} $ROOKPKG_DESTDIR/usr/sbin/
+install -v -m644 systemd/*.service $ROOKPKG_DESTDIR/usr/lib/systemd/system/
+mkdir -p $ROOKPKG_DESTDIR/usr/share/man/man{5,8}
+install -v -m644 doc/docbook/wpa_supplicant.conf.5 $ROOKPKG_DESTDIR/usr/share/man/man5/
+install -v -m644 doc/docbook/wpa_{cli,passphrase,supplicant}.8 $ROOKPKG_DESTDIR/usr/share/man/man8/
+"""
+
+[files]
+"usr/sbin/wpa_supplicant" = { mode = 755 }
+"usr/sbin/wpa_cli" = { mode = 755 }
+"usr/sbin/wpa_passphrase" = { mode = 755 }
+"usr/lib/systemd/system/wpa_supplicant@.service" = {}
+"usr/lib/systemd/system/wpa_supplicant.service" = {}
+
+[config_files]
+"etc/wpa_supplicant/" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.11"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "NL80211 and WEXT drivers enabled",
+    "EAP methods enabled"
+]
+
+[metadata]
+keywords = ["wpa_supplicant", "wifi", "wpa", "wpa2", "wireless"]
+categories = ["network", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

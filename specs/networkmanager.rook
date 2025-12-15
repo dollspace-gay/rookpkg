@@ -1,0 +1,147 @@
+[package]
+name = "networkmanager"
+version = "1.54.0"
+release = 1
+summary = "Network management daemon"
+description = """
+NetworkManager is a set of utilities for making networking configuration as
+simple and automatic as possible. It can configure wired and wireless
+network connections, and supports various VPN services.
+"""
+homepage = "https://networkmanager.dev/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/NetworkManager/1.54/NetworkManager-1.54.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib = ">= 2.70"
+libndp = ">= 1.0"
+libnl = ">= 3.0"
+libpsl = ">= 0.21"
+curl = ">= 7.0"
+polkit = ">= 0.105"
+
+[depends]
+glibc = ">= 2.39"
+glib = ">= 2.70"
+libndp = ">= 1.0"
+libnl = ">= 3.0"
+libpsl = ">= 0.21"
+curl = ">= 7.0"
+polkit = ">= 0.105"
+gnutls = ">= 3.8"
+systemd = ">= 250"
+
+[optional_depends]
+dhcpcd = ">= 10.0"
+wpa-supplicant = ">= 2.10"
+modemmanager = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/NetworkManager-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/NetworkManager-*
+mkdir -p build
+cd build
+meson setup ..                          \
+      --prefix=/usr                     \
+      --buildtype=release               \
+      -D libaudit=no                    \
+      -D nmtui=false                    \
+      -D ovs=false                      \
+      -D ppp=false                      \
+      -D nbft=false                     \
+      -D selinux=false                  \
+      -D qt=false                       \
+      -D session_tracking=systemd       \
+      -D nm_cloud_setup=false           \
+      -D modem_manager=false            \
+      -D crypto=gnutls                  \
+      -D introspection=false            \
+      -D docs=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/NetworkManager-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/NetworkManager-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/NetworkManager-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Create configuration directory
+mkdir -p $ROOKPKG_DESTDIR/etc/NetworkManager
+
+# Create basic configuration
+cat > $ROOKPKG_DESTDIR/etc/NetworkManager/NetworkManager.conf << "EOF"
+[main]
+plugins=keyfile
+EOF
+"""
+
+[files]
+"usr/bin/nm-online" = { mode = 755 }
+"usr/bin/nmcli" = { mode = 755 }
+"usr/sbin/NetworkManager" = { mode = 755 }
+"usr/lib/libNM.so" = { mode = 755 }
+"usr/lib/NetworkManager/" = {}
+"usr/share/dbus-1/system.d/org.freedesktop.NetworkManager.conf" = {}
+"usr/share/dbus-1/system-services/org.freedesktop.NetworkManager.service" = {}
+"usr/lib/systemd/system/NetworkManager.service" = {}
+
+[config_files]
+"etc/NetworkManager/" = {}
+
+[scripts]
+pre_install = """
+# Create netdev group
+if ! grep -q "^netdev:" /etc/group 2>/dev/null; then
+    groupadd -fg 86 netdev
+fi
+"""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.54.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "GnuTLS crypto backend",
+    "systemd session tracking"
+]
+
+[metadata]
+keywords = ["networkmanager", "network", "wifi", "ethernet", "vpn"]
+categories = ["network", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

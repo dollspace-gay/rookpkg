@@ -1,0 +1,149 @@
+[package]
+name = "avahi"
+version = "0.8"
+release = 1
+summary = "mDNS/DNS-SD service discovery"
+description = """
+Avahi is a system which facilitates service discovery on a local network via
+the mDNS/DNS-SD protocol suite. It enables programs to publish and discover
+services and hosts running on a local network.
+"""
+homepage = "https://avahi.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/avahi/avahi/releases/download/v0.8/avahi-0.8.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/avahi-0.8-ipv6_race_condition_fix-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+glib = ">= 2.70"
+libdaemon = ">= 0.14"
+
+[depends]
+glibc = ">= 2.39"
+glib = ">= 2.70"
+libdaemon = ">= 0.14"
+
+[optional_depends]
+dbus = ">= 1.12"
+systemd = ">= 250"
+gtk3 = ">= 3.24"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/avahi-*.tar.gz
+cd avahi-*
+
+# Apply IPv6 race condition fix
+patch -Np1 -i $ROOKPKG_SOURCES/avahi-0.8-ipv6_race_condition_fix-1.patch || true
+
+# Fix security vulnerability
+sed -i '426a if (events & AVAHI_WATCH_HUP) { client_free(c); return; }' avahi-daemon/simple-protocol.c
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/avahi-*
+./configure                 \
+    --prefix=/usr           \
+    --sysconfdir=/etc       \
+    --localstatedir=/var    \
+    --disable-static        \
+    --disable-mono          \
+    --disable-monodoc       \
+    --disable-python        \
+    --disable-qt3           \
+    --disable-qt4           \
+    --disable-qt5           \
+    --disable-gtk           \
+    --disable-gtk3          \
+    --enable-core-docs      \
+    --with-distro=none      \
+    --with-dbus-system-address='unix:path=/run/dbus/system_bus_socket'
+"""
+
+build = """
+cd $ROOKPKG_BUILD/avahi-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/avahi-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/avahi-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/avahi-browse" = { mode = 755 }
+"usr/bin/avahi-browse-domains" = {}
+"usr/bin/avahi-publish" = { mode = 755 }
+"usr/bin/avahi-publish-address" = {}
+"usr/bin/avahi-publish-service" = {}
+"usr/bin/avahi-resolve" = { mode = 755 }
+"usr/bin/avahi-resolve-address" = {}
+"usr/bin/avahi-resolve-host-name" = {}
+"usr/bin/avahi-set-host-name" = { mode = 755 }
+"usr/sbin/avahi-daemon" = { mode = 755 }
+"usr/lib/libavahi-client.so" = { mode = 755 }
+"usr/lib/libavahi-common.so" = { mode = 755 }
+"usr/lib/libavahi-core.so" = { mode = 755 }
+"usr/lib/libavahi-glib.so" = { mode = 755 }
+"usr/include/avahi-client/" = {}
+"usr/include/avahi-common/" = {}
+"usr/include/avahi-core/" = {}
+"usr/include/avahi-glib/" = {}
+"usr/lib/pkgconfig/avahi-client.pc" = {}
+"usr/lib/pkgconfig/avahi-core.pc" = {}
+"usr/lib/pkgconfig/avahi-glib.pc" = {}
+
+[config_files]
+"etc/avahi/" = {}
+
+[scripts]
+pre_install = """
+# Create avahi user and group
+if ! grep -q "^avahi:" /etc/group 2>/dev/null; then
+    groupadd -fg 84 avahi
+fi
+if ! grep -q "^avahi:" /etc/passwd 2>/dev/null; then
+    useradd -c "Avahi Daemon Owner" -d /run/avahi-daemon -u 84 -g avahi -s /bin/false avahi
+fi
+"""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "IPv6 race condition fix applied",
+    "Security fix for simple-protocol"
+]
+
+[metadata]
+keywords = ["avahi", "mdns", "dns-sd", "zeroconf", "bonjour"]
+categories = ["network", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

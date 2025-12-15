@@ -1,0 +1,118 @@
+[package]
+name = "modemmanager"
+version = "1.24.0"
+release = 1
+summary = "Mobile broadband modem management service"
+description = """
+ModemManager is a D-Bus activated daemon which controls mobile broadband
+devices and connections. It can manage 2G/3G/4G devices and connections,
+providing a unified high-level API for communicating with different modem
+types.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/ModemManager/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/ModemManager/ModemManager-1.24.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib = ">= 2.70"
+libgudev = ">= 230"
+polkit = ">= 0.105"
+
+[depends]
+glibc = ">= 2.39"
+glib = ">= 2.70"
+libgudev = ">= 230"
+polkit = ">= 0.105"
+systemd = ">= 250"
+
+[optional_depends]
+libmbim = ">= 1.28"
+libqmi = ">= 1.34"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/ModemManager-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/ModemManager-*
+mkdir -p build
+cd build
+meson setup ..                   \
+      --prefix=/usr              \
+      --buildtype=release        \
+      -D systemdsystemunitdir=/usr/lib/systemd/system \
+      -D udev_base_dir=/usr/lib/udev \
+      -D introspection=false     \
+      -D vapi=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/ModemManager-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/ModemManager-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/ModemManager-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/mmcli" = { mode = 755 }
+"usr/sbin/ModemManager" = { mode = 755 }
+"usr/lib/libmm-glib.so" = { mode = 755 }
+"usr/lib/ModemManager/" = {}
+"usr/include/ModemManager/" = {}
+"usr/include/libmm-glib/" = {}
+"usr/lib/pkgconfig/ModemManager.pc" = {}
+"usr/lib/pkgconfig/mm-glib.pc" = {}
+"usr/share/dbus-1/system.d/org.freedesktop.ModemManager1.conf" = {}
+"usr/share/dbus-1/system-services/org.freedesktop.ModemManager1.service" = {}
+"usr/lib/systemd/system/ModemManager.service" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.24.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Optional MBIM/QMI support"
+]
+
+[metadata]
+keywords = ["modemmanager", "modem", "mobile", "broadband", "3g", "4g", "lte"]
+categories = ["network", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

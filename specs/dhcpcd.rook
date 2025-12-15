@@ -1,0 +1,108 @@
+[package]
+name = "dhcpcd"
+version = "10.2.4"
+release = 1
+summary = "DHCP client daemon"
+description = """
+dhcpcd is an RFC2131 compliant DHCP client. It is fully featured yet compact
+and lightweight. dhcpcd runs well on embedded devices and is also suitable
+for traditional desktops.
+"""
+homepage = "https://roy.marples.name/projects/dhcpcd"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/NetworkConfiguration/dhcpcd/releases/download/v10.2.4/dhcpcd-10.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+systemd = ">= 250"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/dhcpcd-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/dhcpcd-*
+./configure --prefix=/usr                  \
+            --sysconfdir=/etc              \
+            --libexecdir=/usr/lib/dhcpcd   \
+            --dbdir=/var/lib/dhcpcd        \
+            --runstatedir=/run             \
+            --privsepuser=dhcpcd
+"""
+
+build = """
+cd $ROOKPKG_BUILD/dhcpcd-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/dhcpcd-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/dhcpcd-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/sbin/dhcpcd" = { mode = 755 }
+"usr/lib/dhcpcd/" = {}
+"usr/share/dhcpcd/hooks/" = {}
+"usr/share/man/man5/dhcpcd.conf.5" = {}
+"usr/share/man/man8/dhcpcd.8" = {}
+
+[config_files]
+"etc/dhcpcd.conf" = {}
+
+[scripts]
+pre_install = """
+# Create dhcpcd user and group
+if ! grep -q "^dhcpcd:" /etc/group 2>/dev/null; then
+    groupadd -g 52 dhcpcd
+fi
+if ! grep -q "^dhcpcd:" /etc/passwd 2>/dev/null; then
+    useradd -c "dhcpcd Privilege Separation" -g dhcpcd -s /bin/false -u 52 dhcpcd
+fi
+"""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "10.2.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Privilege separation enabled"
+]
+
+[metadata]
+keywords = ["dhcpcd", "dhcp", "network", "client"]
+categories = ["network", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
