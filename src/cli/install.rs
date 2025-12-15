@@ -154,7 +154,7 @@ pub fn run(packages: &[String], local: bool, dry_run: bool, download_only: bool,
 
     // Build install list from solution (excluding virtual root)
     let mut to_install: Vec<(PackageEntry, String)> = Vec::new();
-    for (pkg, _version) in &solution {
+    for pkg in solution.keys() {
         if pkg.0 != "__root__" {
             if let Some((entry, repo)) = package_map.get(&pkg.0) {
                 to_install.push((entry.clone(), repo.clone()));

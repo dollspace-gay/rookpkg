@@ -6,7 +6,7 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
 /// Main configuration structure
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct Config {
     /// Database configuration
     #[serde(default)]
@@ -275,20 +275,6 @@ impl Default for DownloadConfig {
             download_timeout_secs: default_download_timeout(),
             retries: default_retries(),
             show_progress: true,
-        }
-    }
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            database: DatabaseConfig::default(),
-            signing: SigningConfig::default(),
-            repositories: vec![],
-            build: BuildConfig::default(),
-            paths: PathsConfig::default(),
-            hooks: HooksConfig::default(),
-            download: DownloadConfig::default(),
         }
     }
 }

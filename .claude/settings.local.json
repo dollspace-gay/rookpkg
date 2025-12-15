@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(wsl -d RookeryOS -- bash -c \"cd /mnt/c/Users/texas/rookpkg && ./target/release/rookpkg --help\":*)",
+      "Bash(wsl -d RookeryOS -- bash -c:*)"
     ]
   }
 }

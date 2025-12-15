@@ -91,7 +91,7 @@ fn show_dependencies(package: &str, config: &Config) -> Result<()> {
             println!("  {} [{}]", "[available]".yellow(), result.repository.cyan());
             for dep in &pkg.depends {
                 // Parse dependency string like "name" or "name >= 1.0"
-                let (dep_name, constraint_str) = if let Some(pos) = dep.find(|c: char| c == '>' || c == '<' || c == '=') {
+                let (dep_name, constraint_str) = if let Some(pos) = dep.find(['>', '<', '=']) {
                     (&dep[..pos].trim(), dep[pos..].trim().to_string())
                 } else {
                     (&dep.trim(), String::new())

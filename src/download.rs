@@ -288,11 +288,9 @@ impl Downloader {
             if metadata.is_file() {
                 if let Ok(modified) = metadata.modified() {
                     if let Ok(age) = modified.elapsed() {
-                        if age > max_age {
-                            if fs::remove_file(entry.path()).is_ok() {
-                                tracing::info!("Removed old cache file: {:?}", entry.file_name());
-                                removed += 1;
-                            }
+                        if age > max_age && fs::remove_file(entry.path()).is_ok() {
+                            tracing::info!("Removed old cache file: {:?}", entry.file_name());
+                            removed += 1;
                         }
                     }
                 }

@@ -177,14 +177,12 @@ pub fn untrust_key(fingerprint: &str, config: &Config) -> Result<()> {
 
     // Also allow removing from master keys (with warning)
     let master_dir = &config.signing.master_keys_dir;
-    if master_dir.exists() {
-        if contains_key_by_fingerprint(master_dir, fingerprint)? {
-            println!(
-                "{} This is a master key. Removing it may break system packages.",
-                "Warning:".yellow().bold()
-            );
-            found |= remove_key_by_fingerprint(master_dir, fingerprint)?;
-        }
+    if master_dir.exists() && contains_key_by_fingerprint(master_dir, fingerprint)? {
+        println!(
+            "{} This is a master key. Removing it may break system packages.",
+            "Warning:".yellow().bold()
+        );
+        found |= remove_key_by_fingerprint(master_dir, fingerprint)?;
     }
 
     if found {

@@ -1,5 +1,38 @@
 # Guidelines for Claude - Rust Development
 
+## Build Environment
+
+**All builds run via WSL Rookery OS as root.** Rust is at `/opt/rustc`.
+
+### Build Commands
+
+```bash
+# Template: wsl -d RookeryOS -u root bash -c '<commands>'
+
+# Build release
+wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo build --release'
+
+# Run clippy
+wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo clippy'
+
+# Run tests
+wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo test'
+
+# Format code
+wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo fmt'
+
+# Run the binary
+wsl -d RookeryOS -u root bash -c 'cd /mnt/c/Users/texas/rookpkg && ./target/release/rookpkg --help'
+```
+
+### Key Points
+
+- Must use `-u root` for registry permissions
+- Must export `CARGO_HOME=/opt/rustc` and `PATH=/opt/rustc/bin:/usr/bin:/bin`
+- Use single quotes around bash -c argument to avoid Windows PATH escaping issues
+
+---
+
 ## Core Principles
 
 Instructions for Claude

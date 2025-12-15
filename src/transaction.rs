@@ -819,10 +819,8 @@ impl Transaction {
         dirs_vec.reverse();
 
         for dir in dirs_vec {
-            if !protected_dirs.contains(&dir) && dir.is_dir() {
-                if fs::read_dir(&dir)?.next().is_none() {
-                    fs::remove_dir(&dir).ok();
-                }
+            if !protected_dirs.contains(&dir) && dir.is_dir() && fs::read_dir(&dir)?.next().is_none() {
+                fs::remove_dir(&dir).ok();
             }
         }
 
@@ -1037,10 +1035,8 @@ impl Transaction {
         dirs_vec.reverse();
 
         for dir in dirs_vec {
-            if !protected_dirs.contains(&dir) && dir.is_dir() {
-                if fs::read_dir(&dir)?.next().is_none() {
-                    fs::remove_dir(&dir).ok();
-                }
+            if !protected_dirs.contains(&dir) && dir.is_dir() && fs::read_dir(&dir)?.next().is_none() {
+                fs::remove_dir(&dir).ok();
             }
         }
 

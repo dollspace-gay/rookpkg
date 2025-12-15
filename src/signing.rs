@@ -115,9 +115,10 @@ pub struct LoadedPublicKey {
 }
 
 /// Trust level for a public key
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum TrustLevel {
     /// Unknown key, not trusted
+    #[default]
     Unknown,
     /// Marginal trust (user added)
     Marginal,
@@ -125,12 +126,6 @@ pub enum TrustLevel {
     Full,
     /// Ultimate trust (user's own key)
     Ultimate,
-}
-
-impl Default for TrustLevel {
-    fn default() -> Self {
-        TrustLevel::Unknown
-    }
 }
 
 /// Generate a new hybrid signing key pair

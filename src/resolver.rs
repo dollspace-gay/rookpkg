@@ -96,7 +96,7 @@ impl DependencyProvider<Package, SemanticVersion> for RookeryDependencyProvider 
                     let mut matching: Vec<_> = versions
                         .iter()
                         .filter(|v| version_range.contains(&v.version))
-                        .map(|v| v.version.clone())
+                        .map(|v| v.version)
                         .collect();
                     matching.sort();
                     (matching.pop(), matching.len() + 1) // +1 because we popped

@@ -26,7 +26,7 @@ fn list_installed(filter: Option<&str>, config: &Config) -> Result<()> {
         return Ok(());
     }
 
-    let db = Database::open(&db_path)?;
+    let db = Database::open(db_path)?;
     let packages = db.list_packages()?;
 
     if packages.is_empty() {
@@ -145,9 +145,10 @@ fn list_available(filter: Option<&str>, all_versions: bool, config: &Config) -> 
                     let versions = index.find_all_versions(name);
                     for pkg in versions {
                         println!(
-                            "    {} {} [{}]",
+                            "    {} {}-{} [{}]",
                             "-".dimmed(),
-                            format!("{}-{}", pkg.version, pkg.release),
+                            pkg.version,
+                            pkg.release,
                             repo.name.cyan()
                         );
                     }

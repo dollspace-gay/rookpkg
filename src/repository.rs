@@ -1272,12 +1272,12 @@ impl RepoManager {
             .into_iter()
             .enumerate()
             .filter_map(|(idx, (path, pkg, repo_name, url))| {
-                if url.is_none() {
+                if let Some(download_url) = url {
+                    Some((idx, path, pkg, repo_name, download_url))
+                } else {
                     // Already cached
                     results.push((idx, path));
                     None
-                } else {
-                    Some((idx, path, pkg, repo_name, url.unwrap()))
                 }
             })
             .collect();

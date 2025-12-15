@@ -106,19 +106,14 @@ impl DeltaInfo {
 }
 
 /// Delta algorithm type
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum DeltaAlgorithm {
     /// Block-based binary diff (similar to bsdiff)
+    #[default]
     Bsdiff,
     /// Simple xdelta-style diff
     Xdelta,
-}
-
-impl Default for DeltaAlgorithm {
-    fn default() -> Self {
-        Self::Bsdiff
-    }
 }
 
 /// A delta operation in the binary diff
