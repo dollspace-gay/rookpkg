@@ -1,0 +1,213 @@
+[package]
+name = "shadow-pam"
+version = "4.18.0"
+release = 1
+summary = "Shadow password suite with PAM support"
+description = """
+Shadow contains programs for handling passwords in a secure way. This package
+is a rebuild of the base shadow package with PAM (Pluggable Authentication
+Modules) support enabled, providing enhanced authentication capabilities.
+"""
+homepage = "https://github.com/shadow-maint/shadow"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/shadow-maint/shadow/releases/download/4.18.0/shadow-4.18.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+linux-pam = ">= 1.5"
+
+[depends]
+glibc = ">= 2.39"
+linux-pam = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/shadow-*.tar.xz
+cd shadow-*
+
+# Remove groups program (Coreutils version preferred)
+sed -i 's/groups\$(EXEEXT) //' src/Makefile.in
+
+# Remove conflicting man pages
+find man -name Makefile.in -exec sed -i 's/groups\\.1 / /'   {} \;
+find man -name Makefile.in -exec sed -i 's/getspnam\\.3 / /' {} \;
+find man -name Makefile.in -exec sed -i 's/passwd\\.5 / /'   {} \;
+
+# Configure login.defs for YESCRYPT and proper paths
+sed -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD YESCRYPT@' \
+    -e 's@/var/spool/mail@/var/mail@'                   \
+    -e '/PATH=/{s@/sbin:@@;s@/bin:@@}'                  \
+    -i etc/login.defs
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/shadow-*
+./configure --sysconfdir=/etc   \
+            --disable-static    \
+            --without-libbsd    \
+            --with-{b,yes}crypt
+"""
+
+build = """
+cd $ROOKPKG_BUILD/shadow-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Shadow tests require specific system state
+"""
+
+install = """
+cd $ROOKPKG_BUILD/shadow-*
+# pamddir= prevents installing shipped PAM configs
+make DESTDIR=$ROOKPKG_DESTDIR exec_prefix=/usr pamddir= install
+make DESTDIR=$ROOKPKG_DESTDIR -C man install-man
+
+# Create PAM configuration files for Shadow utilities
+mkdir -p $ROOKPKG_DESTDIR/etc/pam.d
+
+# login
+cat > $ROOKPKG_DESTDIR/etc/pam.d/login << "EOF"
+# Begin /etc/pam.d/login
+auth      optional    pam_faildelay.so  delay=3000000
+auth      requisite   pam_nologin.so
+auth      include     system-auth
+account   required    pam_access.so
+account   include     system-account
+session   required    pam_env.so
+session   required    pam_limits.so
+session   include     system-session
+password  include     system-password
+# End /etc/pam.d/login
+EOF
+
+# passwd
+cat > $ROOKPKG_DESTDIR/etc/pam.d/passwd << "EOF"
+# Begin /etc/pam.d/passwd
+password  include     system-password
+# End /etc/pam.d/passwd
+EOF
+
+# su
+cat > $ROOKPKG_DESTDIR/etc/pam.d/su << "EOF"
+# Begin /etc/pam.d/su
+auth      sufficient  pam_rootok.so
+auth      include     system-auth
+account   include     system-account
+session   required    pam_env.so
+session   include     system-session
+# End /etc/pam.d/su
+EOF
+
+# chpasswd
+cat > $ROOKPKG_DESTDIR/etc/pam.d/chpasswd << "EOF"
+# Begin /etc/pam.d/chpasswd
+auth      sufficient  pam_rootok.so
+auth      include     system-auth
+account   include     system-account
+password  include     system-password
+# End /etc/pam.d/chpasswd
+EOF
+
+# chage
+cat > $ROOKPKG_DESTDIR/etc/pam.d/chage << "EOF"
+# Begin /etc/pam.d/chage
+auth      sufficient  pam_rootok.so
+auth      include     system-auth
+account   include     system-account
+# End /etc/pam.d/chage
+EOF
+
+# Copy chage for other utilities
+for PROGRAM in chfn chgpasswd chsh groupadd groupdel groupmems groupmod useradd userdel usermod newusers; do
+    cp $ROOKPKG_DESTDIR/etc/pam.d/chage $ROOKPKG_DESTDIR/etc/pam.d/\${PROGRAM}
+    sed -i "s/chage/\${PROGRAM}/" $ROOKPKG_DESTDIR/etc/pam.d/\${PROGRAM}
+done
+"""
+
+[files]
+"usr/bin/chage" = { mode = 755 }
+"usr/bin/chfn" = { mode = 755 }
+"usr/bin/chsh" = { mode = 755 }
+"usr/bin/expiry" = { mode = 755 }
+"usr/bin/gpasswd" = { mode = 755 }
+"usr/bin/login" = { mode = 755 }
+"usr/bin/newgrp" = { mode = 755 }
+"usr/bin/passwd" = { mode = 4755 }
+"usr/bin/sg" = { mode = 755 }
+"usr/bin/su" = { mode = 755 }
+"usr/sbin/chgpasswd" = { mode = 755 }
+"usr/sbin/chpasswd" = { mode = 755 }
+"usr/sbin/groupadd" = { mode = 755 }
+"usr/sbin/groupdel" = { mode = 755 }
+"usr/sbin/groupmems" = { mode = 755 }
+"usr/sbin/groupmod" = { mode = 755 }
+"usr/sbin/grpck" = { mode = 755 }
+"usr/sbin/grpconv" = { mode = 755 }
+"usr/sbin/grpunconv" = { mode = 755 }
+"usr/sbin/newusers" = { mode = 755 }
+"usr/sbin/pwck" = { mode = 755 }
+"usr/sbin/pwconv" = { mode = 755 }
+"usr/sbin/pwunconv" = { mode = 755 }
+"usr/sbin/useradd" = { mode = 755 }
+"usr/sbin/userdel" = { mode = 755 }
+"usr/sbin/usermod" = { mode = 755 }
+"usr/sbin/vigr" = { mode = 755 }
+"usr/sbin/vipw" = { mode = 755 }
+
+[config_files]
+"etc/login.defs" = {}
+"etc/pam.d/login" = {}
+"etc/pam.d/passwd" = {}
+"etc/pam.d/su" = {}
+"etc/pam.d/chpasswd" = {}
+"etc/pam.d/chage" = {}
+"etc/default/useradd" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+# Enable shadowed passwords
+pwconv 2>/dev/null || true
+grpconv 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = """
+pwconv 2>/dev/null || true
+grpconv 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "4.18.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "PAM support enabled",
+    "PAM configuration files included"
+]
+
+[metadata]
+keywords = ["shadow", "pam", "password", "authentication", "login"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

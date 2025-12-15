@@ -1,0 +1,97 @@
+[package]
+name = "libgpg-error"
+version = "1.58"
+release = 1
+summary = "Common error handling library for GnuPG components"
+description = """
+libgpg-error is a small library that defines common error values for all
+GnuPG components. It provides functions to retrieve string descriptions
+for the defined error values.
+"""
+homepage = "https://gnupg.org/software/libgpg-error/"
+license = "LGPL-2.1-or-later AND GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.58.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libgpg-error-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libgpg-error-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libgpg-error-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libgpg-error-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libgpg-error-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+install -v -m644 -D README $ROOKPKG_DESTDIR/usr/share/doc/libgpg-error-1.58/README
+"""
+
+[files]
+"usr/lib/libgpg-error.so" = { mode = 755 }
+"usr/bin/gpg-error" = { mode = 755 }
+"usr/bin/gpgrt-config" = { mode = 755 }
+"usr/bin/yat2m" = { mode = 755 }
+"usr/include/gpg-error.h" = {}
+"usr/include/gpgrt.h" = {}
+"usr/lib/pkgconfig/gpg-error.pc" = {}
+"usr/share/libgpg-error/" = {}
+"usr/share/aclocal/gpgrt.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.58"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libgpg-error", "gnupg", "error", "library"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

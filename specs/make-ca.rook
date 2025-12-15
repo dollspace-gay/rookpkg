@@ -1,0 +1,97 @@
+[package]
+name = "make-ca"
+version = "1.16.1"
+release = 1
+summary = "CA certificate management scripts"
+description = """
+make-ca provides scripts to maintain the CA certificates on a system. It fetches
+certificates from the Mozilla CA Certificate Store and processes them into the
+format needed by applications that use SSL/TLS.
+"""
+homepage = "https://github.com/lfs-book/make-ca"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "any"
+
+[sources]
+source0 = { url = "https://github.com/lfs-book/make-ca/releases/download/v1.16.1/make-ca-1.16.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+p11-kit = ">= 0.25"
+
+[depends]
+p11-kit = ">= 0.25"
+openssl = ">= 3.0"
+
+[optional_depends]
+nss = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/make-ca-*.tar.gz
+"""
+
+configure = """
+# make-ca doesn't need configuration
+"""
+
+build = """
+# make-ca doesn't need building
+"""
+
+check = """
+# make-ca doesn't have tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/make-ca-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+mkdir -p $ROOKPKG_DESTDIR/etc/ssl/local
+"""
+
+[files]
+"usr/sbin/make-ca" = { mode = 755 }
+"usr/libexec/make-ca/" = {}
+"usr/share/doc/make-ca-1.16.1/" = {}
+
+[config_files]
+"etc/make-ca.conf" = {}
+"etc/ssl/local/" = {}
+"etc/pki/anchors/" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+# Generate initial CA certificates
+/usr/sbin/make-ca -g 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = """
+/usr/sbin/make-ca -g 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "1.16.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["make-ca", "certificates", "ca", "ssl", "trust"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

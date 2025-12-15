@@ -1,0 +1,94 @@
+[package]
+name = "libksba"
+version = "1.6.8"
+release = 1
+summary = "X.509 and CMS library for GnuPG"
+description = """
+libksba is a library to make the tasks of working with X.509 certificates,
+CMS data, and related objects more easy. It provides a high-level interface
+to the implemented standards for GnuPG.
+"""
+homepage = "https://gnupg.org/software/libksba/"
+license = "LGPL-3.0-or-later AND GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/libksba/libksba-1.6.8.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libgpg-error = ">= 1.46"
+
+[depends]
+glibc = ">= 2.39"
+libgpg-error = ">= 1.46"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libksba-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libksba-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libksba-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libksba-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libksba-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libksba.so" = { mode = 755 }
+"usr/include/ksba.h" = {}
+"usr/lib/pkgconfig/ksba.pc" = {}
+"usr/share/info/ksba.info" = {}
+"usr/share/aclocal/ksba.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.6.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libksba", "x509", "cms", "gnupg", "certificates"]
+categories = ["development", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

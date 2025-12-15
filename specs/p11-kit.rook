@@ -1,0 +1,125 @@
+[package]
+name = "p11-kit"
+version = "0.25.5"
+release = 1
+summary = "PKCS#11 trust module and toolkit"
+description = """
+p11-kit provides a way to load and enumerate PKCS#11 modules. It also provides
+a standard configuration setup for installing PKCS#11 modules in such a way
+that they're automatically discoverable by all applications.
+"""
+homepage = "https://p11-glue.github.io/p11-glue/p11-kit.html"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+libtasn1 = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+libtasn1 = ">= 4.0"
+libffi = ">= 3.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/p11-kit-*.tar.xz
+cd p11-kit-*
+
+# Prepare the distribution specific anchor hook
+sed '20,\$ d' -i trust/trust-extract-compat
+
+cat >> trust/trust-extract-compat << "EOF"
+# Copy existing anchor modifications to /etc/ssl/local
+/usr/libexec/make-ca/copy-trust-modifications
+
+# Update trust stores
+/usr/sbin/make-ca -r
+EOF
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/p11-kit-*
+mkdir -p build
+cd build
+meson setup ..                  \
+      --prefix=/usr             \
+      --buildtype=release       \
+      -D trust_paths=/etc/pki/anchors
+"""
+
+build = """
+cd $ROOKPKG_BUILD/p11-kit-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/p11-kit-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/p11-kit-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Create symlinks
+ln -sfv /usr/libexec/p11-kit/trust-extract-compat \
+        $ROOKPKG_DESTDIR/usr/bin/update-ca-certificates
+ln -sfv ./pkcs11/p11-kit-trust.so $ROOKPKG_DESTDIR/usr/lib/libnssckbi.so
+"""
+
+[files]
+"usr/bin/p11-kit" = { mode = 755 }
+"usr/bin/trust" = { mode = 755 }
+"usr/bin/update-ca-certificates" = {}
+"usr/lib/libp11-kit.so" = { mode = 755 }
+"usr/lib/libnssckbi.so" = {}
+"usr/lib/pkcs11/" = {}
+"usr/libexec/p11-kit/" = {}
+"usr/include/p11-kit-1/" = {}
+"usr/lib/pkgconfig/p11-kit-1.pc" = {}
+"usr/share/p11-kit/" = {}
+
+[config_files]
+"etc/pkcs11/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.25.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "NSS compatibility symlink included"
+]
+
+[metadata]
+keywords = ["p11-kit", "pkcs11", "certificates", "trust"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

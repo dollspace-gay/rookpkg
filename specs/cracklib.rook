@@ -1,0 +1,108 @@
+[package]
+name = "cracklib"
+version = "2.10.3"
+release = 1
+summary = "Password checking library"
+description = """
+CrackLib is a library containing a C function which may be used in a passwd(1)
+-like program. The idea is simple: try to prevent users from choosing passwords
+that could be guessed by Crack by filtering them out, at source.
+"""
+homepage = "https://github.com/cracklib/cracklib"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/cracklib/cracklib/releases/download/v2.10.3/cracklib-2.10.3.tar.xz", sha256 = "FIXME" }
+source1 = { url = "https://github.com/cracklib/cracklib/releases/download/v2.10.3/cracklib-words-2.10.3.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/cracklib-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/cracklib-*
+./configure --prefix=/usr         \
+            --disable-static      \
+            --with-default-dict=/usr/share/cracklib/pw_dict
+"""
+
+build = """
+cd $ROOKPKG_BUILD/cracklib-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/cracklib-*
+make test
+"""
+
+install = """
+cd $ROOKPKG_BUILD/cracklib-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install word list
+mkdir -p $ROOKPKG_DESTDIR/usr/share/cracklib
+xzcat $ROOKPKG_SOURCES/cracklib-words-*.xz > $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words || true
+
+# Create dictionary if word list exists
+if [ -f $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words ]; then
+    $ROOKPKG_DESTDIR/usr/sbin/create-cracklib-dict $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words
+fi
+"""
+
+[files]
+"usr/lib/libcrack.so" = { mode = 755 }
+"usr/sbin/create-cracklib-dict" = { mode = 755 }
+"usr/sbin/cracklib-check" = { mode = 755 }
+"usr/sbin/cracklib-format" = { mode = 755 }
+"usr/sbin/cracklib-packer" = { mode = 755 }
+"usr/sbin/cracklib-unpacker" = { mode = 755 }
+"usr/share/cracklib/" = {}
+"usr/include/crack.h" = {}
+"usr/include/packer.h" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.10.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["cracklib", "password", "security", "validation"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

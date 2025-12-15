@@ -1,0 +1,124 @@
+[package]
+name = "gnupg"
+version = "2.5.6"
+release = 1
+summary = "GNU Privacy Guard encryption suite"
+description = """
+GnuPG is GNU's tool for secure communication and data storage. It can be used
+to encrypt data and to create digital signatures. It includes an advanced key
+management facility and is compliant with the OpenPGP Internet standard.
+"""
+homepage = "https://gnupg.org/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.6.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libgpg-error = ">= 1.46"
+libgcrypt = ">= 1.9"
+libassuan = ">= 2.5"
+libksba = ">= 1.6"
+npth = ">= 1.6"
+
+[depends]
+glibc = ">= 2.39"
+libgpg-error = ">= 1.46"
+libgcrypt = ">= 1.9"
+libassuan = ">= 2.5"
+libksba = ">= 1.6"
+npth = ">= 1.6"
+pinentry = ">= 1.0"
+
+[optional_depends]
+openldap = ">= 2.4"
+libusb = ">= 1.0"
+sqlite = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gnupg-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gnupg-*
+./configure --prefix=/usr           \
+            --sysconfdir=/etc       \
+            --localstatedir=/var    \
+            --docdir=/usr/share/doc/gnupg-2.5.6
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gnupg-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gnupg-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gnupg-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/gpg" = { mode = 755 }
+"usr/bin/gpg2" = {}
+"usr/bin/gpgv" = { mode = 755 }
+"usr/bin/gpgsm" = { mode = 755 }
+"usr/bin/gpg-agent" = { mode = 755 }
+"usr/bin/gpgconf" = { mode = 755 }
+"usr/bin/gpg-connect-agent" = { mode = 755 }
+"usr/bin/gpgparsemail" = { mode = 755 }
+"usr/bin/gpgtar" = { mode = 755 }
+"usr/bin/gpg-wks-client" = { mode = 755 }
+"usr/bin/watchgnupg" = { mode = 755 }
+"usr/libexec/dirmngr_ldap" = { mode = 755 }
+"usr/libexec/gpg-check-pattern" = { mode = 755 }
+"usr/libexec/gpg-preset-passphrase" = { mode = 755 }
+"usr/libexec/gpg-protect-tool" = { mode = 755 }
+"usr/libexec/scdaemon" = { mode = 755 }
+"usr/libexec/keyboxd" = { mode = 755 }
+"usr/sbin/dirmngr" = { mode = 755 }
+"usr/share/gnupg/" = {}
+"usr/share/doc/gnupg-2.5.6/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.5.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gnupg", "gpg", "encryption", "security", "pgp"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

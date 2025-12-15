@@ -1,0 +1,103 @@
+[package]
+name = "gpgme"
+version = "1.25.0"
+release = 1
+summary = "GnuPG Made Easy library"
+description = """
+GPGME (GnuPG Made Easy) is a library that allows cryptographic functions to be
+easily integrated into programs. It provides a high-level crypto API for
+encryption, decryption, signing, signature verification, and key management.
+"""
+homepage = "https://gnupg.org/software/gpgme/"
+license = "LGPL-2.1-or-later AND GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/gpgme/gpgme-1.25.0.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libgpg-error = ">= 1.46"
+libassuan = ">= 2.5"
+gnupg = ">= 2.4"
+
+[depends]
+glibc = ">= 2.39"
+libgpg-error = ">= 1.46"
+libassuan = ">= 2.5"
+gnupg = ">= 2.4"
+
+[optional_depends]
+python = ">= 3.6"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gpgme-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gpgme-*
+./configure --prefix=/usr --disable-gpg-test
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gpgme-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gpgme-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gpgme-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libgpgme.so" = { mode = 755 }
+"usr/lib/libgpgmepp.so" = { mode = 755 }
+"usr/bin/gpgme-tool" = { mode = 755 }
+"usr/bin/gpgme-json" = { mode = 755 }
+"usr/include/gpgme.h" = {}
+"usr/include/gpgme++/" = {}
+"usr/lib/pkgconfig/gpgme.pc" = {}
+"usr/lib/pkgconfig/gpgmepp.pc" = {}
+"usr/share/info/gpgme.info" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.25.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gpgme", "gnupg", "encryption", "library"]
+categories = ["development", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

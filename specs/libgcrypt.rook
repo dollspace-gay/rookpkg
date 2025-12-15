@@ -1,0 +1,99 @@
+[package]
+name = "libgcrypt"
+version = "1.11.2"
+release = 1
+summary = "General purpose cryptographic library"
+description = """
+libgcrypt is a general purpose crypto library based on the code used in GnuPG.
+It provides functions for all cryptographic building blocks: symmetric ciphers,
+hash algorithms, MACs, public key algorithms, and random number generation.
+"""
+homepage = "https://gnupg.org/software/libgcrypt/"
+license = "LGPL-2.1-or-later AND GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.2.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libgpg-error = ">= 1.46"
+
+[depends]
+glibc = ">= 2.39"
+libgpg-error = ">= 1.46"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libgcrypt-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libgcrypt-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libgcrypt-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libgcrypt-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libgcrypt-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+install -v -dm755 $ROOKPKG_DESTDIR/usr/share/doc/libgcrypt-1.11.2
+install -v -m644 README doc/README.apichanges $ROOKPKG_DESTDIR/usr/share/doc/libgcrypt-1.11.2/ || true
+"""
+
+[files]
+"usr/lib/libgcrypt.so" = { mode = 755 }
+"usr/bin/dumpsexp" = { mode = 755 }
+"usr/bin/hmac256" = { mode = 755 }
+"usr/bin/mpicalc" = { mode = 755 }
+"usr/include/gcrypt.h" = {}
+"usr/lib/pkgconfig/libgcrypt.pc" = {}
+"usr/share/info/gcrypt.info" = {}
+"usr/share/doc/libgcrypt-1.11.2/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.11.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libgcrypt", "cryptography", "encryption", "gnupg"]
+categories = ["development", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

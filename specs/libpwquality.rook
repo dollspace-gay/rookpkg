@@ -1,0 +1,102 @@
+[package]
+name = "libpwquality"
+version = "1.4.5"
+release = 1
+summary = "Library for password quality checking"
+description = """
+libpwquality is a library for password quality checks and generation of random
+passwords that pass the checks. It includes a PAM module for enforcing password
+quality requirements on password changes.
+"""
+homepage = "https://github.com/libpwquality/libpwquality"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libpwquality/libpwquality/releases/download/libpwquality-1.4.5/libpwquality-1.4.5.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+cracklib = ">= 2.9"
+linux-pam = ">= 1.5"
+
+[depends]
+glibc = ">= 2.39"
+cracklib = ">= 2.9"
+linux-pam = ">= 1.5"
+
+[optional_depends]
+python = ">= 3.6"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libpwquality-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libpwquality-*
+./configure --prefix=/usr                  \
+            --disable-static               \
+            --with-securedir=/usr/lib/security
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libpwquality-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libpwquality-*
+make check
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libpwquality-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libpwquality.so" = { mode = 755 }
+"usr/lib/security/pam_pwquality.so" = { mode = 755 }
+"usr/bin/pwmake" = { mode = 755 }
+"usr/bin/pwscore" = { mode = 755 }
+"usr/include/pwquality.h" = {}
+"usr/lib/pkgconfig/pwquality.pc" = {}
+
+[config_files]
+"etc/security/pwquality.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.4.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "PAM module included"
+]
+
+[metadata]
+keywords = ["libpwquality", "password", "security", "pam"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

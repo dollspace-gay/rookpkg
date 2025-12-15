@@ -1,0 +1,160 @@
+[package]
+name = "linux-pam"
+version = "1.7.1"
+release = 1
+summary = "Pluggable Authentication Modules"
+description = """
+Linux-PAM (Pluggable Authentication Modules for Linux) is a suite of shared
+libraries that enable the local system administrator to choose how applications
+authenticate users. The flexibility enables authentication schemes to be changed
+without modifying applications.
+"""
+homepage = "https://github.com/linux-pam/linux-pam"
+license = "GPL-2.0-or-later AND BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/linux-pam/linux-pam/releases/download/v1.7.1/Linux-PAM-1.7.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+libcap = ">= 2.0"
+audit = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/Linux-PAM-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/Linux-PAM-*
+mkdir -p build
+cd build
+meson setup ..                                \
+      --prefix=/usr                           \
+      --buildtype=release                     \
+      -D docdir=/usr/share/doc/Linux-PAM-1.7.1
+"""
+
+build = """
+cd $ROOKPKG_BUILD/Linux-PAM-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/Linux-PAM-*/build
+# Tests require PAM configuration
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/Linux-PAM-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Set SUID bit on unix_chkpwd (required for non-root password verification)
+chmod -v 4755 $ROOKPKG_DESTDIR/usr/sbin/unix_chkpwd
+
+# Create default PAM configuration
+mkdir -p $ROOKPKG_DESTDIR/etc/pam.d
+
+# system-account
+cat > $ROOKPKG_DESTDIR/etc/pam.d/system-account << "EOF"
+# Begin /etc/pam.d/system-account
+account   required    pam_unix.so
+# End /etc/pam.d/system-account
+EOF
+
+# system-auth
+cat > $ROOKPKG_DESTDIR/etc/pam.d/system-auth << "EOF"
+# Begin /etc/pam.d/system-auth
+auth      required    pam_unix.so
+# End /etc/pam.d/system-auth
+EOF
+
+# system-session
+cat > $ROOKPKG_DESTDIR/etc/pam.d/system-session << "EOF"
+# Begin /etc/pam.d/system-session
+session   required    pam_unix.so
+# End /etc/pam.d/system-session
+EOF
+
+# system-password
+cat > $ROOKPKG_DESTDIR/etc/pam.d/system-password << "EOF"
+# Begin /etc/pam.d/system-password
+password  required    pam_unix.so       yescrypt shadow try_first_pass
+# End /etc/pam.d/system-password
+EOF
+
+# other (restrictive default)
+cat > $ROOKPKG_DESTDIR/etc/pam.d/other << "EOF"
+# Begin /etc/pam.d/other
+auth        required        pam_warn.so
+auth        required        pam_deny.so
+account     required        pam_warn.so
+account     required        pam_deny.so
+password    required        pam_warn.so
+password    required        pam_deny.so
+session     required        pam_warn.so
+session     required        pam_deny.so
+# End /etc/pam.d/other
+EOF
+"""
+
+[files]
+"usr/sbin/unix_chkpwd" = { mode = 4755 }
+"usr/sbin/unix_update" = { mode = 755 }
+"usr/sbin/pam_namespace_helper" = { mode = 755 }
+"usr/sbin/pam_timestamp_check" = { mode = 755 }
+"usr/bin/mkhomedir_helper" = { mode = 755 }
+"usr/lib/libpam.so" = { mode = 755 }
+"usr/lib/libpam_misc.so" = { mode = 755 }
+"usr/lib/libpamc.so" = { mode = 755 }
+"usr/lib/security/" = {}
+"usr/include/security/" = {}
+"usr/share/doc/Linux-PAM-1.7.1/" = {}
+
+[config_files]
+"etc/pam.d/" = {}
+"etc/security/" = {}
+"etc/environment" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.7.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Default PAM configuration included"
+]
+
+[metadata]
+keywords = ["pam", "authentication", "security", "login"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
