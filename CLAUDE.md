@@ -1,0 +1,214 @@
+# Guidelines for Claude - Rust Development
+
+## Core Principles
+
+Instructions for Claude
+For all work in this repository, you must use the beads issue tracker.
+Use the bd command-line tool to create, manage, and close issues.
+Do not use markdown files for creating to-do lists or for tracking your work. All issues and bugs are to be tracked via bd.
+
+bd - Dependency-Aware Issue Tracker
+
+Issues chained together like beads.
+
+GETTING STARTED
+  bd init   Initialize bd in your project
+            Creates .beads/ directory with project-specific database        
+            Auto-detects prefix from directory name (e.g., myapp-1, myapp-2)
+
+  bd init --prefix api   Initialize with custom prefix
+            Issues will be named: api-1, api-2, ...
+
+CREATING ISSUES
+  bd create "Fix login bug"
+  bd create "Add auth" -p 0 -t feature
+  bd create "Write tests" -d "Unit tests for auth" --assignee alice
+
+VIEWING ISSUES
+  bd list       List all issues
+  bd list --status open  List by status
+  bd list --priority 0  List by priority (0-4, 0=highest)
+  bd show bd-1       Show issue details
+
+MANAGING DEPENDENCIES
+  bd dep add bd-1 bd-2     Add dependency (bd-2 blocks bd-1)
+  bd dep tree bd-1  Visualize dependency tree
+  bd dep cycles      Detect circular dependencies
+
+DEPENDENCY TYPES
+  blocks  Task B must complete before task A
+  related  Soft connection, doesn't block progress
+  parent-child  Epic/subtask hierarchical relationship
+  discovered-from  Auto-created when AI discovers related work
+
+READY WORK
+  bd ready       Show issues ready to work on
+            Ready = status is 'open' AND no blocking dependencies
+            Perfect for agents to claim next work!
+
+UPDATING ISSUES
+  bd update bd-1 --status in_progress
+  bd update bd-1 --priority 0
+  bd update bd-1 --assignee bob
+
+CLOSING ISSUES
+  bd close bd-1
+  bd close bd-2 bd-3 --reason "Fixed in PR #42"
+
+DATABASE LOCATION
+  bd automatically discovers your database:
+    1. --db /path/to/db.db flag
+    2. $BEADS_DB environment variable
+    3. .beads/*.db in current directory or ancestors
+    4. ~/.beads/default.db as fallback
+
+AGENT INTEGRATION
+  bd is designed for AI-supervised workflows:
+    • Agents create issues when discovering new work
+    • bd ready shows unblocked work ready to claim
+    • Use --json flags for programmatic parsing
+    • Dependencies prevent agents from duplicating effort
+	
+GIT WORKFLOW (AUTO-SYNC)
+  bd automatically keeps git in sync:
+    • ✓ Export to JSONL after CRUD operations (5s debounce)
+    • ✓ Import from JSONL when newer than DB (after git pull)
+    • ✓ Works seamlessly across machines and team members
+    • No manual export/import needed!
+  Disable with: --no-auto-flush or --no-auto-import
+
+### 1. No Stubs, No Shortcuts
+- **NEVER** use `unimplemented!()`, `todo!()`, or stub implementations
+- **NEVER** leave placeholder code or incomplete implementations
+- **NEVER** skip functionality because it seems complex
+- Every function must be fully implemented and working
+- Every feature must be complete before moving on
+
+### 2. Break Down Complex Tasks
+- Large files or complex features should be broken into manageable chunks
+- If a file is too large, discuss breaking it into smaller modules
+- If a task seems overwhelming, ask the user how to break it down
+- Work incrementally, but each increment must be complete and functional
+
+### 3. Best Rust Coding Practices
+- Follow Rust idioms and conventions at all times
+- Use proper error handling with `Result<T, E>` - no panics in library code
+- Implement appropriate traits (`Debug`, `Clone`, `PartialEq`, etc.)
+- Use type safety to prevent errors at compile time
+- Leverage Rust's ownership system properly
+- Use `async`/`await` correctly with proper trait bounds
+- Follow naming conventions:
+  - `snake_case` for functions, variables, modules
+  - `PascalCase` for types, structs, enums, traits
+  - `SCREAMING_SNAKE_CASE` for constants
+- Write clear, descriptive documentation comments (`///`)
+- Keep functions focused and single-purpose
+
+### 4. Comprehensive Testing
+- Write comprehensive unit tests for every module
+- Aim for high test coverage (all major code paths)
+- Test edge cases, error conditions, and boundary values
+- Include doc tests for public APIs
+- All tests must pass before considering a file "complete"
+- Test both success and failure cases
+
+### 5. Translation Accuracy
+- Translate TypeScript functionality completely and accurately
+- Maintain behavior equivalence with the original TypeScript
+- Don't add features that weren't in the original
+- Don't remove features from the original
+- Document any unavoidable differences between TS and Rust
+
+### 6. Code Quality Standards
+- No warnings from `cargo clippy`
+- No warnings from `cargo build`
+- Format code with `rustfmt` conventions
+- Clear, self-documenting code with meaningful variable names
+- Add comments for complex logic, but prefer clear code over comments
+- Keep functions reasonably sized (< 100 lines ideally)
+
+### 7. Dependencies
+- Only add dependencies when necessary
+- Use well-maintained, popular crates
+- Document why each dependency is needed
+- Keep the dependency tree minimal
+
+### 8. Error Handling
+- Create specific error types for each module using `thiserror`
+- Provide helpful error messages
+- Use `Result` types consistently
+- Never use `.unwrap()` in library code (only in tests)
+- Use `.expect()` only when failure is truly impossible
+
+### 9. Documentation
+- Every public item must have documentation comments
+- Include examples in doc comments when helpful
+- Document panics, errors, and safety considerations
+- Keep docs up to date with code changes
+
+### 10. Work Process
+- Translate one file at a time completely
+- Run tests after every file
+- Ensure all tests pass before moving to next file
+- Ask for clarification if requirements are unclear
+- Discuss approach before starting large/complex files
+
+### 11. Git Workflow
+- **NEVER** create git commits automatically
+- **NEVER** use `git commit` without explicit user instruction
+- **NEVER** use `git push` without explicit user instruction
+- The user will handle all git commits and pushes manually
+- You may stage files with `git add` only when explicitly asked
+- You may run `git status` and `git diff` to check changes
+- You may run `git log` to view history
+- Focus on code quality and testing; leave version control to the user
+
+## What to Do When Facing Complexity
+
+**DON'T:**
+- Stub it out
+- Skip it
+- Say "we'll come back to it"
+- Implement a simplified version
+
+**DO:**
+- Analyze the dependencies
+- Break it into smaller pieces
+- Translate dependencies first
+- Ask the user for guidance on approach
+- Propose a phased implementation plan where each phase is complete
+
+## Example of Breaking Down a Complex File
+
+If `agent.ts` is 1,595 lines:
+
+**WRONG:**
+```rust
+pub struct Agent {
+    // TODO: implement this later
+}
+
+impl Agent {
+    pub fn new() -> Self {
+        unimplemented!()
+    }
+}
+```
+
+
+## Quality Checklist Before Marking a File "Complete"
+
+- [ ] No `todo!()` or `unimplemented!()` macros
+- [ ] Comprehensive unit tests written and passing
+- [ ] All tests pass (`cargo test`)
+- [ ] No compiler warnings
+- [ ] No clippy warnings (run `cargo clippy`)
+- [ ] Code follows Rust best practices
+- [ ] Error handling is proper and comprehensive
+- [ ] Documentation is complete and accurate
+
+## Remember
+
+**The goal is a production-quality Rust code, not a prototype.**
+
+Every line of code should be something you'd be proud to ship in a production system. Quality over speed. Completeness over convenience.

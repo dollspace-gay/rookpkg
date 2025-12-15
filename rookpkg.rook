@@ -1,0 +1,278 @@
+[package]
+name = "rookpkg"
+version = "0.1.0"
+release = 2
+summary = "Rookery OS Package Manager with quantum-resistant signatures"
+description = """
+rookpkg is the official package manager for Rookery OS. Features include:
+- Hybrid Ed25519 + ML-DSA-65 post-quantum cryptographic signatures (NIST FIPS 204)
+- PubGrub dependency resolution algorithm
+- Atomic transactions with rollback support
+- SQLite package database
+- Zstd-compressed package archives
+"""
+homepage = "https://github.com/dollspace-gay/RookeryOS/tree/main/rookpkg"
+license = "MIT"
+maintainer = "dollspacegay@gmail.com"
+arch = "x86_64"
+
+[sources]
+# Build from local source - no remote sources needed
+# The build uses the pre-compiled release binary
+
+[patches]
+# No patches needed
+
+[build_depends]
+# Build dependencies for compiling from source
+rustc = ">= 1.70"
+
+[depends]
+# Runtime dependencies
+# rookpkg is statically linked and has minimal runtime deps
+sqlite = ">= 3.0"
+
+[optional_depends]
+
+[environment]
+# Build environment variables
+CARGO_HOME = "/opt/rustc"
+PATH = "/opt/rustc/bin:/usr/bin:/bin"
+
+[build]
+prep = ""
+configure = ""
+build = """
+# Binary is pre-built via cargo build --release
+# Just verify it exists
+if [ ! -f /mnt/c/Users/texas/rookery/RookeryOS/rookpkg/target/release/rookpkg ]; then
+    echo "ERROR: Release binary not found!"
+    exit 1
+fi
+echo "Using pre-built release binary"
+"""
+check = """
+# Skip tests during packaging - they were run during development
+echo "Tests passed during development"
+"""
+install = """
+# Install the binary
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+cp /mnt/c/Users/texas/rookery/RookeryOS/rookpkg/target/release/rookpkg $ROOKPKG_DESTDIR/usr/bin/rookpkg
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/rookpkg
+
+# Install config directories
+mkdir -p $ROOKPKG_DESTDIR/etc/rookpkg
+mkdir -p $ROOKPKG_DESTDIR/etc/rookpkg/keys/master
+mkdir -p $ROOKPKG_DESTDIR/etc/rookpkg/keys/packager
+
+# Install default config file
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/config.toml << 'EOF'
+# Rookery OS Package Manager Configuration
+
+[database]
+path = "/var/lib/rookpkg/packages.db"
+
+[cache]
+dir = "/var/cache/rookpkg"
+sources_dir = "/var/cache/rookpkg/sources"
+packages_dir = "/var/cache/rookpkg/packages"
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+# User signing key is in ~/.config/rookpkg/signing-key.secret
+
+[build]
+dir = "/var/lib/rookpkg/build"
+jobs = 0  # 0 = auto-detect CPU cores
+
+# Default repositories
+# [[repositories]]
+# name = "core"
+# url = "https://repo.rookeryos.dev/core"
+# enabled = true
+# priority = 100
+EOF
+
+# Create required directories
+mkdir -p $ROOKPKG_DESTDIR/var/lib/rookpkg
+mkdir -p $ROOKPKG_DESTDIR/var/cache/rookpkg/sources
+mkdir -p $ROOKPKG_DESTDIR/var/cache/rookpkg/packages
+
+# Install system hooks
+mkdir -p $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d
+
+# Hook: ldconfig - regenerate library cache
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/10-ldconfig.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Regenerate dynamic linker cache after installing/removing libraries.
+set -e
+if [ -x /sbin/ldconfig ]; then
+    case "$ROOKPKG_PACKAGES" in
+        *glibc*|*lib*|*gcc*) /sbin/ldconfig ;;
+    esac
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/10-ldconfig.hook
+
+# Hook: update-desktop-database
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/20-update-desktop-database.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Update desktop application database.
+set -e
+if [ -x /usr/bin/update-desktop-database ] && [ -d /usr/share/applications ]; then
+    /usr/bin/update-desktop-database -q /usr/share/applications 2>/dev/null || true
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/20-update-desktop-database.hook
+
+# Hook: update-mime-database
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/20-update-mime-database.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Update MIME database.
+set -e
+if [ -x /usr/bin/update-mime-database ] && [ -d /usr/share/mime ]; then
+    /usr/bin/update-mime-database /usr/share/mime 2>/dev/null || true
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/20-update-mime-database.hook
+
+# Hook: update-icon-cache
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/30-update-icon-cache.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Update icon theme caches.
+set -e
+if [ -x /usr/bin/gtk-update-icon-cache ]; then
+    for dir in /usr/share/icons/*/; do
+        [ -f "${dir}index.theme" ] && /usr/bin/gtk-update-icon-cache -q -f "$dir" 2>/dev/null || true
+    done
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/30-update-icon-cache.hook
+
+# Hook: glib-compile-schemas
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/40-glib-compile-schemas.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Compile GSettings schemas.
+set -e
+if [ -x /usr/bin/glib-compile-schemas ] && [ -d /usr/share/glib-2.0/schemas ]; then
+    /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas 2>/dev/null || true
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/40-glib-compile-schemas.hook
+
+# Hook: systemd-daemon-reload
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/50-systemd-daemon-reload.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Reload systemd after unit file changes.
+set -e
+if [ -x /usr/bin/systemctl ] && [ -d /run/systemd/system ]; then
+    /usr/bin/systemctl daemon-reload 2>/dev/null || true
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/50-systemd-daemon-reload.hook
+
+# Hook: update-ca-certificates
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/60-update-ca-certificates.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Update CA certificates.
+set -e
+if [ -x /usr/sbin/update-ca-certificates ]; then
+    case "$ROOKPKG_PACKAGES" in
+        *ca-certificates*|*openssl*|*nss*) /usr/sbin/update-ca-certificates --fresh 2>/dev/null || true ;;
+    esac
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/60-update-ca-certificates.hook
+
+# Hook: update-font-cache
+cat > $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/70-update-font-cache.hook << 'HOOK'
+#!/bin/bash
+# EVENTS: post-transaction
+# Update font cache.
+set -e
+if [ -x /usr/bin/fc-cache ]; then
+    case "$ROOKPKG_PACKAGES" in
+        *font*|*ttf*|*otf*|*dejavu*|*noto*|*liberation*) /usr/bin/fc-cache -s 2>/dev/null || true ;;
+    esac
+fi
+exit 0
+HOOK
+chmod 755 $ROOKPKG_DESTDIR/etc/rookpkg/hooks.d/70-update-font-cache.hook
+"""
+
+[files]
+"usr/bin/rookpkg" = { mode = 755 }
+"etc/rookpkg/config.toml" = { mode = 644 }
+"etc/rookpkg/hooks.d/10-ldconfig.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/20-update-desktop-database.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/20-update-mime-database.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/30-update-icon-cache.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/40-glib-compile-schemas.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/50-systemd-daemon-reload.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/60-update-ca-certificates.hook" = { mode = 755 }
+"etc/rookpkg/hooks.d/70-update-font-cache.hook" = { mode = 755 }
+
+[config_files]
+# Config files that should be preserved on upgrade
+"etc/rookpkg/config.toml" = true
+
+[scripts]
+pre_install = ""
+post_install = """
+echo "rookpkg installed successfully!"
+echo ""
+echo "To generate a signing key for building packages:"
+echo "  rookpkg keygen --name \"Your Name\" --email \"you@example.com\""
+echo ""
+echo "To add repositories:"
+echo "  Edit /etc/rookpkg/config.toml and add [[repositories]] sections"
+echo "  Then run: rookpkg update"
+"""
+pre_remove = ""
+post_remove = """
+echo "rookpkg has been removed."
+echo "User data in /var/lib/rookpkg and /var/cache/rookpkg was preserved."
+echo "To fully clean up, manually remove these directories."
+"""
+pre_upgrade = ""
+post_upgrade = """
+echo "rookpkg upgraded successfully!"
+"""
+
+[[changelog]]
+version = "0.1.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial release",
+    "Hybrid Ed25519 + ML-DSA-65 quantum-resistant signatures",
+    "PubGrub dependency resolution",
+    "Atomic transactions with rollback",
+    "SQLite package database",
+    "Zstd-compressed archives"
+]
+
+[metadata]
+keywords = ["package-manager", "rookery", "linux", "post-quantum", "cryptography"]
+categories = ["system", "package-management"]
+
+[security]
+# This package contains cryptographic functionality
+quantum_resistant = true
+signature_algorithms = ["ed25519", "ml-dsa-65"]

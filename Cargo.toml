@@ -1,0 +1,91 @@
+[package]
+name = "rookpkg"
+version = "0.1.0"
+edition = "2021"
+authors = ["Friendly Society of Corvids"]
+description = "Rookery OS Package Manager"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/rookery-os/rookpkg"
+readme = "README.md"
+keywords = ["package-manager", "rookery", "linux"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+# Command-line interface
+clap = { version = "4", features = ["derive", "env"] }
+
+# Configuration and spec parsing
+toml = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Dependency resolution
+pubgrub = "0.2"
+
+# Database
+rusqlite = { version = "0.31", features = ["bundled"] }
+
+# Archive handling
+tar = "0.4"
+zstd = "0.13"
+
+# Hashing and verification
+sha2 = "0.10"
+
+# Cryptographic signing (Ed25519 + ML-DSA post-quantum hybrid)
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+ml-dsa = "0.1.0-rc.2"  # FIPS 204 post-quantum signatures (ML-DSA-65)
+rand = "0.8"
+
+# Secure memory handling
+zeroize = { version = "1", features = ["derive"] }
+
+# HTTP downloads
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls"], default-features = false }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+anyhow = "1"
+thiserror = "1"
+
+# Progress bars
+indicatif = "0.17"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Encoding
+base64 = "0.22"
+hex = "0.4"
+
+# Semver parsing
+semver = "1"
+
+# Path handling
+directories = "5"
+
+# Terminal colors
+colored = "2"
+
+# Unix system calls (for root check)
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+# Temporary files/directories
+tempfile = "3"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+
+[[bin]]
+name = "rookpkg"
+path = "src/main.rs"
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1

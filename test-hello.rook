@@ -1,0 +1,64 @@
+[package]
+name = "hello"
+version = "1.0.0"
+release = 1
+summary = "A simple test package"
+description = "This is a test package for rookpkg"
+homepage = "https://example.com"
+license = "MIT"
+maintainer = "Test User <test@example.com>"
+arch = "x86_64"
+
+[sources]
+# No sources for this simple test
+
+[patches]
+# No patches
+
+[build_depends]
+
+[depends]
+
+[optional_depends]
+
+[environment]
+CFLAGS = "-O2"
+
+[build]
+prep = ""
+configure = ""
+build = ""
+check = ""
+install = """
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+cat > $ROOKPKG_DESTDIR/usr/bin/hello << 'SCRIPT'
+#!/bin/sh
+echo "Hello World"
+SCRIPT
+chmod +x $ROOKPKG_DESTDIR/usr/bin/hello
+"""
+
+[files]
+"usr/bin/hello" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "echo Package installed successfully"
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.0.0"
+date = "2024-12-15"
+author = "Test User <test@example.com>"
+changes = ["Initial release"]
+
+[metadata]
+keywords = ["test", "hello"]
+categories = ["utils"]
+
+[security]
