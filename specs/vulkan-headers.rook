@@ -1,0 +1,89 @@
+[package]
+name = "vulkan-headers"
+version = "1.4.303"
+release = 1
+summary = "Vulkan API header files"
+description = """
+Vulkan-Headers contains the Vulkan API header files and registry XML files.
+They define the Vulkan API and are needed for developing Vulkan applications.
+"""
+homepage = "https://www.khronos.org/vulkan/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.303/Vulkan-Headers-1.4.303.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+cmake = ">= 3.20"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/Vulkan-Headers-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/Vulkan-Headers-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/Vulkan-Headers-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/Vulkan-Headers-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/include/vulkan/" = {}
+"usr/include/vk_video/" = {}
+"usr/share/vulkan/registry/" = {}
+"usr/share/cmake/VulkanHeaders/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.4.303"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["vulkan", "headers", "graphics", "api"]
+categories = ["development", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,89 @@
+[package]
+name = "spirv-headers"
+version = "1.4.303"
+release = 1
+summary = "SPIR-V header files"
+description = """
+SPIRV-Headers contains machine-readable files for the SPIR-V Registry.
+This includes the SPIR-V headers and unified grammar for all known SPIR-V
+versions.
+"""
+homepage = "https://www.khronos.org/spir/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/KhronosGroup/SPIRV-Headers/archive/vulkan-sdk-1.4.303.0/SPIRV-Headers-vulkan-sdk-1.4.303.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+cmake = ">= 3.20"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/SPIRV-Headers-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/SPIRV-Headers-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/SPIRV-Headers-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/SPIRV-Headers-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/include/spirv/" = {}
+"usr/share/cmake/SPIRV-Headers/" = {}
+"usr/lib/pkgconfig/SPIRV-Headers.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.4.303"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["spirv", "headers", "shader", "graphics"]
+categories = ["development", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

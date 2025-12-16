@@ -1,0 +1,141 @@
+[package]
+name = "mesa"
+version = "24.3.2"
+release = 1
+summary = "OpenGL and Vulkan implementations"
+description = """
+Mesa is an open-source implementation of the OpenGL, Vulkan, and other
+graphics API specifications. It provides hardware-accelerated 3D graphics
+for Linux and other systems.
+"""
+homepage = "https://www.mesa3d.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://mesa.freedesktop.org/archive/mesa-24.3.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+python = ">= 3.11"
+llvm = ">= 17.0"
+libdrm = ">= 2.4.120"
+libxcb = ">= 1.17"
+wayland = ">= 1.22"
+wayland-protocols = ">= 1.30"
+
+[depends]
+glibc = ">= 2.39"
+libdrm = ">= 2.4.120"
+libxcb = ">= 1.17"
+xorg-libraries = ">= 7.8"
+wayland = ">= 1.22"
+llvm = ">= 17.0"
+zlib = ">= 1.2"
+zstd = ">= 1.5"
+expat = ">= 2.5"
+
+[optional_depends]
+libva = ">= 2.20"
+libvdpau = ">= 1.5"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/mesa-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/mesa-*
+mkdir -p build
+cd build
+meson setup ..                                  \
+      --prefix=/usr                             \
+      --buildtype=release                       \
+      -D platforms=x11,wayland                  \
+      -D gallium-drivers=r300,r600,radeonsi,nouveau,virgl,svga,swrast,iris,crocus,zink \
+      -D vulkan-drivers=amd,intel,intel_hasvk,swrast \
+      -D gallium-nine=false                     \
+      -D glx=dri                                \
+      -D valgrind=disabled                      \
+      -D libunwind=disabled                     \
+      -D video-codecs=all_free
+"""
+
+build = """
+cd $ROOKPKG_BUILD/mesa-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/mesa-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/mesa-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libEGL.so" = { mode = 755 }
+"usr/lib/libGL.so" = { mode = 755 }
+"usr/lib/libGLX.so" = { mode = 755 }
+"usr/lib/libGLESv1_CM.so" = { mode = 755 }
+"usr/lib/libGLESv2.so" = { mode = 755 }
+"usr/lib/libgbm.so" = { mode = 755 }
+"usr/lib/libglapi.so" = { mode = 755 }
+"usr/lib/libxatracker.so" = { mode = 755 }
+"usr/lib/dri/" = {}
+"usr/include/EGL/" = {}
+"usr/include/GL/" = {}
+"usr/include/GLES/" = {}
+"usr/include/GLES2/" = {}
+"usr/include/GLES3/" = {}
+"usr/include/gbm.h" = {}
+"usr/lib/pkgconfig/dri.pc" = {}
+"usr/lib/pkgconfig/egl.pc" = {}
+"usr/lib/pkgconfig/gbm.pc" = {}
+"usr/lib/pkgconfig/gl.pc" = {}
+"usr/lib/pkgconfig/glesv1_cm.pc" = {}
+"usr/lib/pkgconfig/glesv2.pc" = {}
+"usr/share/drirc.d/" = {}
+"usr/share/vulkan/icd.d/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "24.3.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "X11 and Wayland support",
+    "AMD, Intel, and software Vulkan drivers"
+]
+
+[metadata]
+keywords = ["mesa", "opengl", "vulkan", "3d", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,98 @@
+[package]
+name = "glu"
+version = "9.0.3"
+release = 1
+summary = "OpenGL Utility Library"
+description = """
+GLU is the OpenGL Utility Library. It provides functions that build on
+top of the core OpenGL library to provide higher-level drawing routines
+from the more primitive routines that OpenGL provides.
+"""
+homepage = "https://mesa3d.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://archive.mesa3d.org/glu/glu-9.0.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+mesa = ">= 24.0"
+
+[depends]
+glibc = ">= 2.39"
+mesa = ">= 24.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/glu-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/glu-*
+mkdir -p build
+cd build
+meson setup ..            \
+      --prefix=/usr       \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/glu-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/glu-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/glu-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libGLU.so" = { mode = 755 }
+"usr/include/GL/glu.h" = {}
+"usr/include/GL/glu_mangle.h" = {}
+"usr/lib/pkgconfig/glu.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "9.0.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["glu", "opengl", "utility", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

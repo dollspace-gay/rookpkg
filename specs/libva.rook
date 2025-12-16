@@ -1,0 +1,106 @@
+[package]
+name = "libva"
+version = "2.22.0"
+release = 1
+summary = "Video Acceleration API"
+description = """
+libva is an implementation of the Video Acceleration API (VA-API).
+It provides access to graphics hardware acceleration capabilities for
+video processing and playback.
+"""
+homepage = "https://github.com/intel/libva"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/intel/libva/releases/download/2.22.0/libva-2.22.0.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+libdrm = ">= 2.4"
+
+[depends]
+glibc = ">= 2.39"
+libdrm = ">= 2.4"
+xorg-libraries = ">= 7.8"
+wayland = ">= 1.22"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libva-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libva-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libva-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libva-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libva-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libva.so" = { mode = 755 }
+"usr/lib/libva-drm.so" = { mode = 755 }
+"usr/lib/libva-x11.so" = { mode = 755 }
+"usr/lib/libva-wayland.so" = { mode = 755 }
+"usr/include/va/" = {}
+"usr/lib/pkgconfig/libva.pc" = {}
+"usr/lib/pkgconfig/libva-drm.pc" = {}
+"usr/lib/pkgconfig/libva-x11.pc" = {}
+"usr/lib/pkgconfig/libva-wayland.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.22.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "X11 and Wayland support"
+]
+
+[metadata]
+keywords = ["libva", "vaapi", "video", "acceleration", "gpu"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

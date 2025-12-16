@@ -1,0 +1,114 @@
+[package]
+name = "spirv-tools"
+version = "1.4.303"
+release = 1
+summary = "SPIR-V tools and library"
+description = """
+SPIRV-Tools provides an optimizer, assembler, disassembler, and validator
+for SPIR-V. These tools are used by graphics drivers and shader compilers
+to process SPIR-V shaders.
+"""
+homepage = "https://www.khronos.org/spir/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/KhronosGroup/SPIRV-Tools/archive/vulkan-sdk-1.4.303.0/SPIRV-Tools-vulkan-sdk-1.4.303.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+spirv-headers = ">= 1.4.303"
+python = ">= 3.11"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/SPIRV-Tools-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/SPIRV-Tools-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr         \
+      -DCMAKE_BUILD_TYPE=Release          \
+      -DSPIRV_WERROR=OFF                  \
+      -DSPIRV-Headers_SOURCE_DIR=/usr     \
+      -DBUILD_SHARED_LIBS=ON              \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/SPIRV-Tools-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/SPIRV-Tools-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/SPIRV-Tools-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/spirv-as" = { mode = 755 }
+"usr/bin/spirv-cfg" = { mode = 755 }
+"usr/bin/spirv-dis" = { mode = 755 }
+"usr/bin/spirv-link" = { mode = 755 }
+"usr/bin/spirv-lint" = { mode = 755 }
+"usr/bin/spirv-objdump" = { mode = 755 }
+"usr/bin/spirv-opt" = { mode = 755 }
+"usr/bin/spirv-reduce" = { mode = 755 }
+"usr/bin/spirv-val" = { mode = 755 }
+"usr/lib/libSPIRV-Tools.so" = { mode = 755 }
+"usr/lib/libSPIRV-Tools-opt.so" = { mode = 755 }
+"usr/lib/libSPIRV-Tools-link.so" = { mode = 755 }
+"usr/lib/libSPIRV-Tools-reduce.so" = { mode = 755 }
+"usr/lib/libSPIRV-Tools-lint.so" = { mode = 755 }
+"usr/include/spirv-tools/" = {}
+"usr/lib/pkgconfig/SPIRV-Tools.pc" = {}
+"usr/lib/pkgconfig/SPIRV-Tools-shared.pc" = {}
+"usr/share/cmake/SPIRV-Tools/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.4.303"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["spirv", "tools", "shader", "graphics", "vulkan"]
+categories = ["development", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

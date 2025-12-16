@@ -1,0 +1,100 @@
+[package]
+name = "vulkan-loader"
+version = "1.4.303"
+release = 1
+summary = "Vulkan ICD loader"
+description = """
+The Vulkan-Loader provides the Vulkan Installable Client Driver (ICD) loader
+library. It loads the appropriate Vulkan driver for the system and dispatches
+Vulkan API calls to the correct implementation.
+"""
+homepage = "https://www.khronos.org/vulkan/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.303/Vulkan-Loader-1.4.303.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+vulkan-headers = ">= 1.4.303"
+wayland = ">= 1.22"
+xorg-libraries = ">= 7.8"
+
+[depends]
+glibc = ">= 2.39"
+wayland = ">= 1.22"
+xorg-libraries = ">= 7.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/Vulkan-Loader-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/Vulkan-Loader-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DCMAKE_SKIP_RPATH=TRUE         \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libvulkan.so" = { mode = 755 }
+"usr/lib/pkgconfig/vulkan.pc" = {}
+"usr/share/cmake/VulkanLoader/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.4.303"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["vulkan", "loader", "icd", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
