@@ -1,6 +1,6 @@
 [package]
 name = "taglib"
-version = "2.0.2"
+version = "2.1.1"
 release = 1
 summary = "Audio meta-data library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://taglib.org/releases/taglib-2.0.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://taglib.org/releases/taglib-2.1.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ zlib = ">= 1.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf taglib-*
 tar xf $ROOKPKG_SOURCES/taglib-*.tar.gz
 """
 

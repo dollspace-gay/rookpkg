@@ -1,6 +1,6 @@
 [package]
 name = "shaderc"
-version = "2024.4"
+version = "2025.3"
 release = 1
 summary = "Shader compiler library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/google/shaderc/archive/v2024.4/shaderc-2024.4.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -38,7 +38,13 @@ spirv-tools = ">= 1.4.303"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf shaderc-*
 tar xf $ROOKPKG_SOURCES/shaderc-*.tar.gz
+cd shaderc-*
+sed '/build-version/d'   -i glslc/CMakeLists.txt
+sed '/third_party/d'     -i CMakeLists.txt
+sed 's|SPIRV|glslang/&|' -i libshaderc_util/src/compiler.cc
+echo '"2025.3"' > glslc/src/build-version.inc
 """
 
 configure = """

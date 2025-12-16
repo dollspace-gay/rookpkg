@@ -37,6 +37,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf sddm-*
 tar xf $ROOKPKG_SOURCES/sddm-*.tar.gz
 """
 
@@ -44,14 +45,17 @@ configure = """
 cd $ROOKPKG_BUILD/sddm-*
 mkdir -p build
 cd build
-cmake ..                                      \
-      -DCMAKE_INSTALL_PREFIX=/usr             \
-      -DCMAKE_BUILD_TYPE=Release              \
-      -DBUILD_MAN_PAGES=OFF                   \
-      -DENABLE_JOURNALD=ON                    \
-      -DNO_SYSTEMD=OFF                        \
-      -DUSE_ELOGIND=OFF                       \
-      -DBUILD_WITH_QT6=ON                     \
+cmake ..                                            \
+      -DCMAKE_INSTALL_PREFIX=/usr                   \
+      -DCMAKE_PREFIX_PATH=/opt/qt6                  \
+      -DCMAKE_BUILD_TYPE=Release                    \
+      -DDATA_INSTALL_DIR=/usr/share/sddm            \
+      -DDBUS_CONFIG_FILENAME=sddm_org.freedesktop.DisplayManager.conf \
+      -DBUILD_MAN_PAGES=OFF                         \
+      -DENABLE_JOURNALD=ON                          \
+      -DNO_SYSTEMD=OFF                              \
+      -DUSE_ELOGIND=OFF                             \
+      -DBUILD_WITH_QT6=ON                           \
       -G Ninja
 """
 

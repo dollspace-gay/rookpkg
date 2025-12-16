@@ -30,6 +30,7 @@ make = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf sound-theme-freedesktop-*
 tar xf $ROOKPKG_SOURCES/sound-theme-freedesktop-*.tar.bz2
 """
 

@@ -34,6 +34,7 @@ libxcrypt = ">= 4.4"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf shadow-*
 tar xf $ROOKPKG_SOURCES/shadow-*.tar.xz
 """
 

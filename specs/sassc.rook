@@ -36,6 +36,7 @@ libsass = ">= 3.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf sassc-*
 tar xf $ROOKPKG_SOURCES/sassc-*.tar.gz
 """
 

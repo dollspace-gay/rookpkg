@@ -36,6 +36,7 @@ openssl = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf sudo-*
 tar xf $ROOKPKG_SOURCES/sudo-*.tar.gz
 """
 

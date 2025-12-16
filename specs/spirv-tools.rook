@@ -1,6 +1,6 @@
 [package]
 name = "spirv-tools"
-version = "1.4.303"
+version = "1.4.321"
 release = 1
 summary = "SPIR-V tools and library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/KhronosGroup/SPIRV-Tools/archive/vulkan-sdk-1.4.303.0/SPIRV-Tools-vulkan-sdk-1.4.303.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/KhronosGroup/SPIRV-Tools/archive/vulkan-sdk-1.4.321.0/SPIRV-Tools-vulkan-sdk-1.4.321.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf SPIRV-Tools-*
 tar xf $ROOKPKG_SOURCES/SPIRV-Tools-*.tar.gz
 """
 
@@ -44,6 +45,7 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr         \
       -DCMAKE_BUILD_TYPE=Release          \
       -DSPIRV_WERROR=OFF                  \
+      -DSPIRV_TOOLS_BUILD_STATIC=OFF      \
       -DSPIRV-Headers_SOURCE_DIR=/usr     \
       -DBUILD_SHARED_LIBS=ON              \
       ..

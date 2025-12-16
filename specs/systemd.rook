@@ -46,6 +46,7 @@ zstd = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf systemd-*
 tar xf $ROOKPKG_SOURCES/systemd-*.tar.gz
 cd systemd-*
 

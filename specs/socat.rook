@@ -34,6 +34,7 @@ readline = ">= 8.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf socat-*
 tar xf $ROOKPKG_SOURCES/socat-*.tar.bz2
 """
 

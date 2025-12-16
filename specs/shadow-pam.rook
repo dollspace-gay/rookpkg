@@ -34,6 +34,7 @@ linux-pam = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf shadow-*
 tar xf $ROOKPKG_SOURCES/shadow-*.tar.xz
 cd shadow-*
 
