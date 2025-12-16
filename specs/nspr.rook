@@ -1,6 +1,6 @@
 [package]
 name = "nspr"
-version = "4.36"
+version = "4.37"
 release = 1
 summary = "Netscape Portable Runtime"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://archive.mozilla.org/pub/nspr/releases/v4.36/src/nspr-4.36.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://archive.mozilla.org/pub/nspr/releases/v4.37/src/nspr-4.37.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,11 +33,17 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf nspr-*
 tar xf $ROOKPKG_SOURCES/nspr-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/nspr-*/nspr
+
+# Apply sed commands from BLFS
+sed -i '/^RELEASE/s|^|#|' pr/src/misc/Makefile.in
+sed -i 's|$(LIBRARY) ||'  config/rules.mk
+
 ./configure --prefix=/usr          \
             --with-mozilla         \
             --with-pthreads        \
@@ -78,7 +84,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "4.36"
+version = "4.37"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

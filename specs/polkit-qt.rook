@@ -35,6 +35,7 @@ polkit = ">= 124"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf polkit-qt-1-*
 tar xf $ROOKPKG_SOURCES/polkit-qt-1-*.tar.xz
 """
 

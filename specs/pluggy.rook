@@ -33,6 +33,7 @@ python = ">= 3.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pluggy-*
 tar xf $ROOKPKG_SOURCES/pluggy-*.tar.gz
 """
 

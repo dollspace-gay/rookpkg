@@ -37,6 +37,7 @@ mpfr = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf mpc-*
 tar xf $ROOKPKG_SOURCES/mpc-*.tar.gz
 """
 

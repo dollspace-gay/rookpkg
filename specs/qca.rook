@@ -1,6 +1,6 @@
 [package]
 name = "qca"
-version = "2.3.9"
+version = "2.3.10"
 release = 1
 summary = "Qt Cryptographic Architecture"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/qca/2.3.9/qca-2.3.9.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/qca/2.3.10/qca-2.3.10.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,18 +36,24 @@ ca-certificates = ">= 2024"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf qca-*
 tar xf $ROOKPKG_SOURCES/qca-*.tar.xz
+cd qca-*
+# Fix CA certificates location
+sed -i 's@cert.pem@certs/ca-bundle.crt@' CMakeLists.txt
 """
 
 configure = """
 cd $ROOKPKG_BUILD/qca-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DQT6=ON                        \
-      -DWITH_ossl_PLUGIN=ON           \
+cmake ..                                       \
+      -DCMAKE_INSTALL_PREFIX=/opt/qt6          \
+      -DCMAKE_PREFIX_PATH=/opt/qt6             \
+      -DCMAKE_BUILD_TYPE=Release               \
+      -DQT6=ON                                 \
+      -DQCA_INSTALL_IN_QT_PREFIX=ON            \
+      -DQCA_MAN_INSTALL_DIR=/usr/share/man     \
       -G Ninja
 """
 

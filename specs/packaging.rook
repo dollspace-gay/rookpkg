@@ -32,6 +32,7 @@ python = ">= 3.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf packaging-*
 tar xf $ROOKPKG_SOURCES/packaging-*.tar.gz
 """
 

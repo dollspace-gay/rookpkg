@@ -1,6 +1,6 @@
 [package]
 name = "opencv"
-version = "4.10.0"
+version = "4.12.0"
 release = 1
 summary = "Open Source Computer Vision Library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/opencv/opencv/archive/4.10.0/opencv-4.10.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/opencv/opencv/archive/4.12.0/opencv-4.12.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -45,6 +45,7 @@ v4l-utils = ">= 1.26"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf opencv-*
 tar xf $ROOKPKG_SOURCES/opencv-*.tar.gz
 """
 
@@ -52,24 +53,28 @@ configure = """
 cd $ROOKPKG_BUILD/opencv-*
 mkdir -p build
 cd build
-cmake ..                                     \
-      -DCMAKE_INSTALL_PREFIX=/usr            \
+cmake -DCMAKE_INSTALL_PREFIX=/usr            \
       -DCMAKE_BUILD_TYPE=Release             \
-      -DWITH_FFMPEG=ON                       \
-      -DWITH_GSTREAMER=ON                    \
-      -DWITH_GTK=ON                          \
-      -DWITH_OPENGL=ON                       \
-      -DWITH_V4L=ON                          \
-      -DBUILD_EXAMPLES=OFF                   \
-      -DBUILD_TESTS=OFF                      \
+      -DENABLE_CXX11=ON                      \
       -DBUILD_PERF_TESTS=OFF                 \
-      -DOPENCV_GENERATE_PKGCONFIG=ON         \
-      -G Ninja
+      -DBUILD_TESTS=OFF                      \
+      -DBUILD_EXAMPLES=OFF                   \
+      -DBUILD_opencv_java=OFF                \
+      -DBUILD_opencv_python2=OFF             \
+      -DBUILD_opencv_python3=OFF             \
+      -DWITH_FFMPEG=ON                       \
+      -DWITH_GSTREAMER=OFF                   \
+      -DWITH_V4L=ON                          \
+      -DWITH_OPENGL=ON                       \
+      -DWITH_GTK=OFF                         \
+      -DWITH_QT=OFF                          \
+      -W no-dev                              \
+      ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/opencv-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
@@ -78,7 +83,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/opencv-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -100,7 +105,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "4.10.0"
+version = "4.12.0"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

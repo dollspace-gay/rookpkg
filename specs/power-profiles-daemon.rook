@@ -37,6 +37,7 @@ upower = ">= 1.90"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf power-profiles-daemon-*
 tar xf $ROOKPKG_SOURCES/power-profiles-daemon-*.tar.bz2
 """
 

@@ -33,6 +33,7 @@ ncurses = ">= 6.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf nano-*
 tar xf $ROOKPKG_SOURCES/nano-*.tar.xz
 """
 

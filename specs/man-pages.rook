@@ -30,6 +30,7 @@ man-db = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf man-pages-*
 tar xf $ROOKPKG_SOURCES/man-pages-*.tar.xz
 """
 

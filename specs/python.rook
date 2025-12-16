@@ -49,6 +49,7 @@ sqlite = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf Python-*
 tar xf $ROOKPKG_SOURCES/Python-*.tar.xz
 """
 

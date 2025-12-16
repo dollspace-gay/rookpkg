@@ -73,7 +73,10 @@
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libaom-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libassuan-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
       "Bash(wsl -d RookeryOS -u root bash:*)",
-      "Bash(bd ready)"
+      "Bash(bd ready)",
+      "Bash(Select-String -Path \"c:\\Users\\texas\\rookpkg\\scripts\\build_in_chroot.sh\" -Pattern \"Shadow|Sed\" -Context 2,30)",
+      "Bash(Select-Object -First 100)",
+      "Bash(findstr:*)"
     ]
   }
 }

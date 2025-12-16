@@ -32,6 +32,7 @@ extra-cmake-modules = ">= 6.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf plasma-wayland-protocols-*
 tar xf $ROOKPKG_SOURCES/plasma-wayland-protocols-*.tar.xz
 """
 

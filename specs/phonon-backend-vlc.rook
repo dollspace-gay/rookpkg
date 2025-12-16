@@ -37,6 +37,7 @@ vlc = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf phonon-backend-vlc-*
 tar xf $ROOKPKG_SOURCES/phonon-backend-vlc-*.tar.xz
 """
 
@@ -44,27 +45,27 @@ configure = """
 cd $ROOKPKG_BUILD/phonon-backend-vlc-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
+cmake -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_PREFIX_PATH=/opt/qt6    \
       -DCMAKE_BUILD_TYPE=Release      \
       -DPHONON_BUILD_QT5=OFF          \
       -DPHONON_BUILD_QT6=ON           \
-      -G Ninja
+      -Wno-dev ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/phonon-backend-vlc-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/phonon-backend-vlc-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/phonon-backend-vlc-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

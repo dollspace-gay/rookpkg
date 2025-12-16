@@ -1,6 +1,6 @@
 [package]
 name = "modemmanager"
-version = "1.24.0"
+version = "1.24.2"
 release = 1
 summary = "Mobile broadband modem management service"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/ModemManager/ModemManager-1.24.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/ModemManager/ModemManager-1.24.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -43,7 +43,8 @@ libqmi = ">= 1.34"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/ModemManager-*.tar.xz
+rm -rf ModemManager-*
+tar xf $ROOKPKG_SOURCES/ModemManager-*.tar.gz
 """
 
 configure = """
@@ -56,7 +57,9 @@ meson setup ..                   \
       -D systemdsystemunitdir=/usr/lib/systemd/system \
       -D udev_base_dir=/usr/lib/udev \
       -D introspection=false     \
-      -D vapi=false
+      -D vapi=false              \
+      -D bash_completion=false   \
+      -D qrtr=false
 """
 
 build = """
@@ -98,7 +101,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "1.24.0"
+version = "1.24.2"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

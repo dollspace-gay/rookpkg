@@ -1,6 +1,6 @@
 [package]
 name = "pygments"
-version = "2.18.0"
+version = "2.19.2"
 release = 1
 summary = "Syntax highlighting package"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/pygments/pygments/releases/download/2.18.0/pygments-2.18.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/pygments/pygments/releases/download/2.19.2/pygments-2.19.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,6 +32,7 @@ python = ">= 3.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pygments-*
 tar xf $ROOKPKG_SOURCES/pygments-*.tar.gz
 """
 

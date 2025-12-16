@@ -35,6 +35,7 @@ qt6 = ">= 6.7"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf phonon-*
 tar xf $ROOKPKG_SOURCES/phonon-*.tar.xz
 """
 
@@ -42,27 +43,27 @@ configure = """
 cd $ROOKPKG_BUILD/phonon-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
+cmake -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_PREFIX_PATH=/opt/qt6    \
       -DCMAKE_BUILD_TYPE=Release      \
       -DPHONON_BUILD_QT5=OFF          \
       -DPHONON_BUILD_QT6=ON           \
-      -G Ninja
+      -Wno-dev ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/phonon-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/phonon-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/phonon-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

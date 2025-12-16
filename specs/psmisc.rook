@@ -33,6 +33,7 @@ ncurses = ">= 6.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf psmisc-*
 tar xf $ROOKPKG_SOURCES/psmisc-*.tar.xz
 """
 

@@ -20,8 +20,7 @@ source0 = { url = "https://downloads.xiph.org/releases/opus/opus-1.5.2.tar.gz", 
 
 [build_depends]
 gcc = ">= 10.0"
-meson = ">= 0.60"
-ninja = ">= 1.8"
+make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -33,31 +32,28 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf opus-*
 tar xf $ROOKPKG_SOURCES/opus-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/opus-*
-mkdir -p build
-cd build
-meson setup ..            \
-      --prefix=/usr       \
-      --buildtype=release
+./configure --prefix=/usr --disable-static
 """
 
 build = """
-cd $ROOKPKG_BUILD/opus-*/build
-ninja -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/opus-*
+make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/opus-*/build
-ninja test || true
+cd $ROOKPKG_BUILD/opus-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/opus-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd $ROOKPKG_BUILD/opus-*
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

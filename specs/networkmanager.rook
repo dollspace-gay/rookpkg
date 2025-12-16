@@ -50,6 +50,7 @@ modemmanager = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf NetworkManager-*
 tar xf $ROOKPKG_SOURCES/NetworkManager-*.tar.xz
 """
 

@@ -36,6 +36,7 @@ libffi = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf p11-kit-*
 tar xf $ROOKPKG_SOURCES/p11-kit-*.tar.xz
 cd p11-kit-*
 

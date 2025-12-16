@@ -34,22 +34,25 @@ hicolor-icon-theme = ">= 0.17"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf oxygen-icons-*
 tar xf $ROOKPKG_SOURCES/oxygen-icons-*.tar.xz
+cd oxygen-icons-*
+# Enable scalable icons
+sed -i '/( oxygen/ s/)/scalable )/' CMakeLists.txt
 """
 
 configure = """
 cd $ROOKPKG_BUILD/oxygen-icons-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -G Ninja
+cmake -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_PREFIX_PATH="/usr;/opt/qt6" \
+      -W no-dev ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/oxygen-icons-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
@@ -58,7 +61,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/oxygen-icons-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

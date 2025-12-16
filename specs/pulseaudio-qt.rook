@@ -36,6 +36,7 @@ pulseaudio = ">= 17.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pulseaudio-qt-*
 tar xf $ROOKPKG_SOURCES/pulseaudio-qt-*.tar.xz
 """
 

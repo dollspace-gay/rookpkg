@@ -43,6 +43,7 @@ bluez = ">= 5.70"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pulseaudio-*
 tar xf $ROOKPKG_SOURCES/pulseaudio-*.tar.xz
 """
 

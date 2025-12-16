@@ -36,6 +36,7 @@ bzip2 = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf perl-*
 tar xf $ROOKPKG_SOURCES/perl-*.tar.xz
 """
 

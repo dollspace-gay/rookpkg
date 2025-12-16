@@ -1,6 +1,6 @@
 [package]
 name = "qtwebengine"
-version = "6.7.3"
+version = "6.9.2"
 release = 1
 summary = "Qt WebEngine - Chromium-based web browser engine"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.qt.io/official_releases/qt/6.7/6.7.3/submodules/qtwebengine-everywhere-src-6.7.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.qt.io/official_releases/qt/6.9/6.9.2/submodules/qtwebengine-everywhere-src-6.9.2.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -56,6 +56,7 @@ libx11 = ">= 1.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf qtwebengine-everywhere-src-*
 tar xf $ROOKPKG_SOURCES/qtwebengine-everywhere-src-*.tar.xz
 """
 
@@ -63,14 +64,16 @@ configure = """
 cd $ROOKPKG_BUILD/qtwebengine-everywhere-src-*
 mkdir -p build
 cd build
-cmake ..                                       \
-      -DCMAKE_INSTALL_PREFIX=/usr              \
-      -DCMAKE_BUILD_TYPE=Release               \
-      -DQT_FEATURE_webengine_system_ffmpeg=ON  \
-      -DQT_FEATURE_webengine_system_icu=ON     \
-      -DQT_FEATURE_webengine_system_libevent=ON \
-      -DQT_FEATURE_webengine_proprietary_codecs=ON \
-      -DQT_FEATURE_webengine_webrtc=ON         \
+cmake ..                                            \
+      -DCMAKE_MESSAGE_LOG_LEVEL=STATUS              \
+      -DCMAKE_PREFIX_PATH=/opt/qt6                  \
+      -DQT_FEATURE_webengine_system_ffmpeg=OFF      \
+      -DQT_FEATURE_webengine_system_icu=ON          \
+      -DQT_FEATURE_webengine_system_libevent=ON     \
+      -DQT_FEATURE_webengine_proprietary_codecs=ON  \
+      -DQT_FEATURE_webengine_webrtc_pipewire=ON     \
+      -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF            \
+      -DQT_GENERATE_SBOM=OFF                        \
       -G Ninja
 """
 

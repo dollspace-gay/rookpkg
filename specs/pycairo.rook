@@ -35,6 +35,7 @@ cairo = ">= 1.18"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pycairo-*
 tar xf $ROOKPKG_SOURCES/pycairo-*.tar.gz
 """
 

@@ -49,6 +49,7 @@ libvdpau = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf mesa-*
 tar xf $ROOKPKG_SOURCES/mesa-*.tar.xz
 """
 

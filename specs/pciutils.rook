@@ -1,6 +1,6 @@
 [package]
 name = "pciutils"
-version = "3.13.0"
+version = "3.14.0"
 release = 1
 summary = "PCI utilities and library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://mj.ucw.cz/download/linux/pci/pciutils-3.13.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://mj.ucw.cz/download/linux/pci/pciutils-3.14.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,7 +33,12 @@ hwdata = ">= 0.385"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pciutils-*
 tar xf $ROOKPKG_SOURCES/pciutils-*.tar.gz
+cd pciutils-*
+# Prevent installation of pci.ids to avoid conflict with hwdata
+sed -r '/INSTALL/{/PCI_IDS|update-pciids /d; s/update-pciids.8//}' \
+    -i Makefile
 """
 
 configure = """
@@ -84,7 +89,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "3.13.0"
+version = "3.14.0"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

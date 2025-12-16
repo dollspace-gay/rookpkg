@@ -37,6 +37,7 @@ plasma-activities = ">= 6.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf plasma-activities-stats-*
 tar xf $ROOKPKG_SOURCES/plasma-activities-stats-*.tar.xz
 """
 

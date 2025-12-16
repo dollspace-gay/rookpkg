@@ -1,6 +1,6 @@
 [package]
 name = "pipewire"
-version = "1.2.7"
+version = "1.4.7"
 release = 1
 summary = "Multimedia processing server"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.2.7/pipewire-1.2.7.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.4.7/pipewire-1.4.7.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -43,7 +43,8 @@ libva = ">= 2.20"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/pipewire-*.tar.gz
+rm -rf pipewire-*
+tar xf $ROOKPKG_SOURCES/pipewire-*.tar.bz2
 """
 
 configure = """
@@ -53,10 +54,6 @@ cd build
 meson setup ..                        \
       --prefix=/usr                   \
       --buildtype=release             \
-      -D docs=disabled                \
-      -D man=disabled                 \
-      -D bluez5=disabled              \
-      -D jack=disabled                \
       -D session-managers=[]
 """
 
@@ -119,7 +116,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "1.2.7"
+version = "1.4.7"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

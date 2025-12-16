@@ -32,6 +32,7 @@ ncurses = ">= 6.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf procps-ng-*
 tar xf $ROOKPKG_SOURCES/procps-ng-*.tar.xz
 """
 

@@ -1,6 +1,6 @@
 [package]
 name = "pytest"
-version = "8.3.3"
+version = "8.4.1"
 release = 1
 summary = "Python testing framework"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/pytest-dev/pytest/releases/download/8.3.3/pytest-8.3.3.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/pytest-dev/pytest/releases/download/8.4.1/pytest-8.4.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,6 +36,7 @@ packaging = ">= 24.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pytest-*
 tar xf $ROOKPKG_SOURCES/pytest-*.tar.gz
 """
 

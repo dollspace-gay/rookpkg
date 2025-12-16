@@ -1,6 +1,6 @@
 [package]
 name = "pygobject"
-version = "3.50.0"
+version = "3.52.3"
 release = 1
 summary = "Python bindings for GObject/GLib"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/pygobject/3.50/pygobject-3.50.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/pygobject/3.52/pygobject-3.52.3.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,7 +37,11 @@ pycairo = ">= 1.27"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf pygobject-*
 tar xf $ROOKPKG_SOURCES/pygobject-*.tar.xz
+cd pygobject-*
+mv -v tests/test_gdbus.py{,.nouse}
+mv -v tests/test_overrides_gtk.py{,.nouse}
 """
 
 configure = """

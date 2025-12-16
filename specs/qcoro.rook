@@ -1,6 +1,6 @@
 [package]
 name = "qcoro"
-version = "0.10.0"
+version = "0.12.0"
 release = 1
 summary = "C++ Coroutines for Qt"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/danvratil/qcoro/archive/v0.10.0/qcoro-0.10.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/danvratil/qcoro/archive/v0.12.0/qcoro-0.12.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ qt6 = ">= 6.7"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf qcoro-*
 tar xf $ROOKPKG_SOURCES/qcoro-*.tar.gz
 """
 
@@ -41,11 +42,13 @@ configure = """
 cd $ROOKPKG_BUILD/qcoro-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DQCORO_BUILD_EXAMPLES=OFF      \
-      -DQCORO_WITH_QT6=ON             \
+cmake ..                                    \
+      -DCMAKE_INSTALL_PREFIX=/opt/qt6       \
+      -DCMAKE_PREFIX_PATH=/opt/qt6          \
+      -DCMAKE_BUILD_TYPE=Release            \
+      -DBUILD_TESTING=OFF                   \
+      -DQCORO_BUILD_EXAMPLES=OFF            \
+      -DBUILD_SHARED_LIBS=ON                \
       -G Ninja
 """
 

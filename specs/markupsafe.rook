@@ -34,6 +34,7 @@ python = ">= 3.9"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf markupsafe-*
 tar xf $ROOKPKG_SOURCES/markupsafe-*.tar.gz
 """
 

@@ -1,6 +1,6 @@
 [package]
 name = "qt6"
-version = "6.7.3"
+version = "6.9.2"
 release = 1
 summary = "Cross-platform application framework"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.qt.io/official_releases/qt/6.7/6.7.3/single/qt-everywhere-src-6.7.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.qt.io/official_releases/qt/6.9/6.9.2/single/qt-everywhere-src-6.9.2.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -63,34 +63,28 @@ pulseaudio = ">= 17.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf qt-everywhere-src-*
 tar xf $ROOKPKG_SOURCES/qt-everywhere-src-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/qt-everywhere-src-*
-mkdir -p build
-cd build
-cmake ..                                    \
-      -DCMAKE_INSTALL_PREFIX=/usr           \
-      -DCMAKE_BUILD_TYPE=Release            \
-      -DINSTALL_BINDIR=lib/qt6/bin          \
-      -DINSTALL_PUBLICBINDIR=usr/bin        \
-      -DINSTALL_LIBEXECDIR=lib/qt6          \
-      -DINSTALL_DOCDIR=share/doc/qt6        \
-      -DINSTALL_ARCHDATADIR=lib/qt6         \
-      -DINSTALL_DATADIR=share/qt6           \
-      -DINSTALL_INCLUDEDIR=include/qt6      \
-      -DINSTALL_MKSPECSDIR=lib/qt6/mkspecs  \
-      -DINSTALL_EXAMPLESDIR=share/doc/qt6/examples \
-      -DQT_FEATURE_journald=OFF             \
-      -DQT_FEATURE_openssl_linked=ON        \
-      -DQT_FEATURE_vulkan=ON                \
-      -DBUILD_qtwebengine=OFF               \
-      -G Ninja
+./configure -prefix /opt/qt6        \
+            -sysconfdir /etc/xdg    \
+            -dbus-linked            \
+            -openssl-linked         \
+            -system-sqlite          \
+            -nomake examples        \
+            -no-rpath               \
+            -no-sbom                \
+            -journald               \
+            -skip qt3d              \
+            -skip qtquick3dphysics  \
+            -skip qtwebengine
 """
 
 build = """
-cd $ROOKPKG_BUILD/qt-everywhere-src-*/build
+cd $ROOKPKG_BUILD/qt-everywhere-src-*
 ninja -j$ROOKPKG_JOBS
 """
 
@@ -99,29 +93,16 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/qt-everywhere-src-*/build
+cd $ROOKPKG_BUILD/qt-everywhere-src-*
 DESTDIR=$ROOKPKG_DESTDIR ninja install
 
-# Install useful symlinks
-mkdir -p $ROOKPKG_DESTDIR/usr/bin
-for tool in assistant designer lconvert linguist lrelease lupdate \
-            pixeltool qdbusviewer qdbus qdoc qhelpgenerator qtpaths \
-            qtplugininfo qmake; do
-    if [ -f $ROOKPKG_DESTDIR/usr/lib/qt6/bin/$tool ]; then
-        ln -sf ../lib/qt6/bin/$tool $ROOKPKG_DESTDIR/usr/bin/${tool}6
-    fi
-done
+# Remove build directory references from prl files
+find $ROOKPKG_DESTDIR/opt/qt6/ -name \*.prl \
+   -exec sed -i -e '/^QMAKE_PRL_BUILD_DIR/d' {} \;
 """
 
 [files]
-"usr/lib/qt6/" = {}
-"usr/include/qt6/" = {}
-"usr/share/qt6/" = {}
-"usr/lib/libQt6*.so" = { mode = 755 }
-"usr/lib/cmake/Qt6*/" = {}
-"usr/lib/pkgconfig/Qt6*.pc" = {}
-"usr/bin/" = {}
-"usr/share/doc/qt6/" = {}
+"opt/qt6/" = {}
 
 [config_files]
 

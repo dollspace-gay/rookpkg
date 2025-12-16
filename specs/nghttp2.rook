@@ -36,6 +36,7 @@ c-ares = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf nghttp2-*
 tar xf $ROOKPKG_SOURCES/nghttp2-*.tar.xz
 """
 

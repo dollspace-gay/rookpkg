@@ -33,6 +33,7 @@ ninja = ">= 1.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf meson-*
 tar xf $ROOKPKG_SOURCES/meson-*.tar.gz
 """
 
