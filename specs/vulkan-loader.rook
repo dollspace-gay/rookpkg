@@ -1,6 +1,6 @@
 [package]
 name = "vulkan-loader"
-version = "1.4.303"
+version = "1.4.321"
 release = 1
 summary = "Vulkan ICD loader"
 description = """
@@ -14,14 +14,14 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.303/Vulkan-Loader-1.4.303.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/KhronosGroup/Vulkan-Loader/archive/v1.4.321/Vulkan-Loader-1.4.321.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
-vulkan-headers = ">= 1.4.303"
+vulkan-headers = ">= 1.4.321"
 wayland = ">= 1.22"
 xorg-libraries = ">= 7.8"
 
@@ -37,6 +37,7 @@ xorg-libraries = ">= 7.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf Vulkan-Loader-*
 tar xf $ROOKPKG_SOURCES/Vulkan-Loader-*.tar.gz
 """
 
@@ -46,23 +47,22 @@ mkdir -p build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr     \
       -DCMAKE_BUILD_TYPE=Release      \
-      -DCMAKE_SKIP_RPATH=TRUE         \
-      ..
+      -DCMAKE_SKIP_RPATH=ON           \
+      -G Ninja ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
-make -j$ROOKPKG_JOBS
+ninja -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
-make test || true
+# No tests
 """
 
 install = """
 cd $ROOKPKG_BUILD/Vulkan-Loader-*/build
-make DESTDIR=$ROOKPKG_DESTDIR install
+DESTDIR=$ROOKPKG_DESTDIR ninja install
 """
 
 [files]

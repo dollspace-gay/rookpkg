@@ -40,6 +40,7 @@ dbus = ">= 1.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf wpa_supplicant-*
 tar xf $ROOKPKG_SOURCES/wpa_supplicant-*.tar.gz
 """
 

@@ -1,6 +1,6 @@
 [package]
 name = "wayland-protocols"
-version = "1.39"
+version = "1.45"
 release = 1
 summary = "Wayland protocol extensions"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.39/downloads/wayland-protocols-1.39.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.45/downloads/wayland-protocols-1.45.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,17 +34,14 @@ wayland = ">= 1.22"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf wayland-protocols-*
 tar xf $ROOKPKG_SOURCES/wayland-protocols-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/wayland-protocols-*
-mkdir -p build
-cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D tests=false
+mkdir build && cd build
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """

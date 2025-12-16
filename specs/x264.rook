@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://anduin.linuxfromscratch.org/BLFS/x264/x264-20240513.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://anduin.linuxfromscratch.org/BLFS/x264/x264-20250815.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ ffmpeg = ">= 7.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf x264-*
 tar xf $ROOKPKG_SOURCES/x264-*.tar.xz
 """
 

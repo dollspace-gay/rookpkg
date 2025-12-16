@@ -1,6 +1,6 @@
 [package]
 name = "wireplumber"
-version = "0.5.7"
+version = "0.5.10"
 release = 1
 summary = "Session manager for PipeWire"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.5.7/wireplumber-0.5.7.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.5.10/wireplumber-0.5.10.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -41,19 +41,14 @@ dbus = ">= 1.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/wireplumber-*.tar.gz
+rm -rf wireplumber-*
+tar xf $ROOKPKG_SOURCES/wireplumber-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/wireplumber-*
-mkdir -p build
-cd build
-meson setup ..                   \
-      --prefix=/usr              \
-      --buildtype=release        \
-      -D doc=disabled            \
-      -D introspection=disabled  \
-      -D system-lua=true
+mkdir build && cd build
+meson setup --prefix=/usr --buildtype=release -D system-lua=true ..
 """
 
 build = """
@@ -69,6 +64,7 @@ ninja test || true
 install = """
 cd $ROOKPKG_BUILD/wireplumber-*/build
 DESTDIR=$ROOKPKG_DESTDIR ninja install
+mv -v $ROOKPKG_DESTDIR/usr/share/doc/wireplumber{,-0.5.10}
 """
 
 [files]

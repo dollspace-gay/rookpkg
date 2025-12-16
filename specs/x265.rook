@@ -1,6 +1,6 @@
 [package]
 name = "x265"
-version = "4.0"
+version = "4.1"
 release = 1
 summary = "H.265/HEVC video encoder"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,20 +33,25 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf x265_*
 tar xf $ROOKPKG_SOURCES/x265_*.tar.gz
+cd x265_*
+# Fix CMake policy (BLFS requirement)
+sed -r '/cmake_policy.*(0025|0054)/d' -i source/CMakeLists.txt
 """
 
 configure = """
-cd $ROOKPKG_BUILD/x265_*/source
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_BUILD_TYPE=Release  \
-      ..
+cd $ROOKPKG_BUILD/x265_*
+mkdir bld && cd bld
+cmake -D CMAKE_INSTALL_PREFIX=/usr \
+      -D GIT_ARCHETYPE=1 \
+      -D CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+      -W no-dev \
+      ../source
 """
 
 build = """
-cd $ROOKPKG_BUILD/x265_*/source/build
+cd $ROOKPKG_BUILD/x265_*/bld
 make -j$ROOKPKG_JOBS
 """
 
@@ -55,9 +60,9 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/x265_*/source/build
+cd $ROOKPKG_BUILD/x265_*/bld
 make DESTDIR=$ROOKPKG_DESTDIR install
-rm -f $ROOKPKG_DESTDIR/usr/lib/libx265.a
+rm -vf $ROOKPKG_DESTDIR/usr/lib/libx265.a
 """
 
 [files]

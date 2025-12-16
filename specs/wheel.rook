@@ -32,6 +32,7 @@ python = ">= 3.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf wheel-*
 tar xf $ROOKPKG_SOURCES/wheel-*.tar.gz
 """
 

@@ -38,6 +38,7 @@ libidn2 = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf wget-*
 tar xf $ROOKPKG_SOURCES/wget-*.tar.gz
 """
 
@@ -45,7 +46,8 @@ configure = """
 cd $ROOKPKG_BUILD/wget-*
 ./configure --prefix=/usr        \
             --sysconfdir=/etc    \
-            --with-ssl=openssl
+            --with-ssl=openssl   \
+            --enable-libproxy
 """
 
 build = """
