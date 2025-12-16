@@ -41,7 +41,14 @@ gtk3 = ">= 3.24"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libcanberra-*
 tar xf $ROOKPKG_SOURCES/libcanberra-*.tar.xz
+cd libcanberra-*
+
+# Apply wayland patch if available
+if [ -f $ROOKPKG_SOURCES/libcanberra-0.30-wayland-1.patch ]; then
+    patch -Np1 -i $ROOKPKG_SOURCES/libcanberra-0.30-wayland-1.patch
+fi
 """
 
 configure = """
@@ -61,7 +68,7 @@ make check || true
 
 install = """
 cd $ROOKPKG_BUILD/libcanberra-*
-make DESTDIR=$ROOKPKG_DESTDIR install
+make docdir=/usr/share/doc/libcanberra-0.30 DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

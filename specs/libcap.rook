@@ -1,6 +1,6 @@
 [package]
 name = "libcap"
-version = "2.73"
+version = "2.70"
 release = 1
 summary = "POSIX capabilities library"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.73.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.70.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,6 +35,7 @@ attr = ">= 2.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libcap-*
 tar xf $ROOKPKG_SOURCES/libcap-*.tar.xz
 cd libcap-*
 
@@ -82,6 +83,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.70"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Corrected version to 2.70 per LFS 12.4"
+]
 
 [[changelog]]
 version = "2.73"

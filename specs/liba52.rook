@@ -32,16 +32,17 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf a52dec-*
 tar xf $ROOKPKG_SOURCES/a52dec-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/a52dec-*
-./configure --prefix=/usr       \
+./configure --prefix=/usr           \
             --mandir=/usr/share/man \
-            --enable-shared     \
-            --disable-static    \
-            CFLAGS="$CFLAGS -fPIC"
+            --enable-shared         \
+            --disable-static        \
+            CFLAGS="${CFLAGS:--g -O3} -fPIC"
 """
 
 build = """
@@ -57,6 +58,9 @@ make check || true
 install = """
 cd $ROOKPKG_BUILD/a52dec-*
 make DESTDIR=$ROOKPKG_DESTDIR install
+cp liba52/a52_internal.h $ROOKPKG_DESTDIR/usr/include/a52dec
+install -v -m644 -D doc/liba52.txt \
+    $ROOKPKG_DESTDIR/usr/share/doc/liba52-0.8.0/liba52.txt
 """
 
 [files]

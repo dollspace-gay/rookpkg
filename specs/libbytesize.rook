@@ -1,6 +1,6 @@
 [package]
 name = "libbytesize"
-version = "2.10"
+version = "2.11"
 release = 1
 summary = "Library for working with byte sizes"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/storaged-project/libbytesize/releases/download/2.10/libbytesize-2.10.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/storaged-project/libbytesize/releases/download/2.11/libbytesize-2.11.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,13 +35,13 @@ mpfr = ">= 4.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libbytesize-*
 tar xf $ROOKPKG_SOURCES/libbytesize-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libbytesize-*
-./configure --prefix=/usr        \
-            --disable-static
+./configure --prefix=/usr
 """
 
 build = """
@@ -74,6 +74,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.11"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.11 per BLFS"
+]
 
 [[changelog]]
 version = "2.10"

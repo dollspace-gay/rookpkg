@@ -33,6 +33,7 @@ libgpg-error = ">= 1.46"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libassuan-*
 tar xf $ROOKPKG_SOURCES/libassuan-*.tar.bz2
 """
 

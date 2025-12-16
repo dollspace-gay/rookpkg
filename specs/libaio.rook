@@ -32,7 +32,12 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libaio-*
 tar xf $ROOKPKG_SOURCES/libaio-*.tar.gz
+cd libaio-*
+
+# Disable installation of static library
+sed -i '/install.*libaio.a/s/^/#/' src/Makefile
 """
 
 configure = """

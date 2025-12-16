@@ -67,7 +67,12 @@
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''breeze-icons'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -50\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 35 ''brotli-1'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -45\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 35 ''bubblewrap'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -45\")",
-      "Bash(wsl:*)"
+      "Bash(wsl:*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 'a52dec-0' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\":*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libaio-0'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libaom-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libassuan-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
+      "Bash(wsl -d RookeryOS -u root bash:*)"
     ]
   }
 }

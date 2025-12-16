@@ -1,6 +1,6 @@
 [package]
 name = "libblockdev"
-version = "3.2.1"
+version = "3.3.1"
 release = 1
 summary = "Library for manipulating block devices"
 description = """
@@ -14,14 +14,13 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/storaged-project/libblockdev/releases/download/3.2.1/libblockdev-3.2.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/storaged-project/libblockdev/releases/download/3.3.1/libblockdev-3.3.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-meson = ">= 0.60"
-ninja = ">= 1.8"
+make = ">= 4.0"
 gobject-introspection = ">= 1.80"
 
 [depends]
@@ -42,32 +41,36 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libblockdev-*
 tar xf $ROOKPKG_SOURCES/libblockdev-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libblockdev-*
-mkdir -p build
-cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D gtk_doc=false
+./configure --prefix=/usr      \
+            --sysconfdir=/etc  \
+            --with-python3     \
+            --without-escrow   \
+            --without-gtk-doc  \
+            --without-lvm_dbus \
+            --without-nvdimm   \
+            --without-tools    \
+            --without-smartmontools
 """
 
 build = """
-cd $ROOKPKG_BUILD/libblockdev-*/build
-ninja -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/libblockdev-*
+make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/libblockdev-*/build
-ninja test || true
+cd $ROOKPKG_BUILD/libblockdev-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/libblockdev-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd $ROOKPKG_BUILD/libblockdev-*
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -88,6 +91,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.3.1"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 3.3.1 per BLFS",
+    "Use configure instead of meson"
+]
 
 [[changelog]]
 version = "3.2.1"

@@ -32,6 +32,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libatasmart-*
 tar xf $ROOKPKG_SOURCES/libatasmart-*.tar.xz
 """
 
@@ -53,7 +54,7 @@ make check || true
 
 install = """
 cd $ROOKPKG_BUILD/libatasmart-*
-make DESTDIR=$ROOKPKG_DESTDIR install
+make docdir=/usr/share/doc/libatasmart-0.19 DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

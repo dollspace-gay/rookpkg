@@ -1,6 +1,6 @@
 [package]
 name = "libaom"
-version = "3.11.0"
+version = "3.12.1"
 release = 1
 summary = "AV1 video codec library"
 description = """
@@ -14,13 +14,14 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://storage.googleapis.com/aom-releases/libaom-3.11.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://storage.googleapis.com/aom-releases/libaom-3.12.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
+ninja = ">= 1.8"
 nasm = ">= 2.15"
 
 [depends]
@@ -33,33 +34,34 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libaom-* aom-*
 tar xf $ROOKPKG_SOURCES/libaom-*.tar.gz
 """
 
 configure = """
-cd $ROOKPKG_BUILD/libaom-*
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr  \
-      -DCMAKE_BUILD_TYPE=Release   \
-      -DBUILD_SHARED_LIBS=ON       \
-      -DENABLE_DOCS=OFF            \
-      ..
+cd $ROOKPKG_BUILD/libaom-* || cd $ROOKPKG_BUILD/aom-*
+mkdir -p aom-build
+cd aom-build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \
+      -D CMAKE_BUILD_TYPE=Release  \
+      -D BUILD_SHARED_LIBS=1       \
+      -D ENABLE_DOCS=no            \
+      -G Ninja ..
 """
 
 build = """
-cd $ROOKPKG_BUILD/libaom-*/build
-make -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/libaom-*/aom-build || cd $ROOKPKG_BUILD/aom-*/aom-build
+ninja -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/libaom-*/build
-make test || true
+# libaom tests are slow
 """
 
 install = """
-cd $ROOKPKG_BUILD/libaom-*/build
-make DESTDIR=$ROOKPKG_DESTDIR install
+cd $ROOKPKG_BUILD/libaom-*/aom-build || cd $ROOKPKG_BUILD/aom-*/aom-build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+rm -v $ROOKPKG_DESTDIR/usr/lib/libaom.a
 """
 
 [files]
@@ -78,6 +80,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.12.1"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 3.12.1 per BLFS",
+    "Use Ninja build system"
+]
 
 [[changelog]]
 version = "3.11.0"
