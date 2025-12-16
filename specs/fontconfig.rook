@@ -1,6 +1,6 @@
 [package]
 name = "fontconfig"
-version = "2.15.0"
+version = "2.17.1"
 release = 1
 summary = "Font configuration and customization library"
 description = """
@@ -14,14 +14,13 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.17.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-meson = ">= 0.60"
-ninja = ">= 1.8"
+make = ">= 4.0"
 gperf = ">= 3.0"
 freetype = ">= 2.13"
 
@@ -37,33 +36,32 @@ expat = ">= 2.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf fontconfig-*
 tar xf $ROOKPKG_SOURCES/fontconfig-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/fontconfig-*
-mkdir -p build
-cd build
-meson setup ..                  \
-      --prefix=/usr             \
-      --buildtype=release       \
-      --localstatedir=/var      \
-      -D doc=disabled
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --disable-docs       \
+            --docdir=/usr/share/doc/fontconfig-2.17.1
 """
 
 build = """
-cd $ROOKPKG_BUILD/fontconfig-*/build
-ninja -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/fontconfig-*
+make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/fontconfig-*/build
-ninja test || true
+cd $ROOKPKG_BUILD/fontconfig-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/fontconfig-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd $ROOKPKG_BUILD/fontconfig-*
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -101,6 +99,15 @@ post_upgrade = """
 /sbin/ldconfig
 fc-cache -f
 """
+
+[[changelog]]
+version = "2.17.1"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.17.1 per BLFS",
+    "Changed from meson to configure per BLFS"
+]
 
 [[changelog]]
 version = "2.15.0"

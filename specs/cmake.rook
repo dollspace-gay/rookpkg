@@ -1,6 +1,6 @@
 [package]
 name = "cmake"
-version = "3.30.5"
+version = "4.1.0"
 release = 1
 summary = "Cross-platform build system generator"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://cmake.org/files/v3.30/cmake-3.30.5.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://cmake.org/files/v4.1/cmake-4.1.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -38,16 +38,29 @@ zlib = ">= 1.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf cmake-*
 tar xf $ROOKPKG_SOURCES/cmake-*.tar.gz
+cd cmake-*
+
+# BLFS: Fix lib64 path
+sed -i '/"lib64"/s/64//' Modules/GNUInstallDirs.cmake
 """
 
 configure = """
 cd $ROOKPKG_BUILD/cmake-*
 ./bootstrap --prefix=/usr              \
-            --system-libs              \
+            --mandir=/share/man        \
             --no-system-jsoncpp        \
             --no-system-cppdap         \
-            --parallel=$ROOKPKG_JOBS
+            --no-system-librhash       \
+            --no-system-curl           \
+            --no-system-libarchive     \
+            --no-system-libuv          \
+            --no-system-nghttp2        \
+            --no-qt-gui                \
+            --docdir=/share/doc/cmake-4.1.0 \
+            --parallel=$ROOKPKG_JOBS   \
+            -- -DCMAKE_USE_OPENSSL=ON -DBUILD_CursesDialog=OFF
 """
 
 build = """
@@ -70,7 +83,7 @@ make DESTDIR=$ROOKPKG_DESTDIR install
 "usr/bin/cpack" = { mode = 755 }
 "usr/bin/ctest" = { mode = 755 }
 "usr/bin/ccmake" = { mode = 755 }
-"usr/share/cmake-3.30/" = {}
+"usr/share/cmake-4.1/" = {}
 "usr/share/aclocal/cmake.m4" = {}
 
 [config_files]
@@ -82,6 +95,16 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "4.1.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 4.1.0 per BLFS",
+    "Updated bootstrap options to use bundled libs per BLFS",
+    "Added lib64 fix"
+]
 
 [[changelog]]
 version = "3.30.5"

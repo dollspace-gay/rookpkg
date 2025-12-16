@@ -33,6 +33,7 @@ libxml2 = ">= 2.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf docbook-xml-*
 unzip $ROOKPKG_SOURCES/docbook-xml-4.5.zip -d docbook-xml-4.5
 """
 
@@ -64,25 +65,88 @@ cp -v -af docbook.cat *.dtd ent/ *.mod $ROOKPKG_DESTDIR/usr/share/xml/docbook/xm
 [scripts]
 pre_install = ""
 post_install = """
+# Create XML catalog if it doesn't exist
 if [ ! -e /etc/xml/docbook ]; then
     xmlcatalog --noout --create /etc/xml/docbook
 fi
+
+# Add entries to docbook catalog per BLFS
 xmlcatalog --noout --add "public" \
     "-//OASIS//DTD DocBook XML V4.5//EN" \
     "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" \
     /etc/xml/docbook
-xmlcatalog --noout --add "system" \
-    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" \
-    "file:///usr/share/xml/docbook/xml-dtd-4.5/docbookx.dtd" \
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//DTD DocBook XML CALS Table Model V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/calstblx.dtd" \
     /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//DTD XML Exchange Table Model 19990315//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/soextblx.dtd" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ELEMENTS DocBook XML Information Pool V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/dbpoolx.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ELEMENTS DocBook XML Document Hierarchy V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/dbhierx.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ELEMENTS DocBook XML HTML Tables V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/htmltblx.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ENTITIES DocBook XML Notations V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/dbnotnx.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ENTITIES DocBook XML Character Entities V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/dbcentx.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "public" \
+    "-//OASIS//ENTITIES DocBook XML Additional General Entities V4.5//EN" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/dbgenent.mod" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "rewriteSystem" \
+    "http://www.oasis-open.org/docbook/xml/4.5" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5" \
+    /etc/xml/docbook
+
+xmlcatalog --noout --add "rewriteURI" \
+    "http://www.oasis-open.org/docbook/xml/4.5" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5" \
+    /etc/xml/docbook
+
+# Create main catalog if it doesn't exist
 if [ ! -e /etc/xml/catalog ]; then
     xmlcatalog --noout --create /etc/xml/catalog
 fi
+
+xmlcatalog --noout --add "delegatePublic" \
+    "-//OASIS//ENTITIES DocBook XML" \
+    "file:///etc/xml/docbook" \
+    /etc/xml/catalog
+
 xmlcatalog --noout --add "delegatePublic" \
     "-//OASIS//DTD DocBook XML" \
     "file:///etc/xml/docbook" \
     /etc/xml/catalog
+
 xmlcatalog --noout --add "delegateSystem" \
+    "http://www.oasis-open.org/docbook/" \
+    "file:///etc/xml/docbook" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "delegateURI" \
     "http://www.oasis-open.org/docbook/" \
     "file:///etc/xml/docbook" \
     /etc/xml/catalog
@@ -91,6 +155,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "4.5"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Expanded XML catalog entries per BLFS",
+    "Added rewriteSystem/rewriteURI and delegateURI entries"
+]
 
 [[changelog]]
 version = "4.5"

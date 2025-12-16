@@ -33,14 +33,19 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf cracklib-*
 tar xf $ROOKPKG_SOURCES/cracklib-*.tar.xz
+cd cracklib-*
+
+# BLFS: Run autoreconf
+autoreconf -fiv
 """
 
 configure = """
 cd $ROOKPKG_BUILD/cracklib-*
-./configure --prefix=/usr         \
-            --disable-static      \
-            --with-default-dict=/usr/share/cracklib/pw_dict
+PYTHON=python3 ./configure --prefix=/usr         \
+                           --disable-static      \
+                           --with-default-dict=/usr/lib/cracklib/pw_dict
 """
 
 build = """
@@ -57,14 +62,12 @@ install = """
 cd $ROOKPKG_BUILD/cracklib-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
-# Install word list
-mkdir -p $ROOKPKG_DESTDIR/usr/share/cracklib
-xzcat $ROOKPKG_SOURCES/cracklib-words-*.xz > $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words || true
+# BLFS: Install the cracklib-small dictionary
+install -v -m644 -D dicts/cracklib-small $ROOKPKG_DESTDIR/usr/share/dict/cracklib-small
+ln -sfv cracklib-small $ROOKPKG_DESTDIR/usr/share/dict/words
 
-# Create dictionary if word list exists
-if [ -f $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words ]; then
-    $ROOKPKG_DESTDIR/usr/sbin/create-cracklib-dict $ROOKPKG_DESTDIR/usr/share/cracklib/cracklib-words
-fi
+# BLFS: Create the word list and dictionary
+install -v -m755 -d $ROOKPKG_DESTDIR/usr/lib/cracklib
 """
 
 [files]

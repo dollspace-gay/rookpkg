@@ -37,6 +37,7 @@ zstd = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf elfutils-*
 tar xf $ROOKPKG_SOURCES/elfutils-*.tar.bz2
 """
 

@@ -32,6 +32,7 @@ expect = ">= 5.45"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf dejagnu-*
 tar xf $ROOKPKG_SOURCES/dejagnu-*.tar.gz
 """
 

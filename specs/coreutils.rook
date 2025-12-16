@@ -36,6 +36,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf coreutils-*
 tar xf $ROOKPKG_SOURCES/coreutils-*.tar.xz
 cd coreutils-*
 

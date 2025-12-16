@@ -1,6 +1,6 @@
 [package]
 name = "cargo-c"
-version = "0.10.4"
+version = "0.10.15"
 release = 1
 summary = "Cargo subcommand to build and install C-ABI libraries"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/lu-zero/cargo-c/archive/refs/tags/v0.10.4.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/lu-zero/cargo-c/archive/refs/tags/v0.10.15/cargo-c-0.10.15.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,7 +33,8 @@ openssl = ">= 3.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/v0.10.4.tar.gz
+rm -rf cargo-c-*
+tar xf $ROOKPKG_SOURCES/cargo-c-*.tar.gz
 """
 
 configure = """
@@ -52,14 +53,12 @@ cargo test || true
 
 install = """
 cd $ROOKPKG_BUILD/cargo-c-*
-install -Dm755 target/release/cargo-capi $ROOKPKG_DESTDIR/usr/bin/cargo-capi
-install -Dm755 target/release/cargo-cbuild $ROOKPKG_DESTDIR/usr/bin/cargo-cbuild
-install -Dm755 target/release/cargo-cinstall $ROOKPKG_DESTDIR/usr/bin/cargo-cinstall
-install -Dm755 target/release/cargo-ctest $ROOKPKG_DESTDIR/usr/bin/cargo-ctest
+install -vDm755 target/release/cargo-cbuild $ROOKPKG_DESTDIR/usr/bin/
+install -vDm755 target/release/cargo-cinstall $ROOKPKG_DESTDIR/usr/bin/
+install -vDm755 target/release/cargo-ctest $ROOKPKG_DESTDIR/usr/bin/
 """
 
 [files]
-"usr/bin/cargo-capi" = { mode = 755 }
 "usr/bin/cargo-cbuild" = { mode = 755 }
 "usr/bin/cargo-cinstall" = { mode = 755 }
 "usr/bin/cargo-ctest" = { mode = 755 }
@@ -73,6 +72,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "0.10.15"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.10.15 per BLFS",
+    "Removed cargo-capi (not in BLFS install)"
+]
 
 [[changelog]]
 version = "0.10.4"

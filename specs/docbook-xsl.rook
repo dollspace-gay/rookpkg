@@ -33,6 +33,7 @@ docbook-xml = ">= 4.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf docbook-xsl-*
 tar xf $ROOKPKG_SOURCES/docbook-xsl-nons-*.tar.bz2
 cd docbook-xsl-nons-*
 patch -Np1 -i $ROOKPKG_SOURCES/docbook-xsl-nons-1.79.2-stack_fix-1.patch || true
@@ -99,6 +100,16 @@ xmlcatalog --noout --add "rewriteSystem" \
 
 xmlcatalog --noout --add "rewriteURI" \
     "https://cdn.docbook.org/release/xsl-nons/current" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "rewriteSystem" \
+    "http://docbook.sourceforge.net/release/xsl/current" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "rewriteURI" \
+    "http://docbook.sourceforge.net/release/xsl/current" \
     "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
     /etc/xml/catalog
 """

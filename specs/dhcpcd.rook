@@ -33,6 +33,7 @@ systemd = ">= 250"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf dhcpcd-*
 tar xf $ROOKPKG_SOURCES/dhcpcd-*.tar.xz
 """
 

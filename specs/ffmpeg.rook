@@ -1,6 +1,6 @@
 [package]
 name = "ffmpeg"
-version = "7.1"
+version = "7.1.1"
 release = 1
 summary = "Complete multimedia framework"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -56,6 +56,7 @@ sdl2 = ">= 2.28"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf ffmpeg-*
 tar xf $ROOKPKG_SOURCES/ffmpeg-*.tar.xz
 """
 
@@ -68,17 +69,12 @@ cd $ROOKPKG_BUILD/ffmpeg-*
             --disable-static     \
             --enable-shared      \
             --disable-debug      \
-            --enable-libass      \
-            --enable-libfreetype \
-            --enable-libmp3lame  \
-            --enable-libopus     \
-            --enable-libtheora   \
             --enable-libvorbis   \
+            --enable-libopus     \
             --enable-libvpx      \
+            --enable-libaom      \
             --enable-libx264     \
-            --enable-libx265     \
-            --enable-vaapi       \
-            --enable-vdpau
+            --enable-libx265
 """
 
 build = """
@@ -131,6 +127,16 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "7.1.1"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 7.1.1 per BLFS",
+    "Simplified configure options per BLFS",
+    "Added libaom support"
+]
 
 [[changelog]]
 version = "7.1"

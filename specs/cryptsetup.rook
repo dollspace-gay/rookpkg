@@ -1,6 +1,6 @@
 [package]
 name = "cryptsetup"
-version = "2.7.5"
+version = "2.8.1"
 release = 1
 summary = "Disk encryption utilities"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/utils/cryptsetup/v2.7/cryptsetup-2.7.5.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.kernel.org/pub/linux/utils/cryptsetup/v2.8/cryptsetup-2.8.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,14 +37,15 @@ argon2 = ">= 20190702"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf cryptsetup-*
 tar xf $ROOKPKG_SOURCES/cryptsetup-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/cryptsetup-*
-./configure --prefix=/usr            \
-            --disable-ssh-token      \
-            --enable-libargon2
+./configure --prefix=/usr       \
+            --disable-ssh-token \
+            --disable-asciidoc
 """
 
 build = """
@@ -80,6 +81,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.8.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.8.1 per BLFS",
+    "Updated configure options per BLFS"
+]
 
 [[changelog]]
 version = "2.7.5"

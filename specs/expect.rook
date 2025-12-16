@@ -35,6 +35,7 @@ tcl = ">= 8.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf expect5.45.4
 tar xf $ROOKPKG_SOURCES/expect5.45.4.tar.gz
 cd expect5.45.4
 

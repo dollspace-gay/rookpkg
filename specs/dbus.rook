@@ -36,6 +36,7 @@ libcap = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf dbus-*
 tar xf $ROOKPKG_SOURCES/dbus-*.tar.xz
 """
 

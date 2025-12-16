@@ -32,7 +32,12 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf duktape-*
 tar xf $ROOKPKG_SOURCES/duktape-*.tar.xz
+cd duktape-*
+
+# BLFS: Use -O2 instead of -Os for better performance
+sed -i 's/-Os/-O2/' Makefile.sharedlibrary
 """
 
 configure = """
@@ -41,13 +46,7 @@ configure = """
 
 build = """
 cd $ROOKPKG_BUILD/duktape-*
-# Build shared library
-gcc -shared -fPIC -o libduktape.so.2.7.0 src/duktape.c -lm
-ln -sf libduktape.so.2.7.0 libduktape.so.2
-ln -sf libduktape.so.2 libduktape.so
-
-# Build duk command
-gcc -o duk -I./src examples/cmdline/duk_cmdline.c -L. -lduktape -lm
+make -f Makefile.sharedlibrary INSTALL_PREFIX=/usr
 """
 
 check = """
@@ -56,31 +55,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/duktape-*
-install -d $ROOKPKG_DESTDIR/usr/lib
-install -d $ROOKPKG_DESTDIR/usr/include
-install -d $ROOKPKG_DESTDIR/usr/bin
-install -d $ROOKPKG_DESTDIR/usr/lib/pkgconfig
-
-install -m755 libduktape.so.2.7.0 $ROOKPKG_DESTDIR/usr/lib/
-ln -sf libduktape.so.2.7.0 $ROOKPKG_DESTDIR/usr/lib/libduktape.so.2
-ln -sf libduktape.so.2 $ROOKPKG_DESTDIR/usr/lib/libduktape.so
-
-install -m644 src/duktape.h $ROOKPKG_DESTDIR/usr/include/
-install -m644 src/duk_config.h $ROOKPKG_DESTDIR/usr/include/
-install -m755 duk $ROOKPKG_DESTDIR/usr/bin/
-
-cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/duktape.pc << 'EOF'
-prefix=/usr
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-
-Name: duktape
-Description: Embeddable JavaScript engine
-Version: 2.7.0
-Libs: -L${libdir} -lduktape -lm
-Cflags: -I${includedir}
-EOF
+make -f Makefile.sharedlibrary INSTALL_PREFIX=/usr DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

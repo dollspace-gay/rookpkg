@@ -20,7 +20,7 @@ source0 = { url = "https://downloads.xiph.org/releases/flac/flac-1.5.0.tar.xz", 
 
 [build_depends]
 gcc = ">= 10.0"
-cmake = ">= 3.20"
+make = ">= 4.0"
 libogg = ">= 1.3"
 
 [depends]
@@ -34,31 +34,27 @@ libogg = ">= 1.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf flac-*
 tar xf $ROOKPKG_SOURCES/flac-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/flac-*
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr       \
-      -DCMAKE_BUILD_TYPE=Release        \
-      -DBUILD_SHARED_LIBS=ON            \
-      ..
+./configure --prefix=/usr --disable-static
 """
 
 build = """
-cd $ROOKPKG_BUILD/flac-*/build
+cd $ROOKPKG_BUILD/flac-*
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/flac-*/build
+cd $ROOKPKG_BUILD/flac-*
 make test || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/flac-*/build
+cd $ROOKPKG_BUILD/flac-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 

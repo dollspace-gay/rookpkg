@@ -37,6 +37,7 @@ dbus = ">= 1.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf dconf-*
 tar xf $ROOKPKG_SOURCES/dconf-*.tar.xz
 """
 

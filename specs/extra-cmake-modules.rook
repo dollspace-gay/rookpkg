@@ -1,6 +1,6 @@
 [package]
 name = "extra-cmake-modules"
-version = "6.7.0"
+version = "6.17.0"
 release = 1
 summary = "Extra CMake modules for KDE"
 description = """
@@ -14,7 +14,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/frameworks/6.7/extra-cmake-modules-6.7.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/extra-cmake-modules-6.17.0.tar.xz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/extra-cmake-modules-6.17.0-upstream_fix-1.patch", sha256 = "FIXME" }
 
 [patches]
 
@@ -31,32 +32,44 @@ ninja = ">= 1.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf extra-cmake-modules-*
 tar xf $ROOKPKG_SOURCES/extra-cmake-modules-*.tar.xz
+cd extra-cmake-modules-*
+
+# BLFS patch
+patch -Np1 -i $ROOKPKG_SOURCES/extra-cmake-modules-6.17.0-upstream_fix-1.patch
+
+# BLFS: Fix lib64 path
+sed -i '/"lib64"/s/64//' kde-modules/KDEInstallDirsCommon.cmake
+
+# BLFS: Fix ECMConfig prefix
+sed -e '/PACKAGE_INIT/i set(SAVE_PACKAGE_PREFIX_DIR "${PACKAGE_PREFIX_DIR}")' \
+    -e '/^include/a set(PACKAGE_PREFIX_DIR "${SAVE_PACKAGE_PREFIX_DIR}")' \
+    -i ECMConfig.cmake.in
 """
 
 configure = """
 cd $ROOKPKG_BUILD/extra-cmake-modules-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -G Ninja
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_PREFIX_PATH=/opt/qt6 \
+      -DBUILD_WITH_QT6=ON ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/extra-cmake-modules-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/extra-cmake-modules-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/extra-cmake-modules-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -72,6 +85,16 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 6.17.0 per BLFS",
+    "Added upstream patch, lib64 fix, ECMConfig fix per BLFS",
+    "Changed from ninja to make per BLFS"
+]
 
 [[changelog]]
 version = "6.7.0"

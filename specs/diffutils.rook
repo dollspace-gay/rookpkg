@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf diffutils-*
 tar xf $ROOKPKG_SOURCES/diffutils-*.tar.xz
 """
 

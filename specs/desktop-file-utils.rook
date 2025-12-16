@@ -35,6 +35,7 @@ glib2 = ">= 2.70"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf desktop-file-utils-*
 tar xf $ROOKPKG_SOURCES/desktop-file-utils-*.tar.xz
 """
 
