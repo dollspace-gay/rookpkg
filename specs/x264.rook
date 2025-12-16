@@ -1,0 +1,94 @@
+[package]
+name = "x264"
+version = "0.164"
+release = 1
+summary = "H.264/MPEG-4 AVC video encoder"
+description = """
+x264 is a free software library and application for encoding video streams
+into the H.264/MPEG-4 AVC compression format. It provides excellent quality
+and encoding speed.
+"""
+homepage = "https://www.videolan.org/developers/x264.html"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://anduin.linuxfromscratch.org/BLFS/x264/x264-20240513.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+nasm = ">= 2.15"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+ffmpeg = ">= 7.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/x264-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/x264-*
+./configure --prefix=/usr       \
+            --enable-shared     \
+            --disable-cli
+"""
+
+build = """
+cd $ROOKPKG_BUILD/x264-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/x264-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libx264.so" = { mode = 755 }
+"usr/include/x264.h" = {}
+"usr/include/x264_config.h" = {}
+"usr/lib/pkgconfig/x264.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.164"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["x264", "h264", "avc", "video", "encoder"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

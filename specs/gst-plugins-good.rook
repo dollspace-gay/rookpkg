@@ -1,0 +1,111 @@
+[package]
+name = "gst-plugins-good"
+version = "1.24.10"
+release = 1
+summary = "GStreamer good plugins"
+description = """
+GStreamer Good Plugins is a set of plug-ins that have good quality code,
+correct functionality, and the preferred license (LGPL for the plug-in code,
+LGPL or LGPL-compatible for the supporting library).
+"""
+homepage = "https://gstreamer.freedesktop.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.24.10.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gst-plugins-base = ">= 1.24"
+
+[depends]
+glibc = ">= 2.39"
+gst-plugins-base = ">= 1.24"
+flac = ">= 1.5"
+libjpeg-turbo = ">= 3.0"
+libpng = ">= 1.6"
+pulseaudio = ">= 17.0"
+
+[optional_depends]
+gtk3 = ">= 3.24"
+pipewire = ">= 1.0"
+libsoup = ">= 3.4"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gst-plugins-good-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gst-plugins-good-*
+mkdir -p build
+cd build
+meson setup ..                  \
+      --prefix=/usr             \
+      --buildtype=release       \
+      -D doc=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gst-plugins-good-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gst-plugins-good-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gst-plugins-good-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/gstreamer-1.0/libgstflac.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstjpeg.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstpng.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstpulseaudio.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstautodetect.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstvideo4linux2.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstavi.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstmatroska.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/libgstwavparse.so" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.24.10"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gstreamer", "plugins", "good", "multimedia"]
+categories = ["multimedia", "plugins"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

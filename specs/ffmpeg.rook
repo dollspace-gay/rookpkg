@@ -1,0 +1,154 @@
+[package]
+name = "ffmpeg"
+version = "7.1"
+release = 1
+summary = "Complete multimedia framework"
+description = """
+FFmpeg is a complete, cross-platform solution to record, convert and stream
+audio and video. It includes libavcodec, libavformat, libavutil, libavfilter,
+libswscale, and libswresample libraries.
+"""
+homepage = "https://ffmpeg.org/"
+license = "GPL-3.0-or-later AND LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+nasm = ">= 2.15"
+libass = ">= 0.17"
+fdk-aac = ">= 2.0"
+freetype = ">= 2.13"
+lame = ">= 3.100"
+libtheora = ">= 1.1"
+libvorbis = ">= 1.3"
+libvpx = ">= 1.14"
+opus = ">= 1.5"
+x264 = ">= 0.164"
+x265 = ">= 3.5"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2"
+libass = ">= 0.17"
+freetype = ">= 2.13"
+lame = ">= 3.100"
+libtheora = ">= 1.1"
+libvorbis = ">= 1.3"
+libvpx = ">= 1.14"
+opus = ">= 1.5"
+x264 = ">= 0.164"
+x265 = ">= 3.5"
+libva = ">= 2.20"
+libvdpau = ">= 1.5"
+
+[optional_depends]
+sdl2 = ">= 2.28"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/ffmpeg-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/ffmpeg-*
+./configure --prefix=/usr        \
+            --enable-gpl         \
+            --enable-version3    \
+            --enable-nonfree     \
+            --disable-static     \
+            --enable-shared      \
+            --disable-debug      \
+            --enable-libass      \
+            --enable-libfreetype \
+            --enable-libmp3lame  \
+            --enable-libopus     \
+            --enable-libtheora   \
+            --enable-libvorbis   \
+            --enable-libvpx      \
+            --enable-libx264     \
+            --enable-libx265     \
+            --enable-vaapi       \
+            --enable-vdpau
+"""
+
+build = """
+cd $ROOKPKG_BUILD/ffmpeg-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/ffmpeg-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/ffmpeg-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/ffmpeg" = { mode = 755 }
+"usr/bin/ffprobe" = { mode = 755 }
+"usr/lib/libavcodec.so" = { mode = 755 }
+"usr/lib/libavdevice.so" = { mode = 755 }
+"usr/lib/libavfilter.so" = { mode = 755 }
+"usr/lib/libavformat.so" = { mode = 755 }
+"usr/lib/libavutil.so" = { mode = 755 }
+"usr/lib/libpostproc.so" = { mode = 755 }
+"usr/lib/libswresample.so" = { mode = 755 }
+"usr/lib/libswscale.so" = { mode = 755 }
+"usr/include/libavcodec/" = {}
+"usr/include/libavdevice/" = {}
+"usr/include/libavfilter/" = {}
+"usr/include/libavformat/" = {}
+"usr/include/libavutil/" = {}
+"usr/include/libpostproc/" = {}
+"usr/include/libswresample/" = {}
+"usr/include/libswscale/" = {}
+"usr/lib/pkgconfig/libavcodec.pc" = {}
+"usr/lib/pkgconfig/libavformat.pc" = {}
+"usr/lib/pkgconfig/libavutil.pc" = {}
+"usr/share/ffmpeg/" = {}
+"usr/share/man/man1/ffmpeg.1" = {}
+"usr/share/man/man1/ffprobe.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "7.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Hardware acceleration via VAAPI and VDPAU",
+    "Common codec support enabled"
+]
+
+[metadata]
+keywords = ["ffmpeg", "video", "audio", "codec", "multimedia"]
+categories = ["multimedia", "video"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

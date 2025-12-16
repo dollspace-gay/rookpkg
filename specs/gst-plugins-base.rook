@@ -1,0 +1,120 @@
+[package]
+name = "gst-plugins-base"
+version = "1.24.10"
+release = 1
+summary = "GStreamer base plugins"
+description = """
+GStreamer Base Plugins is a set of well-maintained base plug-ins for
+GStreamer. It includes elements for audio and video playback and provides
+essential infrastructure for GStreamer applications.
+"""
+homepage = "https://gstreamer.freedesktop.org/"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.24.10.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gstreamer = ">= 1.24"
+alsa-lib = ">= 1.2"
+pango = ">= 1.54"
+
+[depends]
+glibc = ">= 2.39"
+gstreamer = ">= 1.24"
+alsa-lib = ">= 1.2"
+pango = ">= 1.54"
+libogg = ">= 1.3"
+libvorbis = ">= 1.3"
+opus = ">= 1.5"
+mesa = ">= 24.0"
+
+[optional_depends]
+cdparanoia = ">= 10.2"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gst-plugins-base-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gst-plugins-base-*
+mkdir -p build
+cd build
+meson setup ..                    \
+      --prefix=/usr               \
+      --buildtype=release         \
+      -D introspection=disabled   \
+      -D doc=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gst-plugins-base-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gst-plugins-base-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gst-plugins-base-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/gst-device-monitor-1.0" = { mode = 755 }
+"usr/bin/gst-discoverer-1.0" = { mode = 755 }
+"usr/bin/gst-play-1.0" = { mode = 755 }
+"usr/lib/libgstaudio-1.0.so" = { mode = 755 }
+"usr/lib/libgstpbutils-1.0.so" = { mode = 755 }
+"usr/lib/libgstriff-1.0.so" = { mode = 755 }
+"usr/lib/libgsttag-1.0.so" = { mode = 755 }
+"usr/lib/libgstvideo-1.0.so" = { mode = 755 }
+"usr/lib/libgstgl-1.0.so" = { mode = 755 }
+"usr/lib/gstreamer-1.0/" = {}
+"usr/include/gstreamer-1.0/gst/audio/" = {}
+"usr/include/gstreamer-1.0/gst/video/" = {}
+"usr/lib/pkgconfig/gstreamer-audio-1.0.pc" = {}
+"usr/lib/pkgconfig/gstreamer-video-1.0.pc" = {}
+"usr/lib/pkgconfig/gstreamer-gl-1.0.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.24.10"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gstreamer", "plugins", "base", "multimedia"]
+categories = ["multimedia", "plugins"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

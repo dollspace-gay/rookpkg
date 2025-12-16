@@ -1,0 +1,99 @@
+[package]
+name = "libaom"
+version = "3.11.0"
+release = 1
+summary = "AV1 video codec library"
+description = """
+libaom is the reference implementation of the Alliance for Open Media
+AV1 codec. AV1 provides significantly better compression than VP9 and
+H.265 at the same quality levels.
+"""
+homepage = "https://aomedia.org/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://storage.googleapis.com/aom-releases/libaom-3.11.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+nasm = ">= 2.15"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libaom-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libaom-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr  \
+      -DCMAKE_BUILD_TYPE=Release   \
+      -DBUILD_SHARED_LIBS=ON       \
+      -DENABLE_DOCS=OFF            \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libaom-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libaom-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libaom-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/aomdec" = { mode = 755 }
+"usr/bin/aomenc" = { mode = 755 }
+"usr/lib/libaom.so" = { mode = 755 }
+"usr/include/aom/" = {}
+"usr/lib/pkgconfig/aom.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.11.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libaom", "av1", "video", "codec", "aom"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,91 @@
+[package]
+name = "nasm"
+version = "2.16.03"
+release = 1
+summary = "Netwide Assembler"
+description = """
+NASM (Netwide Assembler) is an assembler and disassembler for the Intel
+x86 architecture. It can be used to write 16-bit, 32-bit, and 64-bit
+programs. It is used to build multimedia libraries like x264, x265, and FFmpeg.
+"""
+homepage = "https://www.nasm.us/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nasm-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/nasm-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nasm-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/nasm-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nasm-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/nasm" = { mode = 755 }
+"usr/bin/ndisasm" = { mode = 755 }
+"usr/share/man/man1/nasm.1" = {}
+"usr/share/man/man1/ndisasm.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.16.03"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["nasm", "assembler", "x86", "asm"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

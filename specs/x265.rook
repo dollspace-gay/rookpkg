@@ -1,0 +1,97 @@
+[package]
+name = "x265"
+version = "4.0"
+release = 1
+summary = "H.265/HEVC video encoder"
+description = """
+x265 is a free software library and application for encoding video streams
+into the H.265/MPEG-H HEVC compression format. HEVC provides significantly
+better compression than H.264 at the same quality levels.
+"""
+homepage = "https://www.x265.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+nasm = ">= 2.15"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/x265_*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/x265_*/source
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release  \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/x265_*/source/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/x265_*/source/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+rm -f $ROOKPKG_DESTDIR/usr/lib/libx265.a
+"""
+
+[files]
+"usr/bin/x265" = { mode = 755 }
+"usr/lib/libx265.so" = { mode = 755 }
+"usr/include/x265.h" = {}
+"usr/include/x265_config.h" = {}
+"usr/lib/pkgconfig/x265.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["x265", "h265", "hevc", "video", "encoder"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

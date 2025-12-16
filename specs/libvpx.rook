@@ -1,0 +1,100 @@
+[package]
+name = "libvpx"
+version = "1.15.0"
+release = 1
+summary = "VP8/VP9/AV1 video codec"
+description = """
+libvpx is a video codec library which implements the VP8 and VP9 video
+codecs. VP9 provides superior compression compared to VP8 and is used
+widely for web video streaming.
+"""
+homepage = "https://www.webmproject.org/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/webmproject/libvpx/archive/v1.15.0/libvpx-1.15.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+nasm = ">= 2.15"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libvpx-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libvpx-*
+sed -i 's/cp -p/cp/' build/make/Makefile
+
+mkdir libvpx-build
+cd    libvpx-build
+
+../configure --prefix=/usr    \
+             --enable-shared  \
+             --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libvpx-*/libvpx-build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libvpx-*/libvpx-build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libvpx-*/libvpx-build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/vpxdec" = { mode = 755 }
+"usr/bin/vpxenc" = { mode = 755 }
+"usr/lib/libvpx.so" = { mode = 755 }
+"usr/include/vpx/" = {}
+"usr/lib/pkgconfig/vpx.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.15.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libvpx", "vp8", "vp9", "video", "codec", "webm"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

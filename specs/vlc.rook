@@ -1,0 +1,137 @@
+[package]
+name = "vlc"
+version = "3.0.21"
+release = 1
+summary = "VLC media player"
+description = """
+VLC is a free and open-source cross-platform multimedia player and framework
+that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and
+various streaming protocols.
+"""
+homepage = "https://www.videolan.org/vlc/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.videolan.org/vlc/3.0.21/vlc-3.0.21.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+ffmpeg = ">= 7.0"
+qt5 = ">= 5.15"
+alsa-lib = ">= 1.2"
+
+[depends]
+glibc = ">= 2.39"
+ffmpeg = ">= 7.0"
+qt5 = ">= 5.15"
+alsa-lib = ">= 1.2"
+dbus = ">= 1.12"
+libva = ">= 2.20"
+libvdpau = ">= 1.5"
+lua = ">= 5.4"
+gnutls = ">= 3.8"
+libgcrypt = ">= 1.10"
+libsecret = ">= 0.21"
+xcb-util = ">= 0.4"
+xcb-util-keysyms = ">= 0.4"
+pulseaudio = ">= 17.0"
+
+[optional_depends]
+libaom = ">= 3.0"
+libvpx = ">= 1.14"
+x264 = ">= 0.164"
+x265 = ">= 3.5"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/vlc-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/vlc-*
+BUILDCC=gcc ./configure --prefix=/usr   \
+            --disable-opencv            \
+            --disable-vpx               \
+            --disable-lua               \
+            --disable-mad               \
+            --disable-a52
+"""
+
+build = """
+cd $ROOKPKG_BUILD/vlc-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/vlc-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/vlc-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/vlc" = { mode = 755 }
+"usr/bin/cvlc" = { mode = 755 }
+"usr/bin/nvlc" = { mode = 755 }
+"usr/bin/qvlc" = {}
+"usr/bin/rvlc" = { mode = 755 }
+"usr/bin/svlc" = { mode = 755 }
+"usr/bin/vlc-wrapper" = { mode = 755 }
+"usr/lib/libvlc.so" = { mode = 755 }
+"usr/lib/libvlccore.so" = { mode = 755 }
+"usr/lib/vlc/" = {}
+"usr/include/vlc/" = {}
+"usr/lib/pkgconfig/libvlc.pc" = {}
+"usr/lib/pkgconfig/vlc-plugin.pc" = {}
+"usr/share/vlc/" = {}
+"usr/share/applications/vlc.desktop" = {}
+"usr/share/icons/hicolor/*/apps/vlc.*" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+/sbin/ldconfig
+update-desktop-database
+"""
+pre_remove = ""
+post_remove = """
+/sbin/ldconfig
+update-desktop-database
+"""
+pre_upgrade = ""
+post_upgrade = """
+/sbin/ldconfig
+update-desktop-database
+"""
+
+[[changelog]]
+version = "3.0.21"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["vlc", "media", "player", "video", "audio"]
+categories = ["multimedia", "applications"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
