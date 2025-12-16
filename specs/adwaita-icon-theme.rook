@@ -1,0 +1,92 @@
+[package]
+name = "adwaita-icon-theme"
+version = "47.0"
+release = 1
+summary = "GNOME default icon theme"
+description = """
+Adwaita Icon Theme is the default icon theme for GNOME applications. It
+provides a comprehensive set of icons in a clean, modern style.
+"""
+homepage = "https://gitlab.gnome.org/GNOME/adwaita-icon-theme"
+license = "LGPL-3.0-or-later OR CC-BY-SA-3.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/adwaita-icon-theme/47/adwaita-icon-theme-47.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gtk3 = ">= 3.24"
+
+[depends]
+hicolor-icon-theme = ">= 0.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/adwaita-icon-theme-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/adwaita-icon-theme-*
+mkdir -p build
+cd build
+meson setup ..            \
+      --prefix=/usr       \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/adwaita-icon-theme-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/adwaita-icon-theme-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/icons/Adwaita/" = {}
+"usr/share/pkgconfig/adwaita-icon-theme.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "gtk-update-icon-cache /usr/share/icons/Adwaita"
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = "gtk-update-icon-cache /usr/share/icons/Adwaita"
+
+[[changelog]]
+version = "47.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["adwaita", "icon", "theme", "gnome"]
+categories = ["icons", "themes", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

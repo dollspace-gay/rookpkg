@@ -1,0 +1,115 @@
+[package]
+name = "at-spi2-core"
+version = "2.54.0"
+release = 1
+summary = "Assistive Technology Service Provider Interface"
+description = """
+AT-SPI2 Core is the main Assistive Technology Service Provider Interface
+package. It provides the core infrastructure for accessibility support
+in GTK and GNOME applications.
+"""
+homepage = "https://wiki.gnome.org/Accessibility"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib2 = ">= 2.70"
+dbus = ">= 1.12"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+dbus = ">= 1.12"
+xorg-libraries = ">= 7.8"
+systemd = ">= 250"
+
+[optional_depends]
+gobject-introspection = ">= 1.80"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/at-spi2-core-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/at-spi2-core-*
+mkdir -p build
+cd build
+meson setup ..                     \
+      --prefix=/usr                \
+      --buildtype=release          \
+      -D introspection=disabled    \
+      -D docs=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/at-spi2-core-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/at-spi2-core-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/at-spi2-core-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/libexec/at-spi2-registryd" = { mode = 755 }
+"usr/libexec/at-spi-bus-launcher" = { mode = 755 }
+"usr/lib/libatspi.so" = { mode = 755 }
+"usr/lib/libatk-1.0.so" = { mode = 755 }
+"usr/lib/libatk-bridge-2.0.so" = { mode = 755 }
+"usr/lib/gtk-2.0/modules/libatk-bridge.so" = { mode = 755 }
+"usr/include/at-spi-2.0/" = {}
+"usr/include/atk-1.0/" = {}
+"usr/include/at-spi2-atk/2.0/" = {}
+"usr/lib/pkgconfig/atspi-2.pc" = {}
+"usr/lib/pkgconfig/atk.pc" = {}
+"usr/lib/pkgconfig/atk-bridge-2.0.pc" = {}
+"usr/share/dbus-1/services/org.a11y.Bus.service" = {}
+"usr/share/dbus-1/accessibility-services/org.a11y.atspi.Registry.service" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.54.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["at-spi2", "accessibility", "atspi", "atk", "gnome"]
+categories = ["libraries", "accessibility", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

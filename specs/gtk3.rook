@@ -1,0 +1,145 @@
+[package]
+name = "gtk3"
+version = "3.24.43"
+release = 1
+summary = "GTK+ 3 widget toolkit"
+description = """
+GTK+ 3 is a multi-platform toolkit for creating graphical user interfaces.
+It is used by many major desktop applications and provides a complete set
+of widgets for building applications.
+"""
+homepage = "https://www.gtk.org/"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.43.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib2 = ">= 2.70"
+pango = ">= 1.54"
+gdk-pixbuf = ">= 2.42"
+cairo = ">= 1.18"
+at-spi2-core = ">= 2.50"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+pango = ">= 1.54"
+gdk-pixbuf = ">= 2.42"
+cairo = ">= 1.18"
+at-spi2-core = ">= 2.50"
+libepoxy = ">= 1.5"
+libxkbcommon = ">= 1.6"
+wayland = ">= 1.22"
+wayland-protocols = ">= 1.30"
+xorg-libraries = ">= 7.8"
+hicolor-icon-theme = ">= 0.17"
+shared-mime-info = ">= 2.0"
+
+[optional_depends]
+cups = ">= 2.4"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gtk+-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gtk+-*
+mkdir -p build
+cd build
+meson setup ..                     \
+      --prefix=/usr                \
+      --buildtype=release          \
+      -D introspection=false       \
+      -D man=false                 \
+      -D gtk_doc=false             \
+      -D broadway_backend=true
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gtk+-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gtk+-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gtk+-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/gtk3-demo" = { mode = 755 }
+"usr/bin/gtk3-demo-application" = { mode = 755 }
+"usr/bin/gtk3-icon-browser" = { mode = 755 }
+"usr/bin/gtk3-widget-factory" = { mode = 755 }
+"usr/bin/gtk-builder-tool" = { mode = 755 }
+"usr/bin/gtk-encode-symbolic-svg" = { mode = 755 }
+"usr/bin/gtk-launch" = { mode = 755 }
+"usr/bin/gtk-query-immodules-3.0" = { mode = 755 }
+"usr/bin/gtk-query-settings" = { mode = 755 }
+"usr/bin/gtk-update-icon-cache" = { mode = 755 }
+"usr/lib/libgtk-3.so" = { mode = 755 }
+"usr/lib/libgdk-3.so" = { mode = 755 }
+"usr/lib/libgailutil-3.so" = { mode = 755 }
+"usr/lib/gtk-3.0/" = {}
+"usr/include/gtk-3.0/" = {}
+"usr/lib/pkgconfig/gtk+-3.0.pc" = {}
+"usr/lib/pkgconfig/gdk-3.0.pc" = {}
+"usr/lib/pkgconfig/gdk-wayland-3.0.pc" = {}
+"usr/lib/pkgconfig/gdk-x11-3.0.pc" = {}
+"usr/share/gtk-3.0/" = {}
+"usr/share/themes/" = {}
+
+[config_files]
+"etc/gtk-3.0/" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+/sbin/ldconfig
+gtk-query-immodules-3.0 --update-cache
+glib-compile-schemas /usr/share/glib-2.0/schemas
+"""
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = """
+/sbin/ldconfig
+gtk-query-immodules-3.0 --update-cache
+glib-compile-schemas /usr/share/glib-2.0/schemas
+"""
+
+[[changelog]]
+version = "3.24.43"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "X11, Wayland, and Broadway backends"
+]
+
+[metadata]
+keywords = ["gtk3", "gtk", "widget", "toolkit", "gnome"]
+categories = ["libraries", "gui", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

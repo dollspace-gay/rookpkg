@@ -1,0 +1,85 @@
+[package]
+name = "hicolor-icon-theme"
+version = "0.18"
+release = 1
+summary = "Default fallback icon theme"
+description = """
+The Hicolor Icon Theme package contains a default fallback theme for icons.
+Applications should install icons according to the Icon Theme Specification
+and this package provides the directory structure they need.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/icon-theme/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.18.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/hicolor-icon-theme-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/hicolor-icon-theme-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/hicolor-icon-theme-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/hicolor-icon-theme-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/share/icons/hicolor/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.18"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["hicolor", "icon", "theme", "fallback"]
+categories = ["icons", "themes"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

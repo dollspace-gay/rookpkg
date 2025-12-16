@@ -1,0 +1,102 @@
+[package]
+name = "graphene"
+version = "1.10.8"
+release = 1
+summary = "Thin layer of graphic data types"
+description = """
+Graphene provides a small set of mathematical types needed to implement
+graphic libraries that deal with 2D and 3D transformations and projections.
+It is used by GTK4 for its rendering pipeline.
+"""
+homepage = "https://ebassi.github.io/graphene/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib2 = ">= 2.70"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+
+[optional_depends]
+gobject-introspection = ">= 1.80"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/graphene-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/graphene-*
+mkdir -p build
+cd build
+meson setup ..                    \
+      --prefix=/usr               \
+      --buildtype=release         \
+      -D introspection=disabled   \
+      -D gtk_doc=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/graphene-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/graphene-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/graphene-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libgraphene-1.0.so" = { mode = 755 }
+"usr/include/graphene-1.0/" = {}
+"usr/lib/pkgconfig/graphene-1.0.pc" = {}
+"usr/lib/pkgconfig/graphene-gobject-1.0.pc" = {}
+"usr/lib/graphene-1.0/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.10.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["graphene", "math", "graphics", "3d", "gtk4"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

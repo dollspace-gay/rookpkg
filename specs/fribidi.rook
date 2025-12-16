@@ -1,0 +1,97 @@
+[package]
+name = "fribidi"
+version = "1.0.16"
+release = 1
+summary = "Unicode Bidirectional Algorithm library"
+description = """
+FriBidi is an implementation of the Unicode Bidirectional Algorithm (bidi).
+It is used to render text that mixes left-to-right and right-to-left scripts,
+such as Arabic and Hebrew mixed with English.
+"""
+homepage = "https://github.com/fribidi/fribidi"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/fribidi/fribidi/releases/download/v1.0.16/fribidi-1.0.16.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/fribidi-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/fribidi-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release   \
+      -D docs=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/fribidi-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/fribidi-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/fribidi-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/fribidi" = { mode = 755 }
+"usr/lib/libfribidi.so" = { mode = 755 }
+"usr/include/fribidi/" = {}
+"usr/lib/pkgconfig/fribidi.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.16"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["fribidi", "bidi", "unicode", "rtl", "text"]
+categories = ["libraries", "text"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
