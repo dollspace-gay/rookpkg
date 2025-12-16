@@ -1,6 +1,6 @@
 [package]
 name = "zxing-cpp"
-version = "2.2.1"
+version = "2.3.0"
 release = 1
 summary = "ZXing barcode scanning library for C++"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/zxing-cpp/zxing-cpp/archive/v2.2.1/zxing-cpp-2.2.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/zxing-cpp/zxing-cpp/archive/v2.3.0/zxing-cpp-2.3.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf zxing-cpp-*
 tar xf $ROOKPKG_SOURCES/zxing-cpp-*.tar.gz
 """
 
@@ -43,24 +44,23 @@ cd build
 cmake ..                              \
       -DCMAKE_INSTALL_PREFIX=/usr     \
       -DCMAKE_BUILD_TYPE=Release      \
-      -DBUILD_SHARED_LIBS=ON          \
-      -DBUILD_EXAMPLES=OFF            \
-      -G Ninja
+      -DZXING_EXAMPLES=OFF            \
+      -W no-dev
 """
 
 build = """
 cd $ROOKPKG_BUILD/zxing-cpp-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/zxing-cpp-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/zxing-cpp-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -80,7 +80,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "2.2.1"
+version = "2.3.0"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

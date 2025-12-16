@@ -76,7 +76,8 @@
       "Bash(bd ready)",
       "Bash(Select-String -Path \"c:\\Users\\texas\\rookpkg\\scripts\\build_in_chroot.sh\" -Pattern \"Shadow|Sed\" -Context 2,30)",
       "Bash(Select-Object -First 100)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(bd stats:*)"
     ]
   }
 }
