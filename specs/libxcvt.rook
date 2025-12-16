@@ -1,6 +1,6 @@
 [package]
 name = "libxcvt"
-version = "0.1.2"
+version = "0.1.3"
 release = 1
 summary = "VESA CVT standard timing modelines generator"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/lib/libxcvt-0.1.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/lib/libxcvt-0.1.3.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libxcvt-*
 tar xf $ROOKPKG_SOURCES/libxcvt-*.tar.xz
 """
 

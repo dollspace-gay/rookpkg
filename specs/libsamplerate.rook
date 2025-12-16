@@ -33,6 +33,7 @@ fftw = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libsamplerate-*
 tar xf $ROOKPKG_SOURCES/libsamplerate-*.tar.xz
 """
 

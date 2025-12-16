@@ -1,6 +1,6 @@
 [package]
 name = "libxml2"
-version = "2.13.5"
+version = "2.14.5"
 release = 1
 summary = "XML parsing library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.5.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/libxml2/2.14/libxml2-2.14.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,6 +36,7 @@ icu = ">= 74.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libxml2-*
 tar xf $ROOKPKG_SOURCES/libxml2-*.tar.xz
 """
 
@@ -46,7 +47,8 @@ cd $ROOKPKG_BUILD/libxml2-*
             --disable-static        \
             --with-history          \
             --with-icu              \
-            PYTHON=/usr/bin/python3
+            PYTHON=/usr/bin/python3 \
+            --docdir=/usr/share/doc/libxml2-2.14.5
 """
 
 build = """

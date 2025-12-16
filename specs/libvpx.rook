@@ -1,6 +1,6 @@
 [package]
 name = "libvpx"
-version = "1.15.0"
+version = "1.15.2"
 release = 1
 summary = "VP8/VP9/AV1 video codec"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/webmproject/libvpx/archive/v1.15.0/libvpx-1.15.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/webmproject/libvpx/archive/v1.15.2/libvpx-1.15.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,11 +33,16 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libvpx-*
 tar xf $ROOKPKG_SOURCES/libvpx-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libvpx-*
+# Update timestamps (BLFS requirement)
+find -type f | xargs touch
+
+# Fix ownership/permissions (BLFS requirement)
 sed -i 's/cp -p/cp/' build/make/Makefile
 
 mkdir libvpx-build

@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libXau-*
 tar xf $ROOKPKG_SOURCES/libXau-*.tar.xz
 """
 

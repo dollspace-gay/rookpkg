@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/intel/libva/releases/download/2.22.0/libva-2.22.0.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://github.com/intel/libva/releases/download/2.22.0/libva-2.22.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,7 +37,8 @@ wayland = ">= 1.22"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/libva-*.tar.bz2
+rm -rf libva-*
+tar xf $ROOKPKG_SOURCES/libva-*.tar.gz
 """
 
 configure = """

@@ -1,6 +1,6 @@
 [package]
 name = "libuv"
-version = "1.49.2"
+version = "1.51.0"
 release = 1
 summary = "Multi-platform asynchronous I/O library"
 description = """
@@ -14,14 +14,16 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://dist.libuv.org/dist/v1.49.2/libuv-v1.49.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://dist.libuv.org/dist/v1.51.0/libuv-v1.51.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-cmake = ">= 3.20"
-ninja = ">= 1.8"
+make = ">= 4.0"
+autoconf = ">= 2.71"
+automake = ">= 1.16"
+libtool = ">= 2.4"
 
 [depends]
 glibc = ">= 2.39"
@@ -33,33 +35,30 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libuv-*
 tar xf $ROOKPKG_SOURCES/libuv-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libuv-*
-mkdir -p build
-cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DBUILD_TESTING=OFF             \
-      -G Ninja
+unset ACLOCAL
+sh autogen.sh
+./configure --prefix=/usr --disable-static
 """
 
 build = """
-cd $ROOKPKG_BUILD/libuv-*/build
-ninja -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/libuv-*
+make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/libuv-*/build
-ninja test || true
+cd $ROOKPKG_BUILD/libuv-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/libuv-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd $ROOKPKG_BUILD/libuv-*
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

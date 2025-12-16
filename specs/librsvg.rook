@@ -1,6 +1,6 @@
 [package]
 name = "librsvg"
-version = "2.59.2"
+version = "2.61.0"
 release = 1
 summary = "SVG rendering library"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/librsvg/2.59/librsvg-2.59.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/librsvg/2.61/librsvg-2.61.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,6 +40,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf librsvg-*
 tar xf $ROOKPKG_SOURCES/librsvg-*.tar.xz
 """
 
@@ -49,9 +50,7 @@ mkdir -p build
 cd build
 meson setup ..                 \
       --prefix=/usr            \
-      --buildtype=release      \
-      -D introspection=disabled \
-      -D docs=disabled
+      --buildtype=release
 """
 
 build = """

@@ -38,6 +38,7 @@ libxdmcp = ">= 1.1"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libxcb-*
 tar xf $ROOKPKG_SOURCES/libxcb-*.tar.xz
 """
 

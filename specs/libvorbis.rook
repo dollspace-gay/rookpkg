@@ -33,6 +33,7 @@ libogg = ">= 1.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libvorbis-*
 tar xf $ROOKPKG_SOURCES/libvorbis-*.tar.xz
 """
 

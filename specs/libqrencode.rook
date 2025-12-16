@@ -14,14 +14,13 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://fukuchi.org/works/qrencode/qrencode-4.1.1.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://fukuchi.org/works/qrencode/qrencode-4.1.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-cmake = ">= 3.20"
-ninja = ">= 1.8"
+make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -34,33 +33,29 @@ libpng = ">= 1.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/qrencode-*.tar.bz2
+rm -rf qrencode-*
+tar xf $ROOKPKG_SOURCES/qrencode-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/qrencode-*
-mkdir -p build
-cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DWITH_TOOLS=ON                 \
-      -G Ninja
+./autogen.sh
+./configure --prefix=/usr
 """
 
 build = """
-cd $ROOKPKG_BUILD/qrencode-*/build
-ninja -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/qrencode-*
+make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/qrencode-*/build
-ninja test || true
+cd $ROOKPKG_BUILD/qrencode-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/qrencode-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd $ROOKPKG_BUILD/qrencode-*
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

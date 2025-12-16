@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/libqmi/libqmi-1.36.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/libqmi/libqmi-1.36.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -38,7 +38,8 @@ libmbim = ">= 1.28"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/libqmi-*.tar.xz
+rm -rf libqmi-*
+tar xf $ROOKPKG_SOURCES/libqmi-*.tar.gz
 """
 
 configure = """
@@ -48,7 +49,8 @@ cd build
 meson setup ..                 \
       --prefix=/usr            \
       --buildtype=release      \
-      -D introspection=false   \
+      -D qrtr=false            \
+      -D man=false             \
       -D bash_completion=false
 """
 

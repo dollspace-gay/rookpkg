@@ -35,12 +35,13 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libsass-*
 tar xf $ROOKPKG_SOURCES/libsass-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libsass-*
-autoreconf -fvi
+autoreconf -fi
 ./configure --prefix=/usr        \
             --disable-static
 """

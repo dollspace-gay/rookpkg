@@ -1,6 +1,6 @@
 [package]
 name = "libxmlb"
-version = "0.3.21"
+version = "0.3.23"
 release = 1
 summary = "Library to help create and query binary XML blobs"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/hughsie/libxmlb/releases/download/0.3.21/libxmlb-0.3.21.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/hughsie/libxmlb/releases/download/0.3.23/libxmlb-0.3.23.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,6 +37,7 @@ zstd = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libxmlb-*
 tar xf $ROOKPKG_SOURCES/libxmlb-*.tar.xz
 """
 
@@ -47,8 +48,9 @@ cd build
 meson setup ..                 \
       --prefix=/usr            \
       --buildtype=release      \
-      -D introspection=false   \
-      -D stemmer=false
+      -D gtkdoc=false          \
+      -D stemmer=false         \
+      -D introspection=true
 """
 
 build = """

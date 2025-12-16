@@ -1,6 +1,6 @@
 [package]
 name = "libxkbcommon"
-version = "1.7.0"
+version = "1.11.0"
 release = 1
 summary = "Keyboard handling library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xkbcommon.org/download/libxkbcommon-1.11.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,7 +40,8 @@ wayland = ">= 1.22"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/libxkbcommon-*.tar.xz
+rm -rf libxkbcommon-*
+tar xf $ROOKPKG_SOURCES/libxkbcommon-*.tar.gz
 """
 
 configure = """
@@ -50,7 +51,7 @@ cd build
 meson setup ..                        \
       --prefix=/usr                   \
       --buildtype=release             \
-      -D enable-docs=false
+      -Denable-docs=false
 """
 
 build = """

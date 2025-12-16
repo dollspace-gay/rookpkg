@@ -35,6 +35,7 @@ xorg-libraries = ">= 7.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libvdpau-*
 tar xf $ROOKPKG_SOURCES/libvdpau-*.tar.bz2
 """
 
@@ -44,8 +45,7 @@ mkdir -p build
 cd build
 meson setup ..                \
       --prefix=/usr           \
-      --buildtype=release     \
-      -D documentation=false
+      --buildtype=release
 """
 
 build = """

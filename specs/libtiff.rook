@@ -21,6 +21,7 @@ source0 = { url = "https://download.osgeo.org/libtiff/tiff-4.7.0.tar.gz", sha256
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
+ninja = ">= 1.8"
 
 [depends]
 glibc = ">= 2.39"
@@ -37,6 +38,7 @@ libwebp = ">= 1.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf tiff-*
 tar xf $ROOKPKG_SOURCES/tiff-*.tar.gz
 """
 
@@ -44,24 +46,27 @@ configure = """
 cd $ROOKPKG_BUILD/tiff-*
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr  \
-      -DCMAKE_BUILD_TYPE=Release   \
+cmake -DCMAKE_INSTALL_PREFIX=/usr                      \
+      -DCMAKE_BUILD_TYPE=Release                       \
+      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libtiff-4.7.0 \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5               \
+      -G Ninja                                         \
       ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/tiff-*/build
-make -j$ROOKPKG_JOBS
+ninja -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/tiff-*/build
-make test || true
+ninja test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/tiff-*/build
-make DESTDIR=$ROOKPKG_DESTDIR install
+DESTDIR=$ROOKPKG_DESTDIR ninja install
 """
 
 [files]

@@ -36,6 +36,7 @@ audit = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf Linux-PAM-*
 tar xf $ROOKPKG_SOURCES/Linux-PAM-*.tar.xz
 """
 

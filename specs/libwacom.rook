@@ -1,6 +1,6 @@
 [package]
 name = "libwacom"
-version = "2.14.0"
+version = "2.17.0"
 release = 1
 summary = "Wacom tablet library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/linuxwacom/libwacom/releases/download/libwacom-2.14.0/libwacom-2.14.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/linuxwacom/libwacom/releases/download/libwacom-2.17.0/libwacom-2.17.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -38,6 +38,7 @@ libevdev = ">= 1.11"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libwacom-*
 tar xf $ROOKPKG_SOURCES/libwacom-*.tar.xz
 """
 

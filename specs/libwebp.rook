@@ -1,6 +1,6 @@
 [package]
 name = "libwebp"
-version = "1.5.0"
+version = "1.6.0"
 release = 1
 summary = "WebP image library"
 description = """
@@ -14,13 +14,13 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/webmproject/libwebp/archive/v1.5.0/libwebp-1.5.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/webmproject/libwebp/archive/v1.6.0/libwebp-1.6.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-cmake = ">= 3.20"
+make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -35,31 +35,33 @@ libtiff = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libwebp-*
 tar xf $ROOKPKG_SOURCES/libwebp-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libwebp-*
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr    \
-      -DCMAKE_BUILD_TYPE=Release     \
-      -DBUILD_SHARED_LIBS=ON         \
-      ..
+./configure --prefix=/usr           \
+            --enable-libwebpmux     \
+            --enable-libwebpdemux   \
+            --enable-libwebpdecoder \
+            --enable-libwebpextras  \
+            --enable-swap-16bit-csp \
+            --disable-static
 """
 
 build = """
-cd $ROOKPKG_BUILD/libwebp-*/build
+cd $ROOKPKG_BUILD/libwebp-*
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/libwebp-*/build
-make test || true
+cd $ROOKPKG_BUILD/libwebp-*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/libwebp-*/build
+cd $ROOKPKG_BUILD/libwebp-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
