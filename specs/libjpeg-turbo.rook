@@ -1,6 +1,6 @@
 [package]
 name = "libjpeg-turbo"
-version = "3.0.4"
+version = "3.0.1"
 release = 1
 summary = "JPEG image codec with SIMD acceleration"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.4.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libjpeg-turbo-*
 tar xf $ROOKPKG_SOURCES/libjpeg-turbo-*.tar.gz
 """
 
@@ -40,10 +41,13 @@ configure = """
 cd $ROOKPKG_BUILD/libjpeg-turbo-*
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr       \
-      -DCMAKE_BUILD_TYPE=Release        \
-      -DENABLE_STATIC=FALSE             \
-      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-3.0.4 \
+cmake -D CMAKE_INSTALL_PREFIX=/usr \
+      -D CMAKE_BUILD_TYPE=RELEASE \
+      -D ENABLE_STATIC=FALSE \
+      -D CMAKE_INSTALL_DEFAULT_LIBDIR=lib \
+      -D CMAKE_POLICY_VERSION_MINIMUM=3.5 \
+      -D CMAKE_SKIP_INSTALL_RPATH=ON \
+      -D CMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-3.0.1 \
       ..
 """
 
@@ -91,6 +95,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.0.1"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Corrected version to 3.0.1 per BLFS",
+    "Updated cmake options per BLFS"
+]
 
 [[changelog]]
 version = "3.0.4"

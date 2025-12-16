@@ -35,6 +35,7 @@ lcms2 = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libmng-*
 tar xf $ROOKPKG_SOURCES/libmng-*.tar.xz
 """
 
@@ -56,6 +57,8 @@ make check || true
 install = """
 cd $ROOKPKG_BUILD/libmng-*
 make DESTDIR=$ROOKPKG_DESTDIR install
+install -v -m755 -d        $ROOKPKG_DESTDIR/usr/share/doc/libmng-2.0.3
+install -v -m644 doc/*.txt $ROOKPKG_DESTDIR/usr/share/doc/libmng-2.0.3
 """
 
 [files]

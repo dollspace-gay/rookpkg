@@ -1,6 +1,6 @@
 [package]
 name = "libinput"
-version = "1.27.1"
+version = "1.29.0"
 release = 1
 summary = "Input device handling library"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.27.1/libinput-1.27.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.29.0/libinput-1.29.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,6 +40,7 @@ libwacom = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libinput-*
 tar xf $ROOKPKG_SOURCES/libinput-*.tar.gz
 """
 
@@ -47,11 +48,13 @@ configure = """
 cd $ROOKPKG_BUILD/libinput-*
 mkdir -p build
 cd build
-meson setup ..                     \
-      --prefix=/usr                \
-      --buildtype=release          \
-      -D documentation=false       \
-      -D tests=false
+meson setup ..                      \
+      --prefix=/usr                 \
+      --buildtype=release           \
+      -D debug-gui=false            \
+      -D tests=false                \
+      -D libwacom=false             \
+      -D udev-dir=/usr/lib/udev
 """
 
 build = """
@@ -90,6 +93,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.29.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.29.0 per BLFS",
+    "Updated meson options per BLFS"
+]
 
 [[changelog]]
 version = "1.27.1"

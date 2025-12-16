@@ -34,6 +34,7 @@ libunistring = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libidn2-*
 tar xf $ROOKPKG_SOURCES/libidn2-*.tar.gz
 """
 

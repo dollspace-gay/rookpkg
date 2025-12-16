@@ -32,9 +32,10 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libmad-*
 tar xf $ROOKPKG_SOURCES/libmad-*.tar.gz
 cd libmad-*
-patch -Np1 -i $ROOKPKG_SOURCES/libmad-0.15.1b-fixes-1.patch || true
+patch -Np1 -i $ROOKPKG_SOURCES/libmad-0.15.1b-fixes-1.patch
 """
 
 configure = """

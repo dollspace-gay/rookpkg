@@ -1,6 +1,6 @@
 [package]
 name = "libksba"
-version = "1.6.8"
+version = "1.6.7"
 release = 1
 summary = "X.509 and CMS library for GnuPG"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/libksba/libksba-1.6.8.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://gnupg.org/ftp/gcrypt/libksba/libksba-1.6.7.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ libgpg-error = ">= 1.46"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libksba-*
 tar xf $ROOKPKG_SOURCES/libksba-*.tar.bz2
 """
 
@@ -73,6 +74,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.6.7"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Corrected version to 1.6.7 per BLFS"
+]
 
 [[changelog]]
 version = "1.6.8"

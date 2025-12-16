@@ -72,7 +72,8 @@
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libaio-0'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libaom-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''libassuan-3'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -40\")",
-      "Bash(wsl -d RookeryOS -u root bash:*)"
+      "Bash(wsl -d RookeryOS -u root bash:*)",
+      "Bash(bd ready)"
     ]
   }
 }

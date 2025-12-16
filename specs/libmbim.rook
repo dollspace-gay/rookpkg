@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/libmbim/libmbim-1.32.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/libmbim/libmbim-1.32.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,18 +35,15 @@ glib = ">= 2.70"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/libmbim-*.tar.xz
+rm -rf libmbim-*
+tar xf $ROOKPKG_SOURCES/libmbim-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libmbim-*
 mkdir -p build
 cd build
-meson setup ..                 \
-      --prefix=/usr            \
-      --buildtype=release      \
-      -D introspection=false   \
-      -D bash_completion=false
+meson setup --prefix=/usr --buildtype=release -D bash_completion=false -D man=false ..
 """
 
 build = """
