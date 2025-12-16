@@ -43,7 +43,19 @@
       "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 180 -First 20 -ExpandProperty BaseName\")",
       "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 220 -First 20 -ExpandProperty BaseName\")",
       "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 240 -First 20 -ExpandProperty BaseName\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 40 ''build_aspell()'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 40 ''build_at_spi2_core()'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 40 'at.spi2.core' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -50\":*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 30 ''build_attr()'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 30 ''attr-2'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -50\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 10 ''attr-2.5.2'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -20\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 5 -A 20 ''autoconf-2'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -40\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 15 ''Autoconf-2'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -25\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 40 'build_avahi()' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh\":*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 50 ''avahi-0'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -60\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''Bash-5'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -50\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 25 ''Bc-[0-9]'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -35\")"
     ]
   }
 }

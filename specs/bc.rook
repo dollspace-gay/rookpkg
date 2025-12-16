@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf bc-*
 tar xf $ROOKPKG_SOURCES/bc-*.tar.xz
 """
 

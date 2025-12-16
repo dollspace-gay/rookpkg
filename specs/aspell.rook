@@ -33,7 +33,13 @@ ncurses = ">= 6.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf aspell-*
 tar xf $ROOKPKG_SOURCES/aspell-*.tar.gz
+cd aspell-*
+
+# BLFS: Fix for GCC-15
+sed -e 's/; i.*size)/, e = end(); i != e; ++i, ++size_)/' \
+    -i modules/speller/default/vector_hash-t.hpp
 """
 
 configure = """
@@ -56,11 +62,17 @@ cd $ROOKPKG_BUILD/aspell-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
 ln -svfn aspell-0.60 $ROOKPKG_DESTDIR/usr/lib/aspell
+
+# BLFS: Install ispell and spell wrapper scripts
+install -v -m 755 scripts/ispell $ROOKPKG_DESTDIR/usr/bin/
+install -v -m 755 scripts/spell $ROOKPKG_DESTDIR/usr/bin/
 """
 
 [files]
 "usr/bin/aspell" = { mode = 755 }
 "usr/bin/aspell-import" = { mode = 755 }
+"usr/bin/ispell" = { mode = 755 }
+"usr/bin/spell" = { mode = 755 }
 "usr/bin/precat" = { mode = 755 }
 "usr/bin/preunzip" = { mode = 755 }
 "usr/bin/prezip" = { mode = 755 }
@@ -85,6 +97,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.60.8.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Added BLFS fix for GCC-15 compatibility",
+    "Added ispell and spell wrapper scripts per BLFS"
+]
 
 [[changelog]]
 version = "0.60.8.1"

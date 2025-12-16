@@ -1,6 +1,6 @@
 [package]
 name = "alsa-utils"
-version = "1.2.13"
+version = "1.2.14"
 release = 1
 summary = "ALSA utilities"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.alsa-project.org/files/pub/utils/alsa-utils-1.2.13.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://www.alsa-project.org/files/pub/utils/alsa-utils-1.2.14.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,12 +37,18 @@ fftw = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf alsa-utils-*
 tar xf $ROOKPKG_SOURCES/alsa-utils-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/alsa-utils-*
-./configure --prefix=/usr --sysconfdir=/etc --disable-alsaconf
+./configure --prefix=/usr         \
+            --sysconfdir=/etc     \
+            --disable-alsaconf    \
+            --disable-bat         \
+            --disable-xmlto       \
+            --with-curses=ncursesw
 """
 
 build = """
@@ -94,6 +100,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.2.14"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.2.14 per BLFS",
+    "Updated configure options: --disable-bat --disable-xmlto --with-curses=ncursesw"
+]
 
 [[changelog]]
 version = "1.2.13"

@@ -1,6 +1,6 @@
 [package]
 name = "appstream"
-version = "1.0.3"
+version = "1.0.6"
 release = 1
 summary = "AppStream software metadata library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,6 +40,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf AppStream-*
 tar xf $ROOKPKG_SOURCES/AppStream-*.tar.xz
 """
 
@@ -50,8 +51,8 @@ cd build
 meson setup ..               \
       --prefix=/usr          \
       --buildtype=release    \
-      -D docs=false          \
-      -D apidocs=false
+      -D apidocs=false       \
+      -D stemming=false
 """
 
 build = """
@@ -87,6 +88,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.0.6 per BLFS",
+    "Updated meson options: -D apidocs=false -D stemming=false"
+]
 
 [[changelog]]
 version = "1.0.3"

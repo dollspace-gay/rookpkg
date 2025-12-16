@@ -34,6 +34,7 @@ readline = ">= 8.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf bash-*
 tar xf $ROOKPKG_SOURCES/bash-*.tar.gz
 """
 

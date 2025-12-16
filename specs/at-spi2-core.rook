@@ -1,6 +1,6 @@
 [package]
 name = "at-spi2-core"
-version = "2.54.0"
+version = "2.56.4"
 release = 1
 summary = "Assistive Technology Service Provider Interface"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/at-spi2-core/2.54/at-spi2-core-2.54.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/at-spi2-core/2.56/at-spi2-core-2.56.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,6 +40,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf at-spi2-core-*
 tar xf $ROOKPKG_SOURCES/at-spi2-core-*.tar.xz
 """
 
@@ -50,8 +51,7 @@ cd build
 meson setup ..                     \
       --prefix=/usr                \
       --buildtype=release          \
-      -D introspection=disabled    \
-      -D docs=false
+      -Dgtk2_atk_adaptor=false
 """
 
 build = """
@@ -94,6 +94,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.56.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.56.4 per BLFS",
+    "Updated meson option to -Dgtk2_atk_adaptor=false"
+]
 
 [[changelog]]
 version = "2.54.0"
