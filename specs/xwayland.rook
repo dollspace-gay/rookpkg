@@ -1,6 +1,6 @@
 [package]
 name = "xwayland"
-version = "24.1.4"
+version = "24.1.8"
 release = 1
 summary = "X server for Wayland compositors"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xwayland-24.1.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xwayland-24.1.8.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -48,7 +48,11 @@ libepoxy = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xwayland-*
 tar xf $ROOKPKG_SOURCES/xwayland-*.tar.xz
+cd xwayland-*
+# Remove man page to avoid conflict with xorg-server
+sed -i '/install_man/,$d' meson.build
 """
 
 configure = """
@@ -59,7 +63,8 @@ meson setup ..                      \
       --prefix=/usr                 \
       --buildtype=release           \
       -D xkb_dir=/usr/share/X11/xkb \
-      -D xkb_output_dir=/var/lib/xkb
+      -D xkb_output_dir=/var/lib/xkb \
+      -D secure-rpc=false
 """
 
 build = """
@@ -93,7 +98,7 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "24.1.4"
+version = "24.1.8"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

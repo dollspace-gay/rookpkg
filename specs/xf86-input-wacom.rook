@@ -1,6 +1,6 @@
 [package]
 name = "xf86-input-wacom"
-version = "1.2.2"
+version = "1.2.3"
 release = 1
 summary = "X.Org Wacom tablet input driver"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/linuxwacom/xf86-input-wacom/releases/download/xf86-input-wacom-1.2.2/xf86-input-wacom-1.2.2.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://github.com/linuxwacom/xf86-input-wacom/releases/download/xf86-input-wacom-1.2.3/xf86-input-wacom-1.2.3.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,13 +35,17 @@ libwacom = ">= 2.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xf86-input-wacom-*
 tar xf $ROOKPKG_SOURCES/xf86-input-wacom-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/xf86-input-wacom-*
-./configure --prefix=/usr                 \
-            --with-systemd-unit-dir=/usr/lib/systemd/system
+./configure --prefix=/usr                             \
+            --with-xorg-module-dir=/usr/lib/xorg/modules \
+            --with-sdkdir=/usr/include/xorg              \
+            --with-systemd-unit-dir=/usr/lib/systemd/system \
+            --with-udev-rules-dir=/usr/lib/udev/rules.d
 """
 
 build = """

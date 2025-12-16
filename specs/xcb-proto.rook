@@ -30,6 +30,7 @@ python = ">= 3.11"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xcb-proto-*
 tar xf $ROOKPKG_SOURCES/xcb-proto-*.tar.xz
 """
 

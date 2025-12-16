@@ -41,13 +41,13 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xdg-desktop-portal-*
 tar xf $ROOKPKG_SOURCES/xdg-desktop-portal-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/xdg-desktop-portal-*
-mkdir -p build
-cd build
+mkdir build && cd build
 meson setup ..               \
       --prefix=/usr          \
       --buildtype=release    \

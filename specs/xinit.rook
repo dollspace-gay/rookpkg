@@ -1,6 +1,6 @@
 [package]
 name = "xinit"
-version = "1.4.2"
+version = "1.4.4"
 release = 1
 summary = "X Window System initializer"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/app/xinit-1.4.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/app/xinit-1.4.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,6 +35,7 @@ mcookie = ">= 2.40"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xinit-*
 tar xf $ROOKPKG_SOURCES/xinit-*.tar.xz
 """
 
@@ -42,7 +43,7 @@ configure = """
 cd $ROOKPKG_BUILD/xinit-*
 ./configure --prefix=/usr                 \
             --sysconfdir=/etc             \
-            --with-xinitdir=/etc/X11/xinit
+            --with-xinitdir=/etc/X11/app-defaults
 """
 
 build = """

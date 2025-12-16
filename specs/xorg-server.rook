@@ -1,6 +1,6 @@
 [package]
 name = "xorg-server"
-version = "21.1.16"
+version = "21.1.18"
 release = 1
 summary = "X.Org X server"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xorg-server-21.1.16.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xorg-server-21.1.18.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -47,6 +47,7 @@ systemd = ">= 250"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xorg-server-*
 tar xf $ROOKPKG_SOURCES/xorg-server-*.tar.xz
 """
 
@@ -61,7 +62,8 @@ meson setup ..                           \
       -D glamor=true                     \
       -D xvfb=true                       \
       -D xkb_dir=/usr/share/X11/xkb      \
-      -D xkb_output_dir=/var/lib/xkb
+      -D xkb_output_dir=/var/lib/xkb     \
+      -D secure-rpc=false
 """
 
 build = """
@@ -107,7 +109,7 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "21.1.16"
+version = "21.1.18"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

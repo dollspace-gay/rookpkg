@@ -31,6 +31,7 @@ xcursorgen = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xcursor-themes-*
 tar xf $ROOKPKG_SOURCES/xcursor-themes-*.tar.xz
 """
 

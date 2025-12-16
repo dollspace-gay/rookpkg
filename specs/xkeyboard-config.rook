@@ -1,6 +1,6 @@
 [package]
 name = "xkeyboard-config"
-version = "2.43"
+version = "2.45"
 release = 1
 summary = "X Keyboard Extension configuration database"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/xkeyboard-config-2.43.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/xkeyboard-config-2.45.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,17 +33,14 @@ gettext = ">= 0.22"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xkeyboard-config-*
 tar xf $ROOKPKG_SOURCES/xkeyboard-config-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/xkeyboard-config-*
-mkdir -p build
-cd build
-meson setup ..              \
-      --prefix=/usr         \
-      --buildtype=release   \
-      -D xkb-base=/usr/share/X11/xkb
+mkdir build && cd build
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """

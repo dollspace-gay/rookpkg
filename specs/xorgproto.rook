@@ -30,6 +30,7 @@ ninja = ">= 1.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xorgproto-*
 tar xf $ROOKPKG_SOURCES/xorgproto-*.tar.xz
 """
 

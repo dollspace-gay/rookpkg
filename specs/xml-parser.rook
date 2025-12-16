@@ -35,6 +35,7 @@ expat = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf XML-Parser-*
 tar xf $ROOKPKG_SOURCES/XML-Parser-*.tar.gz
 """
 

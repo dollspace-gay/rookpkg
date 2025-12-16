@@ -1,6 +1,6 @@
 [package]
 name = "xf86-input-libinput"
-version = "1.4.0"
+version = "1.5.0"
 release = 1
 summary = "X.Org libinput-based input driver"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-1.4.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-1.5.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,6 +35,7 @@ libinput = ">= 1.26"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xf86-input-libinput-*
 tar xf $ROOKPKG_SOURCES/xf86-input-libinput-*.tar.xz
 """
 

@@ -30,6 +30,7 @@ make = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xbitmaps-*
 tar xf $ROOKPKG_SOURCES/xbitmaps-*.tar.xz
 """
 

@@ -15,9 +15,13 @@ arch = "noarch"
 [sources]
 source0 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-util-1.4.1.tar.xz", sha256 = "FIXME" }
 source1 = { url = "https://xorg.freedesktop.org/archive/individual/font/encodings-1.1.0.tar.xz", sha256 = "FIXME" }
-source2 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-alias-1.0.5.tar.xz", sha256 = "FIXME" }
-source3 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-misc-misc-1.1.3.tar.xz", sha256 = "FIXME" }
-source4 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-cursor-misc-1.0.4.tar.xz", sha256 = "FIXME" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-adobe-utopia-type1-1.0.5.tar.xz", sha256 = "FIXME" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-ttf-1.0.4.tar.xz", sha256 = "FIXME" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-type1-1.0.4.tar.xz", sha256 = "FIXME" }
+source5 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-ibm-type1-1.0.4.tar.xz", sha256 = "FIXME" }
+source6 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-misc-ethiopic-1.0.5.tar.xz", sha256 = "FIXME" }
+source7 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-xfree86-type1-1.0.5.tar.xz", sha256 = "FIXME" }
+source8 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-alias-1.0.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,14 +39,17 @@ mkfontscale = ">= 1.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+for pkg in font-util encodings font-adobe-utopia-type1 font-bh-ttf font-bh-type1 \
+           font-ibm-type1 font-misc-ethiopic font-xfree86-type1 font-alias; do
+    rm -rf ${pkg}-*
     tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.xz
 done
 """
 
 configure = """
 cd $ROOKPKG_BUILD
-for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+for pkg in font-util encodings font-adobe-utopia-type1 font-bh-ttf font-bh-type1 \
+           font-ibm-type1 font-misc-ethiopic font-xfree86-type1 font-alias; do
     cd ${pkg}-*
     ./configure --prefix=/usr
     cd ..
@@ -51,7 +58,8 @@ done
 
 build = """
 cd $ROOKPKG_BUILD
-for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+for pkg in font-util encodings font-adobe-utopia-type1 font-bh-ttf font-bh-type1 \
+           font-ibm-type1 font-misc-ethiopic font-xfree86-type1 font-alias; do
     cd ${pkg}-*
     make -j$ROOKPKG_JOBS
     cd ..
@@ -64,7 +72,8 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD
-for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+for pkg in font-util encodings font-adobe-utopia-type1 font-bh-ttf font-bh-type1 \
+           font-ibm-type1 font-misc-ethiopic font-xfree86-type1 font-alias; do
     cd ${pkg}-*
     make DESTDIR=$ROOKPKG_DESTDIR install
     cd ..

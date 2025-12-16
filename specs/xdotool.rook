@@ -36,6 +36,7 @@ libxkbcommon = ">= 1.7"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf xdotool-*
 tar xf $ROOKPKG_SOURCES/xdotool-*.tar.gz
 """
 

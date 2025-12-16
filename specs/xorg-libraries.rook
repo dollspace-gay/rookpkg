@@ -14,26 +14,39 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libX11-1.8.10.tar.xz", sha256 = "FIXME" }
-source1 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXext-1.3.6.tar.xz", sha256 = "FIXME" }
-source2 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrender-0.9.11.tar.xz", sha256 = "FIXME" }
-source3 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrandr-1.5.4.tar.xz", sha256 = "FIXME" }
-source4 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXi-1.8.2.tar.xz", sha256 = "FIXME" }
-source5 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcursor-1.2.3.tar.xz", sha256 = "FIXME" }
-source6 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcomposite-0.4.6.tar.xz", sha256 = "FIXME" }
-source7 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXdamage-1.1.6.tar.xz", sha256 = "FIXME" }
-source8 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXfixes-6.0.1.tar.xz", sha256 = "FIXME" }
-source9 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXft-2.3.8.tar.xz", sha256 = "FIXME" }
-source10 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXinerama-1.1.5.tar.xz", sha256 = "FIXME" }
-source11 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.5.tar.xz", sha256 = "FIXME" }
-source12 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXv-1.0.12.tar.xz", sha256 = "FIXME" }
-source13 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXxf86vm-1.1.5.tar.xz", sha256 = "FIXME" }
-source14 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libSM-1.2.4.tar.xz", sha256 = "FIXME" }
-source15 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libICE-1.1.2.tar.xz", sha256 = "FIXME" }
-source16 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXt-1.3.1.tar.xz", sha256 = "FIXME" }
-source17 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXmu-1.2.1.tar.xz", sha256 = "FIXME" }
-source18 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXpm-3.5.17.tar.xz", sha256 = "FIXME" }
-source19 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXaw-1.0.16.tar.xz", sha256 = "FIXME" }
+# BLFS: 32 X11 libraries in build order
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/xtrans-1.6.0.tar.gz", sha256 = "FIXME" }
+source1 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libX11-1.8.12.tar.xz", sha256 = "FIXME" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXext-1.3.6.tar.xz", sha256 = "FIXME" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libFS-1.0.10.tar.gz", sha256 = "FIXME" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libICE-1.1.2.tar.xz", sha256 = "FIXME" }
+source5 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libSM-1.2.6.tar.xz", sha256 = "FIXME" }
+source6 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXScrnSaver-1.2.4.tar.xz", sha256 = "FIXME" }
+source7 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXt-1.3.1.tar.xz", sha256 = "FIXME" }
+source8 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXmu-1.2.1.tar.xz", sha256 = "FIXME" }
+source9 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXpm-3.5.17.tar.xz", sha256 = "FIXME" }
+source10 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXaw-1.0.16.tar.xz", sha256 = "FIXME" }
+source11 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXfixes-6.0.1.tar.xz", sha256 = "FIXME" }
+source12 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcomposite-0.4.6.tar.xz", sha256 = "FIXME" }
+source13 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrender-0.9.12.tar.xz", sha256 = "FIXME" }
+source14 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcursor-1.2.3.tar.xz", sha256 = "FIXME" }
+source15 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXdamage-1.1.6.tar.xz", sha256 = "FIXME" }
+source16 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libfontenc-1.1.8.tar.xz", sha256 = "FIXME" }
+source17 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXfont2-2.0.7.tar.xz", sha256 = "FIXME" }
+source18 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXft-2.3.9.tar.xz", sha256 = "FIXME" }
+source19 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXi-1.8.2.tar.xz", sha256 = "FIXME" }
+source20 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXinerama-1.1.5.tar.xz", sha256 = "FIXME" }
+source21 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrandr-1.5.4.tar.xz", sha256 = "FIXME" }
+source22 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXres-1.2.2.tar.xz", sha256 = "FIXME" }
+source23 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.5.tar.xz", sha256 = "FIXME" }
+source24 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXv-1.0.13.tar.xz", sha256 = "FIXME" }
+source25 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXvMC-1.0.14.tar.xz", sha256 = "FIXME" }
+source26 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXxf86dga-1.1.6.tar.xz", sha256 = "FIXME" }
+source27 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXxf86vm-1.1.6.tar.xz", sha256 = "FIXME" }
+source28 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libpciaccess-0.18.1.tar.xz", sha256 = "FIXME" }
+source29 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libxkbfile-1.1.3.tar.xz", sha256 = "FIXME" }
+source30 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libxshmfence-1.3.3.tar.xz", sha256 = "FIXME" }
+source31 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXpresent-1.0.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -59,33 +72,64 @@ freetype = ">= 2.13"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-for pkg in libX11 libXext libXrender libXrandr libXi libXcursor \
-           libXcomposite libXdamage libXfixes libXft libXinerama \
-           libXtst libXv libXxf86vm libSM libICE libXt libXmu libXpm libXaw; do
-    tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.xz
+# Extract all 32 libraries (some use .tar.gz)
+for pkg in xtrans libX11 libXext libFS libICE libSM libXScrnSaver libXt libXmu \
+           libXpm libXaw libXfixes libXcomposite libXrender libXcursor libXdamage \
+           libfontenc libXfont2 libXft libXi libXinerama libXrandr libXres libXtst \
+           libXv libXvMC libXxf86dga libXxf86vm libpciaccess libxkbfile libxshmfence \
+           libXpresent; do
+    rm -rf ${pkg}-*
+    tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.* 2>/dev/null || true
 done
 """
 
 configure = """
 cd $ROOKPKG_BUILD
-for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
-           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
-           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+# Configure all 32 libraries in correct build order
+# Note: libpciaccess uses meson, handled separately in build step
+for pkg in xtrans libICE libSM libXt libX11 libXext libFS libXScrnSaver libXmu \
+           libXpm libXaw libXfixes libXcomposite libXrender libXcursor libXdamage \
+           libfontenc libXfont2 libXft libXi libXinerama libXrandr libXres libXtst \
+           libXv libXvMC libXxf86dga libXxf86vm libxkbfile libxshmfence libXpresent; do
     cd ${pkg}-*
-    ./configure --prefix=/usr --sysconfdir=/etc --disable-static
+    case $pkg in
+        libXt)
+            ./configure --prefix=/usr --sysconfdir=/etc --disable-static \
+                        --with-appdefaultdir=/etc/X11/app-defaults
+            ;;
+        libXfont2)
+            ./configure --prefix=/usr --sysconfdir=/etc --disable-static \
+                        --disable-devel-docs
+            ;;
+        libXpm)
+            ./configure --prefix=/usr --sysconfdir=/etc --disable-static \
+                        --disable-open-zfile
+            ;;
+        *)
+            ./configure --prefix=/usr --sysconfdir=/etc --disable-static
+            ;;
+    esac
     cd ..
 done
 """
 
 build = """
 cd $ROOKPKG_BUILD
-for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
-           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
-           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+# Build autotools-based libraries
+for pkg in xtrans libICE libSM libXt libX11 libXext libFS libXScrnSaver libXmu \
+           libXpm libXaw libXfixes libXcomposite libXrender libXcursor libXdamage \
+           libfontenc libXfont2 libXft libXi libXinerama libXrandr libXres libXtst \
+           libXv libXvMC libXxf86dga libXxf86vm libxkbfile libxshmfence libXpresent; do
     cd ${pkg}-*
     make -j$ROOKPKG_JOBS
     cd ..
 done
+# Build libpciaccess with meson
+cd libpciaccess-*
+mkdir -p build && cd build
+meson setup --prefix=/usr --buildtype=release ..
+ninja -j$ROOKPKG_JOBS
+cd ../..
 """
 
 check = """
@@ -94,13 +138,19 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD
-for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
-           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
-           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+# Install autotools-based libraries
+for pkg in xtrans libICE libSM libXt libX11 libXext libFS libXScrnSaver libXmu \
+           libXpm libXaw libXfixes libXcomposite libXrender libXcursor libXdamage \
+           libfontenc libXfont2 libXft libXi libXinerama libXrandr libXres libXtst \
+           libXv libXvMC libXxf86dga libXxf86vm libxkbfile libxshmfence libXpresent; do
     cd ${pkg}-*
     make DESTDIR=$ROOKPKG_DESTDIR install
     cd ..
 done
+# Install libpciaccess
+cd libpciaccess-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+cd ../..
 """
 
 [files]

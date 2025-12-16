@@ -1,6 +1,6 @@
 [package]
 name = "xf86-input-evdev"
-version = "2.10.6"
+version = "2.11.0"
 release = 1
 summary = "X.Org evdev input driver"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-2.10.6.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-2.11.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,7 +36,8 @@ mtdev = ">= 1.1"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/xf86-input-evdev-*.tar.bz2
+rm -rf xf86-input-evdev-*
+tar xf $ROOKPKG_SOURCES/xf86-input-evdev-*.tar.xz
 """
 
 configure = """
