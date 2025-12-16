@@ -1,6 +1,6 @@
 [package]
 name = "hatch-vcs"
-version = "0.4.0"
+version = "0.5.0"
 release = 1
 summary = "Hatch plugin for versioning with VCS tags"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/ofek/hatch-vcs/archive/v0.4.0/hatch-vcs-0.4.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://files.pythonhosted.org/packages/source/h/hatch_vcs/hatch_vcs-0.5.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,7 +34,8 @@ setuptools-scm = ">= 8.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/hatch-vcs-*.tar.gz
+rm -rf hatch_vcs-*
+tar xf $ROOKPKG_SOURCES/hatch_vcs-*.tar.gz
 """
 
 configure = """
@@ -42,8 +43,8 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/hatch-vcs-*
-pip3 wheel -w dist --no-build-isolation --no-deps .
+cd $ROOKPKG_BUILD/hatch_vcs-*
+pip3 wheel -w dist --no-build-isolation --no-deps --no-cache-dir $PWD
 """
 
 check = """
@@ -51,8 +52,8 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/hatch-vcs-*
-pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR hatch-vcs
+cd $ROOKPKG_BUILD/hatch_vcs-*
+pip3 install --no-index --find-links dist --no-user hatch_vcs
 """
 
 [files]
@@ -67,6 +68,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "0.5.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.5.0 per BLFS",
+    "Updated pip commands per BLFS"
+]
 
 [[changelog]]
 version = "0.4.0"

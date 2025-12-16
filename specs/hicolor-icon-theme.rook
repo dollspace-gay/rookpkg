@@ -19,7 +19,8 @@ source0 = { url = "https://icon-theme.freedesktop.org/releases/hicolor-icon-them
 [patches]
 
 [build_depends]
-make = ">= 4.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
 
 [depends]
 
@@ -30,17 +31,19 @@ make = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf hicolor-icon-theme-*
 tar xf $ROOKPKG_SOURCES/hicolor-icon-theme-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/hicolor-icon-theme-*
-./configure --prefix=/usr
+mkdir build && cd build
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """
-cd $ROOKPKG_BUILD/hicolor-icon-theme-*
-make -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/hicolor-icon-theme-*/build
+ninja
 """
 
 check = """
@@ -48,8 +51,8 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/hicolor-icon-theme-*
-make DESTDIR=$ROOKPKG_DESTDIR install
+cd $ROOKPKG_BUILD/hicolor-icon-theme-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
 """
 
 [files]
@@ -64,6 +67,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "0.18"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Changed to meson build system per BLFS"
+]
 
 [[changelog]]
 version = "0.18"

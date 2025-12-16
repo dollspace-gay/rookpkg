@@ -1,6 +1,6 @@
 [package]
 name = "gst-libav"
-version = "1.24.10"
+version = "1.26.5"
 release = 1
 summary = "GStreamer FFmpeg/Libav plugin"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.24.10.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,6 +36,7 @@ ffmpeg = ">= 7.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gst-libav-*
 tar xf $ROOKPKG_SOURCES/gst-libav-*.tar.xz
 """
 
@@ -43,10 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/gst-libav-*
 mkdir -p build
 cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D doc=disabled
+meson setup --prefix=/usr --buildtype=release --wrap-mode=nodownload ..
 """
 
 build = """
@@ -76,6 +74,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.26.5"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.26.5 per BLFS"
+]
 
 [[changelog]]
 version = "1.24.10"

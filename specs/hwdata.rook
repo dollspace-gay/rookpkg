@@ -30,6 +30,7 @@ make = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf hwdata-*
 tar xf $ROOKPKG_SOURCES/hwdata-*.tar.gz
 """
 

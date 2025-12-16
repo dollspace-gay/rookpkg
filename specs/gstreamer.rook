@@ -1,6 +1,6 @@
 [package]
 name = "gstreamer"
-version = "1.24.10"
+version = "1.26.5"
 release = 1
 summary = "Multimedia framework"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.24.10.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,6 +36,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gstreamer-*
 tar xf $ROOKPKG_SOURCES/gstreamer-*.tar.xz
 """
 
@@ -43,12 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/gstreamer-*
 mkdir -p build
 cd build
-meson setup ..                    \
-      --prefix=/usr               \
-      --buildtype=release         \
-      -D introspection=disabled   \
-      -D doc=disabled             \
-      -D gst_debug=false
+meson setup --prefix=/usr --buildtype=release -D gst_debug=false ..
 """
 
 build = """
@@ -94,6 +90,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.26.5"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.26.5 per BLFS",
+    "Simplified meson options"
+]
 
 [[changelog]]
 version = "1.24.10"

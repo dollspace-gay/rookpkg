@@ -1,6 +1,6 @@
 [package]
 name = "gst-plugins-good"
-version = "1.24.10"
+version = "1.26.5"
 release = 1
 summary = "GStreamer good plugins"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.24.10.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -42,6 +42,7 @@ libsoup = ">= 3.4"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gst-plugins-good-*
 tar xf $ROOKPKG_SOURCES/gst-plugins-good-*.tar.xz
 """
 
@@ -49,10 +50,7 @@ configure = """
 cd $ROOKPKG_BUILD/gst-plugins-good-*
 mkdir -p build
 cd build
-meson setup ..                  \
-      --prefix=/usr             \
-      --buildtype=release       \
-      -D doc=disabled
+meson setup --prefix=/usr --buildtype=release --wrap-mode=nodownload ..
 """
 
 build = """
@@ -90,6 +88,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.26.5"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.26.5 per BLFS",
+    "Simplified meson options"
+]
 
 [[changelog]]
 version = "1.24.10"

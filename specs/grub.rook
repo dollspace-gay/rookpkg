@@ -37,6 +37,7 @@ lvm2 = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf grub-*
 tar xf $ROOKPKG_SOURCES/grub-*.tar.xz
 cd grub-*
 

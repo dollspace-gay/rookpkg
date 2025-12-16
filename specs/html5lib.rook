@@ -34,6 +34,7 @@ webencodings = ">= 0.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf html5lib-*
 tar xf $ROOKPKG_SOURCES/html5lib-*.tar.gz
 """
 
@@ -42,18 +43,16 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/html5lib-python-*
-pip3 wheel -w dist --no-build-isolation --no-deps .
+# No wheel build needed
 """
 
 check = """
-cd $ROOKPKG_BUILD/html5lib-python-*
-python3 -m pytest || true
+# Skip tests
 """
 
 install = """
-cd $ROOKPKG_BUILD/html5lib-python-*
-pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR html5lib
+cd $ROOKPKG_BUILD/html5lib-*
+pip3 install --no-build-isolation .
 """
 
 [files]

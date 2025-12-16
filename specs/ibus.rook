@@ -1,6 +1,6 @@
 [package]
 name = "ibus"
-version = "1.5.30"
+version = "1.5.32"
 release = 1
 summary = "Intelligent Input Bus for Linux"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/ibus/ibus/releases/download/1.5.30/ibus-1.5.30.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/ibus/ibus/releases/download/1.5.32/ibus-1.5.32.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -41,18 +41,27 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf ibus-*
 tar xf $ROOKPKG_SOURCES/ibus-*.tar.gz
+cd ibus-*
+
+# Fix issue with deprecated schema entries
+sed -e 's@/desktop/ibus@/org/freedesktop/ibus@g' \
+    -i data/dconf/org.freedesktop.ibus.gschema.xml
+
+# Run autogen.sh per BLFS
+SAVE_DIST_FILES=1 NOCONFIGURE=1 ./autogen.sh
 """
 
 configure = """
 cd $ROOKPKG_BUILD/ibus-*
-./configure --prefix=/usr              \
-            --sysconfdir=/etc          \
-            --enable-gtk4              \
-            --enable-wayland           \
-            --disable-memconf          \
-            --disable-emoji-dict       \
-            --disable-unicode-dict
+PYTHON=python3                     \
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --disable-python2      \
+            --disable-appindicator \
+            --disable-gtk2         \
+            --disable-emoji-dict
 """
 
 build = """
@@ -97,6 +106,16 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig && glib-compile-schemas /usr/share/glib-2.0/schemas"
+
+[[changelog]]
+version = "1.5.32"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.5.32 per BLFS",
+    "Added sed fix and autogen.sh step from BLFS",
+    "Updated configure options per BLFS"
+]
 
 [[changelog]]
 version = "1.5.30"

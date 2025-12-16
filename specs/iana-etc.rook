@@ -29,6 +29,7 @@ source0 = { url = "https://github.com/Mic92/iana-etc/releases/download/20250807/
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf iana-etc-*
 tar xf $ROOKPKG_SOURCES/iana-etc-*.tar.gz
 """
 

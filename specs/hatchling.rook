@@ -1,6 +1,6 @@
 [package]
 name = "hatchling"
-version = "1.26.3"
+version = "1.27.0"
 release = 1
 summary = "Modern Python build backend"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/pypa/hatch/archive/hatchling-v1.26.3/hatchling-1.26.3.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://files.pythonhosted.org/packages/source/h/hatchling/hatchling-1.27.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,6 +35,7 @@ trove-classifiers = ">= 2024.10"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf hatchling-*
 tar xf $ROOKPKG_SOURCES/hatchling-*.tar.gz
 """
 
@@ -43,8 +44,8 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/hatch-hatchling-*/backend
-pip3 wheel -w dist --no-build-isolation --no-deps .
+cd $ROOKPKG_BUILD/hatchling-*
+pip3 wheel -w dist --no-build-isolation --no-deps --no-cache-dir $PWD
 """
 
 check = """
@@ -52,8 +53,8 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/hatch-hatchling-*/backend
-pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR hatchling
+cd $ROOKPKG_BUILD/hatchling-*
+pip3 install --no-index --find-links dist --no-user hatchling
 """
 
 [files]
@@ -68,6 +69,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.27.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.27.0 per BLFS",
+    "Updated pip commands per BLFS"
+]
 
 [[changelog]]
 version = "1.26.3"

@@ -1,6 +1,6 @@
 [package]
 name = "gtk4"
-version = "4.16.8"
+version = "4.18.6"
 release = 1
 summary = "GTK 4 widget toolkit"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/gtk/4.16/gtk-4.16.8.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/gtk/4.18/gtk-4.18.6.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -53,21 +53,25 @@ cups = ">= 2.4"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/gtk-*.tar.xz
+rm -rf gtk-4*
+tar xf $ROOKPKG_SOURCES/gtk-4*.tar.xz
+cd gtk-4*
+
+# Fix from BLFS
+sed -e '939 s/= { 0, }//' \
+    -e '940 a memset (&transform, 0, sizeof(GtkCssTransform));' \
+    -i gtk/gtkcsstransformvalue.c
 """
 
 configure = """
 cd $ROOKPKG_BUILD/gtk-4*
 mkdir -p build
 cd build
-meson setup ..                      \
-      --prefix=/usr                 \
-      --buildtype=release           \
-      -D introspection=disabled     \
-      -D documentation=false        \
-      -D man-pages=false            \
-      -D build-testsuite=false      \
-      -D broadway-backend=true
+meson setup --prefix=/usr --buildtype=release \
+            -Dbroadway-backend=true \
+            -Dintrospection=enabled \
+            -Dvulkan=enabled \
+            ..
 """
 
 build = """
@@ -121,6 +125,16 @@ post_upgrade = """
 /sbin/ldconfig
 glib-compile-schemas /usr/share/glib-2.0/schemas
 """
+
+[[changelog]]
+version = "4.18.6"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 4.18.6 per BLFS",
+    "Added sed fix from BLFS",
+    "Enabled introspection and Vulkan"
+]
 
 [[changelog]]
 version = "4.16.8"

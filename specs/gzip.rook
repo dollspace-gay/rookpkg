@@ -1,6 +1,6 @@
 [package]
 name = "gzip"
-version = "1.13"
+version = "1.14"
 release = 1
 summary = "GNU compression utility"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/gzip/gzip-1.13.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/gzip/gzip-1.14.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gzip-*
 tar xf $ROOKPKG_SOURCES/gzip-*.tar.xz
 """
 
@@ -79,6 +80,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.14"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.14 per LFS"
+]
 
 [[changelog]]
 version = "1.13"

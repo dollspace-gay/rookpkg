@@ -30,6 +30,7 @@ pixman = ">= 0.44"
 fontconfig = ">= 2.15"
 freetype = ">= 2.13"
 glib2 = ">= 2.70"
+pango = ">= 1.54"
 
 [optional_depends]
 libx11 = ">= 1.8"
@@ -48,9 +49,7 @@ configure = """
 cd $ROOKPKG_BUILD/cairo-*
 mkdir -p build
 cd build
-meson setup ..                \
-      --prefix=/usr           \
-      --buildtype=release
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """
@@ -90,6 +89,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.18.4"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Made pango a hard dependency"
+]
 
 [[changelog]]
 version = "1.18.4"
