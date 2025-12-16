@@ -1,0 +1,115 @@
+[package]
+name = "alsa-utils"
+version = "1.2.13"
+release = 1
+summary = "ALSA utilities"
+description = """
+The ALSA Utilities package contains various utilities that are useful
+for controlling sound cards. These include tools for testing, configuring,
+and mixing ALSA audio devices.
+"""
+homepage = "https://www.alsa-project.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.alsa-project.org/files/pub/utils/alsa-utils-1.2.13.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+alsa-lib = ">= 1.2.13"
+ncurses = ">= 6.4"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2.13"
+ncurses = ">= 6.4"
+
+[optional_depends]
+fftw = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/alsa-utils-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/alsa-utils-*
+./configure --prefix=/usr --sysconfdir=/etc --disable-alsaconf
+"""
+
+build = """
+cd $ROOKPKG_BUILD/alsa-utils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/alsa-utils-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/alsa-utils-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/aconnect" = { mode = 755 }
+"usr/bin/alsaloop" = { mode = 755 }
+"usr/bin/alsamixer" = { mode = 755 }
+"usr/bin/alsatplg" = { mode = 755 }
+"usr/bin/alsaucm" = { mode = 755 }
+"usr/bin/amidi" = { mode = 755 }
+"usr/bin/amixer" = { mode = 755 }
+"usr/bin/aplay" = { mode = 755 }
+"usr/bin/aplaymidi" = { mode = 755 }
+"usr/bin/arecord" = {}
+"usr/bin/arecordmidi" = { mode = 755 }
+"usr/bin/aseqdump" = { mode = 755 }
+"usr/bin/aseqnet" = { mode = 755 }
+"usr/bin/axfer" = { mode = 755 }
+"usr/bin/iecset" = { mode = 755 }
+"usr/bin/speaker-test" = { mode = 755 }
+"usr/sbin/alsactl" = { mode = 755 }
+"usr/share/alsa/" = {}
+"usr/share/man/man1/aplay.1" = {}
+"usr/share/man/man1/alsamixer.1" = {}
+"usr/share/man/man1/amixer.1" = {}
+"usr/lib/systemd/system/alsa-restore.service" = {}
+"usr/lib/systemd/system/alsa-state.service" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.2.13"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["alsa", "utils", "mixer", "audio", "sound"]
+categories = ["multimedia", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

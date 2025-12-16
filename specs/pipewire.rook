@@ -1,0 +1,138 @@
+[package]
+name = "pipewire"
+version = "1.2.7"
+release = 1
+summary = "Multimedia processing server"
+description = """
+PipeWire is a server for handling audio and video streams on Linux. It is
+designed to work for both traditional desktop environments and modern
+container-based desktops, providing low-latency audio and video processing.
+"""
+homepage = "https://pipewire.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.2.7/pipewire-1.2.7.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+dbus = ">= 1.12"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+dbus = ">= 1.12"
+systemd = ">= 250"
+
+[optional_depends]
+pulseaudio = ">= 17.0"
+bluez = ">= 5.70"
+libva = ">= 2.20"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pipewire-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pipewire-*
+mkdir -p build
+cd build
+meson setup ..                        \
+      --prefix=/usr                   \
+      --buildtype=release             \
+      -D docs=disabled                \
+      -D man=disabled                 \
+      -D bluez5=disabled              \
+      -D jack=disabled                \
+      -D session-managers=[]
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pipewire-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pipewire-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pipewire-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/pipewire" = { mode = 755 }
+"usr/bin/pipewire-pulse" = { mode = 755 }
+"usr/bin/pw-cat" = { mode = 755 }
+"usr/bin/pw-cli" = { mode = 755 }
+"usr/bin/pw-config" = { mode = 755 }
+"usr/bin/pw-dot" = { mode = 755 }
+"usr/bin/pw-dump" = { mode = 755 }
+"usr/bin/pw-link" = { mode = 755 }
+"usr/bin/pw-loopback" = { mode = 755 }
+"usr/bin/pw-metadata" = { mode = 755 }
+"usr/bin/pw-mididump" = { mode = 755 }
+"usr/bin/pw-mon" = { mode = 755 }
+"usr/bin/pw-profiler" = { mode = 755 }
+"usr/bin/pw-top" = { mode = 755 }
+"usr/bin/spa-acp-tool" = { mode = 755 }
+"usr/bin/spa-inspect" = { mode = 755 }
+"usr/bin/spa-monitor" = { mode = 755 }
+"usr/bin/spa-resample" = { mode = 755 }
+"usr/lib/libpipewire-0.3.so" = { mode = 755 }
+"usr/lib/pipewire-0.3/" = {}
+"usr/lib/spa-0.2/" = {}
+"usr/include/pipewire-0.3/" = {}
+"usr/include/spa-0.2/" = {}
+"usr/lib/pkgconfig/libpipewire-0.3.pc" = {}
+"usr/lib/pkgconfig/libspa-0.2.pc" = {}
+"usr/share/pipewire/" = {}
+"usr/lib/systemd/user/pipewire.service" = {}
+"usr/lib/systemd/user/pipewire.socket" = {}
+"usr/lib/systemd/user/pipewire-pulse.service" = {}
+"usr/lib/systemd/user/pipewire-pulse.socket" = {}
+
+[config_files]
+"etc/pipewire/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.2.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pipewire", "audio", "video", "multimedia", "server"]
+categories = ["multimedia", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

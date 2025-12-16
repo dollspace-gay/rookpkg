@@ -1,0 +1,114 @@
+[package]
+name = "libsndfile"
+version = "1.2.2"
+release = 1
+summary = "C library for reading and writing sound files"
+description = """
+libsndfile is a C library for reading and writing files containing sampled
+audio data. It supports many audio file formats including WAV, AIFF, FLAC,
+and Ogg/Vorbis.
+"""
+homepage = "https://libsndfile.github.io/libsndfile/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+flac = ">= 1.4"
+libogg = ">= 1.3"
+libvorbis = ">= 1.3"
+opus = ">= 1.4"
+
+[depends]
+glibc = ">= 2.39"
+flac = ">= 1.4"
+libogg = ">= 1.3"
+libvorbis = ">= 1.3"
+opus = ">= 1.4"
+
+[optional_depends]
+alsa-lib = ">= 1.2"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libsndfile-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libsndfile-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr       \
+      -DCMAKE_BUILD_TYPE=Release        \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libsndfile-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libsndfile-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libsndfile-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/sndfile-cmp" = { mode = 755 }
+"usr/bin/sndfile-concat" = { mode = 755 }
+"usr/bin/sndfile-convert" = { mode = 755 }
+"usr/bin/sndfile-deinterleave" = { mode = 755 }
+"usr/bin/sndfile-info" = { mode = 755 }
+"usr/bin/sndfile-interleave" = { mode = 755 }
+"usr/bin/sndfile-metadata-get" = { mode = 755 }
+"usr/bin/sndfile-metadata-set" = { mode = 755 }
+"usr/bin/sndfile-play" = { mode = 755 }
+"usr/bin/sndfile-salvage" = { mode = 755 }
+"usr/lib/libsndfile.so" = { mode = 755 }
+"usr/include/sndfile.h" = {}
+"usr/include/sndfile.hh" = {}
+"usr/lib/pkgconfig/sndfile.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.2.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libsndfile", "audio", "sound", "wav", "flac"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

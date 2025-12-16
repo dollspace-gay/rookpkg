@@ -1,0 +1,93 @@
+[package]
+name = "alsa-plugins"
+version = "1.2.12"
+release = 1
+summary = "ALSA plugins"
+description = """
+The ALSA Plugins package contains plugins for various audio libraries
+and sound servers. It provides additional functionality for the ALSA
+sound system.
+"""
+homepage = "https://www.alsa-project.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1.2.12.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+alsa-lib = ">= 1.2.13"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2.13"
+
+[optional_depends]
+pulseaudio = ">= 17.0"
+pipewire = ">= 1.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/alsa-plugins-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/alsa-plugins-*
+./configure --prefix=/usr --sysconfdir=/etc
+"""
+
+build = """
+cd $ROOKPKG_BUILD/alsa-plugins-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/alsa-plugins-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/alsa-plugins-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/alsa-lib/" = {}
+"usr/share/alsa/alsa.conf.d/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.2.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["alsa", "plugins", "audio", "sound"]
+categories = ["multimedia", "plugins"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

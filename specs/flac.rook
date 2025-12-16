@@ -1,0 +1,104 @@
+[package]
+name = "flac"
+version = "1.5.0"
+release = 1
+summary = "Free Lossless Audio Codec"
+description = """
+FLAC is an open-source lossless audio codec. It is capable of compressing
+audio files to about 50-60% of the original size while preserving the
+original quality.
+"""
+homepage = "https://xiph.org/flac/"
+license = "BSD-3-Clause AND GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.xiph.org/releases/flac/flac-1.5.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+libogg = ">= 1.3"
+
+[depends]
+glibc = ">= 2.39"
+libogg = ">= 1.3"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/flac-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/flac-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr       \
+      -DCMAKE_BUILD_TYPE=Release        \
+      -DBUILD_SHARED_LIBS=ON            \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/flac-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/flac-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/flac-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/flac" = { mode = 755 }
+"usr/bin/metaflac" = { mode = 755 }
+"usr/lib/libFLAC.so" = { mode = 755 }
+"usr/lib/libFLAC++.so" = { mode = 755 }
+"usr/include/FLAC/" = {}
+"usr/include/FLAC++/" = {}
+"usr/lib/pkgconfig/flac.pc" = {}
+"usr/lib/pkgconfig/flac++.pc" = {}
+"usr/share/man/man1/flac.1" = {}
+"usr/share/man/man1/metaflac.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["flac", "lossless", "audio", "codec"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,92 @@
+[package]
+name = "libsamplerate"
+version = "0.2.2"
+release = 1
+summary = "Sample rate converter library"
+description = """
+libsamplerate (Secret Rabbit Code) is a sample rate converter for audio.
+It is capable of arbitrary and time-varying conversions and supports
+multiple conversion algorithms.
+"""
+homepage = "https://libsndfile.github.io/libsamplerate/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libsndfile/libsamplerate/releases/download/0.2.2/libsamplerate-0.2.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+fftw = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libsamplerate-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libsamplerate-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libsamplerate-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libsamplerate-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libsamplerate-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/sndfile-resample" = { mode = 755 }
+"usr/lib/libsamplerate.so" = { mode = 755 }
+"usr/include/samplerate.h" = {}
+"usr/lib/pkgconfig/samplerate.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.2.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libsamplerate", "resampling", "audio", "converter"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

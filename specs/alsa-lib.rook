@@ -1,0 +1,93 @@
+[package]
+name = "alsa-lib"
+version = "1.2.13"
+release = 1
+summary = "ALSA sound library"
+description = """
+The ALSA library provides the user space API for applications to access
+ALSA sound functionality in the Linux kernel.
+"""
+homepage = "https://www.alsa-project.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.13.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/alsa-lib-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/alsa-lib-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/alsa-lib-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/alsa-lib-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/alsa-lib-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libasound.so" = { mode = 755 }
+"usr/lib/libatopology.so" = { mode = 755 }
+"usr/include/alsa/" = {}
+"usr/lib/pkgconfig/alsa.pc" = {}
+"usr/lib/pkgconfig/alsa-topology.pc" = {}
+"usr/share/alsa/" = {}
+
+[config_files]
+"etc/asound.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.2.13"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["alsa", "audio", "sound", "library"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

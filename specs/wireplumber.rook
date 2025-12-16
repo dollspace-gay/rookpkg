@@ -1,0 +1,113 @@
+[package]
+name = "wireplumber"
+version = "0.5.7"
+release = 1
+summary = "Session manager for PipeWire"
+description = """
+WirePlumber is a modular session/policy manager for PipeWire. It provides
+a flexible way to configure audio and video routing, and handles various
+use cases like desktop audio, professional audio, and embedded systems.
+"""
+homepage = "https://pipewire.pages.freedesktop.org/wireplumber/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/pipewire/wireplumber/-/archive/0.5.7/wireplumber-0.5.7.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+pipewire = ">= 1.0"
+glib2 = ">= 2.70"
+lua = ">= 5.4"
+
+[depends]
+glibc = ">= 2.39"
+pipewire = ">= 1.0"
+glib2 = ">= 2.70"
+lua = ">= 5.4"
+systemd = ">= 250"
+
+[optional_depends]
+dbus = ">= 1.12"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/wireplumber-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/wireplumber-*
+mkdir -p build
+cd build
+meson setup ..                   \
+      --prefix=/usr              \
+      --buildtype=release        \
+      -D doc=disabled            \
+      -D introspection=disabled  \
+      -D system-lua=true
+"""
+
+build = """
+cd $ROOKPKG_BUILD/wireplumber-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/wireplumber-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/wireplumber-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/wireplumber" = { mode = 755 }
+"usr/bin/wpctl" = { mode = 755 }
+"usr/bin/wpexec" = { mode = 755 }
+"usr/lib/libwireplumber-0.5.so" = { mode = 755 }
+"usr/lib/wireplumber-0.5/" = {}
+"usr/include/wireplumber-0.5/" = {}
+"usr/lib/pkgconfig/wireplumber-0.5.pc" = {}
+"usr/share/wireplumber/" = {}
+"usr/lib/systemd/user/wireplumber.service" = {}
+
+[config_files]
+"etc/wireplumber/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.5.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["wireplumber", "pipewire", "session", "audio", "policy"]
+categories = ["multimedia", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

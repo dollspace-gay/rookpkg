@@ -1,0 +1,109 @@
+[package]
+name = "libmad"
+version = "0.15.1b"
+release = 1
+summary = "MPEG audio decoder library"
+description = """
+libmad is a high-quality MPEG audio decoder. It currently supports MPEG-1
+and MPEG-2 Layer I, II, and III (i.e. MP3) audio formats.
+"""
+homepage = "https://www.underbit.com/products/mad/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/mad/libmad-0.15.1b.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/libmad-0.15.1b-fixes-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libmad-*.tar.gz
+cd libmad-*
+patch -Np1 -i $ROOKPKG_SOURCES/libmad-0.15.1b-fixes-1.patch || true
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libmad-*
+sed "s@AM_CONFIG_HEADER@AC_CONFIG_HEADERS@g" -i configure.ac
+touch NEWS AUTHORS ChangeLog
+autoreconf -fi
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libmad-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libmad-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libmad-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/mad.pc << "EOF"
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: mad
+Description: MPEG audio decoder
+Requires:
+Version: 0.15.1b
+Libs: -L${libdir} -lmad
+Cflags: -I${includedir}
+EOF
+"""
+
+[files]
+"usr/lib/libmad.so" = { mode = 755 }
+"usr/include/mad.h" = {}
+"usr/lib/pkgconfig/mad.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.15.1b"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Fixes patch applied"
+]
+
+[metadata]
+keywords = ["libmad", "mp3", "mpeg", "audio", "decoder"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

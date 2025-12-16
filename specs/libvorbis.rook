@@ -1,0 +1,96 @@
+[package]
+name = "libvorbis"
+version = "1.3.7"
+release = 1
+summary = "Vorbis audio codec library"
+description = """
+libvorbis is a fully open, non-proprietary, patent-and-royalty-free,
+general-purpose compressed audio format for high quality audio and music.
+"""
+homepage = "https://www.xiph.org/vorbis/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libogg = ">= 1.3"
+
+[depends]
+glibc = ">= 2.39"
+libogg = ">= 1.3"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libvorbis-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libvorbis-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libvorbis-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libvorbis-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libvorbis-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libvorbis.so" = { mode = 755 }
+"usr/lib/libvorbisenc.so" = { mode = 755 }
+"usr/lib/libvorbisfile.so" = { mode = 755 }
+"usr/include/vorbis/" = {}
+"usr/lib/pkgconfig/vorbis.pc" = {}
+"usr/lib/pkgconfig/vorbisenc.pc" = {}
+"usr/lib/pkgconfig/vorbisfile.pc" = {}
+"usr/share/doc/libvorbis-1.3.7/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.3.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libvorbis", "vorbis", "ogg", "audio", "codec"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

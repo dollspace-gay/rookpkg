@@ -1,0 +1,95 @@
+[package]
+name = "opus"
+version = "1.5.2"
+release = 1
+summary = "Opus interactive audio codec"
+description = """
+Opus is a totally open, royalty-free, highly versatile audio codec. It is
+unmatched for interactive speech and music transmission over the Internet,
+and is also intended for storage and streaming applications.
+"""
+homepage = "https://opus-codec.org/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.xiph.org/releases/opus/opus-1.5.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/opus-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/opus-*
+mkdir -p build
+cd build
+meson setup ..            \
+      --prefix=/usr       \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/opus-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/opus-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/opus-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libopus.so" = { mode = 755 }
+"usr/include/opus/" = {}
+"usr/lib/pkgconfig/opus.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["opus", "audio", "codec", "speech", "music"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

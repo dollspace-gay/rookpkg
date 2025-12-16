@@ -1,0 +1,91 @@
+[package]
+name = "libogg"
+version = "1.3.5"
+release = 1
+summary = "Ogg bitstream library"
+description = """
+libogg is the bitstream and framing library for the Ogg project. It handles
+audio, video, and text streams and provides a generic implementation of the
+Ogg multimedia container format.
+"""
+homepage = "https://www.xiph.org/ogg/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libogg-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libogg-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libogg-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libogg-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libogg-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libogg.so" = { mode = 755 }
+"usr/include/ogg/" = {}
+"usr/lib/pkgconfig/ogg.pc" = {}
+"usr/share/doc/libogg/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.3.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libogg", "ogg", "audio", "container"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,107 @@
+[package]
+name = "libcanberra"
+version = "0.30"
+release = 1
+summary = "XDG sound theme library"
+description = """
+libcanberra is an implementation of the XDG Sound Theme and Name
+Specifications, for generating event sounds on free desktops. It is used
+by GNOME and other desktop environments for notification sounds.
+"""
+homepage = "http://0pointer.de/lennart/projects/libcanberra/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://0pointer.de/lennart/projects/libcanberra/libcanberra-0.30.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+gtk3 = ">= 3.24"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+libvorbis = ">= 1.3"
+sound-theme-freedesktop = ">= 0.8"
+
+[optional_depends]
+pulseaudio = ">= 17.0"
+gtk3 = ">= 3.24"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libcanberra-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libcanberra-*
+./configure --prefix=/usr --disable-oss
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libcanberra-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libcanberra-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libcanberra-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/canberra-boot" = { mode = 755 }
+"usr/bin/canberra-gtk-play" = { mode = 755 }
+"usr/lib/libcanberra.so" = { mode = 755 }
+"usr/lib/libcanberra-gtk3.so" = { mode = 755 }
+"usr/lib/libcanberra-0.30/" = {}
+"usr/lib/gtk-3.0/modules/libcanberra-gtk3-module.so" = { mode = 755 }
+"usr/include/canberra.h" = {}
+"usr/include/canberra-gtk.h" = {}
+"usr/lib/pkgconfig/libcanberra.pc" = {}
+"usr/lib/pkgconfig/libcanberra-gtk3.pc" = {}
+"usr/share/gdm/autostart/LoginWindow/libcanberra-ready-sound.desktop" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.30"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libcanberra", "sound", "theme", "notification"]
+categories = ["libraries", "multimedia"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

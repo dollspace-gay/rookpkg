@@ -1,0 +1,129 @@
+[package]
+name = "pulseaudio"
+version = "17.0"
+release = 1
+summary = "Sound server for Linux"
+description = """
+PulseAudio is a sound server for POSIX operating systems. It is intended
+as a drop-in replacement for the Enlightened Sound Daemon (esound or esd),
+with better latency, mixing/re-sampling quality and overall architecture.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/PulseAudio/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/pulseaudio/releases/pulseaudio-17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+libsndfile = ">= 1.2"
+
+[depends]
+glibc = ">= 2.39"
+alsa-lib = ">= 1.2"
+glib2 = ">= 2.70"
+libsndfile = ">= 1.2"
+dbus = ">= 1.12"
+systemd = ">= 250"
+speexdsp = ">= 1.2"
+
+[optional_depends]
+bluez = ">= 5.70"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pulseaudio-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pulseaudio-*
+mkdir -p build
+cd build
+meson setup ..                        \
+      --prefix=/usr                   \
+      --buildtype=release             \
+      -D database=gdbm                \
+      -D doxygen=false                \
+      -D bluez5=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pulseaudio-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pulseaudio-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pulseaudio-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/pacat" = { mode = 755 }
+"usr/bin/pacmd" = { mode = 755 }
+"usr/bin/pactl" = { mode = 755 }
+"usr/bin/padsp" = { mode = 755 }
+"usr/bin/pamon" = {}
+"usr/bin/paplay" = {}
+"usr/bin/parec" = {}
+"usr/bin/parecord" = {}
+"usr/bin/pasuspender" = { mode = 755 }
+"usr/bin/pax11publish" = { mode = 755 }
+"usr/bin/pulseaudio" = { mode = 755 }
+"usr/lib/libpulse.so" = { mode = 755 }
+"usr/lib/libpulse-mainloop-glib.so" = { mode = 755 }
+"usr/lib/libpulse-simple.so" = { mode = 755 }
+"usr/lib/pulseaudio/" = {}
+"usr/lib/pulse-17.0/" = {}
+"usr/include/pulse/" = {}
+"usr/lib/pkgconfig/libpulse.pc" = {}
+"usr/lib/pkgconfig/libpulse-mainloop-glib.pc" = {}
+"usr/lib/pkgconfig/libpulse-simple.pc" = {}
+"usr/share/pulseaudio/" = {}
+"usr/lib/systemd/user/pulseaudio.service" = {}
+"usr/lib/systemd/user/pulseaudio.socket" = {}
+
+[config_files]
+"etc/pulse/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "17.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pulseaudio", "audio", "sound", "server"]
+categories = ["multimedia", "services"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
