@@ -41,6 +41,7 @@ fn require_root(operation: &str, dry_run: bool) -> Result<()> {
 
 mod autoremove;
 mod build;
+mod buildall;
 mod check;
 mod delta;
 mod depends;
@@ -152,6 +153,25 @@ pub enum Commands {
         /// Generate delta from a previous package version
         #[arg(long)]
         delta_from: Option<std::path::PathBuf>,
+    },
+
+    /// Build all .rook spec files in a directory
+    Buildall {
+        /// Directory containing .rook spec files
+        #[arg(default_value = "specs")]
+        spec_dir: std::path::PathBuf,
+
+        /// Output directory for built packages
+        #[arg(short, long)]
+        output: Option<std::path::PathBuf>,
+
+        /// Continue building remaining packages on failure
+        #[arg(long, name = "continue")]
+        continue_on_error: bool,
+
+        /// Number of parallel builds (not yet implemented)
+        #[arg(short, long)]
+        jobs: Option<usize>,
     },
 
     /// Generate a new signing key
@@ -466,6 +486,9 @@ pub fn execute(command: Commands, config: &Config) -> Result<()> {
         }
         Commands::Build { spec, install, output, batch, index, delta_from } => {
             build::run(&spec, install, output.as_deref(), batch, index, delta_from.as_deref(), config)
+        }
+        Commands::Buildall { spec_dir, output, continue_on_error, jobs } => {
+            buildall::run(&spec_dir, output.as_deref(), continue_on_error, jobs, config)
         }
         Commands::Keygen { name, email, output } => {
             keygen::run(&name, &email, output.as_deref(), config)
