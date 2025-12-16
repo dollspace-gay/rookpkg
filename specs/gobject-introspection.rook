@@ -1,0 +1,106 @@
+[package]
+name = "gobject-introspection"
+version = "1.82.0"
+release = 1
+summary = "Introspection system for GObject-based libraries"
+description = """
+GObject Introspection is a middleware layer between C libraries (using GObject)
+and language bindings. The C library can be scanned at compile time and generate
+metadata files, in addition to the actual native C library.
+"""
+homepage = "https://wiki.gnome.org/Projects/GObjectIntrospection"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/gobject-introspection/1.82/gobject-introspection-1.82.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+python = ">= 3.11"
+glib2 = ">= 2.80"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+python = ">= 3.11"
+libffi = ">= 3.4"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/gobject-introspection-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gobject-introspection-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gobject-introspection-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gobject-introspection-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gobject-introspection-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/g-ir-compiler" = { mode = 755 }
+"usr/bin/g-ir-generate" = { mode = 755 }
+"usr/bin/g-ir-scanner" = { mode = 755 }
+"usr/lib/libgirepository-1.0.so" = { mode = 755 }
+"usr/include/gobject-introspection-1.0/" = {}
+"usr/lib/pkgconfig/gobject-introspection-1.0.pc" = {}
+"usr/lib/girepository-1.0/" = {}
+"usr/share/gir-1.0/" = {}
+"usr/share/gobject-introspection-1.0/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.82.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gobject-introspection", "gir", "gnome", "bindings"]
+categories = ["libraries", "gnome", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

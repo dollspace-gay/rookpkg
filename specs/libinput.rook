@@ -1,0 +1,111 @@
+[package]
+name = "libinput"
+version = "1.27.1"
+release = 1
+summary = "Input device handling library"
+description = """
+libinput is a library that handles input devices for display servers and
+other applications that need to directly deal with input devices. It provides
+device detection, device handling, input device event processing and
+abstraction.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/libinput/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/libinput/libinput/-/archive/1.27.1/libinput-1.27.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+libevdev = ">= 1.11"
+mtdev = ">= 1.1"
+
+[depends]
+glibc = ">= 2.39"
+libevdev = ">= 1.11"
+mtdev = ">= 1.1"
+systemd = ">= 250"
+libwacom = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libinput-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libinput-*
+mkdir -p build
+cd build
+meson setup ..                     \
+      --prefix=/usr                \
+      --buildtype=release          \
+      -D documentation=false       \
+      -D tests=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libinput-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libinput-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libinput-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/libinput" = { mode = 755 }
+"usr/lib/libinput.so" = { mode = 755 }
+"usr/include/libinput.h" = {}
+"usr/lib/pkgconfig/libinput.pc" = {}
+"usr/lib/udev/rules.d/" = {}
+"usr/lib/udev/libinput-device-group" = { mode = 755 }
+"usr/lib/udev/libinput-fuzz-extract" = { mode = 755 }
+"usr/lib/udev/libinput-fuzz-to-zero" = { mode = 755 }
+"usr/share/libinput/" = {}
+"usr/share/man/man1/libinput.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.27.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libinput", "input", "mouse", "keyboard", "touchpad"]
+categories = ["libraries", "input"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

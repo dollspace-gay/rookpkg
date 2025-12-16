@@ -1,0 +1,127 @@
+[package]
+name = "xorg-server"
+version = "21.1.16"
+release = 1
+summary = "X.Org X server"
+description = """
+The Xorg X Server is the free and open-source implementation of the X Window
+System display server. It provides the basic framework for a GUI environment.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xorg-server-21.1.16.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+xorg-libraries = ">= 7.8"
+xorgproto = ">= 2024.1"
+libdrm = ">= 2.4"
+mesa = ">= 24.0"
+pixman = ">= 0.44"
+xkeyboard-config = ">= 2.40"
+libxkbfile = ">= 1.1"
+
+[depends]
+glibc = ">= 2.39"
+xorg-libraries = ">= 7.8"
+libdrm = ">= 2.4"
+mesa = ">= 24.0"
+pixman = ">= 0.44"
+xkeyboard-config = ">= 2.40"
+libxkbfile = ">= 1.1"
+libepoxy = ">= 1.5"
+
+[optional_depends]
+systemd = ">= 250"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xorg-server-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xorg-server-*
+mkdir -p build
+cd build
+meson setup ..                           \
+      --prefix=/usr                      \
+      --buildtype=release                \
+      --localstatedir=/var               \
+      -D glamor=true                     \
+      -D xvfb=true                       \
+      -D xkb_dir=/usr/share/X11/xkb      \
+      -D xkb_output_dir=/var/lib/xkb
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xorg-server-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xorg-server-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xorg-server-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+mkdir -p $ROOKPKG_DESTDIR/etc/X11/xorg.conf.d
+"""
+
+[files]
+"usr/bin/X" = { mode = 4755 }
+"usr/bin/Xorg" = { mode = 4755 }
+"usr/bin/Xvfb" = { mode = 755 }
+"usr/bin/cvt" = { mode = 755 }
+"usr/bin/gtf" = { mode = 755 }
+"usr/lib/xorg/modules/" = {}
+"usr/lib/xorg/protocol.txt" = {}
+"usr/share/X11/xorg.conf.d/" = {}
+"usr/share/man/man1/Xorg.1" = {}
+"usr/share/man/man1/Xvfb.1" = {}
+"usr/share/man/man5/xorg.conf.5" = {}
+"usr/lib/pkgconfig/xorg-server.pc" = {}
+"var/lib/xkb/" = {}
+
+[config_files]
+"etc/X11/xorg.conf.d/" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "21.1.16"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Glamor acceleration enabled"
+]
+
+[metadata]
+keywords = ["xorg-server", "x11", "xserver", "display"]
+categories = ["x11", "servers"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

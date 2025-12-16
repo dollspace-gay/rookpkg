@@ -1,0 +1,129 @@
+[package]
+name = "docbook-xsl"
+version = "1.79.2"
+release = 1
+summary = "DocBook XSL stylesheets"
+description = """
+The DocBook XSL Stylesheets package contains XSL stylesheets. These are
+useful for performing transformations on XML DocBook files to produce
+HTML, PDF, and other formats.
+"""
+homepage = "https://github.com/docbook/xslt10-stylesheets"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/docbook/xslt10-stylesheets/releases/download/release%2F1.79.2/docbook-xsl-nons-1.79.2.tar.bz2", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/docbook-xsl-nons-1.79.2-stack_fix-1.patch", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+libxml2 = ">= 2.12"
+
+[depends]
+libxml2 = ">= 2.12"
+docbook-xml = ">= 4.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/docbook-xsl-nons-*.tar.bz2
+cd docbook-xsl-nons-*
+patch -Np1 -i $ROOKPKG_SOURCES/docbook-xsl-nons-1.79.2-stack_fix-1.patch || true
+"""
+
+configure = """
+# No configuration needed
+"""
+
+build = """
+# No build needed
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/docbook-xsl-nons-*
+install -v -d -m755 $ROOKPKG_DESTDIR/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2
+
+cp -v -R VERSION assembly common eclipse epub epub3 extensions fo \
+         highlighting html htmlhelp images javahelp lib manpages params \
+         profiling roundtrip slides template tests tools webhelp website \
+         xhtml xhtml-1_1 xhtml5 \
+    $ROOKPKG_DESTDIR/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2
+
+ln -s VERSION $ROOKPKG_DESTDIR/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2/VERSION.xsl
+
+install -v -m644 -D README \
+    $ROOKPKG_DESTDIR/usr/share/doc/docbook-xsl-nons-1.79.2/README.txt
+install -v -m644    RELEASE-NOTES* NEWS* \
+    $ROOKPKG_DESTDIR/usr/share/doc/docbook-xsl-nons-1.79.2 || true
+"""
+
+[files]
+"usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2/" = {}
+"usr/share/doc/docbook-xsl-nons-1.79.2/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+if [ ! -d /etc/xml ]; then install -v -m755 -d /etc/xml; fi
+if [ ! -f /etc/xml/catalog ]; then
+    xmlcatalog --noout --create /etc/xml/catalog
+fi
+
+xmlcatalog --noout --add "rewriteSystem" \
+    "https://cdn.docbook.org/release/xsl-nons/1.79.2" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "rewriteURI" \
+    "https://cdn.docbook.org/release/xsl-nons/1.79.2" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "rewriteSystem" \
+    "https://cdn.docbook.org/release/xsl-nons/current" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+
+xmlcatalog --noout --add "rewriteURI" \
+    "https://cdn.docbook.org/release/xsl-nons/current" \
+    "/usr/share/xml/docbook/xsl-stylesheets-nons-1.79.2" \
+    /etc/xml/catalog
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.79.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Stack fix patch applied",
+    "XML catalog registration"
+]
+
+[metadata]
+keywords = ["docbook", "xsl", "xslt", "stylesheets", "documentation"]
+categories = ["documentation", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

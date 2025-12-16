@@ -1,0 +1,96 @@
+[package]
+name = "libmng"
+version = "2.0.3"
+release = 1
+summary = "MNG image library"
+description = """
+libmng is the MNG (Multiple-image Network Graphics) reference library.
+MNG is a PNG-like Animation format which is gaining acceptance in web
+development.
+"""
+homepage = "https://sourceforge.net/projects/libmng/"
+license = "zlib"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/libmng/libmng-2.0.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+libjpeg-turbo = ">= 3.0"
+lcms2 = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libmng-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libmng-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libmng-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libmng-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libmng-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libmng.so" = { mode = 755 }
+"usr/include/libmng.h" = {}
+"usr/include/libmng_conf.h" = {}
+"usr/include/libmng_types.h" = {}
+"usr/lib/pkgconfig/libmng.pc" = {}
+"usr/share/man/man5/mng.5" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.0.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libmng", "mng", "animation", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

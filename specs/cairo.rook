@@ -1,0 +1,112 @@
+[package]
+name = "cairo"
+version = "1.18.2"
+release = 1
+summary = "2D graphics library"
+description = """
+Cairo is a 2D graphics library with support for multiple output devices.
+It is designed to produce consistent output on all output media while
+taking advantage of display hardware acceleration when available.
+"""
+homepage = "https://www.cairographics.org/"
+license = "LGPL-2.1-or-later OR MPL-1.1"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+libpng = ">= 1.6"
+pixman = ">= 0.44"
+fontconfig = ">= 2.15"
+freetype = ">= 2.13"
+glib2 = ">= 2.70"
+
+[optional_depends]
+libx11 = ">= 1.8"
+libxcb = ">= 1.15"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/cairo-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/cairo-*
+mkdir -p build
+cd build
+meson setup ..                \
+      --prefix=/usr           \
+      --buildtype=release     \
+      -D spectre=disabled     \
+      -D tee=enabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/cairo-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/cairo-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/cairo-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/cairo-trace" = { mode = 755 }
+"usr/lib/libcairo.so" = { mode = 755 }
+"usr/lib/libcairo-gobject.so" = { mode = 755 }
+"usr/lib/libcairo-script-interpreter.so" = { mode = 755 }
+"usr/include/cairo/" = {}
+"usr/lib/pkgconfig/cairo.pc" = {}
+"usr/lib/pkgconfig/cairo-fc.pc" = {}
+"usr/lib/pkgconfig/cairo-ft.pc" = {}
+"usr/lib/pkgconfig/cairo-gobject.pc" = {}
+"usr/lib/pkgconfig/cairo-png.pc" = {}
+"usr/lib/pkgconfig/cairo-script.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.18.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["cairo", "2d", "graphics", "rendering"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

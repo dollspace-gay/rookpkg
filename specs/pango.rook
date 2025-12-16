@@ -1,0 +1,110 @@
+[package]
+name = "pango"
+version = "1.54.0"
+release = 1
+summary = "Text layout and rendering library"
+description = """
+Pango is a library for laying out and rendering of text, with an emphasis
+on internationalization. It can be used anywhere that text layout is needed,
+and forms the core of text and font handling for GTK.
+"""
+homepage = "https://pango.gnome.org/"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/pango/1.54/pango-1.54.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+harfbuzz = ">= 7.0"
+fontconfig = ">= 2.15"
+freetype = ">= 2.13"
+cairo = ">= 1.18"
+fribidi = ">= 1.0"
+
+[optional_depends]
+gobject-introspection = ">= 1.80"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pango-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pango-*
+mkdir -p build
+cd build
+meson setup ..                   \
+      --prefix=/usr              \
+      --buildtype=release        \
+      -D introspection=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pango-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pango-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pango-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/pango-list" = { mode = 755 }
+"usr/bin/pango-segmentation" = { mode = 755 }
+"usr/bin/pango-view" = { mode = 755 }
+"usr/lib/libpango-1.0.so" = { mode = 755 }
+"usr/lib/libpangocairo-1.0.so" = { mode = 755 }
+"usr/lib/libpangoft2-1.0.so" = { mode = 755 }
+"usr/include/pango-1.0/" = {}
+"usr/lib/pkgconfig/pango.pc" = {}
+"usr/lib/pkgconfig/pangocairo.pc" = {}
+"usr/lib/pkgconfig/pangoft2.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.54.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pango", "text", "layout", "rendering", "gnome"]
+categories = ["libraries", "fonts", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

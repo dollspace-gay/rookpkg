@@ -1,0 +1,102 @@
+[package]
+name = "libxmlb"
+version = "0.3.21"
+release = 1
+summary = "Library to help create and query binary XML blobs"
+description = """
+libxmlb is a library to help create and query binary XML blobs. It takes
+XML source, and converts it to a structured binary representation with
+a deduplicated string table, making it ideal for read-only queries.
+"""
+homepage = "https://github.com/hughsie/libxmlb"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/hughsie/libxmlb/releases/download/0.3.21/libxmlb-0.3.21.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib = ">= 2.70"
+
+[depends]
+glibc = ">= 2.39"
+glib = ">= 2.70"
+xz = ">= 5.0"
+zstd = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxmlb-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxmlb-*
+mkdir -p build
+cd build
+meson setup ..                 \
+      --prefix=/usr            \
+      --buildtype=release      \
+      -D introspection=false   \
+      -D stemmer=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxmlb-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxmlb-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxmlb-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/xb-tool" = { mode = 755 }
+"usr/lib/libxmlb.so" = { mode = 755 }
+"usr/include/libxmlb-2/" = {}
+"usr/lib/pkgconfig/xmlb.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.3.21"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxmlb", "xml", "binary", "blob"]
+categories = ["libraries", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

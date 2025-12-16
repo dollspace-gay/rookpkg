@@ -1,0 +1,100 @@
+[package]
+name = "libxslt"
+version = "1.1.42"
+release = 1
+summary = "XSLT processing library"
+description = """
+libxslt is the XSLT C library developed for the GNOME project. XSLT is an
+XML language to define transformation for XML. It provides a fast and
+complete implementation of XSLT 1.0.
+"""
+homepage = "https://gitlab.gnome.org/GNOME/libxslt"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.42.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxml2 = ">= 2.12"
+
+[depends]
+glibc = ">= 2.39"
+libxml2 = ">= 2.12"
+
+[optional_depends]
+libgcrypt = ">= 1.10"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxslt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxslt-*
+./configure --prefix=/usr           \
+            --disable-static        \
+            --without-python
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxslt-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxslt-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxslt-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/xsltproc" = { mode = 755 }
+"usr/lib/libxslt.so" = { mode = 755 }
+"usr/lib/libexslt.so" = { mode = 755 }
+"usr/include/libxslt/" = {}
+"usr/include/libexslt/" = {}
+"usr/lib/pkgconfig/libxslt.pc" = {}
+"usr/lib/pkgconfig/libexslt.pc" = {}
+"usr/share/man/man1/xsltproc.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.1.42"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxslt", "xslt", "xml", "transformation"]
+categories = ["libraries", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

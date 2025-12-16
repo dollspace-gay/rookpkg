@@ -1,0 +1,116 @@
+[package]
+name = "harfbuzz"
+version = "10.1.0"
+release = 1
+summary = "OpenType text shaping engine"
+description = """
+HarfBuzz is an OpenType text shaping engine. It is used to accurately render
+complex scripts such as Arabic, Hebrew, and other scripts requiring advanced
+text shaping algorithms.
+"""
+homepage = "https://harfbuzz.github.io/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/harfbuzz/harfbuzz/releases/download/10.1.0/harfbuzz-10.1.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib2 = ">= 2.70"
+freetype = ">= 2.13"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+freetype = ">= 2.13"
+graphite2 = ">= 1.3"
+icu = ">= 74.0"
+
+[optional_depends]
+cairo = ">= 1.18"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/harfbuzz-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/harfbuzz-*
+mkdir -p build
+cd build
+meson setup ..                   \
+      --prefix=/usr              \
+      --buildtype=release        \
+      -D graphite2=enabled       \
+      -D icu=enabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/harfbuzz-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/harfbuzz-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/harfbuzz-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/hb-info" = { mode = 755 }
+"usr/bin/hb-ot-shape-closure" = { mode = 755 }
+"usr/bin/hb-shape" = { mode = 755 }
+"usr/bin/hb-subset" = { mode = 755 }
+"usr/bin/hb-view" = { mode = 755 }
+"usr/lib/libharfbuzz.so" = { mode = 755 }
+"usr/lib/libharfbuzz-gobject.so" = { mode = 755 }
+"usr/lib/libharfbuzz-icu.so" = { mode = 755 }
+"usr/lib/libharfbuzz-subset.so" = { mode = 755 }
+"usr/include/harfbuzz/" = {}
+"usr/lib/pkgconfig/harfbuzz.pc" = {}
+"usr/lib/pkgconfig/harfbuzz-gobject.pc" = {}
+"usr/lib/pkgconfig/harfbuzz-icu.pc" = {}
+"usr/lib/pkgconfig/harfbuzz-subset.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "10.1.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Graphite2 and ICU support enabled"
+]
+
+[metadata]
+keywords = ["harfbuzz", "font", "shaping", "opentype"]
+categories = ["libraries", "fonts"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

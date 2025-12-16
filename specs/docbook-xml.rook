@@ -1,0 +1,113 @@
+[package]
+name = "docbook-xml"
+version = "4.5"
+release = 1
+summary = "DocBook XML DTDs"
+description = """
+The DocBook XML DTD-4.5 package contains document type definitions for
+verification of XML data files against the DocBook rule set. These are
+useful for structuring books and software documentation to a standard
+allowing you to utilize transformations already written for that standard.
+"""
+homepage = "https://www.docbook.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://www.docbook.org/xml/4.5/docbook-xml-4.5.zip", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+unzip = ">= 6.0"
+libxml2 = ">= 2.12"
+
+[depends]
+libxml2 = ">= 2.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+unzip $ROOKPKG_SOURCES/docbook-xml-4.5.zip -d docbook-xml-4.5
+"""
+
+configure = """
+# No configuration needed
+"""
+
+build = """
+# No build needed
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/docbook-xml-4.5
+install -v -d -m755 $ROOKPKG_DESTDIR/usr/share/xml/docbook/xml-dtd-4.5
+install -v -d -m755 $ROOKPKG_DESTDIR/etc/xml
+cp -v -af docbook.cat *.dtd ent/ *.mod $ROOKPKG_DESTDIR/usr/share/xml/docbook/xml-dtd-4.5
+"""
+
+[files]
+"usr/share/xml/docbook/xml-dtd-4.5/" = {}
+
+[config_files]
+"etc/xml/" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+if [ ! -e /etc/xml/docbook ]; then
+    xmlcatalog --noout --create /etc/xml/docbook
+fi
+xmlcatalog --noout --add "public" \
+    "-//OASIS//DTD DocBook XML V4.5//EN" \
+    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" \
+    /etc/xml/docbook
+xmlcatalog --noout --add "system" \
+    "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" \
+    "file:///usr/share/xml/docbook/xml-dtd-4.5/docbookx.dtd" \
+    /etc/xml/docbook
+if [ ! -e /etc/xml/catalog ]; then
+    xmlcatalog --noout --create /etc/xml/catalog
+fi
+xmlcatalog --noout --add "delegatePublic" \
+    "-//OASIS//DTD DocBook XML" \
+    "file:///etc/xml/docbook" \
+    /etc/xml/catalog
+xmlcatalog --noout --add "delegateSystem" \
+    "http://www.oasis-open.org/docbook/" \
+    "file:///etc/xml/docbook" \
+    /etc/xml/catalog
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "4.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "XML catalog registration"
+]
+
+[metadata]
+keywords = ["docbook", "xml", "dtd", "documentation"]
+categories = ["documentation", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

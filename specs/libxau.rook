@@ -1,0 +1,91 @@
+[package]
+name = "libxau"
+version = "1.0.12"
+release = 1
+summary = "X11 authorization library"
+description = """
+libXau provides the X11 Authorization Protocol library. This provides
+functionality needed by clients to authorize their access to the X server.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXau-1.0.12.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorgproto = ">= 2024.1"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libXau-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libXau-*
+./configure --prefix=/usr --sysconfdir=/etc --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libXau-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libXau-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libXau-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libXau.so" = { mode = 755 }
+"usr/include/X11/Xauth.h" = {}
+"usr/lib/pkgconfig/xau.pc" = {}
+"usr/share/man/man3/Xau.3" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.12"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxau", "x11", "authorization"]
+categories = ["x11", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

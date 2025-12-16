@@ -1,0 +1,94 @@
+[package]
+name = "mtdev"
+version = "1.1.7"
+release = 1
+summary = "Multitouch protocol translation library"
+description = """
+mtdev is a library that transforms all variants of kernel multitouch (MT)
+events to the slotted type B protocol. The events put into mtdev may be
+from any MT device, specifically type A without contact tracking, type A
+with contact tracking, or type B with contact tracking.
+"""
+homepage = "https://bitmath.org/code/mtdev/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://bitmath.org/code/mtdev/mtdev-1.1.7.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/mtdev-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/mtdev-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/mtdev-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/mtdev-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/mtdev-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/mtdev-test" = { mode = 755 }
+"usr/lib/libmtdev.so" = { mode = 755 }
+"usr/include/mtdev.h" = {}
+"usr/include/mtdev-plumbing.h" = {}
+"usr/include/mtdev-mapping.h" = {}
+"usr/lib/pkgconfig/mtdev.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.1.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["mtdev", "multitouch", "touchscreen", "input"]
+categories = ["libraries", "input"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

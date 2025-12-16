@@ -1,0 +1,112 @@
+[package]
+name = "libwebp"
+version = "1.5.0"
+release = 1
+summary = "WebP image library"
+description = """
+libwebp is a library for encoding and decoding images in WebP format.
+WebP is a modern image format that provides superior lossless and lossy
+compression for images on the web.
+"""
+homepage = "https://developers.google.com/speed/webp/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/webmproject/libwebp/archive/v1.5.0/libwebp-1.5.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+
+[depends]
+glibc = ">= 2.39"
+libpng = ">= 1.6"
+libjpeg-turbo = ">= 3.0"
+libtiff = ">= 4.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libwebp-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libwebp-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr    \
+      -DCMAKE_BUILD_TYPE=Release     \
+      -DBUILD_SHARED_LIBS=ON         \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libwebp-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libwebp-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libwebp-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/cwebp" = { mode = 755 }
+"usr/bin/dwebp" = { mode = 755 }
+"usr/bin/gif2webp" = { mode = 755 }
+"usr/bin/img2webp" = { mode = 755 }
+"usr/bin/webpinfo" = { mode = 755 }
+"usr/bin/webpmux" = { mode = 755 }
+"usr/lib/libwebp.so" = { mode = 755 }
+"usr/lib/libwebpdecoder.so" = { mode = 755 }
+"usr/lib/libwebpdemux.so" = { mode = 755 }
+"usr/lib/libwebpmux.so" = { mode = 755 }
+"usr/lib/libsharpyuv.so" = { mode = 755 }
+"usr/include/webp/" = {}
+"usr/lib/pkgconfig/libwebp.pc" = {}
+"usr/lib/pkgconfig/libwebpdecoder.pc" = {}
+"usr/lib/pkgconfig/libwebpdemux.pc" = {}
+"usr/lib/pkgconfig/libwebpmux.pc" = {}
+"usr/lib/pkgconfig/libsharpyuv.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libwebp", "webp", "image", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

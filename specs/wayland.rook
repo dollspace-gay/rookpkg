@@ -1,0 +1,110 @@
+[package]
+name = "wayland"
+version = "1.23.1"
+release = 1
+summary = "Wayland display server protocol"
+description = """
+Wayland is a protocol for a compositor to talk to its clients as well as a
+C library implementation of that protocol. The compositor can be a standalone
+display server running on Linux kernel modesetting and evdev input devices.
+"""
+homepage = "https://wayland.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/wayland/wayland/-/releases/1.23.1/downloads/wayland-1.23.1.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+libxml2 = ">= 2.12"
+
+[depends]
+glibc = ">= 2.39"
+libffi = ">= 3.4"
+expat = ">= 2.5"
+libxml2 = ">= 2.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/wayland-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/wayland-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release   \
+      -D documentation=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/wayland-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/wayland-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/wayland-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/wayland-scanner" = { mode = 755 }
+"usr/lib/libwayland-client.so" = { mode = 755 }
+"usr/lib/libwayland-cursor.so" = { mode = 755 }
+"usr/lib/libwayland-egl.so" = { mode = 755 }
+"usr/lib/libwayland-server.so" = { mode = 755 }
+"usr/include/wayland-*.h" = {}
+"usr/lib/pkgconfig/wayland-client.pc" = {}
+"usr/lib/pkgconfig/wayland-cursor.pc" = {}
+"usr/lib/pkgconfig/wayland-egl.pc" = {}
+"usr/lib/pkgconfig/wayland-server.pc" = {}
+"usr/lib/pkgconfig/wayland-scanner.pc" = {}
+"usr/share/wayland/" = {}
+"usr/share/aclocal/wayland-scanner.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.23.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["wayland", "display", "protocol", "compositor"]
+categories = ["wayland", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

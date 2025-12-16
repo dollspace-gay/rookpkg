@@ -1,0 +1,90 @@
+[package]
+name = "libxdmcp"
+version = "1.1.5"
+release = 1
+summary = "X Display Manager Control Protocol library"
+description = """
+libXdmcp provides the X Display Manager Control Protocol library. This is
+needed to support remote X sessions via XDMCP.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXdmcp-1.1.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorgproto = ">= 2024.1"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libXdmcp-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libXdmcp-*
+./configure --prefix=/usr --sysconfdir=/etc --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libXdmcp-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libXdmcp-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libXdmcp-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libXdmcp.so" = { mode = 755 }
+"usr/include/X11/Xdmcp.h" = {}
+"usr/lib/pkgconfig/xdmcp.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.1.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxdmcp", "x11", "xdmcp", "display-manager"]
+categories = ["x11", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

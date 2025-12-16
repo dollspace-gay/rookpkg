@@ -1,0 +1,123 @@
+[package]
+name = "libxcb"
+version = "1.17.0"
+release = 1
+summary = "X11 C Bindings library"
+description = """
+libxcb provides an interface to the X Window System protocol, designed to
+replace the traditional Xlib interface. It is smaller, simpler, and provides
+direct access to the protocol without hiding the protocol in a complex API.
+"""
+homepage = "https://xcb.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libxcb-1.17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xcb-proto = ">= 1.17"
+libxau = ">= 1.0"
+libxdmcp = ">= 1.1"
+python = ">= 3.11"
+
+[depends]
+glibc = ">= 2.39"
+libxau = ">= 1.0"
+libxdmcp = ">= 1.1"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxcb-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxcb-*
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --disable-static     \
+            --without-doxygen
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxcb-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxcb-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxcb-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libxcb.so" = { mode = 755 }
+"usr/lib/libxcb-composite.so" = { mode = 755 }
+"usr/lib/libxcb-damage.so" = { mode = 755 }
+"usr/lib/libxcb-dpms.so" = { mode = 755 }
+"usr/lib/libxcb-dri2.so" = { mode = 755 }
+"usr/lib/libxcb-dri3.so" = { mode = 755 }
+"usr/lib/libxcb-glx.so" = { mode = 755 }
+"usr/lib/libxcb-present.so" = { mode = 755 }
+"usr/lib/libxcb-randr.so" = { mode = 755 }
+"usr/lib/libxcb-record.so" = { mode = 755 }
+"usr/lib/libxcb-render.so" = { mode = 755 }
+"usr/lib/libxcb-res.so" = { mode = 755 }
+"usr/lib/libxcb-screensaver.so" = { mode = 755 }
+"usr/lib/libxcb-shape.so" = { mode = 755 }
+"usr/lib/libxcb-shm.so" = { mode = 755 }
+"usr/lib/libxcb-sync.so" = { mode = 755 }
+"usr/lib/libxcb-xf86dri.so" = { mode = 755 }
+"usr/lib/libxcb-xfixes.so" = { mode = 755 }
+"usr/lib/libxcb-xinerama.so" = { mode = 755 }
+"usr/lib/libxcb-xinput.so" = { mode = 755 }
+"usr/lib/libxcb-xkb.so" = { mode = 755 }
+"usr/lib/libxcb-xtest.so" = { mode = 755 }
+"usr/lib/libxcb-xv.so" = { mode = 755 }
+"usr/lib/libxcb-xvmc.so" = { mode = 755 }
+"usr/include/xcb/" = {}
+"usr/lib/pkgconfig/xcb.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.17.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxcb", "xcb", "x11", "protocol"]
+categories = ["x11", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

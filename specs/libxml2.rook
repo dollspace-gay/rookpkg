@@ -1,0 +1,106 @@
+[package]
+name = "libxml2"
+version = "2.13.5"
+release = 1
+summary = "XML parsing library"
+description = """
+libxml2 is the XML C parser and toolkit developed for the Gnome project.
+It is free software available under the MIT License. It provides support
+for reading, modifying and writing XML and HTML files.
+"""
+homepage = "https://gitlab.gnome.org/GNOME/libxml2"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+python = ">= 3.11"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+xz = ">= 5.0"
+icu = ">= 74.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxml2-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxml2-*
+./configure --prefix=/usr           \
+            --sysconfdir=/etc       \
+            --disable-static        \
+            --with-history          \
+            --with-icu              \
+            PYTHON=/usr/bin/python3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxml2-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxml2-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxml2-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/xmlcatalog" = { mode = 755 }
+"usr/bin/xmllint" = { mode = 755 }
+"usr/lib/libxml2.so" = { mode = 755 }
+"usr/include/libxml2/" = {}
+"usr/lib/pkgconfig/libxml-2.0.pc" = {}
+"usr/lib/cmake/libxml2/" = {}
+"usr/share/doc/libxml2/" = {}
+"usr/share/man/man1/xmlcatalog.1" = {}
+"usr/share/man/man1/xmllint.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.13.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "ICU support enabled"
+]
+
+[metadata]
+keywords = ["libxml2", "xml", "parser", "gnome"]
+categories = ["libraries", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

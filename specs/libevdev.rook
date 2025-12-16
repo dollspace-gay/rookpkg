@@ -1,0 +1,100 @@
+[package]
+name = "libevdev"
+version = "1.13.3"
+release = 1
+summary = "Wrapper library for evdev devices"
+description = """
+libevdev is a wrapper library for evdev devices. It moves the common tasks
+when dealing with evdev devices into a library and provides a library
+interface to the callers.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/libevdev/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://freedesktop.org/software/libevdev/libevdev-1.13.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libevdev-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libevdev-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D documentation=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libevdev-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libevdev-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libevdev-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/libevdev-tweak-device" = { mode = 755 }
+"usr/bin/mouse-dpi-tool" = { mode = 755 }
+"usr/bin/touchpad-edge-detector" = { mode = 755 }
+"usr/lib/libevdev.so" = { mode = 755 }
+"usr/include/libevdev-1.0/" = {}
+"usr/lib/pkgconfig/libevdev.pc" = {}
+"usr/share/man/man3/libevdev.3" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.13.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libevdev", "evdev", "input", "kernel"]
+categories = ["libraries", "input"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

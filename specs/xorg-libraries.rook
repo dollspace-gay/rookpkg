@@ -1,0 +1,158 @@
+[package]
+name = "xorg-libraries"
+version = "7.8"
+release = 1
+summary = "X.Org client libraries"
+description = """
+Meta-package for the core X.Org client libraries including libX11, libXext,
+libXrender, libXrandr, libXi, libXcursor, libXcomposite, libXdamage, and
+other essential X11 libraries.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libX11-1.8.10.tar.xz", sha256 = "FIXME" }
+source1 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXext-1.3.6.tar.xz", sha256 = "FIXME" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrender-0.9.11.tar.xz", sha256 = "FIXME" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXrandr-1.5.4.tar.xz", sha256 = "FIXME" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXi-1.8.2.tar.xz", sha256 = "FIXME" }
+source5 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcursor-1.2.3.tar.xz", sha256 = "FIXME" }
+source6 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXcomposite-0.4.6.tar.xz", sha256 = "FIXME" }
+source7 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXdamage-1.1.6.tar.xz", sha256 = "FIXME" }
+source8 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXfixes-6.0.1.tar.xz", sha256 = "FIXME" }
+source9 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXft-2.3.8.tar.xz", sha256 = "FIXME" }
+source10 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXinerama-1.1.5.tar.xz", sha256 = "FIXME" }
+source11 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXtst-1.2.5.tar.xz", sha256 = "FIXME" }
+source12 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXv-1.0.12.tar.xz", sha256 = "FIXME" }
+source13 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXxf86vm-1.1.5.tar.xz", sha256 = "FIXME" }
+source14 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libSM-1.2.4.tar.xz", sha256 = "FIXME" }
+source15 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libICE-1.1.2.tar.xz", sha256 = "FIXME" }
+source16 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXt-1.3.1.tar.xz", sha256 = "FIXME" }
+source17 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXmu-1.2.1.tar.xz", sha256 = "FIXME" }
+source18 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXpm-3.5.17.tar.xz", sha256 = "FIXME" }
+source19 = { url = "https://xorg.freedesktop.org/archive/individual/lib/libXaw-1.0.16.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorgproto = ">= 2024.1"
+libxcb = ">= 1.17"
+fontconfig = ">= 2.15"
+freetype = ">= 2.13"
+util-macros = ">= 1.20"
+
+[depends]
+glibc = ">= 2.39"
+libxcb = ">= 1.17"
+fontconfig = ">= 2.15"
+freetype = ">= 2.13"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+for pkg in libX11 libXext libXrender libXrandr libXi libXcursor \
+           libXcomposite libXdamage libXfixes libXft libXinerama \
+           libXtst libXv libXxf86vm libSM libICE libXt libXmu libXpm libXaw; do
+    tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.xz
+done
+"""
+
+configure = """
+cd $ROOKPKG_BUILD
+for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
+           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
+           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+    cd ${pkg}-*
+    ./configure --prefix=/usr --sysconfdir=/etc --disable-static
+    cd ..
+done
+"""
+
+build = """
+cd $ROOKPKG_BUILD
+for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
+           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
+           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+    cd ${pkg}-*
+    make -j$ROOKPKG_JOBS
+    cd ..
+done
+"""
+
+check = """
+# Tests require running X server
+"""
+
+install = """
+cd $ROOKPKG_BUILD
+for pkg in libICE libSM libXt libX11 libXext libXrender libXfixes \
+           libXrandr libXi libXcursor libXcomposite libXdamage libXft \
+           libXinerama libXtst libXv libXxf86vm libXmu libXpm libXaw; do
+    cd ${pkg}-*
+    make DESTDIR=$ROOKPKG_DESTDIR install
+    cd ..
+done
+"""
+
+[files]
+"usr/lib/libX11.so" = { mode = 755 }
+"usr/lib/libXext.so" = { mode = 755 }
+"usr/lib/libXrender.so" = { mode = 755 }
+"usr/lib/libXrandr.so" = { mode = 755 }
+"usr/lib/libXi.so" = { mode = 755 }
+"usr/lib/libXcursor.so" = { mode = 755 }
+"usr/lib/libXcomposite.so" = { mode = 755 }
+"usr/lib/libXdamage.so" = { mode = 755 }
+"usr/lib/libXfixes.so" = { mode = 755 }
+"usr/lib/libXft.so" = { mode = 755 }
+"usr/lib/libXinerama.so" = { mode = 755 }
+"usr/lib/libXtst.so" = { mode = 755 }
+"usr/lib/libXv.so" = { mode = 755 }
+"usr/lib/libXxf86vm.so" = { mode = 755 }
+"usr/lib/libSM.so" = { mode = 755 }
+"usr/lib/libICE.so" = { mode = 755 }
+"usr/lib/libXt.so" = { mode = 755 }
+"usr/lib/libXmu.so" = { mode = 755 }
+"usr/lib/libXpm.so" = { mode = 755 }
+"usr/lib/libXaw.so" = { mode = 755 }
+"usr/include/X11/" = {}
+"usr/lib/pkgconfig/x11.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "7.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Includes all core X11 client libraries"
+]
+
+[metadata]
+keywords = ["xorg", "x11", "libraries", "libx11"]
+categories = ["x11", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

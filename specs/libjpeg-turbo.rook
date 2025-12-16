@@ -1,0 +1,113 @@
+[package]
+name = "libjpeg-turbo"
+version = "3.0.4"
+release = 1
+summary = "JPEG image codec with SIMD acceleration"
+description = """
+libjpeg-turbo is a JPEG image codec that uses SIMD instructions to accelerate
+baseline JPEG compression and decompression. It is a fork of libjpeg that is
+API/ABI compatible with libjpeg.
+"""
+homepage = "https://libjpeg-turbo.org/"
+license = "IJG AND BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.4.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+nasm = ">= 2.13"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libjpeg-turbo-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libjpeg-turbo-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr       \
+      -DCMAKE_BUILD_TYPE=Release        \
+      -DENABLE_STATIC=FALSE             \
+      -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-3.0.4 \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libjpeg-turbo-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libjpeg-turbo-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libjpeg-turbo-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/cjpeg" = { mode = 755 }
+"usr/bin/djpeg" = { mode = 755 }
+"usr/bin/jpegtran" = { mode = 755 }
+"usr/bin/rdjpgcom" = { mode = 755 }
+"usr/bin/wrjpgcom" = { mode = 755 }
+"usr/bin/tjbench" = { mode = 755 }
+"usr/lib/libjpeg.so" = { mode = 755 }
+"usr/lib/libturbojpeg.so" = { mode = 755 }
+"usr/include/jconfig.h" = {}
+"usr/include/jerror.h" = {}
+"usr/include/jmorecfg.h" = {}
+"usr/include/jpeglib.h" = {}
+"usr/include/turbojpeg.h" = {}
+"usr/lib/pkgconfig/libjpeg.pc" = {}
+"usr/lib/pkgconfig/libturbojpeg.pc" = {}
+"usr/share/man/man1/cjpeg.1" = {}
+"usr/share/man/man1/djpeg.1" = {}
+"usr/share/man/man1/jpegtran.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.0.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "SIMD acceleration enabled"
+]
+
+[metadata]
+keywords = ["libjpeg-turbo", "jpeg", "image", "simd"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

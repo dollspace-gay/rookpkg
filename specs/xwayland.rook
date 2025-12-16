@@ -1,0 +1,112 @@
+[package]
+name = "xwayland"
+version = "24.1.4"
+release = 1
+summary = "X server for Wayland compositors"
+description = """
+Xwayland is an X server running on Wayland. It provides X11 compatibility
+for Wayland compositors, allowing X11 applications to run in a Wayland
+session.
+"""
+homepage = "https://wayland.freedesktop.org/xserver.html"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xwayland-24.1.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+xorg-libraries = ">= 7.8"
+xorgproto = ">= 2024.1"
+wayland = ">= 1.22"
+wayland-protocols = ">= 1.30"
+libdrm = ">= 2.4"
+mesa = ">= 24.0"
+pixman = ">= 0.44"
+libxkbcommon = ">= 1.6"
+
+[depends]
+glibc = ">= 2.39"
+xorg-libraries = ">= 7.8"
+wayland = ">= 1.22"
+libdrm = ">= 2.4"
+mesa = ">= 24.0"
+pixman = ">= 0.44"
+libxkbcommon = ">= 1.6"
+libepoxy = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xwayland-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xwayland-*
+mkdir -p build
+cd build
+meson setup ..                      \
+      --prefix=/usr                 \
+      --buildtype=release           \
+      -D xkb_dir=/usr/share/X11/xkb \
+      -D xkb_output_dir=/var/lib/xkb
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xwayland-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xwayland-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xwayland-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/Xwayland" = { mode = 755 }
+"usr/lib/pkgconfig/xwayland.pc" = {}
+"usr/share/man/man1/Xwayland.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "24.1.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xwayland", "x11", "wayland", "compatibility"]
+categories = ["x11", "wayland", "servers"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

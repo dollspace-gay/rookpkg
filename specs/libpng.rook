@@ -1,0 +1,99 @@
+[package]
+name = "libpng"
+version = "1.6.44"
+release = 1
+summary = "PNG image library"
+description = """
+libpng is the official PNG reference library. It supports almost all PNG
+features, is extensible, and has been extensively tested for over 28 years.
+"""
+homepage = "http://www.libpng.org/pub/png/libpng.html"
+license = "libpng-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/libpng/libpng-1.6.44.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libpng-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libpng-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libpng-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libpng-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libpng-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/libpng-config" = { mode = 755 }
+"usr/bin/libpng16-config" = { mode = 755 }
+"usr/bin/pngfix" = { mode = 755 }
+"usr/bin/png-fix-itxt" = { mode = 755 }
+"usr/lib/libpng16.so" = { mode = 755 }
+"usr/lib/libpng.so" = {}
+"usr/include/libpng16/" = {}
+"usr/include/png.h" = {}
+"usr/include/pngconf.h" = {}
+"usr/include/pnglibconf.h" = {}
+"usr/lib/pkgconfig/libpng16.pc" = {}
+"usr/lib/pkgconfig/libpng.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.6.44"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libpng", "png", "image", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

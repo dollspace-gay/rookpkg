@@ -1,0 +1,98 @@
+[package]
+name = "lcms2"
+version = "2.16"
+release = 1
+summary = "Little Color Management System"
+description = """
+Little CMS is a small-footprint color management engine, with special focus
+on accuracy and performance. It uses the International Color Consortium
+standard (ICC) profiles for color management.
+"""
+homepage = "https://www.littlecms.com/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/mm2/Little-CMS/releases/download/lcms2.16/lcms2-2.16.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+libjpeg-turbo = ">= 3.0"
+libtiff = ">= 4.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/lcms2-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/lcms2-*
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/lcms2-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/lcms2-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/lcms2-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/jpgicc" = { mode = 755 }
+"usr/bin/linkicc" = { mode = 755 }
+"usr/bin/psicc" = { mode = 755 }
+"usr/bin/tificc" = { mode = 755 }
+"usr/bin/transicc" = { mode = 755 }
+"usr/lib/liblcms2.so" = { mode = 755 }
+"usr/include/lcms2.h" = {}
+"usr/include/lcms2_plugin.h" = {}
+"usr/lib/pkgconfig/lcms2.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.16"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["lcms2", "color", "icc", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

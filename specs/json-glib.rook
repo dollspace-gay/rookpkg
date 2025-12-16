@@ -1,0 +1,102 @@
+[package]
+name = "json-glib"
+version = "1.10.6"
+release = 1
+summary = "GLib JSON library"
+description = """
+JSON-GLib is a library providing serialization and deserialization support
+for the JavaScript Object Notation (JSON) format described by RFC 4627.
+It uses GLib type system and provides integration with GObject.
+"""
+homepage = "https://wiki.gnome.org/Projects/JsonGlib"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/json-glib/1.10/json-glib-1.10.6.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+glib2 = ">= 2.70"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+
+[optional_depends]
+gobject-introspection = ">= 1.80"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/json-glib-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/json-glib-*
+mkdir -p build
+cd build
+meson setup ..                  \
+      --prefix=/usr             \
+      --buildtype=release       \
+      -D introspection=disabled \
+      -D man=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/json-glib-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/json-glib-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/json-glib-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/json-glib-format" = { mode = 755 }
+"usr/bin/json-glib-validate" = { mode = 755 }
+"usr/lib/libjson-glib-1.0.so" = { mode = 755 }
+"usr/include/json-glib-1.0/" = {}
+"usr/lib/pkgconfig/json-glib-1.0.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.10.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["json-glib", "json", "glib", "gnome"]
+categories = ["libraries", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

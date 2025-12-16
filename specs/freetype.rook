@@ -1,0 +1,104 @@
+[package]
+name = "freetype"
+version = "2.13.3"
+release = 1
+summary = "Font rendering library"
+description = """
+FreeType is a software font engine that is designed to be small, efficient,
+highly customizable, and portable while capable of producing high-quality
+output (glyph images). It can be used in graphics libraries, display servers,
+font conversion tools, and many other products.
+"""
+homepage = "https://www.freetype.org/"
+license = "FTL OR GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://downloads.sourceforge.net/freetype/freetype-2.13.3.tar.xz", sha256 = "FIXME" }
+source1 = { url = "https://downloads.sourceforge.net/freetype/freetype-doc-2.13.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+bzip2 = ">= 1.0"
+libpng = ">= 1.6"
+brotli = ">= 1.0"
+
+[optional_depends]
+harfbuzz = ">= 7.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/freetype-*.tar.xz
+tar xf $ROOKPKG_SOURCES/freetype-doc-*.tar.xz --strip-components=2 -C freetype-*
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/freetype-*
+sed -ri "s:.*(AUX_MODULES.*valid):\\1:" modules.cfg
+sed -r "s:.*(#.*SUBPIXEL_RENDERING) .*:\\1:" \
+    -i include/freetype/config/ftoption.h
+./configure --prefix=/usr --enable-freetype-config --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/freetype-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/freetype-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/freetype-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/freetype-config" = { mode = 755 }
+"usr/lib/libfreetype.so" = { mode = 755 }
+"usr/include/freetype2/" = {}
+"usr/lib/pkgconfig/freetype2.pc" = {}
+"usr/share/aclocal/freetype2.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.13.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Subpixel rendering enabled"
+]
+
+[metadata]
+keywords = ["freetype", "font", "rendering", "typography"]
+categories = ["libraries", "fonts"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

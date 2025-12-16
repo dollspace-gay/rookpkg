@@ -1,0 +1,122 @@
+[package]
+name = "fontconfig"
+version = "2.15.0"
+release = 1
+summary = "Font configuration and customization library"
+description = """
+Fontconfig is a library for configuring and customizing font access. It is
+designed to locate fonts within the system and select them according to
+requirements specified by applications.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/fontconfig/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.15.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gperf = ">= 3.0"
+freetype = ">= 2.13"
+
+[depends]
+glibc = ">= 2.39"
+freetype = ">= 2.13"
+expat = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/fontconfig-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/fontconfig-*
+mkdir -p build
+cd build
+meson setup ..                  \
+      --prefix=/usr             \
+      --buildtype=release       \
+      --localstatedir=/var      \
+      -D doc=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/fontconfig-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/fontconfig-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/fontconfig-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/fc-cache" = { mode = 755 }
+"usr/bin/fc-cat" = { mode = 755 }
+"usr/bin/fc-conflist" = { mode = 755 }
+"usr/bin/fc-list" = { mode = 755 }
+"usr/bin/fc-match" = { mode = 755 }
+"usr/bin/fc-pattern" = { mode = 755 }
+"usr/bin/fc-query" = { mode = 755 }
+"usr/bin/fc-scan" = { mode = 755 }
+"usr/bin/fc-validate" = { mode = 755 }
+"usr/lib/libfontconfig.so" = { mode = 755 }
+"usr/include/fontconfig/" = {}
+"usr/lib/pkgconfig/fontconfig.pc" = {}
+"usr/share/fontconfig/" = {}
+"usr/share/man/man1/fc-cache.1" = {}
+"usr/share/man/man1/fc-list.1" = {}
+"usr/share/man/man1/fc-match.1" = {}
+"usr/share/man/man5/fonts-conf.5" = {}
+
+[config_files]
+"etc/fonts/" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+/sbin/ldconfig
+fc-cache -f
+"""
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = """
+/sbin/ldconfig
+fc-cache -f
+"""
+
+[[changelog]]
+version = "2.15.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["fontconfig", "fonts", "configuration"]
+categories = ["libraries", "fonts"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

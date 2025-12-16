@@ -1,0 +1,107 @@
+[package]
+name = "libwacom"
+version = "2.14.0"
+release = 1
+summary = "Wacom tablet library"
+description = """
+libwacom is a library to identify wacom tablets and their model-specific
+features. It provides easy access to information such as "weights are
+supported" or "button x is at position y".
+"""
+homepage = "https://github.com/linuxwacom/libwacom"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/linuxwacom/libwacom/releases/download/libwacom-2.14.0/libwacom-2.14.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+libgudev = ">= 230"
+libevdev = ">= 1.11"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.70"
+libgudev = ">= 230"
+libevdev = ">= 1.11"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libwacom-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libwacom-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D tests=disabled
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libwacom-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libwacom-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libwacom-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/libwacom-list-local-devices" = { mode = 755 }
+"usr/bin/libwacom-list-devices" = { mode = 755 }
+"usr/bin/libwacom-show-stylus" = { mode = 755 }
+"usr/bin/libwacom-update-db" = { mode = 755 }
+"usr/lib/libwacom.so" = { mode = 755 }
+"usr/include/libwacom-1.0/" = {}
+"usr/lib/pkgconfig/libwacom.pc" = {}
+"usr/share/libwacom/" = {}
+"usr/lib/udev/rules.d/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.14.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libwacom", "wacom", "tablet", "stylus", "input"]
+categories = ["libraries", "input"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

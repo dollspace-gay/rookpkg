@@ -1,0 +1,104 @@
+[package]
+name = "jasper"
+version = "4.2.4"
+release = 1
+summary = "JPEG-2000 library"
+description = """
+JasPer is a software-based implementation of the codec specified in the
+JPEG-2000 Part-1 standard. JasPer provides a library along with several
+application programs.
+"""
+homepage = "https://www.ece.uvic.ca/~frodo/jasper/"
+license = "JasPer-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/jasper-software/jasper/releases/download/version-4.2.4/jasper-4.2.4.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+
+[depends]
+glibc = ">= 2.39"
+libjpeg-turbo = ">= 3.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/jasper-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/jasper-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DCMAKE_SKIP_INSTALL_RPATH=YES  \
+      -DJAS_ENABLE_DOC=NO             \
+      -DJAS_ENABLE_LATEX=NO           \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/jasper-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/jasper-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/jasper-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/jasper" = { mode = 755 }
+"usr/bin/imgcmp" = { mode = 755 }
+"usr/bin/imginfo" = { mode = 755 }
+"usr/lib/libjasper.so" = { mode = 755 }
+"usr/include/jasper/" = {}
+"usr/lib/pkgconfig/jasper.pc" = {}
+"usr/share/man/man1/jasper.1" = {}
+"usr/share/man/man1/imgcmp.1" = {}
+"usr/share/man/man1/imginfo.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.2.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["jasper", "jpeg2000", "jp2", "image"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

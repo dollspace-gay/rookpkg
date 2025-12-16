@@ -1,0 +1,85 @@
+[package]
+name = "util-macros"
+version = "1.20.2"
+release = 1
+summary = "X.Org autoconf macros"
+description = """
+util-macros is a collection of autoconf macros used by the X.Org packages.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/util/util-macros-1.20.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/util-macros-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/util-macros-*
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var
+"""
+
+build = """
+cd $ROOKPKG_BUILD/util-macros-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/util-macros-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/share/aclocal/xorg-macros.m4" = {}
+"usr/share/pkgconfig/xorg-macros.pc" = {}
+"usr/share/util-macros/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.20.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["util-macros", "xorg", "autoconf", "macros"]
+categories = ["x11", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

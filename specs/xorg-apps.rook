@@ -1,0 +1,135 @@
+[package]
+name = "xorg-apps"
+version = "7.8"
+release = 1
+summary = "X.Org applications"
+description = """
+Meta-package for essential X.Org applications including xauth, xhost, xrdb,
+xset, xsetroot, xrandr, xinput, and other X11 utilities.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/app/xauth-1.1.3.tar.xz", sha256 = "FIXME" }
+source1 = { url = "https://xorg.freedesktop.org/archive/individual/app/xhost-1.0.9.tar.xz", sha256 = "FIXME" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/app/xrdb-1.2.2.tar.xz", sha256 = "FIXME" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/app/xset-1.2.5.tar.xz", sha256 = "FIXME" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/app/xsetroot-1.1.3.tar.xz", sha256 = "FIXME" }
+source5 = { url = "https://xorg.freedesktop.org/archive/individual/app/xrandr-1.5.3.tar.xz", sha256 = "FIXME" }
+source6 = { url = "https://xorg.freedesktop.org/archive/individual/app/xinput-1.6.4.tar.xz", sha256 = "FIXME" }
+source7 = { url = "https://xorg.freedesktop.org/archive/individual/app/xprop-1.2.8.tar.xz", sha256 = "FIXME" }
+source8 = { url = "https://xorg.freedesktop.org/archive/individual/app/xwininfo-1.1.6.tar.xz", sha256 = "FIXME" }
+source9 = { url = "https://xorg.freedesktop.org/archive/individual/app/xdpyinfo-1.3.4.tar.xz", sha256 = "FIXME" }
+source10 = { url = "https://xorg.freedesktop.org/archive/individual/app/xkill-1.0.6.tar.xz", sha256 = "FIXME" }
+source11 = { url = "https://xorg.freedesktop.org/archive/individual/app/setxkbmap-1.3.4.tar.xz", sha256 = "FIXME" }
+source12 = { url = "https://xorg.freedesktop.org/archive/individual/app/xmodmap-1.0.11.tar.xz", sha256 = "FIXME" }
+source13 = { url = "https://xorg.freedesktop.org/archive/individual/app/xev-1.2.6.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorg-libraries = ">= 7.8"
+util-macros = ">= 1.20"
+
+[depends]
+glibc = ">= 2.39"
+xorg-libraries = ">= 7.8"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+for pkg in xauth xhost xrdb xset xsetroot xrandr xinput xprop \
+           xwininfo xdpyinfo xkill setxkbmap xmodmap xev; do
+    tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.xz
+done
+"""
+
+configure = """
+cd $ROOKPKG_BUILD
+for pkg in xauth xhost xrdb xset xsetroot xrandr xinput xprop \
+           xwininfo xdpyinfo xkill setxkbmap xmodmap xev; do
+    cd ${pkg}-*
+    ./configure --prefix=/usr --sysconfdir=/etc
+    cd ..
+done
+"""
+
+build = """
+cd $ROOKPKG_BUILD
+for pkg in xauth xhost xrdb xset xsetroot xrandr xinput xprop \
+           xwininfo xdpyinfo xkill setxkbmap xmodmap xev; do
+    cd ${pkg}-*
+    make -j$ROOKPKG_JOBS
+    cd ..
+done
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD
+for pkg in xauth xhost xrdb xset xsetroot xrandr xinput xprop \
+           xwininfo xdpyinfo xkill setxkbmap xmodmap xev; do
+    cd ${pkg}-*
+    make DESTDIR=$ROOKPKG_DESTDIR install
+    cd ..
+done
+"""
+
+[files]
+"usr/bin/xauth" = { mode = 755 }
+"usr/bin/xhost" = { mode = 755 }
+"usr/bin/xrdb" = { mode = 755 }
+"usr/bin/xset" = { mode = 755 }
+"usr/bin/xsetroot" = { mode = 755 }
+"usr/bin/xrandr" = { mode = 755 }
+"usr/bin/xinput" = { mode = 755 }
+"usr/bin/xprop" = { mode = 755 }
+"usr/bin/xwininfo" = { mode = 755 }
+"usr/bin/xdpyinfo" = { mode = 755 }
+"usr/bin/xkill" = { mode = 755 }
+"usr/bin/setxkbmap" = { mode = 755 }
+"usr/bin/xmodmap" = { mode = 755 }
+"usr/bin/xev" = { mode = 755 }
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "7.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Includes essential X11 applications"
+]
+
+[metadata]
+keywords = ["xorg", "x11", "apps", "utilities"]
+categories = ["x11", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,111 @@
+[package]
+name = "libtiff"
+version = "4.7.0"
+release = 1
+summary = "TIFF library and utilities"
+description = """
+The LibTIFF package contains the TIFF libraries and associated utilities.
+The libraries are used by many programs for reading and writing TIFF files
+and the utilities are useful for working with TIFF files.
+"""
+homepage = "http://www.libtiff.org/"
+license = "libtiff"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.osgeo.org/libtiff/tiff-4.7.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+libjpeg-turbo = ">= 3.0"
+xz = ">= 5.0"
+zstd = ">= 1.5"
+
+[optional_depends]
+libwebp = ">= 1.3"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/tiff-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/tiff-*
+mkdir -p build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr  \
+      -DCMAKE_BUILD_TYPE=Release   \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/tiff-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/tiff-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/tiff-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/tiffcp" = { mode = 755 }
+"usr/bin/tiffdump" = { mode = 755 }
+"usr/bin/tiffinfo" = { mode = 755 }
+"usr/bin/tiffset" = { mode = 755 }
+"usr/bin/tiffsplit" = { mode = 755 }
+"usr/lib/libtiff.so" = { mode = 755 }
+"usr/lib/libtiffxx.so" = { mode = 755 }
+"usr/include/tiff.h" = {}
+"usr/include/tiffconf.h" = {}
+"usr/include/tiffio.h" = {}
+"usr/include/tiffio.hxx" = {}
+"usr/include/tiffvers.h" = {}
+"usr/lib/pkgconfig/libtiff-4.pc" = {}
+"usr/share/man/man1/tiffcp.1" = {}
+"usr/share/man/man1/tiffinfo.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.7.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libtiff", "tiff", "image", "graphics"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

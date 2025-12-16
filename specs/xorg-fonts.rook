@@ -1,0 +1,118 @@
+[package]
+name = "xorg-fonts"
+version = "7.8"
+release = 1
+summary = "X.Org fonts"
+description = """
+Meta-package for essential X.Org fonts including encodings, font-util,
+font-alias, and core bitmap fonts needed for X applications.
+"""
+homepage = "https://www.x.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-util-1.4.1.tar.xz", sha256 = "FIXME" }
+source1 = { url = "https://xorg.freedesktop.org/archive/individual/font/encodings-1.1.0.tar.xz", sha256 = "FIXME" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-alias-1.0.5.tar.xz", sha256 = "FIXME" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-misc-misc-1.1.3.tar.xz", sha256 = "FIXME" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-cursor-misc-1.0.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+util-macros = ">= 1.20"
+mkfontscale = ">= 1.2"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+    tar xf $ROOKPKG_SOURCES/${pkg}-*.tar.xz
+done
+"""
+
+configure = """
+cd $ROOKPKG_BUILD
+for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+    cd ${pkg}-*
+    ./configure --prefix=/usr
+    cd ..
+done
+"""
+
+build = """
+cd $ROOKPKG_BUILD
+for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+    cd ${pkg}-*
+    make -j$ROOKPKG_JOBS
+    cd ..
+done
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD
+for pkg in font-util encodings font-alias font-misc-misc font-cursor-misc; do
+    cd ${pkg}-*
+    make DESTDIR=$ROOKPKG_DESTDIR install
+    cd ..
+done
+"""
+
+[files]
+"usr/share/fonts/X11/" = {}
+"usr/share/fonts/X11/encodings/" = {}
+"usr/bin/bdftruncate" = { mode = 755 }
+"usr/bin/ucs2any" = { mode = 755 }
+"usr/share/aclocal/fontutil.m4" = {}
+"usr/lib/pkgconfig/fontutil.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+mkfontdir /usr/share/fonts/X11/misc
+mkfontscale /usr/share/fonts/X11/misc
+fc-cache -f
+"""
+pre_remove = ""
+post_remove = "fc-cache -f"
+pre_upgrade = ""
+post_upgrade = """
+mkfontdir /usr/share/fonts/X11/misc
+mkfontscale /usr/share/fonts/X11/misc
+fc-cache -f
+"""
+
+[[changelog]]
+version = "7.8"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions",
+    "Includes essential X11 fonts"
+]
+
+[metadata]
+keywords = ["xorg", "x11", "fonts"]
+categories = ["x11", "fonts"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
