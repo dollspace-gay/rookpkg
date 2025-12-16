@@ -1,6 +1,6 @@
 [package]
 name = "bluez"
-version = "5.78"
+version = "5.83"
 release = 1
 summary = "Bluetooth protocol stack"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.78.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.83.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -37,6 +37,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf bluez-*
 tar xf $ROOKPKG_SOURCES/bluez-*.tar.xz
 """
 
@@ -63,8 +64,12 @@ install = """
 cd $ROOKPKG_BUILD/bluez-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
+# BLFS: Create symlink for bluetoothd
+ln -svf ../libexec/bluetooth/bluetoothd $ROOKPKG_DESTDIR/usr/sbin
+
 # Install configuration
-install -Dm644 src/main.conf $ROOKPKG_DESTDIR/etc/bluetooth/main.conf
+install -v -dm755 $ROOKPKG_DESTDIR/etc/bluetooth
+install -v -m644 src/main.conf $ROOKPKG_DESTDIR/etc/bluetooth/main.conf
 """
 
 [files]
@@ -92,6 +97,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.83"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 5.83 per BLFS",
+    "Added bluetoothd symlink to /usr/sbin"
+]
 
 [[changelog]]
 version = "5.78"

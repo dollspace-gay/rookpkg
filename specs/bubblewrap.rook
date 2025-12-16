@@ -1,6 +1,6 @@
 [package]
 name = "bubblewrap"
-version = "0.10.0"
+version = "0.11.0"
 release = 1
 summary = "Unprivileged sandboxing tool"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/containers/bubblewrap/releases/download/v0.10.0/bubblewrap-0.10.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/containers/bubblewrap/releases/download/v0.11.0/bubblewrap-0.11.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ libcap = ">= 2.70"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf bubblewrap-*
 tar xf $ROOKPKG_SOURCES/bubblewrap-*.tar.xz
 """
 
@@ -74,6 +75,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "0.11.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.11.0 per BLFS"
+]
 
 [[changelog]]
 version = "0.10.0"

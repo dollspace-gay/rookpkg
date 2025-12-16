@@ -35,6 +35,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf bzip2-*
 tar xf $ROOKPKG_SOURCES/bzip2-*.tar.gz
 cd bzip2-*
 patch -Np1 -i $ROOKPKG_SOURCES/bzip2-1.0.8-install_docs-1.patch
@@ -82,6 +83,9 @@ cp -v bzip2-shared $ROOKPKG_DESTDIR/usr/bin/bzip2
 # Create symlinks for compatibility
 ln -sfv bzip2 $ROOKPKG_DESTDIR/usr/bin/bunzip2
 ln -sfv bzip2 $ROOKPKG_DESTDIR/usr/bin/bzcat
+
+# LFS: Remove static library
+rm -fv $ROOKPKG_DESTDIR/usr/lib/libbz2.a
 """
 
 [files]

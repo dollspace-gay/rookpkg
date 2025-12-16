@@ -55,7 +55,19 @@
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -A 40 'build_avahi()' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh\":*)",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 50 ''avahi-0'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -60\")",
       "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''Bash-5'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -50\")",
-      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 25 ''Bc-[0-9]'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -35\")"
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 25 ''Bc-[0-9]'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -35\")",
+      "Bash(bd ready:*)",
+      "Bash(bd update:*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''Binutils-2'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -50\")",
+      "Bash(bd close:*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 20 ''Bison-3'' /mnt/c/Users/texas/rookpkg/scripts/build_in_chroot.sh | head -30\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 50 ''bluez-5'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -60\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 'boost_1' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -50\":*)",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''boost'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -50\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 40 ''breeze-icons'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -50\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 35 ''brotli-1'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -45\")",
+      "Bash(wsl -d RookeryOS -u root bash -c \"grep -B 2 -A 35 ''bubblewrap'' /mnt/c/Users/texas/rookpkg/scripts/build_blfs_chroot.sh | head -45\")",
+      "Bash(wsl:*)"
     ]
   }
 }

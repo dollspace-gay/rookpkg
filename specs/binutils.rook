@@ -1,6 +1,6 @@
 [package]
 name = "binutils"
-version = "2.44"
+version = "2.45"
 release = 1
 summary = "GNU binary utilities"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/binutils/binutils-2.44.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -35,6 +35,7 @@ zlib = ">= 1.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf binutils-*
 tar xf $ROOKPKG_SOURCES/binutils-*.tar.xz
 """
 
@@ -101,6 +102,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.45"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.45 per LFS"
+]
 
 [[changelog]]
 version = "2.44"

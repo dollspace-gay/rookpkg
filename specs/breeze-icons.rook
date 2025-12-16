@@ -1,6 +1,6 @@
 [package]
 name = "breeze-icons"
-version = "6.7.0"
+version = "6.17.0"
 release = 1
 summary = "Breeze icon theme for KDE"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/frameworks/6.7/breeze-icons-6.7.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/breeze-icons-6.17.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ hicolor-icon-theme = ">= 0.17"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf breeze-icons-*
 tar xf $ROOKPKG_SOURCES/breeze-icons-*.tar.xz
 """
 
@@ -75,6 +76,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = "gtk-update-icon-cache /usr/share/icons/breeze 2>/dev/null || true"
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 6.17.0 per BLFS"
+]
 
 [[changelog]]
 version = "6.7.0"

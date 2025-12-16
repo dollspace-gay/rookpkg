@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf c-ares-*
 tar xf $ROOKPKG_SOURCES/c-ares-*.tar.gz
 """
 

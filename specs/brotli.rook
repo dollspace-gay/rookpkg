@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf brotli-*
 tar xf $ROOKPKG_SOURCES/brotli-*.tar.gz
 """
 
@@ -60,6 +61,29 @@ ninja test || true
 install = """
 cd $ROOKPKG_BUILD/brotli-*/build
 DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# BLFS: Create pkg-config files
+cd ..
+sed -e "s|@prefix@|/usr|g" \
+    -e "s|@exec_prefix@|/usr|g" \
+    -e "s|@libdir@|/usr/lib|g" \
+    -e "s|@includedir@|/usr/include|g" \
+    -e "s|@PACKAGE_VERSION@|1.1.0|g" \
+    scripts/libbrotlicommon.pc.in > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/libbrotlicommon.pc
+
+sed -e "s|@prefix@|/usr|g" \
+    -e "s|@exec_prefix@|/usr|g" \
+    -e "s|@libdir@|/usr/lib|g" \
+    -e "s|@includedir@|/usr/include|g" \
+    -e "s|@PACKAGE_VERSION@|1.1.0|g" \
+    scripts/libbrotlidec.pc.in > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/libbrotlidec.pc
+
+sed -e "s|@prefix@|/usr|g" \
+    -e "s|@exec_prefix@|/usr|g" \
+    -e "s|@libdir@|/usr/lib|g" \
+    -e "s|@includedir@|/usr/include|g" \
+    -e "s|@PACKAGE_VERSION@|1.1.0|g" \
+    scripts/libbrotlienc.pc.in > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/libbrotlienc.pc
 """
 
 [files]

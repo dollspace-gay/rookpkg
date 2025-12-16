@@ -1,6 +1,6 @@
 [package]
 name = "boost"
-version = "1.86.0"
+version = "1.89.0"
 release = 1
 summary = "Free peer-reviewed portable C++ source libraries"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_1_86_0.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://github.com/boostorg/boost/releases/download/boost-1.89.0/boost-1.89.0-b2-nodocs.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,18 +36,25 @@ zstd = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/boost_*.tar.bz2
+rm -rf boost-*
+tar xf $ROOKPKG_SOURCES/boost-*.tar.xz
+cd boost-*
+
+# BLFS: Apply i686 fix if needed
+case $(uname -m) in
+   i?86)
+      sed -e "s/defined(__MINGW32__)/& || defined(__i386__)/" \
+          -i ./libs/stacktrace/src/exception_headers.h ;;
+esac
 """
 
 configure = """
-cd $ROOKPKG_BUILD/boost_*
-./bootstrap.sh --prefix=/usr        \
-               --with-icu           \
-               --with-python=python3
+cd $ROOKPKG_BUILD/boost-*
+./bootstrap.sh --prefix=/usr --with-python=python3
 """
 
 build = """
-cd $ROOKPKG_BUILD/boost_*
+cd $ROOKPKG_BUILD/boost-*
 ./b2 stage -j$ROOKPKG_JOBS threading=multi link=shared
 """
 
@@ -56,14 +63,18 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/boost_*
+cd $ROOKPKG_BUILD/boost-*
+
+# BLFS: Clean old Boost cmake directories
+rm -rf $ROOKPKG_DESTDIR/usr/lib/cmake/[Bb]oost*
+
 ./b2 install --prefix=$ROOKPKG_DESTDIR/usr threading=multi link=shared
 """
 
 [files]
 "usr/lib/libboost_*.so" = { mode = 755 }
 "usr/include/boost/" = {}
-"usr/lib/cmake/Boost-1.86.0/" = {}
+"usr/lib/cmake/Boost-1.89.0/" = {}
 
 [config_files]
 
@@ -74,6 +85,17 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.89.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.89.0 per BLFS",
+    "Changed source to b2-nodocs tarball",
+    "Added i686 fix from BLFS",
+    "Added cmake cleanup step"
+]
 
 [[changelog]]
 version = "1.86.0"

@@ -1,6 +1,6 @@
 [package]
 name = "cairo"
-version = "1.18.2"
+version = "1.18.4"
 release = 1
 summary = "2D graphics library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.cairographics.org/releases/cairo-1.18.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.cairographics.org/releases/cairo-1.18.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,6 +40,7 @@ libxcb = ">= 1.15"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf cairo-*
 tar xf $ROOKPKG_SOURCES/cairo-*.tar.xz
 """
 
@@ -49,9 +50,7 @@ mkdir -p build
 cd build
 meson setup ..                \
       --prefix=/usr           \
-      --buildtype=release     \
-      -D spectre=disabled     \
-      -D tee=enabled
+      --buildtype=release
 """
 
 build = """
@@ -91,6 +90,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.18.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.18.4 per BLFS",
+    "Simplified meson options to match BLFS"
+]
 
 [[changelog]]
 version = "1.18.2"
