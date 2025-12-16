@@ -36,6 +36,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf json-glib-*
 tar xf $ROOKPKG_SOURCES/json-glib-*.tar.xz
 """
 
@@ -43,11 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/json-glib-*
 mkdir -p build
 cd build
-meson setup ..                  \
-      --prefix=/usr             \
-      --buildtype=release       \
-      -D introspection=disabled \
-      -D man=false
+meson setup --prefix=/usr --buildtype=release -D man=false ..
 """
 
 build = """

@@ -33,6 +33,7 @@ ncurses = ">= 6.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf less-*
 tar xf $ROOKPKG_SOURCES/less-*.tar.gz
 """
 

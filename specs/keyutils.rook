@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://people.redhat.com/~dhowells/keyutils/keyutils-1.6.3.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://people.redhat.com/~dhowells/keyutils/keyutils-1.6.3.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,7 +32,8 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/keyutils-*.tar.bz2
+rm -rf keyutils-*
+tar xf $ROOKPKG_SOURCES/keyutils-*.tar.gz
 """
 
 configure = """
@@ -51,10 +52,7 @@ make test || true
 
 install = """
 cd $ROOKPKG_BUILD/keyutils-*
-make DESTDIR=$ROOKPKG_DESTDIR      \
-     LIBDIR=/usr/lib               \
-     USRLIBDIR=/usr/lib            \
-     install
+make NO_ARLIB=1 LIBDIR=/usr/lib BINDIR=/usr/bin SBINDIR=/usr/sbin DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

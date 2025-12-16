@@ -38,6 +38,7 @@ zlib = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf kmod-*
 tar xf $ROOKPKG_SOURCES/kmod-*.tar.xz
 """
 
@@ -68,6 +69,7 @@ make DESTDIR=$ROOKPKG_DESTDIR install
 # Create traditional symlinks
 for target in depmod insmod modinfo modprobe rmmod; do
     ln -sfv ../bin/kmod $ROOKPKG_DESTDIR/usr/sbin/$target
+    rm -fv $ROOKPKG_DESTDIR/usr/bin/$target
 done
 """
 

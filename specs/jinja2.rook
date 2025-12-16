@@ -33,6 +33,7 @@ markupsafe = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf jinja2-*
 tar xf $ROOKPKG_SOURCES/jinja2-*.tar.gz
 """
 
@@ -51,7 +52,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/jinja2-*
-pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR jinja2
+pip3 install --no-index --find-links dist --no-user Jinja2
 """
 
 [files]

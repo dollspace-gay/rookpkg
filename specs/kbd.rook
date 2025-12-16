@@ -1,6 +1,6 @@
 [package]
 name = "kbd"
-version = "2.7.1"
+version = "2.8.0"
 release = 1
 summary = "Keyboard and console font utilities"
 description = """
@@ -14,8 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/utils/kbd/kbd-2.7.1.tar.xz", sha256 = "FIXME" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/kbd-2.7.1-backspace-1.patch", sha256 = "FIXME" }
+source0 = { url = "https://www.kernel.org/pub/linux/utils/kbd/kbd-2.8.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,11 +32,9 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf kbd-*
 tar xf $ROOKPKG_SOURCES/kbd-*.tar.xz
 cd kbd-*
-
-# Apply backspace fix patch
-patch -Np1 -i $ROOKPKG_SOURCES/kbd-2.7.1-backspace-1.patch || true
 
 # Remove resizecons program as it requires obsolete svgalib
 sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure
@@ -101,6 +98,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "2.8.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.8.0 per LFS",
+    "Removed backspace patch (no longer needed)"
+]
 
 [[changelog]]
 version = "2.7.1"

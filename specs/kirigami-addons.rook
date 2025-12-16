@@ -1,6 +1,6 @@
 [package]
 name = "kirigami-addons"
-version = "1.5.0"
+version = "1.9.0"
 release = 1
 summary = "Additional components for Kirigami"
 description = """
@@ -14,14 +14,13 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.5.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.9.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
-ninja = ">= 1.8"
 extra-cmake-modules = ">= 6.0"
 
 [depends]
@@ -35,6 +34,7 @@ qt6 = ">= 6.7"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf kirigami-addons-*
 tar xf $ROOKPKG_SOURCES/kirigami-addons-*.tar.xz
 """
 
@@ -42,26 +42,26 @@ configure = """
 cd $ROOKPKG_BUILD/kirigami-addons-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DBUILD_QCH=OFF                 \
-      -G Ninja
+cmake -D CMAKE_INSTALL_PREFIX=/usr     \
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \
+      -D CMAKE_BUILD_TYPE=Release      \
+      -D BUILD_TESTING=OFF             \
+      -W no-dev ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/kirigami-addons-*/build
-ninja -j$ROOKPKG_JOBS
+make -j$ROOKPKG_JOBS
 """
 
 check = """
 cd $ROOKPKG_BUILD/kirigami-addons-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/kirigami-addons-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -79,6 +79,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.9.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.9.0 per BLFS",
+    "Updated cmake options"
+]
 
 [[changelog]]
 version = "1.5.0"
