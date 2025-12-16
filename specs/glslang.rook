@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/KhronosGroup/glslang/archive/15.4.0/glslang-15.4.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/KhronosGroup/glslang/archive/15.4.0/glslang-15.4.0.tar.gz", sha256 = "b16c78e7604b9be9f546ee35ad8b6db6f39bbbbfb19e8d038b6fe2ea5bba4ff4" }
 
 [patches]
 

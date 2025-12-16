@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/aspell/aspell-0.60.8.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/aspell/aspell-0.60.8.1.tar.gz", sha256 = "d6da12b34d42d457fa604e435ad484a74b2effcd120ff40acd6bb3fb2887d21b" }
 
 [patches]
 

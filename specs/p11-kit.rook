@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/p11-glue/p11-kit/releases/download/0.25.5/p11-kit-0.25.5.tar.xz", sha256 = "04d0a86450cdb1be018f26af6699857171a188ac6d5b8c90786a60854e1198e5" }
 
 [patches]
 
@@ -41,7 +41,7 @@ tar xf $ROOKPKG_SOURCES/p11-kit-*.tar.xz
 cd p11-kit-*
 
 # Prepare the distribution specific anchor hook
-sed '20,\$ d' -i trust/trust-extract-compat
+sed '20,\\$ d' -i trust/trust-extract-compat
 
 cat >> trust/trust-extract-compat << "EOF"
 # Copy existing anchor modifications to /etc/ssl/local

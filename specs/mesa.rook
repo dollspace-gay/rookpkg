@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://mesa.freedesktop.org/archive/mesa-24.3.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://mesa.freedesktop.org/archive/mesa-24.3.2.tar.xz", sha256 = "ad9f5f3a6d2169e4786254ee6eb5062f746d11b826739291205d360f1f3ff716" }
 
 [patches]
 

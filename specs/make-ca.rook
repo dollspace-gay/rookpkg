@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "any"
 
 [sources]
-source0 = { url = "https://github.com/lfs-book/make-ca/releases/download/v1.16.1/make-ca-1.16.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/lfs-book/make-ca/archive/v1.16.1/make-ca-1.16.1.tar.gz", sha256 = "98c7e6fded1938b972d0177b5d5e925d318be87f84ee9e4cad680656a8c29414" }
 
 [patches]
 

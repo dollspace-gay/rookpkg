@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-3.0.1.tar.gz", sha256 = "a3c82880910c3fd516afe64923536402c5f8cfc3835de5d325fb807e5c16e5ef" }
 
 [patches]
 

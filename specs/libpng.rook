@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/libpng/libpng-1.6.50.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://downloads.sourceforge.net/libpng/libpng-1.6.50.tar.xz", sha256 = "81aa7e2770ac6e5b5fbd809680e417e3158e7fd37e5a526bede75c08bfa3408d" }
 
 [patches]
 

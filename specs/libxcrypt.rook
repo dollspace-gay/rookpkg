@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.37/libxcrypt-4.4.37.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.37/libxcrypt-4.4.37.tar.xz", sha256 = "902aa2976f959b5ebe55679b1722b8479f8f13cd4ce2ef432b0a84ae298fffd0" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://sourceware.org/ftp/lvm2/LVM2.2.03.34.tgz", sha256 = "FIXME" }
+source0 = { url = "https://sourceware.org/ftp/lvm2/LVM2.2.03.34.tgz", sha256 = "3f4e78e7d6c49228b4d173ea08ebe158873d54457fba7d31d2abebdddd0e75b9" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xwayland-24.1.8.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/xserver/xwayland-24.1.8.tar.xz", sha256 = "c8908d57c8ed9ceb8293c16ba7ad5af522efaf1ba7e51f9e4cf3c0774d199907" }
 
 [patches]
 

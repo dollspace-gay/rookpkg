@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/libmng/libmng-2.0.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://downloads.sourceforge.net/libmng/libmng-2.0.3.tar.xz", sha256 = "926c24a31a9d4334f83d32545766249036c8e1cc67b19f2cd3a8cc18613882d2" }
 
 [patches]
 

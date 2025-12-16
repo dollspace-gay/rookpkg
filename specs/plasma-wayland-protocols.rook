@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/plasma-wayland-protocols/plasma-wayland-protocols-1.14.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/plasma-wayland-protocols/plasma-wayland-protocols-1.14.0.tar.xz", sha256 = "1a4385ecfc79f7589f07381cab11c3ff51f6e2fa4b73b78600d6ad096394bf81" }
 
 [patches]
 

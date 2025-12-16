@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/docs/man-pages/man-pages-6.12.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.kernel.org/pub/linux/docs/man-pages/man-pages-6.12.tar.xz", sha256 = "b6cb5d67e0bb00a3b3f3d1bcb3fe06c26b045ba63923ed7ae79412350c5e1cb5" }
 
 [patches]
 

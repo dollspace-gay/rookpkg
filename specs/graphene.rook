@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/graphene/1.10/graphene-1.10.8.tar.xz", sha256 = "a37bb0e78a419dcbeaa9c7027bcff52f5ec2367c25ec859da31dfde2928f279a" }
 
 [patches]
 

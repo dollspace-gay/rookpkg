@@ -14,9 +14,9 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/coreutils/coreutils-9.7.tar.xz", sha256 = "FIXME" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-upstream_fix-1.patch", sha256 = "FIXME" }
-patch1 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-i18n-1.patch", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/coreutils/coreutils-9.7.tar.xz", sha256 = "e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-upstream_fix-1.patch", sha256 = "7fc7d0925452808b6eeb13a059b495fd7b7290bc7adc9fec213126f4862da649" }
+patch1 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/coreutils-9.7-i18n-1.patch", sha256 = "4af1cddb73b98350f64ba56cc6db3cb27ab3b3ca92af0089aad0965182f56ce0" }
 
 [patches]
 

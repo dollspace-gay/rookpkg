@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/shadow-maint/shadow/releases/download/4.18.0/shadow-4.18.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/shadow-maint/shadow/releases/download/4.18.0/shadow-4.18.0.tar.xz", sha256 = "add4604d3bc410344433122a819ee4154b79dd8316a56298c60417e637c07608" }
 
 [patches]
 
@@ -39,12 +39,12 @@ tar xf $ROOKPKG_SOURCES/shadow-*.tar.xz
 cd shadow-*
 
 # Remove groups program (Coreutils version preferred)
-sed -i 's/groups\$(EXEEXT) //' src/Makefile.in
+sed -i 's/groups\\$(EXEEXT) //' src/Makefile.in
 
 # Remove conflicting man pages
-find man -name Makefile.in -exec sed -i 's/groups\\.1 / /'   {} \;
-find man -name Makefile.in -exec sed -i 's/getspnam\\.3 / /' {} \;
-find man -name Makefile.in -exec sed -i 's/passwd\\.5 / /'   {} \;
+find man -name Makefile.in -exec sed -i 's/groups\\.1 / /'   {} \\;
+find man -name Makefile.in -exec sed -i 's/getspnam\\.3 / /' {} \\;
+find man -name Makefile.in -exec sed -i 's/passwd\\.5 / /'   {} \\;
 
 # Configure login.defs for YESCRYPT and proper paths
 sed -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD YESCRYPT@' \
@@ -133,8 +133,8 @@ EOF
 
 # Copy chage for other utilities
 for PROGRAM in chfn chgpasswd chsh groupadd groupdel groupmems groupmod useradd userdel usermod newusers; do
-    cp $ROOKPKG_DESTDIR/etc/pam.d/chage $ROOKPKG_DESTDIR/etc/pam.d/\${PROGRAM}
-    sed -i "s/chage/\${PROGRAM}/" $ROOKPKG_DESTDIR/etc/pam.d/\${PROGRAM}
+    cp $ROOKPKG_DESTDIR/etc/pam.d/chage $ROOKPKG_DESTDIR/etc/pam.d/\\${PROGRAM}
+    sed -i "s/chage/\\${PROGRAM}/" $ROOKPKG_DESTDIR/etc/pam.d/\\${PROGRAM}
 done
 """
 

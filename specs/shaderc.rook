@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/google/shaderc/archive/v2025.3/shaderc-2025.3.tar.gz", sha256 = "a8e4a25e5c2686fd36981e527ed05e451fcfc226bddf350f4e76181371190937" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://sourceforge.net/projects/psmisc/files/psmisc/psmisc-23.7.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://sourceforge.net/projects/psmisc/files/psmisc/psmisc-23.7.tar.xz", sha256 = "8230af5936a676a6194a69816724f0dc669786f39a443017e8a6de23bca020f0" }
 
 [patches]
 

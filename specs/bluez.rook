@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.83.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.83.tar.xz", sha256 = "108522d909d220581399bfec93daab62035539ceef3dda3e79970785c63bd24c" }
 
 [patches]
 

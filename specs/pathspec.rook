@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/cpburnz/python-pathspec/archive/v0.12.1/pathspec-0.12.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/cpburnz/python-pathspec/archive/v0.12.1/pathspec-0.12.1.tar.gz", sha256 = "dd47a400b58c965c93e1ee6723b8ac562ade44ebfcc12421075ebc8dbe7030a7" }
 
 [patches]
 

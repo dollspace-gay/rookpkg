@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-4.0.5.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-4.0.5.tar.xz", sha256 = "9eac436e2921453894078040186503ffce90fff5cf9f12fdd71d63e5239af0be" }
 
 [patches]
 

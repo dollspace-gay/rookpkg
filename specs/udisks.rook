@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.2/udisks-2.10.2.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.2/udisks-2.10.2.tar.bz2", sha256 = "6401c715d287ec84fe605e0cb90579e8da6c395bce5f42e419f205dd297e261f" }
 
 [patches]
 

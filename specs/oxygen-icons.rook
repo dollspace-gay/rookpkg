@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/oxygen-icons/oxygen-icons-6.1.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/oxygen-icons/oxygen-icons-6.1.0.tar.xz", sha256 = "16ca971079c5067c4507cabf1b619dc87dd6b326fd5c2dd9f5d43810f2174d68" }
 
 [patches]
 

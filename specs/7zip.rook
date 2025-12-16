@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/ip7z/7zip/releases/download/25.01/7zip-25.01.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/ip7z/7zip/archive/25.01/7zip-25.01.tar.gz", sha256 = "8772e4ef86540c98bf4c23a6d9e13b3a25794d4bb30986ef0b1b9f20075b34c9" }
 
 [patches]
 

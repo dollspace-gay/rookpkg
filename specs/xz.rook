@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://tukaani.org/xz/xz-5.8.1.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://tukaani.org/xz/xz-5.8.1.tar.xz", sha256 = "0b54f79df85912504de0b14aec7971e3f964491af1812d83447005807513cd9e" }
 
 [patches]
 

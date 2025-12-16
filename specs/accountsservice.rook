@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/accountsservice/accountsservice-23.13.9.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://www.freedesktop.org/software/accountsservice/accountsservice-23.13.9.tar.xz", sha256 = "adda4cdeae24fa0992e7df3ffff9effa7090be3ac233a3edfdf69d5a9c9b924f" }
 
 [patches]
 
@@ -46,8 +46,8 @@ cd accountsservice-*
 mv tests/dbusmock{,-tests}
 
 # BLFS: Fix test script for the renamed directory and Python 3.12+
-sed -e '/accounts_service\.py/s/dbusmock/dbusmock-tests/' \
-    -e 's/assertEquals/assertEqual/'                      \
+sed -e '/accounts_service\\.py/s/dbusmock/dbusmock-tests/' \
+    -e 's/assertEquals/assertEqual/'                       \
     -i tests/test-libaccountsservice.py
 
 # BLFS: Fix test that fails without en_IE.UTF-8 locale

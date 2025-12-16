@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/app/xinit-1.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/app/xinit-1.4.4.tar.xz", sha256 = "40a47c7a164c7f981ce3787b4b37f7e411fb43231dcde543d70094075dacfef9" }
 
 [patches]
 

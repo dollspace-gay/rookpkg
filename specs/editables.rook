@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/pfmoore/editables/archive/0.5/editables-0.5.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/pfmoore/editables/archive/0.5/editables-0.5.tar.gz", sha256 = "1ff2663aa1669eb89115a38e2d4067c21bb847e7006f72bf979a1a91b8bc2304" }
 
 [patches]
 

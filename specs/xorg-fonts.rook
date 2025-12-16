@@ -13,15 +13,15 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-util-1.4.1.tar.xz", sha256 = "FIXME" }
-source1 = { url = "https://xorg.freedesktop.org/archive/individual/font/encodings-1.1.0.tar.xz", sha256 = "FIXME" }
-source2 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-adobe-utopia-type1-1.0.5.tar.xz", sha256 = "FIXME" }
-source3 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-ttf-1.0.4.tar.xz", sha256 = "FIXME" }
-source4 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-type1-1.0.4.tar.xz", sha256 = "FIXME" }
-source5 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-ibm-type1-1.0.4.tar.xz", sha256 = "FIXME" }
-source6 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-misc-ethiopic-1.0.5.tar.xz", sha256 = "FIXME" }
-source7 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-xfree86-type1-1.0.5.tar.xz", sha256 = "FIXME" }
-source8 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-alias-1.0.5.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-util-1.4.1.tar.xz", sha256 = "5c9f64123c194b150fee89049991687386e6ff36ef2af7b80ba53efaf368cc95" }
+source1 = { url = "https://xorg.freedesktop.org/archive/individual/font/encodings-1.1.0.tar.xz", sha256 = "9ff13c621756cfa12e95f32ba48a5b23839e8f577d0048beda66c67dab4de975" }
+source2 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-adobe-utopia-type1-1.0.5.tar.xz", sha256 = "4cb280bc47693b07c5e00fd0e5ad5721aabebc0548c3f06774e5cc3cbcf75697" }
+source3 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-ttf-1.0.4.tar.xz", sha256 = "85a5f90d00c48c2b06fd125ea8adbc8b8ee97429e3075081c8710926efec3a56" }
+source4 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-bh-type1-1.0.4.tar.xz", sha256 = "19dec3ec06abde6bedd10094579e928be0f0fc3bdb4fbe93f4c69cce406d72a6" }
+source5 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-ibm-type1-1.0.4.tar.xz", sha256 = "c4395e95ba46d40c4ad1737e91cac20c0ab75411329b60db5d99fed92b60ce7f" }
+source6 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-misc-ethiopic-1.0.5.tar.xz", sha256 = "4749a7e6e1a1eef6c91fcc9a04e8b1c0ed027d40c1599e5a6c93270d8469b612" }
+source7 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-xfree86-type1-1.0.5.tar.xz", sha256 = "a93c2c788a5ea1c002af7c8662cf9d9821fb1df51b8d2b2c5e0026dfdfea4837" }
+source8 = { url = "https://xorg.freedesktop.org/archive/individual/font/font-alias-1.0.5.tar.xz", sha256 = "9f89e217bb73e0e3636a0a493fbf8b7c995156e0c53d9a0476d201b67c2d6b6e" }
 
 [patches]
 

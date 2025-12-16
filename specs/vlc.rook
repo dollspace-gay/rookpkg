@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.videolan.org/vlc/3.0.21/vlc-3.0.21.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.videolan.org/vlc/3.0.21/vlc-3.0.21.tar.xz", sha256 = "24dbbe1d7dfaeea0994d5def0bbde200177347136dbfe573f5b6a4cee25afbb0" }
 
 [patches]
 

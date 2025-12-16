@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://sourceforge.net/projects/smartmontools/files/smartmontools/7.5/smartmontools-7.5.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://sourceforge.net/projects/smartmontools/files/smartmontools/7.5/smartmontools-7.5.tar.gz", sha256 = "0eb2724ccdf08dd27fd39e069e83f4c32eb0d4f739d52ef5a237f0188081bf96" }
 
 [patches]
 

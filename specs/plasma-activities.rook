@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-activities-6.2.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-activities-6.2.4.tar.xz", sha256 = "7c975d2421e6792e8c3cca5f22611dac55f44e1ec8648df97712f00cbb907ccb" }
 
 [patches]
 

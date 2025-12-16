@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz", sha256 = "7c8b7f9fc8609141fdea9cece85249d308624391ff61dedaf528fcb337727dfd" }
 
 [patches]
 

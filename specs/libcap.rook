@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.70.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-2.70.tar.xz", sha256 = "23a6ef8aadaf1e3e875f633bb2d116cfef8952dba7bc7c569b13458e1952b30f" }
 
 [patches]
 
