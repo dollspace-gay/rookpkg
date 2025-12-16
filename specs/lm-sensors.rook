@@ -1,0 +1,98 @@
+[package]
+name = "lm-sensors"
+version = "3.6.0"
+release = 1
+summary = "Hardware monitoring tools"
+description = """
+Lm_sensors provides essential tools for monitoring hardware temperatures,
+voltages, and fan speeds. It includes user-space support for the hardware
+monitoring drivers in the Linux kernel.
+"""
+homepage = "https://hwmon.wiki.kernel.org/lm_sensors"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/lm-sensors/lm-sensors/archive/V3-6-0/lm-sensors-3-6-0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/lm-sensors-*.tar.gz
+"""
+
+configure = """
+# lm_sensors doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/lm-sensors-*
+make PREFIX=/usr BUILD_STATIC_LIB=0 -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/lm-sensors-*
+make PREFIX=/usr BUILD_STATIC_LIB=0 DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/sensors" = { mode = 755 }
+"usr/bin/sensors-detect" = { mode = 755 }
+"usr/bin/fancontrol" = { mode = 755 }
+"usr/bin/pwmconfig" = { mode = 755 }
+"usr/sbin/isadump" = { mode = 755 }
+"usr/sbin/isaset" = { mode = 755 }
+"usr/lib/libsensors.so" = { mode = 755 }
+"usr/include/sensors/" = {}
+"usr/share/man/man1/" = {}
+"usr/share/man/man3/" = {}
+"usr/share/man/man5/" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+"etc/sensors3.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.6.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["lm-sensors", "sensors", "temperature", "hardware", "monitoring"]
+categories = ["utilities", "hardware", "monitoring"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

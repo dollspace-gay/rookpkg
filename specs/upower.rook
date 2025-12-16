@@ -1,0 +1,113 @@
+[package]
+name = "upower"
+version = "1.90.6"
+release = 1
+summary = "Power management daemon"
+description = """
+UPower is a daemon that provides power management functionality including
+battery status, power profiles, and suspend/hibernate support. It provides
+a D-Bus interface for applications to query power state.
+"""
+homepage = "https://upower.freedesktop.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/upower/upower/-/archive/v1.90.6/upower-v1.90.6.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gobject-introspection = ">= 1.80"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+libgudev = ">= 238"
+dbus = ">= 1.14"
+polkit = ">= 124"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/upower-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/upower-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release   \
+      -D gtk-doc=false      \
+      -D man=true
+"""
+
+build = """
+cd $ROOKPKG_BUILD/upower-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/upower-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/upower-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/upower" = { mode = 755 }
+"usr/libexec/upowerd" = { mode = 755 }
+"usr/lib/libupower-glib.so" = { mode = 755 }
+"usr/include/libupower-glib/" = {}
+"usr/lib/pkgconfig/upower-glib.pc" = {}
+"usr/lib/girepository-1.0/UPowerGlib-1.0.typelib" = {}
+"usr/share/gir-1.0/UPowerGlib-1.0.gir" = {}
+"usr/share/dbus-1/" = {}
+"usr/lib/systemd/system/" = {}
+"usr/share/man/man1/" = {}
+"usr/share/man/man7/" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+"etc/UPower/UPower.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.90.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["upower", "power", "battery", "management"]
+categories = ["system", "hardware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

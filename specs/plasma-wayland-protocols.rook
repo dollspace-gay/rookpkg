@@ -1,0 +1,93 @@
+[package]
+name = "plasma-wayland-protocols"
+version = "1.14.0"
+release = 1
+summary = "Wayland protocols used by KDE Plasma"
+description = """
+Plasma Wayland Protocols contains a collection of custom Wayland protocol
+definitions used by KDE Plasma for desktop integration features specific
+to the Plasma desktop environment.
+"""
+homepage = "https://invent.kde.org/libraries/plasma-wayland-protocols"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma-wayland-protocols/plasma-wayland-protocols-1.14.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/plasma-wayland-protocols-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/plasma-wayland-protocols-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/plasma-wayland-protocols-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/plasma-wayland-protocols-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/plasma-wayland-protocols/" = {}
+"usr/lib/cmake/PlasmaWaylandProtocols/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.14.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["plasma-wayland-protocols", "wayland", "kde", "plasma"]
+categories = ["development", "wayland", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

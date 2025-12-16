@@ -1,0 +1,100 @@
+[package]
+name = "kirigami-addons"
+version = "1.5.0"
+release = 1
+summary = "Additional components for Kirigami"
+description = """
+Kirigami Addons provides additional components and extensions for the Kirigami
+framework, including date/time pickers, form layouts, and other UI elements
+commonly needed in mobile-friendly Qt applications.
+"""
+homepage = "https://invent.kde.org/libraries/kirigami-addons"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.5.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/kirigami-addons-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kirigami-addons-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DBUILD_QCH=OFF                 \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kirigami-addons-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/kirigami-addons-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/kirigami-addons-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libKirigamiAddonsStatefulApp.so" = { mode = 755 }
+"usr/lib/qt6/qml/org/kde/kirigamiaddons/" = {}
+"usr/lib/cmake/KF6KirigamiAddons/" = {}
+"usr/include/KF6/KirigamiAddons/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kirigami-addons", "kirigami", "qt", "qml", "kde"]
+categories = ["libraries", "gui", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

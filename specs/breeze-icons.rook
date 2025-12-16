@@ -1,0 +1,96 @@
+[package]
+name = "breeze-icons"
+version = "6.7.0"
+release = 1
+summary = "Breeze icon theme for KDE"
+description = """
+Breeze Icons is the default icon theme for KDE Plasma. It provides a complete
+set of icons in multiple sizes with a clean, modern design that follows KDE's
+visual identity guidelines.
+"""
+homepage = "https://invent.kde.org/frameworks/breeze-icons"
+license = "LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/frameworks/6.7/breeze-icons-6.7.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+
+[depends]
+hicolor-icon-theme = ">= 0.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/breeze-icons-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/breeze-icons-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DBINARY_ICONS_RESOURCE=ON      \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/breeze-icons-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/breeze-icons-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/icons/breeze/" = {}
+"usr/share/icons/breeze-dark/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "gtk-update-icon-cache /usr/share/icons/breeze 2>/dev/null || true"
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = "gtk-update-icon-cache /usr/share/icons/breeze 2>/dev/null || true"
+
+[[changelog]]
+version = "6.7.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["breeze-icons", "breeze", "icons", "kde", "plasma"]
+categories = ["icons", "themes", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

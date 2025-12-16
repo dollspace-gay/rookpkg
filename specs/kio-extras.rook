@@ -1,0 +1,106 @@
+[package]
+name = "kio-extras"
+version = "24.08.3"
+release = 1
+summary = "Additional KIO slaves for KDE"
+description = """
+KIO Extras provides additional KIO slaves (protocol handlers) for KDE,
+enabling access to various network protocols and file formats including
+SFTP, SMB, MTP, thumbnails, and archive files.
+"""
+homepage = "https://invent.kde.org/network/kio-extras"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/release-service/24.08.3/src/kio-extras-24.08.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+libssh = ">= 0.10"
+samba = ">= 4.20"
+taglib = ">= 2.0"
+libmtp = ">= 1.1"
+openexr = ">= 3.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/kio-extras-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kio-extras-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DBUILD_TESTING=OFF             \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kio-extras-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/kio-extras-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/kio-extras-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/qt6/plugins/kf6/kio/" = {}
+"usr/lib/qt6/plugins/kf6/thumbcreator/" = {}
+"usr/lib/libkioarchive6.so" = { mode = 755 }
+"usr/share/kservices6/" = {}
+"usr/share/remoteview/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "24.08.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kio-extras", "kio", "sftp", "smb", "mtp", "kde"]
+categories = ["libraries", "network", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

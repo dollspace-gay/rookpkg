@@ -1,0 +1,104 @@
+[package]
+name = "qca"
+version = "2.3.9"
+release = 1
+summary = "Qt Cryptographic Architecture"
+description = """
+QCA (Qt Cryptographic Architecture) provides a straightforward and cross-platform
+crypto API, using Qt datatypes and conventions. It supports SSL, TLS, X.509,
+SASL, OpenPGP, smartcards, and other cryptographic technologies.
+"""
+homepage = "https://invent.kde.org/libraries/qca"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/qca/2.3.9/qca-2.3.9.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+openssl = ">= 3.3"
+ca-certificates = ">= 2024"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/qca-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/qca-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DQT6=ON                        \
+      -DWITH_ossl_PLUGIN=ON           \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/qca-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/qca-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/qca-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libqca-qt6.so" = { mode = 755 }
+"usr/include/Qca-qt6/" = {}
+"usr/lib/cmake/Qca-qt6/" = {}
+"usr/lib/qca-qt6/" = {}
+"usr/lib/pkgconfig/qca2-qt6.pc" = {}
+"usr/share/man/man1/qcatool-qt6.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.3.9"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["qca", "cryptography", "ssl", "tls", "qt", "kde"]
+categories = ["libraries", "security", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

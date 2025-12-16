@@ -1,0 +1,103 @@
+[package]
+name = "libnvme"
+version = "1.10"
+release = 1
+summary = "C library for NVM Express operations"
+description = """
+Libnvme is a C library for Linux that provides type definitions and functions
+for NVM Express (NVMe) device operations. It includes nvme-cli for managing
+NVMe drives from the command line.
+"""
+homepage = "https://github.com/linux-nvme/libnvme"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/linux-nvme/libnvme/archive/v1.10/libnvme-1.10.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+json-c = ">= 0.17"
+openssl = ">= 3.3"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libnvme-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libnvme-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release   \
+      -D docs=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libnvme-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libnvme-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libnvme-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libnvme.so" = { mode = 755 }
+"usr/lib/libnvme-mi.so" = { mode = 755 }
+"usr/include/libnvme.h" = {}
+"usr/include/libnvme-mi.h" = {}
+"usr/include/nvme/" = {}
+"usr/lib/pkgconfig/libnvme.pc" = {}
+"usr/lib/pkgconfig/libnvme-mi.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.10"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libnvme", "nvme", "ssd", "storage"]
+categories = ["libraries", "storage"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

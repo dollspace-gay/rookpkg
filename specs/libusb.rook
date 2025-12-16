@@ -1,0 +1,92 @@
+[package]
+name = "libusb"
+version = "1.0.27"
+release = 1
+summary = "USB device access library"
+description = """
+Libusb is a C library that provides generic access to USB devices. It is
+intended to be used by developers to facilitate the production of applications
+that communicate with USB hardware.
+"""
+homepage = "https://libusb.info/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libusb-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libusb-*
+./configure --prefix=/usr        \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libusb-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libusb-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libusb-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libusb-1.0.so" = { mode = 755 }
+"usr/include/libusb-1.0/" = {}
+"usr/lib/pkgconfig/libusb-1.0.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.27"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libusb", "usb", "hardware"]
+categories = ["libraries", "hardware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

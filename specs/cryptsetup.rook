@@ -1,0 +1,101 @@
+[package]
+name = "cryptsetup"
+version = "2.7.5"
+release = 1
+summary = "Disk encryption utilities"
+description = """
+Cryptsetup is a utility used to conveniently set up disk encryption based
+on the DMCrypt kernel module. It supports LUKS, plain dm-crypt, loop-AES,
+and TrueCrypt/VeraCrypt volumes.
+"""
+homepage = "https://gitlab.com/cryptsetup/cryptsetup"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/utils/cryptsetup/v2.7/cryptsetup-2.7.5.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+lvm2 = ">= 2.03"
+popt = ">= 1.19"
+json-c = ">= 0.17"
+openssl = ">= 3.3"
+argon2 = ">= 20190702"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/cryptsetup-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/cryptsetup-*
+./configure --prefix=/usr            \
+            --disable-ssh-token      \
+            --enable-libargon2
+"""
+
+build = """
+cd $ROOKPKG_BUILD/cryptsetup-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/cryptsetup-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/cryptsetup-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"sbin/cryptsetup" = { mode = 755 }
+"sbin/veritysetup" = { mode = 755 }
+"sbin/integritysetup" = { mode = 755 }
+"usr/lib/libcryptsetup.so" = { mode = 755 }
+"usr/include/libcryptsetup.h" = {}
+"usr/lib/pkgconfig/libcryptsetup.pc" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.7.5"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["cryptsetup", "luks", "encryption", "dm-crypt"]
+categories = ["system", "security", "storage"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

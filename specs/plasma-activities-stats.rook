@@ -1,0 +1,101 @@
+[package]
+name = "plasma-activities-stats"
+version = "6.2.4"
+release = 1
+summary = "Statistics for KDE Plasma Activities"
+description = """
+Plasma Activities Stats provides a library for tracking resource usage statistics
+across KDE Plasma activities. It enables features like "recently used" files
+and activity-aware application launchers.
+"""
+homepage = "https://invent.kde.org/plasma/plasma-activities-stats"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-activities-stats-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+boost = ">= 1.85"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+plasma-activities = ">= 6.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/plasma-activities-stats-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/plasma-activities-stats-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DBUILD_TESTING=OFF             \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/plasma-activities-stats-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/plasma-activities-stats-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/plasma-activities-stats-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libPlasmaActivitiesStats.so" = { mode = 755 }
+"usr/include/PlasmaActivitiesStats/" = {}
+"usr/lib/cmake/PlasmaActivitiesStats/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["plasma-activities-stats", "activities", "statistics", "kde", "plasma"]
+categories = ["libraries", "desktop", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

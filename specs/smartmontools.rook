@@ -1,0 +1,101 @@
+[package]
+name = "smartmontools"
+version = "7.4"
+release = 1
+summary = "S.M.A.R.T. disk monitoring tools"
+description = """
+SMART Monitoring Tools controls and monitors storage systems using the
+Self-Monitoring, Analysis and Reporting Technology System (S.M.A.R.T.)
+built into most modern ATA/SATA, SCSI/SAS and NVMe disks.
+"""
+homepage = "https://www.smartmontools.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceforge.net/projects/smartmontools/files/smartmontools/7.4/smartmontools-7.4.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+libcap-ng = ">= 0.8"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/smartmontools-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/smartmontools-*
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --with-libcap-ng=yes   \
+            --with-systemdsystemunitdir=/usr/lib/systemd/system
+"""
+
+build = """
+cd $ROOKPKG_BUILD/smartmontools-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/smartmontools-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/sbin/smartctl" = { mode = 755 }
+"usr/sbin/smartd" = { mode = 755 }
+"usr/sbin/update-smart-drivedb" = { mode = 755 }
+"usr/share/smartmontools/drivedb.h" = {}
+"usr/share/man/man5/smartd.conf.5" = {}
+"usr/share/man/man8/smartctl.8" = {}
+"usr/share/man/man8/smartd.8" = {}
+"usr/share/man/man8/update-smart-drivedb.8" = {}
+"usr/lib/systemd/system/smartd.service" = {}
+
+[config_files]
+"etc/smartd.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "7.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["smartmontools", "smart", "disk", "monitoring", "health"]
+categories = ["utilities", "hardware", "monitoring"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

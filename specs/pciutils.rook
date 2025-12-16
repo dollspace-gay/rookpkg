@@ -1,0 +1,103 @@
+[package]
+name = "pciutils"
+version = "3.13.0"
+release = 1
+summary = "PCI utilities and library"
+description = """
+PCI Utilities is a package of programs for listing PCI devices, inspecting
+their status, and setting their configuration registers. It includes lspci
+and setpci commands.
+"""
+homepage = "https://mj.ucw.cz/sw/pciutils/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://mj.ucw.cz/download/linux/pci/pciutils-3.13.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+hwdata = ">= 0.385"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pciutils-*.tar.gz
+"""
+
+configure = """
+# pciutils doesn't use configure script
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pciutils-*
+make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes                 \
+     -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pciutils-*
+make PREFIX=/usr                \
+     SHAREDIR=/usr/share/hwdata \
+     SHARED=yes                 \
+     DESTDIR=$ROOKPKG_DESTDIR   \
+     install install-lib
+
+chmod 755 $ROOKPKG_DESTDIR/usr/lib/libpci.so
+"""
+
+[files]
+"usr/bin/lspci" = { mode = 755 }
+"usr/bin/setpci" = { mode = 755 }
+"usr/sbin/update-pciids" = { mode = 755 }
+"usr/lib/libpci.so" = { mode = 755 }
+"usr/include/pci/" = {}
+"usr/lib/pkgconfig/libpci.pc" = {}
+"usr/share/man/man7/pcilib.7" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.13.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pciutils", "pci", "lspci", "hardware"]
+categories = ["utilities", "hardware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

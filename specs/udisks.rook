@@ -1,0 +1,114 @@
+[package]
+name = "udisks"
+version = "2.10.1"
+release = 1
+summary = "Disk management daemon"
+description = """
+UDisks provides a daemon, tools, and libraries to access and manipulate
+disks, storage devices, and technologies. It provides a D-Bus interface
+for mounting, unmounting, and querying storage devices.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/udisks/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.1/udisks-2.10.1.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+gobject-introspection = ">= 1.80"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+libgudev = ">= 238"
+libatasmart = ">= 0.19"
+libblockdev = ">= 3.0"
+polkit = ">= 124"
+lvm2 = ">= 2.03"
+cryptsetup = ">= 2.7"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/udisks-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/udisks-*
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --localstatedir=/var   \
+            --disable-static       \
+            --enable-lvm2          \
+            --enable-lvmcache
+"""
+
+build = """
+cd $ROOKPKG_BUILD/udisks-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/udisks-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/udisks-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/udisksctl" = { mode = 755 }
+"usr/libexec/udisks2/udisksd" = { mode = 755 }
+"usr/lib/libudisks2.so" = { mode = 755 }
+"usr/include/udisks2/" = {}
+"usr/lib/pkgconfig/udisks2.pc" = {}
+"usr/lib/girepository-1.0/UDisks-2.0.typelib" = {}
+"usr/share/gir-1.0/UDisks-2.0.gir" = {}
+"usr/share/dbus-1/" = {}
+"usr/lib/systemd/system/" = {}
+"usr/share/polkit-1/" = {}
+"usr/share/man/man1/" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+"etc/udisks2/udisks2.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.10.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["udisks", "disk", "storage", "mount"]
+categories = ["system", "storage"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

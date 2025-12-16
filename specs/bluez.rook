@@ -1,0 +1,113 @@
+[package]
+name = "bluez"
+version = "5.78"
+release = 1
+summary = "Bluetooth protocol stack"
+description = """
+BlueZ is the official Linux Bluetooth protocol stack. It provides support
+for core Bluetooth layers and protocols including device management,
+audio streaming, and file transfer.
+"""
+homepage = "http://www.bluez.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.78.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+dbus = ">= 1.14"
+libical = ">= 3.0"
+readline = ">= 8.2"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/bluez-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/bluez-*
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --localstatedir=/var   \
+            --enable-library       \
+            --disable-manpages
+"""
+
+build = """
+cd $ROOKPKG_BUILD/bluez-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/bluez-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/bluez-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install configuration
+install -Dm644 src/main.conf $ROOKPKG_DESTDIR/etc/bluetooth/main.conf
+"""
+
+[files]
+"usr/bin/bluetoothctl" = { mode = 755 }
+"usr/bin/btmon" = { mode = 755 }
+"usr/bin/rctest" = { mode = 755 }
+"usr/bin/l2test" = { mode = 755 }
+"usr/bin/l2ping" = { mode = 755 }
+"usr/bin/hciconfig" = { mode = 755 }
+"usr/bin/hcitool" = { mode = 755 }
+"usr/libexec/bluetooth/bluetoothd" = { mode = 755 }
+"usr/lib/libbluetooth.so" = { mode = 755 }
+"usr/include/bluetooth/" = {}
+"usr/lib/pkgconfig/bluez.pc" = {}
+"usr/share/dbus-1/" = {}
+"usr/lib/systemd/system/" = {}
+
+[config_files]
+"etc/bluetooth/main.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.78"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["bluez", "bluetooth", "wireless"]
+categories = ["system", "hardware", "networking"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

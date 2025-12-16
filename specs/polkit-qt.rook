@@ -1,0 +1,100 @@
+[package]
+name = "polkit-qt"
+version = "0.200.0"
+release = 1
+summary = "Qt bindings for PolicyKit"
+description = """
+Polkit-Qt is a library that allows Qt applications to use the PolicyKit
+authorization framework. It provides Qt-native API for checking and acquiring
+privileges for system administration tasks.
+"""
+homepage = "https://invent.kde.org/libraries/polkit-qt-1"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/polkit-qt-1/polkit-qt-1-0.200.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+polkit = ">= 124"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/polkit-qt-1-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/polkit-qt-1-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DQT_MAJOR_VERSION=6            \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/polkit-qt-1-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/polkit-qt-1-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/polkit-qt-1-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libpolkit-qt6-*.so" = { mode = 755 }
+"usr/include/polkit-qt6-1/" = {}
+"usr/lib/cmake/PolkitQt6-1/" = {}
+"usr/lib/pkgconfig/polkit-qt6-1.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.200.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["polkit-qt", "polkit", "qt", "authorization", "kde"]
+categories = ["libraries", "security", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

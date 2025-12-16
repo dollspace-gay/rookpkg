@@ -1,0 +1,101 @@
+[package]
+name = "keyutils"
+version = "1.6.3"
+release = 1
+summary = "Linux kernel key management utilities"
+description = """
+Keyutils is a set of utilities for managing the key retention facility in
+the Linux kernel, including the keyctl command and libkeyutils library.
+It's used by the kernel for various cryptographic operations.
+"""
+homepage = "https://people.redhat.com/~dhowells/keyutils/"
+license = "GPL-2.0-or-later AND LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://people.redhat.com/~dhowells/keyutils/keyutils-1.6.3.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/keyutils-*.tar.bz2
+"""
+
+configure = """
+# keyutils doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/keyutils-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/keyutils-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/keyutils-*
+make DESTDIR=$ROOKPKG_DESTDIR      \
+     LIBDIR=/usr/lib               \
+     USRLIBDIR=/usr/lib            \
+     install
+"""
+
+[files]
+"usr/bin/keyctl" = { mode = 755 }
+"sbin/request-key" = { mode = 755 }
+"sbin/key.dns_resolver" = { mode = 755 }
+"usr/lib/libkeyutils.so" = { mode = 755 }
+"usr/include/keyutils.h" = {}
+"usr/lib/pkgconfig/libkeyutils.pc" = {}
+"usr/share/man/man1/" = {}
+"usr/share/man/man3/" = {}
+"usr/share/man/man5/" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+"etc/request-key.conf" = {}
+"etc/request-key.d/" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.6.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["keyutils", "keyctl", "kernel", "key-management"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

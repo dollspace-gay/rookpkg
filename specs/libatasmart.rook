@@ -1,0 +1,94 @@
+[package]
+name = "libatasmart"
+version = "0.19"
+release = 1
+summary = "ATA S.M.A.R.T. reading and parsing library"
+description = """
+Libatasmart is a lightweight library for reading and parsing ATA S.M.A.R.T.
+hard disk health information. It is used by udisks for disk health monitoring.
+"""
+homepage = "http://0pointer.de/blog/projects/being-smart.html"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://0pointer.de/public/libatasmart-0.19.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libatasmart-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libatasmart-*
+./configure --prefix=/usr        \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libatasmart-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libatasmart-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libatasmart-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/skdump" = { mode = 755 }
+"usr/bin/sktest" = { mode = 755 }
+"usr/lib/libatasmart.so" = { mode = 755 }
+"usr/include/atasmart.h" = {}
+"usr/lib/pkgconfig/libatasmart.pc" = {}
+"lib/udev/rules.d/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.19"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libatasmart", "atasmart", "smart", "disk", "health"]
+categories = ["libraries", "hardware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

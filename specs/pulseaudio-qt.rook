@@ -1,0 +1,100 @@
+[package]
+name = "pulseaudio-qt"
+version = "1.5.0"
+release = 1
+summary = "Qt bindings for PulseAudio"
+description = """
+PulseAudio Qt Bindings provides a Qt-style API for interacting with the
+PulseAudio sound server. It is used by KDE Plasma for audio volume control
+and device management.
+"""
+homepage = "https://invent.kde.org/libraries/pulseaudio-qt"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/pulseaudio-qt/pulseaudio-qt-1.5.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+pulseaudio = ">= 17.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pulseaudio-qt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pulseaudio-qt-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DQT_MAJOR_VERSION=6            \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pulseaudio-qt-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pulseaudio-qt-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pulseaudio-qt-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libKF6PulseAudioQt.so" = { mode = 755 }
+"usr/include/KF6/KF6PulseAudioQt/" = {}
+"usr/lib/cmake/KF6PulseAudioQt/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pulseaudio-qt", "pulseaudio", "audio", "qt", "kde"]
+categories = ["libraries", "audio", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,91 @@
+[package]
+name = "hwdata"
+version = "0.385"
+release = 1
+summary = "Hardware identification and configuration data"
+description = """
+Hwdata contains various hardware identification and configuration data,
+such as the pci.ids and usb.ids databases. These are used by various
+programs to identify hardware devices.
+"""
+homepage = "https://github.com/vcrhonek/hwdata"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/vcrhonek/hwdata/archive/v0.385/hwdata-0.385.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/hwdata-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/hwdata-*
+./configure --prefix=/usr           \
+            --sysconfdir=/etc       \
+            --datadir=/usr/share
+"""
+
+build = """
+# Data-only package, nothing to compile
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/hwdata-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/share/hwdata/pci.ids" = {}
+"usr/share/hwdata/usb.ids" = {}
+"usr/share/hwdata/pnp.ids" = {}
+"usr/share/hwdata/oui.txt" = {}
+"usr/share/hwdata/iab.txt" = {}
+"usr/lib/pkgconfig/hwdata.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.385"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["hwdata", "pci.ids", "usb.ids", "hardware", "database"]
+categories = ["data", "hardware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

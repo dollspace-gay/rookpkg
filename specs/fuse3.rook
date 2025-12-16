@@ -1,0 +1,105 @@
+[package]
+name = "fuse3"
+version = "3.16.2"
+release = 1
+summary = "Filesystem in Userspace"
+description = """
+FUSE (Filesystem in Userspace) allows non-privileged users to create their
+own filesystem implementations without editing kernel code. FUSE3 is the
+major version 3 series with improved performance and features.
+"""
+homepage = "https://github.com/libfuse/libfuse"
+license = "GPL-2.0-only AND LGPL-2.1-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libfuse/libfuse/releases/download/fuse-3.16.2/fuse-3.16.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/fuse-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/fuse-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D examples=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/fuse-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/fuse-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/fuse-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Fix permissions on fusermount3
+chmod u+s $ROOKPKG_DESTDIR/usr/bin/fusermount3
+"""
+
+[files]
+"usr/bin/fusermount3" = { mode = 4755 }
+"usr/sbin/mount.fuse3" = { mode = 755 }
+"usr/lib/libfuse3.so" = { mode = 755 }
+"usr/include/fuse3/" = {}
+"usr/lib/pkgconfig/fuse3.pc" = {}
+"usr/share/man/man1/fusermount3.1" = {}
+"usr/share/man/man8/mount.fuse3.8" = {}
+"lib/udev/rules.d/99-fuse3.rules" = {}
+
+[config_files]
+"etc/fuse.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.16.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["fuse3", "fuse", "filesystem", "userspace"]
+categories = ["system", "filesystem"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,88 @@
+[package]
+name = "libaio"
+version = "0.3.113"
+release = 1
+summary = "Linux-native asynchronous I/O library"
+description = """
+Libaio provides the Linux-native API for asynchronous I/O. The library
+provides the io_submit, io_getevents, and other functions for async disk
+I/O operations, used by databases and other I/O-intensive applications.
+"""
+homepage = "https://pagure.io/libaio"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://pagure.io/libaio/archive/libaio-0.3.113/libaio-libaio-0.3.113.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libaio-*.tar.gz
+"""
+
+configure = """
+# libaio doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libaio-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require root
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libaio-*
+make prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libaio.so" = { mode = 755 }
+"usr/include/libaio.h" = {}
+"usr/lib/pkgconfig/libaio.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.3.113"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libaio", "aio", "async", "io"]
+categories = ["libraries", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

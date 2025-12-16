@@ -1,0 +1,115 @@
+[package]
+name = "lvm2"
+version = "2.03.27"
+release = 1
+summary = "Logical Volume Manager"
+description = """
+LVM2 refers to the userspace toolset that provides logical volume management
+facilities on Linux. It allows creation of logical volumes from physical
+volumes and supports features like snapshots and thin provisioning.
+"""
+homepage = "https://sourceware.org/lvm2/"
+license = "GPL-2.0-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceware.org/ftp/lvm2/LVM2.2.03.27.tgz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+libaio = ">= 0.3"
+thin-provisioning-tools = ">= 1.0"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/LVM2.*.tgz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/LVM2.*
+./configure --prefix=/usr              \
+            --exec-prefix=             \
+            --enable-cmdlib            \
+            --enable-pkgconfig         \
+            --enable-udev_sync         \
+            --enable-dmeventd          \
+            --with-thin=internal       \
+            --with-cache=internal
+"""
+
+build = """
+cd $ROOKPKG_BUILD/LVM2.*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/LVM2.*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/LVM2.*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"sbin/lvm" = { mode = 755 }
+"sbin/lvs" = { mode = 755 }
+"sbin/vgs" = { mode = 755 }
+"sbin/pvs" = { mode = 755 }
+"sbin/lvmconfig" = { mode = 755 }
+"sbin/dmsetup" = { mode = 755 }
+"usr/lib/liblvm2cmd.so" = { mode = 755 }
+"usr/lib/libdevmapper.so" = { mode = 755 }
+"usr/include/lvm2cmd.h" = {}
+"usr/include/libdevmapper.h" = {}
+"usr/lib/pkgconfig/devmapper.pc" = {}
+"usr/lib/pkgconfig/lvm2app.pc" = {}
+"usr/share/man/man5/" = {}
+"usr/share/man/man7/" = {}
+"usr/share/man/man8/" = {}
+"lib/udev/rules.d/" = {}
+"usr/lib/systemd/system/" = {}
+
+[config_files]
+"etc/lvm/lvm.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.03.27"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["lvm2", "lvm", "logical-volume", "storage"]
+categories = ["system", "storage"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
