@@ -1,6 +1,6 @@
 [package]
 name = "jasper"
-version = "4.2.4"
+version = "4.2.8"
 release = 1
 summary = "JPEG-2000 library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/jasper-software/jasper/releases/download/version-4.2.4/jasper-4.2.4.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/jasper-software/jasper/releases/download/version-4.2.8/jasper-version-4.2.8.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,33 +33,34 @@ libjpeg-turbo = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf jasper-*
 tar xf $ROOKPKG_SOURCES/jasper-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/jasper-*
-mkdir -p build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DCMAKE_SKIP_INSTALL_RPATH=YES  \
-      -DJAS_ENABLE_DOC=NO             \
-      -DJAS_ENABLE_LATEX=NO           \
+mkdir BUILD && cd BUILD
+cmake -D CMAKE_INSTALL_PREFIX=/usr    \
+      -D CMAKE_BUILD_TYPE=Release     \
+      -D CMAKE_SKIP_INSTALL_RPATH=ON  \
+      -D JAS_ENABLE_DOC=NO            \
+      -D ALLOW_IN_SOURCE_BUILD=YES    \
+      -D CMAKE_INSTALL_DOCDIR=/usr/share/doc/jasper-4.2.8 \
       ..
 """
 
 build = """
-cd $ROOKPKG_BUILD/jasper-*/build
+cd $ROOKPKG_BUILD/jasper-*/BUILD
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/jasper-*/build
+cd $ROOKPKG_BUILD/jasper-*/BUILD
 make test || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/jasper-*/build
+cd $ROOKPKG_BUILD/jasper-*/BUILD
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
@@ -83,6 +84,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.2.8"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 4.2.8 per BLFS",
+    "Updated cmake options per BLFS"
+]
 
 [[changelog]]
 version = "4.2.4"

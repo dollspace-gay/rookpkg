@@ -35,7 +35,13 @@ docbook-xml = ">= 4.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf itstool-*
 tar xf $ROOKPKG_SOURCES/itstool-*.tar.bz2
+cd itstool-*
+
+# Fix compatibility problems with Python-3.12 and later
+sed -i 's/re.sub(/re.sub(r/'         itstool.in
+sed -i 's/re.compile(/re.compile(r/' itstool.in
 """
 
 configure = """

@@ -36,6 +36,7 @@ libnftnl = ">= 1.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf iptables-*
 tar xf $ROOKPKG_SOURCES/iptables-*.tar.xz
 """
 

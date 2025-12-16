@@ -34,12 +34,16 @@ xml-parser = ">= 2.40"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf intltool-*
 tar xf $ROOKPKG_SOURCES/intltool-*.tar.gz
+cd intltool-*
+
+# Fix a warning that causes crashes in some packages (from BLFS)
+sed -i 's/\\x27LI\\x27/\\&LU/' intltool-update.in
 """
 
 configure = """
 cd $ROOKPKG_BUILD/intltool-*
-sed -i 's:\\${prefix}:/usr:' intltool-update.in
 ./configure --prefix=/usr
 """
 

@@ -1,6 +1,6 @@
 [package]
 name = "iso-codes"
-version = "4.17.0"
+version = "4.18.0"
 release = 1
 summary = "ISO language, country, and currency code lists"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://salsa.debian.org/iso-codes-team/iso-codes/-/archive/v4.17.0/iso-codes-v4.17.0.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://salsa.debian.org/iso-codes-team/iso-codes/-/archive/v4.18.0/iso-codes-v4.18.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,7 +32,8 @@ gettext = ">= 0.22"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/iso-codes-*.tar.bz2
+rm -rf iso-codes-*
+tar xf $ROOKPKG_SOURCES/iso-codes-*.tar.gz
 """
 
 configure = """
@@ -52,7 +53,7 @@ make check || true
 
 install = """
 cd $ROOKPKG_BUILD/iso-codes-*
-make DESTDIR=$ROOKPKG_DESTDIR install
+make DESTDIR=$ROOKPKG_DESTDIR install LN_S='ln -sfn'
 """
 
 [files]
@@ -70,6 +71,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "4.18.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 4.18.0 per BLFS"
+]
 
 [[changelog]]
 version = "4.17.0"
