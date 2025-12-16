@@ -1,7 +1,7 @@
 [package]
 name = "rookpkg"
 version = "0.1.0"
-release = 5
+release = 7
 summary = "Rookery OS Package Manager with quantum-resistant signatures"
 description = """
 rookpkg is the official package manager for Rookery OS. Features include:

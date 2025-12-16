@@ -87,6 +87,11 @@ impl BuildEnvironment {
         // Set up environment variables
         let mut env = HashMap::new();
 
+        // Sources directory (where downloaded tarballs are cached)
+        let sources_dir = config.paths.cache_dir.join("sources");
+        fs::create_dir_all(&sources_dir)
+            .with_context(|| format!("Failed to create sources dir: {}", sources_dir.display()))?;
+
         // Standard build environment
         env.insert("ROOKPKG_NAME".to_string(), pkg_name.clone());
         env.insert("ROOKPKG_VERSION".to_string(), pkg_version.clone());
@@ -94,17 +99,24 @@ impl BuildEnvironment {
             "ROOKPKG_RELEASE".to_string(),
             spec.package.release.to_string(),
         );
+
+        // Primary variables used by spec files
+        env.insert("ROOKPKG_BUILD".to_string(), src_dir.to_string_lossy().to_string());
+        env.insert("ROOKPKG_SOURCES".to_string(), sources_dir.to_string_lossy().to_string());
+        env.insert("ROOKPKG_DESTDIR".to_string(), dest_dir.to_string_lossy().to_string());
+
+        // Alternative names for compatibility
         env.insert("ROOKPKG_BUILDDIR".to_string(), build_dir.to_string_lossy().to_string());
         env.insert("ROOKPKG_SRCDIR".to_string(), src_dir.to_string_lossy().to_string());
-        env.insert("ROOKPKG_DESTDIR".to_string(), dest_dir.to_string_lossy().to_string());
 
         // Standard paths
         env.insert("PATH".to_string(), "/usr/bin:/bin:/usr/sbin:/sbin".to_string());
         env.insert("HOME".to_string(), "/root".to_string());
         env.insert("TERM".to_string(), "xterm-256color".to_string());
 
-        // Build flags
+        // Build flags - number of parallel jobs
         let jobs = config.build.jobs;
+        env.insert("ROOKPKG_JOBS".to_string(), jobs.to_string());
         env.insert("MAKEFLAGS".to_string(), format!("-j{}", jobs));
         env.insert("NINJAJOBS".to_string(), jobs.to_string());
 
@@ -142,7 +154,7 @@ impl BuildEnvironment {
         &self.dest_dir
     }
 
-    /// Download and extract all sources
+    /// Download all sources (extraction is handled by prep phase in spec)
     pub fn fetch_sources(&self) -> Result<()> {
         tracing::info!("Fetching sources for {}", self.spec.package.name);
 
@@ -166,15 +178,12 @@ impl BuildEnvironment {
             source_files.push((name.clone(), source_file));
         }
 
-        // Download all sources
+        // Download all sources (but don't extract - let prep phase handle extraction)
         let source_file_refs: Vec<_> = source_files.iter().map(|(_, sf)| sf.clone()).collect();
-        let downloaded_paths = self.downloader.download_all(&source_file_refs)?;
+        self.downloader.download_all(&source_file_refs)?;
 
-        // Extract each source
-        for ((name, _), downloaded) in source_files.iter().zip(downloaded_paths.iter()) {
-            tracing::info!("Extracting {} to {:?}", name, self.src_dir);
-            extract_tarball(downloaded, &self.src_dir)?;
-        }
+        // Sources are now in $ROOKPKG_SOURCES, prep phase will extract them to $ROOKPKG_BUILD
+        tracing::info!("Sources downloaded to {:?}", self.downloader.cache_dir());
 
         Ok(())
     }
