@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://duktape.org/duktape-2.7.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://duktape.org/duktape-2.7.0.tar.xz", sha256 = "90f8d2fa8b5567c6899830ddef2c03f3c27960b11aca222fa17aa7ac613c2890" }
 
 [patches]
 
@@ -69,17 +69,17 @@ install -m644 src/duktape.h $ROOKPKG_DESTDIR/usr/include/
 install -m644 src/duk_config.h $ROOKPKG_DESTDIR/usr/include/
 install -m755 duk $ROOKPKG_DESTDIR/usr/bin/
 
-cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/duktape.pc << EOF
+cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/duktape.pc << 'EOF'
 prefix=/usr
-exec_prefix=\${prefix}
-libdir=\${exec_prefix}/lib
-includedir=\${prefix}/include
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
 
 Name: duktape
 Description: Embeddable JavaScript engine
 Version: 2.7.0
-Libs: -L\${libdir} -lduktape -lm
-Cflags: -I\${includedir}
+Libs: -L${libdir} -lduktape -lm
+Cflags: -I${includedir}
 EOF
 """
 

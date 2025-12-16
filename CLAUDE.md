@@ -2,7 +2,7 @@
 
 ## Build Environment
 
-**All builds run via WSL Rookery OS as root.** Rust is at `/opt/rustc`.
+**All builds run via WSL Rookery OS as root.** 
 
 ### Build Commands
 
@@ -10,16 +10,16 @@
 # Template: wsl -d RookeryOS -u root bash -c '<commands>'
 
 # Build release
-wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo build --release'
+wsl -d RookeryOS -u root bash -c 'cd /mnt/c/Users/texas/rookpkg && cargo build --release'
 
 # Run clippy
-wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo clippy'
+wsl -d RookeryOS -u root bash -c 'cd /mnt/c/Users/texas/rookpkg && cargo clippy'
 
 # Run tests
-wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo test'
+wsl -d RookeryOS -u root bash -c  'cd /mnt/c/Users/texas/rookpkg && cargo test'
 
 # Format code
-wsl -d RookeryOS -u root bash -c 'export CARGO_HOME=/opt/rustc; export PATH=/opt/rustc/bin:/usr/bin:/bin; cd /mnt/c/Users/texas/rookpkg && cargo fmt'
+wsl -d RookeryOS -u root bash -c 'cd /mnt/c/Users/texas/rookpkg && cargo fmt'
 
 # Run the binary
 wsl -d RookeryOS -u root bash -c 'cd /mnt/c/Users/texas/rookpkg && ./target/release/rookpkg --help'

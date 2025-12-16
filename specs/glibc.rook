@@ -81,14 +81,14 @@ make -j$ROOKPKG_JOBS
 
 # Replace timezone Makefile with stub to prevent tzselect.ksh errors
 # We install timezone data separately using zic
-cat > timezone/Makefile << "TZSTUB"
+cat > timezone/Makefile << 'TZSTUB'
 .PHONY: all install subdir_lib others clean mostlyclean distclean
 all install subdir_lib others clean mostlyclean distclean:
 	@echo "Timezone utilities disabled - will be installed separately"
 TZSTUB
 
 # Fix Makefile to skip outdated sanity check
-sed "/test-installation/s@\$(PERL)@echo not running@" -i ../Makefile
+sed "/test-installation/s@\\$(PERL)@echo not running@" -i ../Makefile
 """
 
 check = """
@@ -111,7 +111,7 @@ mkdir -pv $ROOKPKG_DESTDIR/usr/lib/locale
 
 # Create nsswitch.conf
 mkdir -p $ROOKPKG_DESTDIR/etc
-cat > $ROOKPKG_DESTDIR/etc/nsswitch.conf << "EOF"
+cat > $ROOKPKG_DESTDIR/etc/nsswitch.conf << 'EOF'
 passwd: files
 group: files
 shadow: files
@@ -124,7 +124,7 @@ rpc: files
 EOF
 
 # Create ld.so.conf
-cat > $ROOKPKG_DESTDIR/etc/ld.so.conf << "EOF"
+cat > $ROOKPKG_DESTDIR/etc/ld.so.conf << 'EOF'
 # Add directories for local libraries
 /usr/local/lib
 

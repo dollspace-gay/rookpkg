@@ -1,6 +1,6 @@
 [package]
 name = "7zip"
-version = "24.08"
+version = "25.01"
 release = 1
 summary = "High compression ratio file archiver"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.7-zip.org/a/7z2408-src.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/ip7z/7zip/releases/download/25.01/7zip-25.01.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,9 +32,9 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-mkdir -p 7zip-24.08
-cd 7zip-24.08
-tar xf $ROOKPKG_SOURCES/7z*-src.tar.xz
+rm -rf 7zip-*
+tar xf $ROOKPKG_SOURCES/7zip-25.01.tar.gz
+cd 7zip-*
 """
 
 configure = """
@@ -42,8 +42,11 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/7zip-*/CPP/7zip/Bundles/Alone2
-make -f makefile.gcc -j$ROOKPKG_JOBS
+cd $ROOKPKG_BUILD/7zip-*
+# Build all components
+for i in Bundles/Alone Bundles/Alone7z Bundles/Format7zF Bundles/SFXCon UI/Console; do
+    make -C CPP/7zip/$i -f ../../cmpl_gcc.mak -j$ROOKPKG_JOBS || exit 1
+done
 """
 
 check = """
@@ -51,15 +54,43 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/7zip-*/CPP/7zip/Bundles/Alone2
+cd $ROOKPKG_BUILD/7zip-*
+
+# Install binaries and library to /usr/lib/7zip
+install -vDm755 CPP/7zip/Bundles/Alone/b/g/7za \
+                CPP/7zip/Bundles/Alone7z/b/g/7zr \
+                CPP/7zip/Bundles/Format7zF/b/g/7z.so \
+                CPP/7zip/UI/Console/b/g/7z \
+                -t $ROOKPKG_DESTDIR/usr/lib/7zip/
+
+install -vm755 CPP/7zip/Bundles/SFXCon/b/g/7zCon \
+               $ROOKPKG_DESTDIR/usr/lib/7zip/7zCon.sfx
+
+# Create wrapper scripts in /usr/bin
 install -d $ROOKPKG_DESTDIR/usr/bin
-install -m755 b/g/7zz $ROOKPKG_DESTDIR/usr/bin/7zz
-ln -sf 7zz $ROOKPKG_DESTDIR/usr/bin/7z
+for i in 7z 7za 7zr; do
+    cat > $ROOKPKG_DESTDIR/usr/bin/$i << 'EOF'
+#!/bin/sh
+exec /usr/lib/7zip/$i "$@"
+EOF
+    chmod 755 $ROOKPKG_DESTDIR/usr/bin/$i
+done
+
+# Install documentation
+install -d $ROOKPKG_DESTDIR/usr/share/doc/7zip-25.01
+cp -rv DOC/* $ROOKPKG_DESTDIR/usr/share/doc/7zip-25.01/
 """
 
 [files]
-"usr/bin/7zz" = { mode = 755 }
-"usr/bin/7z" = {}
+"usr/bin/7z" = { mode = 755 }
+"usr/bin/7za" = { mode = 755 }
+"usr/bin/7zr" = { mode = 755 }
+"usr/lib/7zip/7z" = { mode = 755 }
+"usr/lib/7zip/7za" = { mode = 755 }
+"usr/lib/7zip/7zr" = { mode = 755 }
+"usr/lib/7zip/7z.so" = { mode = 755 }
+"usr/lib/7zip/7zCon.sfx" = { mode = 755 }
+"usr/share/doc/7zip-25.01" = {}
 
 [config_files]
 
@@ -70,6 +101,17 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "25.01"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 25.01 per BLFS",
+    "Build all components (Alone, Alone7z, Format7zF, SFXCon, Console)",
+    "Install to /usr/lib/7zip with wrapper scripts",
+    "Added documentation"
+]
 
 [[changelog]]
 version = "24.08"

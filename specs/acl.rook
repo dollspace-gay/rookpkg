@@ -34,6 +34,7 @@ attr = ">= 2.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf acl-*
 tar xf $ROOKPKG_SOURCES/acl-*.tar.xz
 """
 

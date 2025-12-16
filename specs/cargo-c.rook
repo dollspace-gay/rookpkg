@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://crates.io/api/v1/crates/cargo-c/0.10.4/download", sha256 = "FIXME" }
+source0 = { url = "https://github.com/lu-zero/cargo-c/archive/refs/tags/v0.10.4.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,8 +33,7 @@ openssl = ">= 3.3"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-tar xf $ROOKPKG_SOURCES/cargo-c-*.crate
-mv cargo-c-* cargo-c-0.10.4
+tar xf $ROOKPKG_SOURCES/v0.10.4.tar.gz
 """
 
 configure = """

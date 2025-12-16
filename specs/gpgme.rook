@@ -1,6 +1,6 @@
 [package]
 name = "gpgme"
-version = "1.25.0"
+version = "2.0.0"
 release = 1
 summary = "GnuPG Made Easy library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/gpgme/gpgme-1.25.0.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.0.0.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -44,21 +44,22 @@ tar xf $ROOKPKG_SOURCES/gpgme-*.tar.bz2
 
 configure = """
 cd $ROOKPKG_BUILD/gpgme-*
-./configure --prefix=/usr --disable-gpg-test
+mkdir build && cd build
+../configure --prefix=/usr --disable-static
 """
 
 build = """
-cd $ROOKPKG_BUILD/gpgme-*
+cd $ROOKPKG_BUILD/gpgme-*/build
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/gpgme-*
+cd $ROOKPKG_BUILD/gpgme-*/build
 make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/gpgme-*
+cd $ROOKPKG_BUILD/gpgme-*/build
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
@@ -84,7 +85,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "1.25.0"
+version = "2.0.0"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

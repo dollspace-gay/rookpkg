@@ -64,6 +64,9 @@ hex = "0.4"
 # Semver parsing
 semver = "1"
 
+# Regex for pattern matching
+regex = "1"
+
 # Path handling
 directories = "5"
 

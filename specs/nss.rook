@@ -78,18 +78,18 @@ done
 
 # Install pkgconfig file
 install -d $ROOKPKG_DESTDIR/usr/lib/pkgconfig
-cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/nss.pc << EOF
+cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/nss.pc << 'EOF'
 prefix=/usr
-exec_prefix=\${prefix}
-libdir=\${prefix}/lib
-includedir=\${prefix}/include/nss
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/nss
 
 Name: NSS
 Description: Network Security Services
 Version: 3.106
 Requires: nspr >= 4.36
-Libs: -L\${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
-Cflags: -I\${includedir}
+Libs: -L${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
+Cflags: -I${includedir}
 EOF
 """
 

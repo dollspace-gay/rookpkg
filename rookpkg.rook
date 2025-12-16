@@ -1,7 +1,7 @@
 [package]
 name = "rookpkg"
 version = "0.1.0"
-release = 2
+release = 5
 summary = "Rookery OS Package Manager with quantum-resistant signatures"
 description = """
 rookpkg is the official package manager for Rookery OS. Features include:
@@ -45,7 +45,7 @@ configure = ""
 build = """
 # Binary is pre-built via cargo build --release
 # Just verify it exists
-if [ ! -f /mnt/c/Users/texas/rookery/RookeryOS/rookpkg/target/release/rookpkg ]; then
+if [ ! -f /mnt/c/Users/texas/rookpkg/target/release/rookpkg ]; then
     echo "ERROR: Release binary not found!"
     exit 1
 fi
@@ -58,7 +58,7 @@ echo "Tests passed during development"
 install = """
 # Install the binary
 mkdir -p $ROOKPKG_DESTDIR/usr/bin
-cp /mnt/c/Users/texas/rookery/RookeryOS/rookpkg/target/release/rookpkg $ROOKPKG_DESTDIR/usr/bin/rookpkg
+cp /mnt/c/Users/texas/rookpkg/target/release/rookpkg $ROOKPKG_DESTDIR/usr/bin/rookpkg
 chmod 755 $ROOKPKG_DESTDIR/usr/bin/rookpkg
 
 # Install config directories

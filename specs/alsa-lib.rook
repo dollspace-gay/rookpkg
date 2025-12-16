@@ -1,6 +1,6 @@
 [package]
 name = "alsa-lib"
-version = "1.2.13"
+version = "1.2.14"
 release = 1
 summary = "ALSA sound library"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.13.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://www.alsa-project.org/files/pub/lib/alsa-lib-1.2.14.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -31,12 +31,15 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf alsa-lib-*
 tar xf $ROOKPKG_SOURCES/alsa-lib-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/alsa-lib-*
-./configure --prefix=/usr --disable-static
+./configure --prefix=/usr         \
+            --sysconfdir=/etc     \
+            --with-confdir=/etc/alsa
 """
 
 build = """
@@ -72,6 +75,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.2.14"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.2.14 per BLFS",
+    "Updated configure options: --sysconfdir=/etc --with-confdir=/etc/alsa"
+]
 
 [[changelog]]
 version = "1.2.13"

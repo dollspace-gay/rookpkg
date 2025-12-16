@@ -43,6 +43,7 @@ mod autoremove;
 mod build;
 mod buildall;
 mod check;
+mod checksum;
 mod delta;
 mod depends;
 mod groups;
@@ -262,6 +263,25 @@ pub enum Commands {
     Check {
         /// Package name (or all if not specified)
         package: Option<String>,
+    },
+
+    /// Fetch sources and compute/update checksums in spec files
+    Checksum {
+        /// Path to .rook spec file, or directory for --all
+        #[arg(default_value = ".")]
+        path: std::path::PathBuf,
+
+        /// Update the spec file(s) with computed checksums
+        #[arg(long)]
+        update: bool,
+
+        /// Process all .rook files in the directory
+        #[arg(long)]
+        all: bool,
+
+        /// Continue processing remaining files on error (with --all)
+        #[arg(long, name = "continue")]
+        continue_on_error: bool,
     },
 
     /// Clean package cache
@@ -531,6 +551,13 @@ pub fn execute(command: Commands, config: &Config) -> Result<()> {
         }
         Commands::Check { package } => {
             check::run(package.as_deref(), config)
+        }
+        Commands::Checksum { path, update, all, continue_on_error } => {
+            if all {
+                checksum::run_all(&path, update, continue_on_error, config)
+            } else {
+                checksum::run(&path, update, config)
+            }
         }
         Commands::Clean { all } => {
             require_root("clean", false)?;  // clean always modifies system cache

@@ -1,6 +1,6 @@
 [package]
 name = "adwaita-icon-theme"
-version = "47.0"
+version = "48.1"
 release = 1
 summary = "GNOME default icon theme"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/adwaita-icon-theme/47/adwaita-icon-theme-47.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/adwaita-icon-theme/48/adwaita-icon-theme-48.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,6 +32,7 @@ hicolor-icon-theme = ">= 0.17"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf adwaita-icon-theme-*
 tar xf $ROOKPKG_SOURCES/adwaita-icon-theme-*.tar.xz
 """
 
@@ -71,6 +72,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = "gtk-update-icon-cache /usr/share/icons/Adwaita"
+
+[[changelog]]
+version = "48.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 48.1 per BLFS"
+]
 
 [[changelog]]
 version = "47.0"

@@ -36,7 +36,14 @@
       "Bash(for pkg in cmake llvm rust cargo-c boost nodejs libuv nspr nss cups lua duktape brotli libdisplay-info libxcvt taglib sassc libsass zxing-cpp opencv libqalculate)",
       "Bash(for pkg in pycairo pygobject pytest pluggy iniconfig pathspec trove-classifiers hatchling hatch-vcs setuptools-scm editables pygments pygdbmi html5lib)",
       "Bash(for pkg in which socat 7zip xdotool libdaemon xcursor-themes xbitmaps xinit xkeyboard-config xf86-input-evdev xf86-input-libinput xf86-input-wacom)",
-      "Bash(powershell -Command \"(Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs'' -Filter ''*.rook'').Count\")"
+      "Bash(powershell -Command \"(Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs'' -Filter ''*.rook'').Count\")",
+      "Bash(powershell.exe -Command \"wsl -d RookeryOS -- grep -l ''crates.io/api'' /mnt/c/Users/texas/rookpkg/specs/*.rook\")",
+      "Bash(powershell.exe -Command \"wsl -d RookeryOS -- grep -l ''crates.io'' /mnt/c/Users/texas/rookpkg/specs/*.rook 2>/dev/null || echo ''none found''\")",
+      "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 140 -First 20 -ExpandProperty BaseName\")",
+      "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 180 -First 20 -ExpandProperty BaseName\")",
+      "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 220 -First 20 -ExpandProperty BaseName\")",
+      "Bash(powershell -Command \"Get-ChildItem ''c:\\Users\\texas\\rookpkg\\specs\\*.rook'' | Select-Object -Skip 240 -First 20 -ExpandProperty BaseName\")",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
