@@ -37,14 +37,16 @@ python = ">= 3.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libpwquality-*
 tar xf $ROOKPKG_SOURCES/libpwquality-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/libpwquality-*
-./configure --prefix=/usr                  \
-            --disable-static               \
-            --with-securedir=/usr/lib/security
+./configure --prefix=/usr \
+            --disable-static \
+            --with-securedir=/usr/lib/security \
+            --with-python-binary=python3
 """
 
 build = """

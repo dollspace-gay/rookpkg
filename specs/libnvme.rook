@@ -1,6 +1,6 @@
 [package]
 name = "libnvme"
-version = "1.10"
+version = "1.15"
 release = 1
 summary = "C library for NVM Express operations"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/linux-nvme/libnvme/archive/v1.10/libnvme-1.10.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/linux-nvme/libnvme/archive/v1.15/libnvme-1.15.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -36,6 +36,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libnvme-*
 tar xf $ROOKPKG_SOURCES/libnvme-*.tar.gz
 """
 
@@ -43,10 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/libnvme-*
 mkdir -p build
 cd build
-meson setup ..              \
-      --prefix=/usr         \
-      --buildtype=release   \
-      -D docs=false
+meson setup --prefix=/usr --buildtype=release -D libdbus=auto ..
 """
 
 build = """
@@ -82,6 +80,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.15"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.15 per BLFS",
+    "Added -D libdbus=auto"
+]
 
 [[changelog]]
 version = "1.10"

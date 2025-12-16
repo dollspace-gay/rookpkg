@@ -1,6 +1,6 @@
 [package]
 name = "libpng"
-version = "1.6.44"
+version = "1.6.50"
 release = 1
 summary = "PNG image library"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/libpng/libpng-1.6.44.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://downloads.sourceforge.net/libpng/libpng-1.6.50.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,6 +32,7 @@ zlib = ">= 1.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libpng-*
 tar xf $ROOKPKG_SOURCES/libpng-*.tar.xz
 """
 
@@ -78,6 +79,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.6.50"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.6.50 per BLFS"
+]
 
 [[changelog]]
 version = "1.6.44"

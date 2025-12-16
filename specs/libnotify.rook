@@ -1,6 +1,6 @@
 [package]
 name = "libnotify"
-version = "0.8.4"
+version = "0.8.6"
 release = 1
 summary = "Desktop notification library"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/libnotify/0.8/libnotify-0.8.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/libnotify/0.8/libnotify-0.8.6.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -39,6 +39,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libnotify-*
 tar xf $ROOKPKG_SOURCES/libnotify-*.tar.xz
 """
 
@@ -46,12 +47,11 @@ configure = """
 cd $ROOKPKG_BUILD/libnotify-*
 mkdir -p build
 cd build
-meson setup ..                 \
-      --prefix=/usr            \
-      --buildtype=release      \
-      -D introspection=disabled \
-      -D man=false             \
-      -D gtk_doc=false
+meson setup --prefix=/usr       \
+            --buildtype=release \
+            -D gtk_doc=false    \
+            -D man=false        \
+            ..
 """
 
 build = """
@@ -84,6 +84,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.8.6"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.8.6 per BLFS",
+    "Enabled introspection"
+]
 
 [[changelog]]
 version = "0.8.4"

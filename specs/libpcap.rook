@@ -36,6 +36,7 @@ libnl = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libpcap-*
 tar xf $ROOKPKG_SOURCES/libpcap-*.tar.xz
 """
 
