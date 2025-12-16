@@ -35,6 +35,7 @@ mesa = ">= 24.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf glu-*
 tar xf $ROOKPKG_SOURCES/glu-*.tar.xz
 """
 
@@ -42,9 +43,7 @@ configure = """
 cd $ROOKPKG_BUILD/glu-*
 mkdir -p build
 cd build
-meson setup ..            \
-      --prefix=/usr       \
-      --buildtype=release
+meson setup --prefix=/usr --buildtype=release -D gl_provider=gl ..
 """
 
 build = """

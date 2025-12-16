@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gmp-*
 tar xf $ROOKPKG_SOURCES/gmp-*.tar.xz
 cd gmp-*
 

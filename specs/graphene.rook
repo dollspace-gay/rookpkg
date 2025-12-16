@@ -36,6 +36,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf graphene-*
 tar xf $ROOKPKG_SOURCES/graphene-*.tar.xz
 """
 
@@ -43,11 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/graphene-*
 mkdir -p build
 cd build
-meson setup ..                    \
-      --prefix=/usr               \
-      --buildtype=release         \
-      -D introspection=disabled   \
-      -D gtk_doc=false
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """

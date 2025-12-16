@@ -39,6 +39,7 @@ python = ">= 3.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gpgme-*
 tar xf $ROOKPKG_SOURCES/gpgme-*.tar.bz2
 """
 

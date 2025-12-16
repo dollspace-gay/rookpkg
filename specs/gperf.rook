@@ -1,6 +1,6 @@
 [package]
 name = "gperf"
-version = "3.1"
+version = "3.3"
 release = 1
 summary = "Perfect hash function generator"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/gperf/gperf-3.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.gnu.org/gnu/gperf/gperf-3.3.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,12 +33,13 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gperf-*
 tar xf $ROOKPKG_SOURCES/gperf-*.tar.gz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/gperf-*
-./configure --prefix=/usr --docdir=/usr/share/doc/gperf-3.1
+./configure --prefix=/usr --docdir=/usr/share/doc/gperf-3.3
 """
 
 build = """
@@ -59,7 +60,7 @@ make DESTDIR=$ROOKPKG_DESTDIR install
 [files]
 "usr/bin/gperf" = { mode = 755 }
 "usr/share/info/gperf.info" = {}
-"usr/share/doc/gperf-3.1/" = {}
+"usr/share/doc/gperf-3.3/" = {}
 
 [config_files]
 
@@ -70,6 +71,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "3.3"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 3.3 per LFS"
+]
 
 [[changelog]]
 version = "3.1"

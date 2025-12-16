@@ -1,6 +1,6 @@
 [package]
 name = "gnupg"
-version = "2.5.6"
+version = "2.5.14"
 release = 1
 summary = "GNU Privacy Guard encryption suite"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.6.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.5.14.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -46,29 +46,32 @@ sqlite = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gnupg-*
 tar xf $ROOKPKG_SOURCES/gnupg-*.tar.bz2
 """
 
 configure = """
 cd $ROOKPKG_BUILD/gnupg-*
-./configure --prefix=/usr           \
-            --sysconfdir=/etc       \
-            --localstatedir=/var    \
-            --docdir=/usr/share/doc/gnupg-2.5.6
+mkdir -p build
+cd build
+../configure --prefix=/usr            \
+             --localstatedir=/var     \
+             --sysconfdir=/etc        \
+             --docdir=/usr/share/doc/gnupg-2.5.14
 """
 
 build = """
-cd $ROOKPKG_BUILD/gnupg-*
+cd $ROOKPKG_BUILD/gnupg-*/build
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/gnupg-*
+cd $ROOKPKG_BUILD/gnupg-*/build
 make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/gnupg-*
+cd $ROOKPKG_BUILD/gnupg-*/build
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
@@ -92,7 +95,7 @@ make DESTDIR=$ROOKPKG_DESTDIR install
 "usr/libexec/keyboxd" = { mode = 755 }
 "usr/sbin/dirmngr" = { mode = 755 }
 "usr/share/gnupg/" = {}
-"usr/share/doc/gnupg-2.5.6/" = {}
+"usr/share/doc/gnupg-2.5.14/" = {}
 
 [config_files]
 
@@ -103,6 +106,15 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "2.5.14"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.5.14 per BLFS",
+    "Kyber/ML-KEM PQC support included"
+]
 
 [[changelog]]
 version = "2.5.6"

@@ -32,16 +32,23 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf graphite2-*
 tar xf $ROOKPKG_SOURCES/graphite2-*.tgz
+cd graphite2-*
+
+# BLFS fixes
+sed -i '/cmptest/d' tests/CMakeLists.txt
+sed -i '/cmake_policy(SET CMP0012 NEW)/d' CMakeLists.txt
+sed -i 's/PythonInterp/Python3/' CMakeLists.txt
+find . -name CMakeLists.txt | xargs sed -i 's/VERSION 2.8.0 FATAL_ERROR/VERSION 4.0.0/'
+sed -i '/Font.h/i #include <cstdint>' tests/featuremap/featuremaptest.cpp
 """
 
 configure = """
 cd $ROOKPKG_BUILD/graphite2-*
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_BUILD_TYPE=Release  \
-      ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 """
 
 build = """

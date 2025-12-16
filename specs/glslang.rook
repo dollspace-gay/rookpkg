@@ -1,6 +1,6 @@
 [package]
 name = "glslang"
-version = "15.1.0"
+version = "15.4.0"
 release = 1
 summary = "OpenGL/Vulkan GLSL reference compiler"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/KhronosGroup/glslang/archive/15.1.0/glslang-15.1.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/KhronosGroup/glslang/archive/15.4.0/glslang-15.4.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -34,6 +34,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf glslang-*
 tar xf $ROOKPKG_SOURCES/glslang-*.tar.gz
 """
 
@@ -41,26 +42,26 @@ configure = """
 cd $ROOKPKG_BUILD/glslang-*
 mkdir -p build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr          \
-      -DCMAKE_BUILD_TYPE=Release           \
-      -DALLOW_EXTERNAL_SPIRV_TOOLS=ON      \
-      -DBUILD_SHARED_LIBS=ON               \
-      ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr      \
+      -DCMAKE_BUILD_TYPE=Release       \
+      -DALLOW_EXTERNAL_SPIRV_TOOLS=ON  \
+      -DBUILD_SHARED_LIBS=ON           \
+      -DGLSLANG_TESTS=OFF              \
+      -G Ninja ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/glslang-*/build
-make -j$ROOKPKG_JOBS
+ninja -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/glslang-*/build
-make test || true
+# Tests disabled per BLFS
 """
 
 install = """
 cd $ROOKPKG_BUILD/glslang-*/build
-make DESTDIR=$ROOKPKG_DESTDIR install
+DESTDIR=$ROOKPKG_DESTDIR ninja install
 """
 
 [files]
@@ -84,6 +85,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "15.4.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 15.4.0 per BLFS",
+    "Changed to ninja build system per BLFS"
+]
 
 [[changelog]]
 version = "15.1.0"

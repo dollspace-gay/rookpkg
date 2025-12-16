@@ -41,6 +41,7 @@ unbound = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gnutls-*
 tar xf $ROOKPKG_SOURCES/gnutls-*.tar.xz
 """
 
