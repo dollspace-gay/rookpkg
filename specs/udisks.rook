@@ -1,6 +1,6 @@
 [package]
 name = "udisks"
-version = "2.10.1"
+version = "2.10.2"
 release = 1
 summary = "Disk management daemon"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.1/udisks-2.10.1.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "https://github.com/storaged-project/udisks/releases/download/udisks-2.10.2/udisks-2.10.2.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 
@@ -41,6 +41,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf udisks-*
 tar xf $ROOKPKG_SOURCES/udisks-*.tar.bz2
 """
 

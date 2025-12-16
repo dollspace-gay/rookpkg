@@ -32,6 +32,7 @@ python = ">= 3.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf trove-classifiers-*
 tar xf $ROOKPKG_SOURCES/trove-classifiers-*.tar.gz
 """
 

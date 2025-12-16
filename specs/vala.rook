@@ -36,12 +36,13 @@ graphviz = ">= 2.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf vala-*
 tar xf $ROOKPKG_SOURCES/vala-*.tar.xz
 """
 
 configure = """
 cd $ROOKPKG_BUILD/vala-*
-./configure --prefix=/usr
+./configure --prefix=/usr --disable-valadoc
 """
 
 build = """

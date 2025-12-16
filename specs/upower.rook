@@ -39,6 +39,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf upower-*
 tar xf $ROOKPKG_SOURCES/upower-*.tar.bz2
 """
 

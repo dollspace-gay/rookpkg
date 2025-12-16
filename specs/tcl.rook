@@ -33,6 +33,7 @@ zlib = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf tcl8.6.16
 tar xf $ROOKPKG_SOURCES/tcl8.6.16-src.tar.gz
 """
 

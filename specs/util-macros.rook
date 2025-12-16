@@ -28,6 +28,7 @@ make = ">= 4.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf util-macros-*
 tar xf $ROOKPKG_SOURCES/util-macros-*.tar.xz
 """
 

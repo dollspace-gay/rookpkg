@@ -1,6 +1,6 @@
 [package]
 name = "vulkan-headers"
-version = "1.4.303"
+version = "1.4.321"
 release = 1
 summary = "Vulkan API header files"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.303/Vulkan-Headers-1.4.303.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.4.321/Vulkan-Headers-1.4.321.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -29,6 +29,7 @@ cmake = ">= 3.20"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf Vulkan-Headers-*
 tar xf $ROOKPKG_SOURCES/Vulkan-Headers-*.tar.gz
 """
 
