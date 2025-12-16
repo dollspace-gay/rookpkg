@@ -41,6 +41,7 @@ zlib = ">= 1.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gcc-*
 tar xf $ROOKPKG_SOURCES/gcc-*.tar.xz
 cd gcc-*
 

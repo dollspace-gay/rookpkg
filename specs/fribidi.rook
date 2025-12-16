@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf fribidi-*
 tar xf $ROOKPKG_SOURCES/fribidi-*.tar.xz
 """
 
@@ -40,10 +41,7 @@ configure = """
 cd $ROOKPKG_BUILD/fribidi-*
 mkdir -p build
 cd build
-meson setup ..              \
-      --prefix=/usr         \
-      --buildtype=release   \
-      -D docs=false
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """

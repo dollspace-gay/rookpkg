@@ -1,6 +1,6 @@
 [package]
 name = "glib2"
-version = "2.82.4"
+version = "2.84.4"
 release = 1
 summary = "Low-level core library for GNOME"
 description = """
@@ -14,8 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/glib/2.82/glib-2.82.4.tar.xz", sha256 = "FIXME" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/glib-2.82.4-skip_warnings-1.patch", sha256 = "FIXME" }
+source0 = { url = "https://download.gnome.org/sources/glib/2.84/glib-2.84.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -39,20 +38,22 @@ dbus = ">= 1.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf glib-*
 tar xf $ROOKPKG_SOURCES/glib-*.tar.xz
-cd glib-*
-patch -Np1 -i $ROOKPKG_SOURCES/glib-2.82.4-skip_warnings-1.patch || true
 """
 
 configure = """
 cd $ROOKPKG_BUILD/glib-*
 mkdir -p build
 cd build
-meson setup ..                \
-      --prefix=/usr           \
-      --buildtype=release     \
+meson setup ..                  \
+      --prefix=/usr             \
+      --buildtype=release       \
       -D introspection=disabled \
-      -D man-pages=disabled
+      -D glib_debug=disabled    \
+      -D man-pages=disabled     \
+      -D sysprof=disabled       \
+      -D tests=false
 """
 
 build = """
@@ -97,6 +98,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.84.4"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.84.4 per BLFS",
+    "Updated meson options per BLFS"
+]
 
 [[changelog]]
 version = "2.82.4"

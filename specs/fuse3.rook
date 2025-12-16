@@ -1,6 +1,6 @@
 [package]
 name = "fuse3"
-version = "3.16.2"
+version = "3.17.4"
 release = 1
 summary = "Filesystem in Userspace"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/libfuse/libfuse/releases/download/fuse-3.16.2/fuse-3.16.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/libfuse/libfuse/releases/download/fuse-3.17.4/fuse-3.17.4.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf fuse-*
 tar xf $ROOKPKG_SOURCES/fuse-*.tar.gz
 """
 
@@ -84,6 +85,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.17.4"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 3.17.4 per BLFS"
+]
 
 [[changelog]]
 version = "3.16.2"

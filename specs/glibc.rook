@@ -42,6 +42,7 @@ CFLAGS = "-O2 -pipe"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf glibc-*
 tar xf $ROOKPKG_SOURCES/glibc-2.42.tar.xz
 cd glibc-*
 patch -Np1 -i $ROOKPKG_SOURCES/glibc-2.42-fhs-1.patch || true

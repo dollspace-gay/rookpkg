@@ -39,6 +39,7 @@ harfbuzz = ">= 7.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf freetype-*
 tar xf $ROOKPKG_SOURCES/freetype-*.tar.xz
 tar xf $ROOKPKG_SOURCES/freetype-doc-*.tar.xz --strip-components=2 -C freetype-*
 """

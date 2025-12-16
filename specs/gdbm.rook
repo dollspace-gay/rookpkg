@@ -33,6 +33,7 @@ readline = ">= 8.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gdbm-*
 tar xf $ROOKPKG_SOURCES/gdbm-*.tar.gz
 """
 

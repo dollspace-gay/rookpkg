@@ -40,6 +40,7 @@ gobject-introspection = ">= 1.80"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf gdk-pixbuf-*
 tar xf $ROOKPKG_SOURCES/gdk-pixbuf-*.tar.xz
 """
 
@@ -47,12 +48,11 @@ configure = """
 cd $ROOKPKG_BUILD/gdk-pixbuf-*
 mkdir -p build
 cd build
-meson setup ..                        \
-      --prefix=/usr                   \
-      --buildtype=release             \
-      -D introspection=disabled       \
-      -D installed_tests=false        \
-      --wrap-mode=nofallback
+meson setup --prefix=/usr       \
+            --buildtype=release \
+            -Dothers=enabled    \
+            -Dman=false         \
+            --wrap-mode=nofallback ..
 """
 
 build = """
