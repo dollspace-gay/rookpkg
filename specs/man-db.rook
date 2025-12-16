@@ -36,6 +36,7 @@ libpipeline = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf man-db-*
 tar xf $ROOKPKG_SOURCES/man-db-*.tar.xz
 """
 

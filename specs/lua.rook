@@ -1,6 +1,6 @@
 [package]
 name = "lua"
-version = "5.4.7"
+version = "5.4.8"
 release = 1
 summary = "Powerful, efficient, lightweight scripting language"
 description = """
@@ -14,7 +14,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.lua.org/ftp/lua-5.4.7.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://www.lua.org/ftp/lua-5.4.8.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/lua-5.4.8-shared_library-1.patch", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,15 +34,16 @@ readline = ">= 8.2"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf lua-*
 tar xf $ROOKPKG_SOURCES/lua-*.tar.gz
 """
 
 configure = """
-# Patch Makefile for shared library support
 cd $ROOKPKG_BUILD/lua-*
+# Create pkg-config file
 cat > lua.pc << "EOF"
 V=5.4
-R=5.4.7
+R=5.4.8
 
 prefix=/usr
 INSTALL_BIN=${prefix}/bin
@@ -55,21 +57,20 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: Lua
-Description: An extensible extension language
+Description: An Extensible Extension Language
 Version: ${R}
 Requires:
 Libs: -L${libdir} -llua -lm -ldl
 Cflags: -I${includedir}
 EOF
+
+# Apply shared library patch
+patch -Np1 -i $ROOKPKG_SOURCES/lua-5.4.8-shared_library-1.patch
 """
 
 build = """
 cd $ROOKPKG_BUILD/lua-*
-make linux-readline MYCFLAGS="-fPIC" -j$ROOKPKG_JOBS
-
-# Build shared library
-cd src
-gcc -shared -ldl -lreadline -lncurses -lm -o liblua.so.5.4.7 *.o
+make linux
 """
 
 check = """
@@ -79,17 +80,15 @@ make test || true
 
 install = """
 cd $ROOKPKG_BUILD/lua-*
-make INSTALL_TOP=$ROOKPKG_DESTDIR/usr install
+make INSTALL_TOP=/usr \
+     INSTALL_DATA="cp -d" \
+     INSTALL_MAN=/usr/share/man/man1 \
+     TO_LIB="liblua.so liblua.so.5.4 liblua.so.5.4.8" \
+     DESTDIR=$ROOKPKG_DESTDIR install
 
-# Install shared library
-install -m755 src/liblua.so.5.4.7 $ROOKPKG_DESTDIR/usr/lib/
-ln -sf liblua.so.5.4.7 $ROOKPKG_DESTDIR/usr/lib/liblua.so.5.4
-ln -sf liblua.so.5.4 $ROOKPKG_DESTDIR/usr/lib/liblua.so
-
-# Install pkgconfig file
-install -Dm644 lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua.pc
-ln -sf lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua5.4.pc
-ln -sf lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua-5.4.pc
+mkdir -pv $ROOKPKG_DESTDIR/usr/share/doc/lua-5.4.8
+cp -v doc/*.{html,css,gif,png} $ROOKPKG_DESTDIR/usr/share/doc/lua-5.4.8 2>/dev/null || true
+install -v -m644 -D lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua.pc
 """
 
 [files]

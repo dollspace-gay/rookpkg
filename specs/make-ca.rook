@@ -33,6 +33,7 @@ nss = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf make-ca-*
 tar xf $ROOKPKG_SOURCES/make-ca-*.tar.gz
 """
 

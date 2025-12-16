@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf m4-*
 tar xf $ROOKPKG_SOURCES/m4-*.tar.xz
 """
 

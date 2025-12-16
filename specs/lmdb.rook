@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf lmdb-*
 tar xf $ROOKPKG_SOURCES/lmdb-*.tar.gz
 """
 

@@ -1,6 +1,6 @@
 [package]
 name = "lm-sensors"
-version = "3.6.0"
+version = "3.6.2"
 release = 1
 summary = "Hardware monitoring tools"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/lm-sensors/lm-sensors/archive/V3-6-0/lm-sensors-3-6-0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/lm-sensors/lm-sensors/archive/V3-6-2/lm-sensors-3-6-2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf lm-sensors-*
 tar xf $ROOKPKG_SOURCES/lm-sensors-*.tar.gz
 """
 
@@ -41,7 +42,7 @@ configure = """
 
 build = """
 cd $ROOKPKG_BUILD/lm-sensors-*
-make PREFIX=/usr BUILD_STATIC_LIB=0 -j$ROOKPKG_JOBS
+make PREFIX=/usr BUILD_STATIC_LIB=0 MANDIR=/usr/share/man -j$ROOKPKG_JOBS
 """
 
 check = """
@@ -50,7 +51,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/lm-sensors-*
-make PREFIX=/usr BUILD_STATIC_LIB=0 DESTDIR=$ROOKPKG_DESTDIR install
+make PREFIX=/usr BUILD_STATIC_LIB=0 MANDIR=/usr/share/man DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

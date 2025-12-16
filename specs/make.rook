@@ -31,6 +31,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf make-*
 tar xf $ROOKPKG_SOURCES/make-*.tar.gz
 """
 

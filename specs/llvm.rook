@@ -38,6 +38,7 @@ zstd = ">= 1.5"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf llvm-project-*
 tar xf $ROOKPKG_SOURCES/llvm-project-*.tar.xz
 """
 
