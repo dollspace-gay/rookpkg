@@ -1,0 +1,93 @@
+[package]
+name = "socat"
+version = "1.8.0.1"
+release = 1
+summary = "Multipurpose relay for bidirectional data transfer"
+description = """
+Socat is a multipurpose relay that establishes two bidirectional byte streams
+and transfers data between them. It can connect various types of data channels
+including TCP sockets, Unix sockets, files, pipes, and PTYs.
+"""
+homepage = "http://www.dest-unreach.org/socat/"
+license = "GPL-2.0-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://www.dest-unreach.org/socat/download/socat-1.8.0.1.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+openssl = ">= 3.3"
+readline = ">= 8.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/socat-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/socat-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/socat-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/socat-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/socat-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/socat" = { mode = 755 }
+"usr/bin/procan" = { mode = 755 }
+"usr/bin/filan" = { mode = 755 }
+"usr/share/man/man1/socat.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.8.0.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["socat", "relay", "socket", "network", "proxy"]
+categories = ["utilities", "networking"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

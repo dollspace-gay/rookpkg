@@ -1,0 +1,94 @@
+[package]
+name = "xf86-input-evdev"
+version = "2.10.6"
+release = 1
+summary = "X.Org evdev input driver"
+description = """
+Xf86-input-evdev is an X.Org input driver for Linux's generic event devices.
+It is a generic driver that supports all input devices that the kernel
+event device interface (evdev) supports.
+"""
+homepage = "https://xorg.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-2.10.6.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorg-server = ">= 21.1"
+
+[depends]
+glibc = ">= 2.39"
+xorg-server = ">= 21.1"
+libevdev = ">= 1.13"
+mtdev = ">= 1.1"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xf86-input-evdev-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xf86-input-evdev-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xf86-input-evdev-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xf86-input-evdev-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/xorg/modules/input/evdev_drv.so" = { mode = 755 }
+"usr/share/X11/xorg.conf.d/10-evdev.conf" = {}
+"usr/share/man/man4/evdev.4" = {}
+"usr/lib/pkgconfig/xorg-evdev.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.10.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xf86-input-evdev", "evdev", "input", "driver", "xorg"]
+categories = ["drivers", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

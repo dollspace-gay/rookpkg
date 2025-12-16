@@ -1,0 +1,91 @@
+[package]
+name = "libdaemon"
+version = "0.14"
+release = 1
+summary = "Lightweight C library for writing UNIX daemons"
+description = """
+Libdaemon is a lightweight C library that eases the writing of UNIX daemons.
+It abstracts away daemon boilerplate code such as PID file handling, signal
+management, and syslog logging.
+"""
+homepage = "http://0pointer.de/lennart/projects/libdaemon/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://0pointer.de/lennart/projects/libdaemon/libdaemon-0.14.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libdaemon-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libdaemon-*
+./configure --prefix=/usr        \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libdaemon-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libdaemon-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libdaemon-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libdaemon.so" = { mode = 755 }
+"usr/include/libdaemon/" = {}
+"usr/lib/pkgconfig/libdaemon.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.14"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libdaemon", "daemon", "unix", "service"]
+categories = ["libraries", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

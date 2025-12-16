@@ -1,0 +1,93 @@
+[package]
+name = "xf86-input-libinput"
+version = "1.4.0"
+release = 1
+summary = "X.Org libinput-based input driver"
+description = """
+Xf86-input-libinput is an X.Org input driver based on libinput. It provides
+input handling for mice, keyboards, touchpads, and other input devices using
+the libinput library's unified interface.
+"""
+homepage = "https://xorg.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-1.4.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorg-server = ">= 21.1"
+
+[depends]
+glibc = ">= 2.39"
+xorg-server = ">= 21.1"
+libinput = ">= 1.26"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xf86-input-libinput-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xf86-input-libinput-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xf86-input-libinput-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xf86-input-libinput-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/xorg/modules/input/libinput_drv.so" = { mode = 755 }
+"usr/share/X11/xorg.conf.d/40-libinput.conf" = {}
+"usr/share/man/man4/libinput.4" = {}
+"usr/lib/pkgconfig/xorg-libinput.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.4.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xf86-input-libinput", "libinput", "input", "driver", "xorg"]
+categories = ["drivers", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

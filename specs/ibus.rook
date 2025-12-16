@@ -1,0 +1,118 @@
+[package]
+name = "ibus"
+version = "1.5.30"
+release = 1
+summary = "Intelligent Input Bus for Linux"
+description = """
+IBus (Intelligent Input Bus) is an input framework for multilingual input
+in Linux. It provides support for various input methods including Chinese,
+Japanese, Korean, and other languages through a unified API.
+"""
+homepage = "https://github.com/ibus/ibus"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/ibus/ibus/releases/download/1.5.30/ibus-1.5.30.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+gobject-introspection = ">= 1.80"
+vala = ">= 0.56"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+gtk3 = ">= 3.24"
+gtk4 = ">= 4.14"
+dconf = ">= 0.40"
+iso-codes = ">= 4.17"
+libnotify = ">= 0.8"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/ibus-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/ibus-*
+./configure --prefix=/usr              \
+            --sysconfdir=/etc          \
+            --enable-gtk4              \
+            --enable-wayland           \
+            --disable-memconf          \
+            --disable-emoji-dict       \
+            --disable-unicode-dict
+"""
+
+build = """
+cd $ROOKPKG_BUILD/ibus-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/ibus-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/ibus-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/ibus" = { mode = 755 }
+"usr/bin/ibus-daemon" = { mode = 755 }
+"usr/bin/ibus-setup" = { mode = 755 }
+"usr/libexec/ibus-*" = { mode = 755 }
+"usr/lib/libibus-1.0.so" = { mode = 755 }
+"usr/lib/gtk-3.0/" = {}
+"usr/lib/gtk-4.0/" = {}
+"usr/include/ibus-1.0/" = {}
+"usr/lib/pkgconfig/ibus-1.0.pc" = {}
+"usr/lib/girepository-1.0/IBus-1.0.typelib" = {}
+"usr/share/gir-1.0/IBus-1.0.gir" = {}
+"usr/share/vala/vapi/" = {}
+"usr/share/ibus/" = {}
+"usr/share/dbus-1/" = {}
+"usr/share/glib-2.0/schemas/" = {}
+"usr/share/icons/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig && glib-compile-schemas /usr/share/glib-2.0/schemas"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig && glib-compile-schemas /usr/share/glib-2.0/schemas"
+
+[[changelog]]
+version = "1.5.30"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["ibus", "input-method", "i18n", "cjk"]
+categories = ["desktop", "input-method"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,93 @@
+[package]
+name = "lmdb"
+version = "0.9.33"
+release = 1
+summary = "Lightning Memory-Mapped Database"
+description = """
+LMDB is an extremely fast, memory-efficient database. It is a B+tree-based
+database management library modeled loosely on the BerkeleyDB API, but much
+simplified. It is optimized for read-heavy workloads.
+"""
+homepage = "https://www.symas.com/lmdb"
+license = "OLDAP-2.8"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/LMDB/lmdb/archive/LMDB_0.9.33/lmdb-LMDB_0.9.33.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/lmdb-*.tar.gz
+"""
+
+configure = """
+# LMDB doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+make prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/mdb_copy" = { mode = 755 }
+"usr/bin/mdb_dump" = { mode = 755 }
+"usr/bin/mdb_load" = { mode = 755 }
+"usr/bin/mdb_stat" = { mode = 755 }
+"usr/lib/liblmdb.so" = { mode = 755 }
+"usr/include/lmdb.h" = {}
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.9.33"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["lmdb", "database", "key-value", "embedded"]
+categories = ["libraries", "database"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

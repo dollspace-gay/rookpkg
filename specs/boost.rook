@@ -1,0 +1,95 @@
+[package]
+name = "boost"
+version = "1.86.0"
+release = 1
+summary = "Free peer-reviewed portable C++ source libraries"
+description = """
+Boost provides free peer-reviewed portable C++ source libraries. The emphasis
+is on libraries that work well with the C++ Standard Library. It includes
+containers, algorithms, math, networking, and many other utilities.
+"""
+homepage = "https://www.boost.org/"
+license = "BSL-1.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://boostorg.jfrog.io/artifactory/main/release/1.86.0/source/boost_1_86_0.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+
+[depends]
+glibc = ">= 2.39"
+icu = ">= 75.1"
+zlib = ">= 1.3"
+bzip2 = ">= 1.0"
+xz = ">= 5.6"
+zstd = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/boost_*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/boost_*
+./bootstrap.sh --prefix=/usr        \
+               --with-icu           \
+               --with-python=python3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/boost_*
+./b2 stage -j$ROOKPKG_JOBS threading=multi link=shared
+"""
+
+check = """
+# Tests are time-consuming, skipping
+"""
+
+install = """
+cd $ROOKPKG_BUILD/boost_*
+./b2 install --prefix=$ROOKPKG_DESTDIR/usr threading=multi link=shared
+"""
+
+[files]
+"usr/lib/libboost_*.so" = { mode = 755 }
+"usr/include/boost/" = {}
+"usr/lib/cmake/Boost-1.86.0/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.86.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["boost", "c++", "libraries", "algorithms"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

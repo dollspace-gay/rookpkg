@@ -1,0 +1,108 @@
+[package]
+name = "appstream"
+version = "1.0.3"
+release = 1
+summary = "AppStream software metadata library"
+description = """
+AppStream is a library for working with software metadata about applications,
+addons, and other software components. It is used by software centers like
+GNOME Software and KDE Discover for displaying application information.
+"""
+homepage = "https://www.freedesktop.org/wiki/Distributions/AppStream/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.3.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gobject-introspection = ">= 1.80"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+libxml2 = ">= 2.12"
+libyaml = ">= 0.2"
+curl = ">= 8.9"
+lmdb = ">= 0.9"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/AppStream-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/AppStream-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D docs=false          \
+      -D apidocs=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/AppStream-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/AppStream-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/AppStream-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/appstreamcli" = { mode = 755 }
+"usr/lib/libappstream.so" = { mode = 755 }
+"usr/include/appstream/" = {}
+"usr/lib/pkgconfig/appstream.pc" = {}
+"usr/lib/girepository-1.0/AppStream-1.0.typelib" = {}
+"usr/share/gir-1.0/AppStream-1.0.gir" = {}
+"usr/share/metainfo/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.0.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["appstream", "metadata", "software-center", "applications"]
+categories = ["libraries", "desktop"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,135 @@
+[package]
+name = "lua"
+version = "5.4.7"
+release = 1
+summary = "Powerful, efficient, lightweight scripting language"
+description = """
+Lua is a powerful, efficient, lightweight, embeddable scripting language.
+It supports procedural programming, object-oriented programming, functional
+programming, and data-driven programming.
+"""
+homepage = "https://www.lua.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.lua.org/ftp/lua-5.4.7.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+readline = ">= 8.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/lua-*.tar.gz
+"""
+
+configure = """
+# Patch Makefile for shared library support
+cd $ROOKPKG_BUILD/lua-*
+cat > lua.pc << "EOF"
+V=5.4
+R=5.4.7
+
+prefix=/usr
+INSTALL_BIN=${prefix}/bin
+INSTALL_INC=${prefix}/include
+INSTALL_LIB=${prefix}/lib
+INSTALL_MAN=${prefix}/share/man/man1
+INSTALL_LMOD=${prefix}/share/lua/${V}
+INSTALL_CMOD=${prefix}/lib/lua/${V}
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Lua
+Description: An extensible extension language
+Version: ${R}
+Requires:
+Libs: -L${libdir} -llua -lm -ldl
+Cflags: -I${includedir}
+EOF
+"""
+
+build = """
+cd $ROOKPKG_BUILD/lua-*
+make linux-readline MYCFLAGS="-fPIC" -j$ROOKPKG_JOBS
+
+# Build shared library
+cd src
+gcc -shared -ldl -lreadline -lncurses -lm -o liblua.so.5.4.7 *.o
+"""
+
+check = """
+cd $ROOKPKG_BUILD/lua-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/lua-*
+make INSTALL_TOP=$ROOKPKG_DESTDIR/usr install
+
+# Install shared library
+install -m755 src/liblua.so.5.4.7 $ROOKPKG_DESTDIR/usr/lib/
+ln -sf liblua.so.5.4.7 $ROOKPKG_DESTDIR/usr/lib/liblua.so.5.4
+ln -sf liblua.so.5.4 $ROOKPKG_DESTDIR/usr/lib/liblua.so
+
+# Install pkgconfig file
+install -Dm644 lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua.pc
+ln -sf lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua5.4.pc
+ln -sf lua.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/lua-5.4.pc
+"""
+
+[files]
+"usr/bin/lua" = { mode = 755 }
+"usr/bin/luac" = { mode = 755 }
+"usr/lib/liblua.so" = { mode = 755 }
+"usr/include/lua.h" = {}
+"usr/include/luaconf.h" = {}
+"usr/include/lualib.h" = {}
+"usr/include/lauxlib.h" = {}
+"usr/include/lua.hpp" = {}
+"usr/lib/pkgconfig/lua.pc" = {}
+"usr/share/man/man1/lua.1" = {}
+"usr/share/man/man1/luac.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "5.4.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["lua", "scripting", "embeddable", "lightweight"]
+categories = ["development", "languages"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

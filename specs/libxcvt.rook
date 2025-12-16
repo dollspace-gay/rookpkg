@@ -1,0 +1,97 @@
+[package]
+name = "libxcvt"
+version = "0.1.2"
+release = 1
+summary = "VESA CVT standard timing modelines generator"
+description = """
+Libxcvt is a library providing a standalone version of the X server
+implementation of the VESA CVT standard timing modelines generator.
+It is used to calculate video mode timings.
+"""
+homepage = "https://gitlab.freedesktop.org/xorg/lib/libxcvt"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/lib/libxcvt-0.1.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libxcvt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libxcvt-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libxcvt-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libxcvt-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libxcvt-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/cvt" = { mode = 755 }
+"usr/lib/libxcvt.so" = { mode = 755 }
+"usr/include/libxcvt/" = {}
+"usr/lib/pkgconfig/libxcvt.pc" = {}
+"usr/share/man/man1/cvt.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.1.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libxcvt", "cvt", "vesa", "modeline"]
+categories = ["libraries", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

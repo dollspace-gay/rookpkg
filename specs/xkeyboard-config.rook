@@ -1,0 +1,96 @@
+[package]
+name = "xkeyboard-config"
+version = "2.43"
+release = 1
+summary = "X Keyboard Extension configuration database"
+description = """
+Xkeyboard-config provides the XKB (X Keyboard Extension) configuration database.
+It contains keyboard layouts, types, and compatibility files for various
+languages and keyboard types used by X11 and Wayland.
+"""
+homepage = "https://xorg.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/data/xkeyboard-config/xkeyboard-config-2.43.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+meson = ">= 0.60"
+ninja = ">= 1.8"
+python = ">= 3.12"
+gettext = ">= 0.22"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xkeyboard-config-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xkeyboard-config-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release   \
+      -D xkb-base=/usr/share/X11/xkb
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xkeyboard-config-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xkeyboard-config-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xkeyboard-config-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/X11/xkb/" = {}
+"usr/share/pkgconfig/xkeyboard-config.pc" = {}
+"usr/share/man/man7/xkeyboard-config.7" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.43"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xkeyboard-config", "xkb", "keyboard", "layouts"]
+categories = ["data", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,87 @@
+[package]
+name = "pygdbmi"
+version = "0.11.0.0"
+release = 1
+summary = "GDB Machine Interface parser"
+description = """
+Pygdbmi is a Python library for parsing GDB Machine Interface (MI) output.
+It allows Python programs to communicate with GDB programmatically through
+its MI interface for debugging automation.
+"""
+homepage = "https://github.com/cs01/pygdbmi"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/cs01/pygdbmi/archive/0.11.0.0/pygdbmi-0.11.0.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+setuptools = ">= 70.0"
+
+[depends]
+python = ">= 3.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pygdbmi-*.tar.gz
+"""
+
+configure = """
+# Python package, no configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pygdbmi-*
+pip3 wheel -w dist --no-build-isolation --no-deps .
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pygdbmi-*
+python3 -m pytest || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pygdbmi-*
+pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR pygdbmi
+"""
+
+[files]
+"usr/lib/python3.12/site-packages/pygdbmi/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.11.0.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pygdbmi", "gdb", "debugger", "mi", "python"]
+categories = ["python", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

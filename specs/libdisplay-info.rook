@@ -1,0 +1,96 @@
+[package]
+name = "libdisplay-info"
+version = "0.2.0"
+release = 1
+summary = "EDID and DisplayID parsing library"
+description = """
+Libdisplay-info is a library to parse EDID (Extended Display Identification
+Data) and DisplayID data from displays. It is used by compositors and display
+configuration tools to query monitor capabilities.
+"""
+homepage = "https://gitlab.freedesktop.org/emersion/libdisplay-info"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/0.2.0/downloads/libdisplay-info-0.2.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libdisplay-info-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libdisplay-info-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libdisplay-info-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libdisplay-info-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libdisplay-info-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/di-edid-decode" = { mode = 755 }
+"usr/lib/libdisplay-info.so" = { mode = 755 }
+"usr/include/libdisplay-info/" = {}
+"usr/lib/pkgconfig/libdisplay-info.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.2.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libdisplay-info", "edid", "displayid", "monitor"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

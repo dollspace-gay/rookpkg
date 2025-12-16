@@ -1,0 +1,88 @@
+[package]
+name = "pygments"
+version = "2.18.0"
+release = 1
+summary = "Syntax highlighting package"
+description = """
+Pygments is a generic syntax highlighter suitable for use in code hosting,
+forums, wikis or other applications. It supports over 500 languages and
+various output formats including HTML, LaTeX, and terminal sequences.
+"""
+homepage = "https://pygments.org/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/pygments/pygments/releases/download/2.18.0/pygments-2.18.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+hatchling = ">= 1.26"
+
+[depends]
+python = ">= 3.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pygments-*.tar.gz
+"""
+
+configure = """
+# Python package, no configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pygments-*
+pip3 wheel -w dist --no-build-isolation --no-deps .
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pygments-*
+python3 -m pytest || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pygments-*
+pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR pygments
+"""
+
+[files]
+"usr/bin/pygmentize" = { mode = 755 }
+"usr/lib/python3.12/site-packages/pygments/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.18.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pygments", "syntax", "highlighting", "code", "python"]
+categories = ["python", "text"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

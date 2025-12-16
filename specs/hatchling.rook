@@ -1,0 +1,89 @@
+[package]
+name = "hatchling"
+version = "1.26.3"
+release = 1
+summary = "Modern Python build backend"
+description = """
+Hatchling is the official build backend for Hatch, a modern, extensible
+Python project manager. It provides PEP 517/660 compliant build functionality
+for Python packages.
+"""
+homepage = "https://hatch.pypa.io/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/pypa/hatch/archive/hatchling-v1.26.3/hatchling-1.26.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+
+[depends]
+python = ">= 3.12"
+packaging = ">= 24.0"
+pathspec = ">= 0.12"
+pluggy = ">= 1.5"
+trove-classifiers = ">= 2024.10"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/hatchling-*.tar.gz
+"""
+
+configure = """
+# Python package, no configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/hatch-hatchling-*/backend
+pip3 wheel -w dist --no-build-isolation --no-deps .
+"""
+
+check = """
+# Skip tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/hatch-hatchling-*/backend
+pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR hatchling
+"""
+
+[files]
+"usr/lib/python3.12/site-packages/hatchling/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.26.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["hatchling", "hatch", "build", "backend", "python"]
+categories = ["python", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

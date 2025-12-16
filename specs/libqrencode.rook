@@ -1,0 +1,100 @@
+[package]
+name = "libqrencode"
+version = "4.1.1"
+release = 1
+summary = "QR Code encoding library"
+description = """
+Libqrencode is a fast and compact library for encoding data in a QR Code,
+a 2D symbology that can be scanned by mobile phones. It supports various
+encoding modes including numeric, alphanumeric, and binary.
+"""
+homepage = "https://fukuchi.org/works/qrencode/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://fukuchi.org/works/qrencode/qrencode-4.1.1.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+libpng = ">= 1.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/qrencode-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/qrencode-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DWITH_TOOLS=ON                 \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/qrencode-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/qrencode-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/qrencode-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/qrencode" = { mode = 755 }
+"usr/lib/libqrencode.so" = { mode = 755 }
+"usr/include/qrencode.h" = {}
+"usr/lib/pkgconfig/libqrencode.pc" = {}
+"usr/share/man/man1/qrencode.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.1.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libqrencode", "qrencode", "qr-code", "barcode"]
+categories = ["libraries", "graphics"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,114 @@
+[package]
+name = "sddm"
+version = "0.21.0"
+release = 1
+summary = "QML based X11 and Wayland display manager"
+description = """
+SDDM (Simple Desktop Display Manager) is a modern display manager for X11
+and Wayland sessions. It uses Qt and QML for its theming engine and supports
+multiple desktop environments.
+"""
+homepage = "https://github.com/sddm/sddm"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/sddm/sddm/archive/v0.21.0/sddm-0.21.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+linux-pam = ">= 1.6"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/sddm-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/sddm-*
+mkdir -p build
+cd build
+cmake ..                                      \
+      -DCMAKE_INSTALL_PREFIX=/usr             \
+      -DCMAKE_BUILD_TYPE=Release              \
+      -DBUILD_MAN_PAGES=OFF                   \
+      -DENABLE_JOURNALD=ON                    \
+      -DNO_SYSTEMD=OFF                        \
+      -DUSE_ELOGIND=OFF                       \
+      -DBUILD_WITH_QT6=ON                     \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/sddm-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require a running X server
+"""
+
+install = """
+cd $ROOKPKG_BUILD/sddm-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/sddm" = { mode = 755 }
+"usr/bin/sddm-greeter" = { mode = 755 }
+"usr/libexec/sddm-helper" = { mode = 755 }
+"usr/share/sddm/" = {}
+"usr/lib/systemd/system/sddm.service" = {}
+"usr/share/dbus-1/" = {}
+
+[config_files]
+"etc/sddm.conf" = {}
+"etc/pam.d/sddm" = {}
+"etc/pam.d/sddm-autologin" = {}
+"etc/pam.d/sddm-greeter" = {}
+
+[scripts]
+pre_install = """
+getent group sddm >/dev/null || groupadd -r sddm
+getent passwd sddm >/dev/null || useradd -r -g sddm -d /var/lib/sddm -s /sbin/nologin sddm
+"""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.21.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["sddm", "display-manager", "login", "qt", "kde"]
+categories = ["desktop", "display-manager"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

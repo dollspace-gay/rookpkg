@@ -1,0 +1,91 @@
+[package]
+name = "7zip"
+version = "24.08"
+release = 1
+summary = "High compression ratio file archiver"
+description = """
+7-Zip is a file archiver with a high compression ratio. It supports 7z, XZ,
+BZIP2, GZIP, TAR, ZIP, WIM and other archive formats. The 7z format typically
+achieves significantly higher compression than other formats.
+"""
+homepage = "https://www.7-zip.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.7-zip.org/a/7z2408-src.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+mkdir -p 7zip-24.08
+cd 7zip-24.08
+tar xf $ROOKPKG_SOURCES/7z*-src.tar.xz
+"""
+
+configure = """
+# 7-Zip doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/7zip-*/CPP/7zip/Bundles/Alone2
+make -f makefile.gcc -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/7zip-*/CPP/7zip/Bundles/Alone2
+install -d $ROOKPKG_DESTDIR/usr/bin
+install -m755 b/g/7zz $ROOKPKG_DESTDIR/usr/bin/7zz
+ln -sf 7zz $ROOKPKG_DESTDIR/usr/bin/7z
+"""
+
+[files]
+"usr/bin/7zz" = { mode = 755 }
+"usr/bin/7z" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "24.08"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["7zip", "7z", "compression", "archive"]
+categories = ["utilities", "compression"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,109 @@
+[package]
+name = "accountsservice"
+version = "23.13.9"
+release = 1
+summary = "D-Bus interface for user account query and manipulation"
+description = """
+AccountsService provides a set of D-Bus interfaces for querying and manipulating
+user account information. It is used by GNOME and other desktop environments
+for user management functionality.
+"""
+homepage = "https://www.freedesktop.org/wiki/Software/AccountsService/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.freedesktop.org/software/accountsservice/accountsservice-23.13.9.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+gobject-introspection = ">= 1.80"
+vala = ">= 0.56"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+polkit = ">= 124"
+systemd = ">= 256"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/accountsservice-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/accountsservice-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D admin_group=wheel   \
+      -D gtk_doc=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/accountsservice-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/accountsservice-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/accountsservice-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/libexec/accounts-daemon" = { mode = 755 }
+"usr/lib/libaccountsservice.so" = { mode = 755 }
+"usr/include/accountsservice-1.0/" = {}
+"usr/lib/pkgconfig/accountsservice.pc" = {}
+"usr/lib/girepository-1.0/AccountsService-1.0.typelib" = {}
+"usr/share/gir-1.0/AccountsService-1.0.gir" = {}
+"usr/share/vala/vapi/" = {}
+"usr/share/dbus-1/" = {}
+"usr/lib/systemd/system/" = {}
+"usr/share/polkit-1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "23.13.9"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["accountsservice", "accounts", "users", "dbus"]
+categories = ["system", "desktop"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

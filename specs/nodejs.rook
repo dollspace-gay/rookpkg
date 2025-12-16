@@ -1,0 +1,110 @@
+[package]
+name = "nodejs"
+version = "22.11.0"
+release = 1
+summary = "JavaScript runtime built on V8"
+description = """
+Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine.
+It enables server-side JavaScript execution and is widely used for building
+scalable network applications and tooling.
+"""
+homepage = "https://nodejs.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://nodejs.org/dist/v22.11.0/node-v22.11.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+python = ">= 3.12"
+
+[depends]
+glibc = ">= 2.39"
+icu = ">= 75.1"
+libuv = ">= 1.48"
+nghttp2 = ">= 1.63"
+openssl = ">= 3.3"
+zlib = ">= 1.3"
+c-ares = ">= 1.33"
+brotli = ">= 1.1"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/node-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/node-*
+./configure --prefix=/usr              \
+            --shared-brotli            \
+            --shared-cares             \
+            --shared-libuv             \
+            --shared-nghttp2           \
+            --shared-openssl           \
+            --shared-zlib              \
+            --with-intl=system-icu
+"""
+
+build = """
+cd $ROOKPKG_BUILD/node-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/node-*
+make test-only || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/node-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/node" = { mode = 755 }
+"usr/bin/npm" = { mode = 755 }
+"usr/bin/npx" = { mode = 755 }
+"usr/bin/corepack" = { mode = 755 }
+"usr/include/node/" = {}
+"usr/lib/node_modules/" = {}
+"usr/share/man/man1/node.1" = {}
+"usr/share/doc/node/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "22.11.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["nodejs", "node", "javascript", "v8", "npm"]
+categories = ["development", "javascript"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

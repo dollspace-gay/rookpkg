@@ -1,0 +1,100 @@
+[package]
+name = "pygobject"
+version = "3.50.0"
+release = 1
+summary = "Python bindings for GObject/GLib"
+description = """
+PyGObject provides Python bindings for GObject-based libraries such as GTK,
+GStreamer, and many others. It uses GObject Introspection to automatically
+generate bindings for GLib-based libraries.
+"""
+homepage = "https://pygobject.gnome.org/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.gnome.org/sources/pygobject/3.50/pygobject-3.50.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+python = ">= 3.12"
+glib2 = ">= 2.80"
+gobject-introspection = ">= 1.80"
+pycairo = ">= 1.27"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pygobject-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/pygobject-*
+mkdir -p build
+cd build
+meson setup ..              \
+      --prefix=/usr         \
+      --buildtype=release
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pygobject-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/pygobject-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pygobject-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/python3.12/site-packages/gi/" = {}
+"usr/lib/python3.12/site-packages/pygtkcompat/" = {}
+"usr/include/pygobject-3.0/" = {}
+"usr/lib/pkgconfig/pygobject-3.0.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.50.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pygobject", "gobject", "gtk", "python", "bindings"]
+categories = ["python", "gnome"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

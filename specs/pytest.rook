@@ -1,0 +1,93 @@
+[package]
+name = "pytest"
+version = "8.3.3"
+release = 1
+summary = "Python testing framework"
+description = """
+Pytest is a mature full-featured Python testing tool that helps you write
+better programs. It makes it easy to write small, readable tests and scales
+to support complex functional testing.
+"""
+homepage = "https://pytest.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/pytest-dev/pytest/releases/download/8.3.3/pytest-8.3.3.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+setuptools = ">= 70.0"
+setuptools-scm = ">= 8.0"
+
+[depends]
+python = ">= 3.12"
+iniconfig = ">= 2.0"
+pluggy = ">= 1.5"
+packaging = ">= 24.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/pytest-*.tar.gz
+"""
+
+configure = """
+# Python package, no configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/pytest-*
+pip3 wheel -w dist --no-build-isolation --no-deps .
+"""
+
+check = """
+# Skip tests to avoid circular dependency
+"""
+
+install = """
+cd $ROOKPKG_BUILD/pytest-*
+pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR pytest
+"""
+
+[files]
+"usr/bin/pytest" = { mode = 755 }
+"usr/bin/py.test" = { mode = 755 }
+"usr/lib/python3.12/site-packages/pytest/" = {}
+"usr/lib/python3.12/site-packages/_pytest/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "8.3.3"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["pytest", "testing", "python", "unit-tests"]
+categories = ["python", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

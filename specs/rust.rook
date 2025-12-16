@@ -1,0 +1,122 @@
+[package]
+name = "rust"
+version = "1.82.0"
+release = 1
+summary = "Rust programming language compiler"
+description = """
+Rust is a systems programming language focused on safety, speed, and concurrency.
+It achieves memory safety without garbage collection and provides zero-cost
+abstractions and guaranteed memory safety.
+"""
+homepage = "https://www.rust-lang.org/"
+license = "MIT OR Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://static.rust-lang.org/dist/rustc-1.82.0-src.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+python = ">= 3.12"
+curl = ">= 8.9"
+
+[depends]
+glibc = ">= 2.39"
+llvm = ">= 18.0"
+openssl = ">= 3.3"
+curl = ">= 8.9"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/rustc-*-src.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/rustc-*-src
+cat > config.toml << EOF
+[llvm]
+link-shared = true
+
+[build]
+target = ["x86_64-unknown-linux-gnu"]
+docs = false
+extended = true
+tools = ["cargo", "clippy", "rustfmt"]
+
+[install]
+prefix = "/usr"
+docdir = "share/doc/rust-1.82.0"
+
+[rust]
+channel = "stable"
+rpath = false
+EOF
+"""
+
+build = """
+cd $ROOKPKG_BUILD/rustc-*-src
+python3 x.py build -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/rustc-*-src
+python3 x.py test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/rustc-*-src
+DESTDIR=$ROOKPKG_DESTDIR python3 x.py install
+"""
+
+[files]
+"usr/bin/rustc" = { mode = 755 }
+"usr/bin/cargo" = { mode = 755 }
+"usr/bin/rustfmt" = { mode = 755 }
+"usr/bin/cargo-fmt" = { mode = 755 }
+"usr/bin/clippy-driver" = { mode = 755 }
+"usr/bin/cargo-clippy" = { mode = 755 }
+"usr/bin/rust-gdb" = { mode = 755 }
+"usr/bin/rust-lldb" = { mode = 755 }
+"usr/lib/rustlib/" = {}
+"usr/lib/libstd-*.so" = { mode = 755 }
+"usr/lib/librustc_driver-*.so" = { mode = 755 }
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.82.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["rust", "rustc", "cargo", "systems-programming"]
+categories = ["development", "compilers"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

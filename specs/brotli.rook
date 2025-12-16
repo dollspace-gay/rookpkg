@@ -1,0 +1,102 @@
+[package]
+name = "brotli"
+version = "1.1.0"
+release = 1
+summary = "Generic-purpose lossless compression algorithm"
+description = """
+Brotli is a generic-purpose lossless compression algorithm that compresses
+data using a combination of the LZ77 algorithm, Huffman coding, and context
+modeling. It achieves compression ratios comparable to LZMA and ZSTD.
+"""
+homepage = "https://github.com/google/brotli"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/google/brotli/archive/v1.1.0/brotli-1.1.0.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/brotli-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/brotli-*
+mkdir -p build
+cd build
+cmake ..                              \
+      -DCMAKE_INSTALL_PREFIX=/usr     \
+      -DCMAKE_BUILD_TYPE=Release      \
+      -DBUILD_SHARED_LIBS=ON          \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/brotli-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/brotli-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/brotli-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/brotli" = { mode = 755 }
+"usr/lib/libbrotlicommon.so" = { mode = 755 }
+"usr/lib/libbrotlidec.so" = { mode = 755 }
+"usr/lib/libbrotlienc.so" = { mode = 755 }
+"usr/include/brotli/" = {}
+"usr/lib/pkgconfig/libbrotlicommon.pc" = {}
+"usr/lib/pkgconfig/libbrotlidec.pc" = {}
+"usr/lib/pkgconfig/libbrotlienc.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.1.0"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["brotli", "compression", "lossless"]
+categories = ["libraries", "compression"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

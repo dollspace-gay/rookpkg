@@ -1,0 +1,137 @@
+[package]
+name = "nss"
+version = "3.106"
+release = 1
+summary = "Network Security Services"
+description = """
+NSS (Network Security Services) is a set of libraries designed to support
+cross-platform development of security-enabled client and server applications.
+It provides a complete implementation of the cryptographic libraries used
+by Mozilla products and other applications.
+"""
+homepage = "https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
+license = "MPL-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://archive.mozilla.org/pub/security/nss/releases/NSS_3_106_RTM/src/nss-3.106.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+nspr = ">= 4.36"
+sqlite = ">= 3.46"
+zlib = ">= 1.3"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nss-*.tar.gz
+"""
+
+configure = """
+# NSS doesn't use configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nss-*/nss
+make -j$ROOKPKG_JOBS BUILD_OPT=1        \
+     NSPR_INCLUDE_DIR=/usr/include/nspr \
+     USE_SYSTEM_ZLIB=1                  \
+     ZLIB_LIBS=-lz                      \
+     NSS_USE_SYSTEM_SQLITE=1            \
+     USE_64=1                           \
+     NSS_ENABLE_WERROR=0
+"""
+
+check = """
+# Tests require setup
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nss-*
+
+# Install libraries
+install -d $ROOKPKG_DESTDIR/usr/lib
+install -m755 dist/Linux*/lib/*.so $ROOKPKG_DESTDIR/usr/lib/
+install -m644 dist/Linux*/lib/*.chk $ROOKPKG_DESTDIR/usr/lib/
+
+# Install headers
+install -d $ROOKPKG_DESTDIR/usr/include/nss
+install -m644 dist/public/nss/*.h $ROOKPKG_DESTDIR/usr/include/nss/
+
+# Install binaries
+install -d $ROOKPKG_DESTDIR/usr/bin
+for tool in certutil cmsutil crlutil modutil pk12util signtool signver ssltap; do
+    install -m755 dist/Linux*/bin/$tool $ROOKPKG_DESTDIR/usr/bin/ || true
+done
+
+# Install pkgconfig file
+install -d $ROOKPKG_DESTDIR/usr/lib/pkgconfig
+cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/nss.pc << EOF
+prefix=/usr
+exec_prefix=\${prefix}
+libdir=\${prefix}/lib
+includedir=\${prefix}/include/nss
+
+Name: NSS
+Description: Network Security Services
+Version: 3.106
+Requires: nspr >= 4.36
+Libs: -L\${libdir} -lnss3 -lnssutil3 -lsmime3 -lssl3
+Cflags: -I\${includedir}
+EOF
+"""
+
+[files]
+"usr/bin/certutil" = { mode = 755 }
+"usr/bin/pk12util" = { mode = 755 }
+"usr/bin/modutil" = { mode = 755 }
+"usr/lib/libnss3.so" = { mode = 755 }
+"usr/lib/libnssutil3.so" = { mode = 755 }
+"usr/lib/libsmime3.so" = { mode = 755 }
+"usr/lib/libssl3.so" = { mode = 755 }
+"usr/lib/libsoftokn3.so" = { mode = 755 }
+"usr/lib/libfreebl3.so" = { mode = 755 }
+"usr/lib/libfreeblpriv3.so" = { mode = 755 }
+"usr/include/nss/" = {}
+"usr/lib/pkgconfig/nss.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.106"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["nss", "mozilla", "security", "ssl", "tls", "crypto"]
+categories = ["libraries", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

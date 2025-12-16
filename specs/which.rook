@@ -1,0 +1,90 @@
+[package]
+name = "which"
+version = "2.21"
+release = 1
+summary = "Shows the full path of shell commands"
+description = """
+Which takes one or more arguments and for each of them prints to stdout
+the full path of the executable that would have been executed when the
+argument had been entered at the shell prompt.
+"""
+homepage = "https://savannah.gnu.org/projects/which/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/which/which-2.21.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/which-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/which-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/which-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/which-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/which-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/which" = { mode = 755 }
+"usr/share/info/which.info" = {}
+"usr/share/man/man1/which.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "install-info /usr/share/info/which.info /usr/share/info/dir"
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.21"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["which", "path", "shell", "utility"]
+categories = ["utilities", "shell"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,97 @@
+[package]
+name = "xf86-input-wacom"
+version = "1.2.2"
+release = 1
+summary = "X.Org Wacom tablet input driver"
+description = """
+Xf86-input-wacom is an X.Org input driver for Wacom tablets and pen displays.
+It provides pressure-sensitive input, multi-button support, and coordination
+between multiple input devices on Wacom products.
+"""
+homepage = "https://github.com/linuxwacom/xf86-input-wacom"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/linuxwacom/xf86-input-wacom/releases/download/xf86-input-wacom-1.2.2/xf86-input-wacom-1.2.2.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+xorg-server = ">= 21.1"
+
+[depends]
+glibc = ">= 2.39"
+xorg-server = ">= 21.1"
+libwacom = ">= 2.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xf86-input-wacom-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xf86-input-wacom-*
+./configure --prefix=/usr                 \
+            --with-systemd-unit-dir=/usr/lib/systemd/system
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xf86-input-wacom-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xf86-input-wacom-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/xsetwacom" = { mode = 755 }
+"usr/lib/xorg/modules/input/wacom_drv.so" = { mode = 755 }
+"usr/share/X11/xorg.conf.d/70-wacom.conf" = {}
+"usr/share/man/man1/xsetwacom.1" = {}
+"usr/share/man/man4/wacom.4" = {}
+"lib/udev/rules.d/wacom.rules" = {}
+"usr/lib/systemd/system/wacom-inputattach@.service" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.2.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xf86-input-wacom", "wacom", "tablet", "pen", "xorg"]
+categories = ["drivers", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

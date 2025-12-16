@@ -1,0 +1,86 @@
+[package]
+name = "trove-classifiers"
+version = "2024.10.21.16"
+release = 1
+summary = "Canonical source for trove classifiers on PyPI"
+description = """
+Trove Classifiers is the canonical source of classifiers used on PyPI. It
+provides the list of valid classifier strings that can be used in Python
+package metadata for categorization.
+"""
+homepage = "https://github.com/pypa/trove-classifiers"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/pypa/trove-classifiers/archive/2024.10.21.16/trove-classifiers-2024.10.21.16.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+python = ">= 3.12"
+calver = ">= 2022.06"
+
+[depends]
+python = ">= 3.12"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/trove-classifiers-*.tar.gz
+"""
+
+configure = """
+# Python package, no configure
+"""
+
+build = """
+cd $ROOKPKG_BUILD/trove-classifiers-*
+pip3 wheel -w dist --no-build-isolation --no-deps .
+"""
+
+check = """
+# Skip tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/trove-classifiers-*
+pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR trove-classifiers
+"""
+
+[files]
+"usr/lib/python3.12/site-packages/trove_classifiers/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2024.10.21.16"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["trove-classifiers", "pypi", "classifiers", "python"]
+categories = ["python", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

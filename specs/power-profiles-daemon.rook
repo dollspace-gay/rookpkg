@@ -1,0 +1,102 @@
+[package]
+name = "power-profiles-daemon"
+version = "0.23"
+release = 1
+summary = "Power profiles management daemon"
+description = """
+Power Profiles Daemon makes power profiles handling available over D-Bus.
+It offers three power profiles: balanced, power-saver, and performance.
+It is used by GNOME and KDE for power management integration.
+"""
+homepage = "https://gitlab.freedesktop.org/upower/power-profiles-daemon"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/upower/power-profiles-daemon/-/archive/0.23/power-profiles-daemon-0.23.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.80"
+polkit = ">= 124"
+systemd = ">= 256"
+upower = ">= 1.90"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/power-profiles-daemon-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/power-profiles-daemon-*
+mkdir -p build
+cd build
+meson setup ..               \
+      --prefix=/usr          \
+      --buildtype=release    \
+      -D gtk_doc=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/power-profiles-daemon-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/power-profiles-daemon-*/build
+ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/power-profiles-daemon-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/powerprofilesctl" = { mode = 755 }
+"usr/libexec/power-profiles-daemon" = { mode = 755 }
+"usr/share/dbus-1/" = {}
+"usr/lib/systemd/system/" = {}
+"usr/share/polkit-1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.23"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["power-profiles-daemon", "power", "profiles", "performance"]
+categories = ["system", "power"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

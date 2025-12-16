@@ -1,0 +1,92 @@
+[package]
+name = "sassc"
+version = "3.6.2"
+release = 1
+summary = "Sass CSS preprocessor command-line tool"
+description = """
+SassC is a command-line interface wrapper around LibSass, the C/C++
+implementation of Sass. It compiles Sass and SCSS files to CSS from
+the command line.
+"""
+homepage = "https://sass-lang.com/libsass"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/sass/sassc/archive/3.6.2/sassc-3.6.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+autoconf = ">= 2.71"
+automake = ">= 1.16"
+libtool = ">= 2.4"
+
+[depends]
+glibc = ">= 2.39"
+libsass = ">= 3.6"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/sassc-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/sassc-*
+autoreconf -fvi
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/sassc-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/sassc-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/sassc" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.6.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["sassc", "sass", "scss", "css", "compiler"]
+categories = ["utilities", "web"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,87 @@
+[package]
+name = "xcursor-themes"
+version = "1.0.7"
+release = 1
+summary = "X.Org cursor themes"
+description = """
+Xcursor-themes provides default cursor themes for the X.Org X Window System.
+It includes the handhelds and redglass cursor themes commonly used in X11
+environments.
+"""
+homepage = "https://xorg.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/data/xcursor-themes-1.0.7.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+xcursorgen = ">= 1.0"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xcursor-themes-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xcursor-themes-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xcursor-themes-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xcursor-themes-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/share/icons/handhelds/" = {}
+"usr/share/icons/redglass/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.0.7"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xcursor-themes", "cursor", "themes", "xorg"]
+categories = ["themes", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,95 @@
+[package]
+name = "libsass"
+version = "3.6.6"
+release = 1
+summary = "Sass CSS preprocessor library"
+description = """
+LibSass is a C/C++ port of the Sass CSS precompiler. It allows Sass and SCSS
+stylesheets to be compiled to CSS. It is the library that powers the sassc
+command-line tool and other Sass implementations.
+"""
+homepage = "https://sass-lang.com/libsass"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/sass/libsass/archive/3.6.6/libsass-3.6.6.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+autoconf = ">= 2.71"
+automake = ">= 1.16"
+libtool = ">= 2.4"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/libsass-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libsass-*
+autoreconf -fvi
+./configure --prefix=/usr        \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libsass-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libsass-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libsass-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libsass.so" = { mode = 755 }
+"usr/include/sass/" = {}
+"usr/lib/pkgconfig/libsass.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.6.6"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libsass", "sass", "scss", "css", "preprocessor"]
+categories = ["libraries", "web"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

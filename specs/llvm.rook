@@ -1,0 +1,122 @@
+[package]
+name = "llvm"
+version = "19.1.4"
+release = 1
+summary = "LLVM compiler infrastructure"
+description = """
+LLVM is a collection of modular and reusable compiler and toolchain technologies.
+It includes the LLVM core libraries, Clang C/C++ compiler, and related tools.
+It is used as a backend for many programming languages.
+"""
+homepage = "https://llvm.org/"
+license = "Apache-2.0 WITH LLVM-exception"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.4/llvm-project-19.1.4.src.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+python = ">= 3.12"
+
+[depends]
+glibc = ">= 2.39"
+libffi = ">= 3.4"
+libxml2 = ">= 2.12"
+zlib = ">= 1.3"
+zstd = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/llvm-project-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/llvm-project-*/llvm
+mkdir -p build
+cd build
+cmake ..                                        \
+      -DCMAKE_INSTALL_PREFIX=/usr               \
+      -DCMAKE_BUILD_TYPE=Release                \
+      -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" \
+      -DLLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi" \
+      -DLLVM_ENABLE_FFI=ON                      \
+      -DLLVM_BUILD_LLVM_DYLIB=ON                \
+      -DLLVM_LINK_LLVM_DYLIB=ON                 \
+      -DLLVM_TARGETS_TO_BUILD="X86;AMDGPU"      \
+      -DLLVM_INCLUDE_BENCHMARKS=OFF             \
+      -DLLVM_INSTALL_UTILS=ON                   \
+      -DCLANG_DEFAULT_PIE_ON_LINUX=ON           \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
+ninja check-all || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/clang" = { mode = 755 }
+"usr/bin/clang++" = { mode = 755 }
+"usr/bin/llvm-*" = { mode = 755 }
+"usr/bin/lld" = { mode = 755 }
+"usr/bin/ld.lld" = { mode = 755 }
+"usr/lib/libLLVM*.so" = { mode = 755 }
+"usr/lib/libclang*.so" = { mode = 755 }
+"usr/lib/libc++*.so" = { mode = 755 }
+"usr/lib/libLTO.so" = { mode = 755 }
+"usr/include/llvm/" = {}
+"usr/include/clang/" = {}
+"usr/include/c++/" = {}
+"usr/lib/cmake/llvm/" = {}
+"usr/lib/cmake/clang/" = {}
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "19.1.4"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["llvm", "clang", "compiler", "lld", "c++"]
+categories = ["development", "compilers"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

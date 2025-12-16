@@ -1,0 +1,106 @@
+[package]
+name = "aspell"
+version = "0.60.8.1"
+release = 1
+summary = "Spell checker designed to eventually replace ispell"
+description = """
+GNU Aspell is a free software spell checker designed to eventually replace
+ispell. It can be used as a library or as an independent spell checker.
+It supports multiple dictionaries and various modes.
+"""
+homepage = "http://aspell.net/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/aspell/aspell-0.60.8.1.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+ncurses = ">= 6.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/aspell-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/aspell-*
+./configure --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/aspell-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/aspell-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/aspell-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+ln -svfn aspell-0.60 $ROOKPKG_DESTDIR/usr/lib/aspell
+"""
+
+[files]
+"usr/bin/aspell" = { mode = 755 }
+"usr/bin/aspell-import" = { mode = 755 }
+"usr/bin/precat" = { mode = 755 }
+"usr/bin/preunzip" = { mode = 755 }
+"usr/bin/prezip" = { mode = 755 }
+"usr/bin/prezip-bin" = { mode = 755 }
+"usr/bin/pspell-config" = { mode = 755 }
+"usr/bin/run-with-aspell" = { mode = 755 }
+"usr/bin/word-list-compress" = { mode = 755 }
+"usr/lib/libaspell.so" = { mode = 755 }
+"usr/lib/libpspell.so" = { mode = 755 }
+"usr/lib/aspell-0.60/" = {}
+"usr/include/aspell.h" = {}
+"usr/include/pspell/" = {}
+"usr/share/info/aspell.info" = {}
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig && install-info /usr/share/info/aspell.info /usr/share/info/dir"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.60.8.1"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["aspell", "spell-checker", "dictionary", "text"]
+categories = ["utilities", "text"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

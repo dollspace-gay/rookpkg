@@ -1,0 +1,99 @@
+[package]
+name = "xinit"
+version = "1.4.2"
+release = 1
+summary = "X Window System initializer"
+description = """
+Xinit is a program that is used to start the X Window System server and a
+first client program on systems that are not using a display manager. It
+includes the startx script for convenient X session startup.
+"""
+homepage = "https://xorg.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xorg.freedesktop.org/releases/individual/app/xinit-1.4.2.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+libx11 = ">= 1.8"
+xauth = ">= 1.1"
+mcookie = ">= 2.40"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/xinit-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xinit-*
+./configure --prefix=/usr                 \
+            --sysconfdir=/etc             \
+            --with-xinitdir=/etc/X11/xinit
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xinit-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xinit-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/xinit" = { mode = 755 }
+"usr/bin/startx" = { mode = 755 }
+"etc/X11/xinit/xinitrc" = {}
+"etc/X11/xinit/xserverrc" = {}
+"usr/share/man/man1/xinit.1" = {}
+"usr/share/man/man1/startx.1" = {}
+
+[config_files]
+"etc/X11/xinit/xinitrc" = {}
+"etc/X11/xinit/xserverrc" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.4.2"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xinit", "startx", "x11", "xorg"]
+categories = ["utilities", "xorg"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

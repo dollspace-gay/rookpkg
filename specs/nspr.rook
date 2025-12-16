@@ -1,0 +1,97 @@
+[package]
+name = "nspr"
+version = "4.36"
+release = 1
+summary = "Netscape Portable Runtime"
+description = """
+NSPR provides platform independence for non-GUI operating system facilities.
+These facilities include threads, thread synchronization, normal file and
+network I/O, interval timing and calendar time, basic memory management,
+and shared library linking.
+"""
+homepage = "https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSPR"
+license = "MPL-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://archive.mozilla.org/pub/nspr/releases/v4.36/src/nspr-4.36.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+tar xf $ROOKPKG_SOURCES/nspr-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/nspr-*/nspr
+./configure --prefix=/usr          \
+            --with-mozilla         \
+            --with-pthreads        \
+            --enable-64bit
+"""
+
+build = """
+cd $ROOKPKG_BUILD/nspr-*/nspr
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/nspr-*/nspr
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/nspr-config" = { mode = 755 }
+"usr/lib/libnspr4.so" = { mode = 755 }
+"usr/lib/libplc4.so" = { mode = 755 }
+"usr/lib/libplds4.so" = { mode = 755 }
+"usr/include/nspr/" = {}
+"usr/lib/pkgconfig/nspr.pc" = {}
+"usr/share/aclocal/nspr.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "4.36"
+date = "2025-12-15"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["nspr", "mozilla", "portable-runtime", "threading"]
+categories = ["libraries", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
