@@ -34,6 +34,7 @@ libgpg-error = ">= 1.46"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libgcrypt-*
 tar xf $ROOKPKG_SOURCES/libgcrypt-*.tar.bz2
 """
 

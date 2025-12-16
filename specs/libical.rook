@@ -1,6 +1,6 @@
 [package]
 name = "libical"
-version = "3.0.18"
+version = "3.0.20"
 release = 1
 summary = "iCalendar protocol implementation"
 description = """
@@ -14,14 +14,14 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/libical/libical/releases/download/v3.0.18/libical-3.0.18.tar.gz", sha256 = "FIXME" }
+source0 = { url = "https://github.com/libical/libical/releases/download/v3.0.20/libical-3.0.20.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
-ninja = ">= 1.8"
+make = ">= 4.0"
 gobject-introspection = ">= 1.80"
 vala = ">= 0.56"
 
@@ -38,6 +38,7 @@ libxml2 = ">= 2.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libical-*
 tar xf $ROOKPKG_SOURCES/libical-*.tar.gz
 """
 
@@ -45,29 +46,28 @@ configure = """
 cd $ROOKPKG_BUILD/libical-*
 mkdir -p build
 cd build
-cmake ..                              \
-      -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_BUILD_TYPE=Release      \
-      -DSHARED_ONLY=yes               \
-      -DICAL_BUILD_DOCS=false         \
-      -DGOBJECT_INTROSPECTION=true    \
-      -DICAL_GLIB_VAPI=true           \
-      -G Ninja
+cmake -D CMAKE_INSTALL_PREFIX=/usr  \
+      -D CMAKE_BUILD_TYPE=Release   \
+      -D SHARED_ONLY=yes            \
+      -D ICAL_BUILD_DOCS=false      \
+      -D GOBJECT_INTROSPECTION=true \
+      -D ICAL_GLIB_VAPI=true        \
+      ..
 """
 
 build = """
 cd $ROOKPKG_BUILD/libical-*/build
-ninja -j$ROOKPKG_JOBS
+make -j1
 """
 
 check = """
 cd $ROOKPKG_BUILD/libical-*/build
-ninja test || true
+make test || true
 """
 
 install = """
 cd $ROOKPKG_BUILD/libical-*/build
-DESTDIR=$ROOKPKG_DESTDIR ninja install
+make DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
@@ -93,6 +93,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.0.20"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 3.0.20 per BLFS",
+    "Switched from ninja to make (use -j1 as recommended by BLFS)"
+]
 
 [[changelog]]
 version = "3.0.18"

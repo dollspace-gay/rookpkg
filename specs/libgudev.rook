@@ -36,6 +36,7 @@ systemd = ">= 256"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libgudev-*
 tar xf $ROOKPKG_SOURCES/libgudev-*.tar.xz
 """
 
@@ -43,10 +44,7 @@ configure = """
 cd $ROOKPKG_BUILD/libgudev-*
 mkdir -p build
 cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D gtk_doc=false
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """

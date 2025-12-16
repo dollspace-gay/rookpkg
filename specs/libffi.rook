@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libffi-*
 tar xf $ROOKPKG_SOURCES/libffi-*.tar.gz
 """
 

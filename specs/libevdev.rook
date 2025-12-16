@@ -1,6 +1,6 @@
 [package]
 name = "libevdev"
-version = "1.13.3"
+version = "1.13.4"
 release = 1
 summary = "Wrapper library for evdev devices"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://freedesktop.org/software/libevdev/libevdev-1.13.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://freedesktop.org/software/libevdev/libevdev-1.13.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libevdev-*
 tar xf $ROOKPKG_SOURCES/libevdev-*.tar.xz
 """
 
@@ -40,10 +41,11 @@ configure = """
 cd $ROOKPKG_BUILD/libevdev-*
 mkdir -p build
 cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D documentation=disabled
+meson setup ..                      \
+      --prefix=/usr                 \
+      --buildtype=release           \
+      -D documentation=disabled     \
+      -D tests=disabled
 """
 
 build = """
@@ -79,6 +81,15 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.13.4"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.13.4 per BLFS",
+    "Added -D tests=disabled per BLFS"
+]
 
 [[changelog]]
 version = "1.13.3"

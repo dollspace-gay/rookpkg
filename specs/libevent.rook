@@ -34,6 +34,7 @@ openssl = ">= 3.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libevent-*
 tar xf $ROOKPKG_SOURCES/libevent-*.tar.gz
 """
 

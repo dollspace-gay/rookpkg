@@ -1,6 +1,6 @@
 [package]
 name = "libdisplay-info"
-version = "0.2.0"
+version = "0.3.0"
 release = 1
 summary = "EDID and DisplayID parsing library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/0.2.0/downloads/libdisplay-info-0.2.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/0.3.0/downloads/libdisplay-info-0.3.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libdisplay-info-*
 tar xf $ROOKPKG_SOURCES/libdisplay-info-*.tar.xz
 """
 
@@ -75,6 +76,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.3.0"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.3.0 per BLFS"
+]
 
 [[changelog]]
 version = "0.2.0"

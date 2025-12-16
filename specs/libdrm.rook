@@ -1,6 +1,6 @@
 [package]
 name = "libdrm"
-version = "2.4.124"
+version = "2.4.125"
 release = 1
 summary = "Direct Rendering Manager library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://dri.freedesktop.org/libdrm/libdrm-2.4.124.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://dri.freedesktop.org/libdrm/libdrm-2.4.125.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -33,6 +33,7 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
+rm -rf libdrm-*
 tar xf $ROOKPKG_SOURCES/libdrm-*.tar.xz
 """
 
@@ -87,6 +88,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.4.125"
+date = "2025-12-16"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2.4.125 per BLFS"
+]
 
 [[changelog]]
 version = "2.4.124"
