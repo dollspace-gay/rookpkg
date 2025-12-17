@@ -1,0 +1,95 @@
+[package]
+name = "check"
+version = "0.15.2"
+release = 1
+summary = "Unit testing framework for C"
+description = """
+Check is a unit testing framework for C. It features a simple interface
+for defining unit tests, putting little in the way of the developer.
+Tests are run in a separate address space, so Check can catch both
+assertion failures and code errors that cause segmentation faults.
+"""
+homepage = "https://libcheck.github.io/check/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf check-*
+tar xf $ROOKPKG_SOURCES/check-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/check-*
+./configure --prefix=/usr \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/check-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/check-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/check-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libcheck.so" = { mode = 755 }
+"usr/include/check.h" = {}
+"usr/lib/pkgconfig/check.pc" = {}
+"usr/share/doc/check/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.15.2"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["check", "unit-testing", "c", "testing"]
+categories = ["development", "testing"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

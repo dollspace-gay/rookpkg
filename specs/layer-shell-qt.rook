@@ -1,0 +1,103 @@
+[package]
+name = "layer-shell-qt"
+version = "6.2.4"
+release = 1
+summary = "Qt component for Wayland layer-shell protocol"
+description = """
+Layer Shell Qt provides a Qt component to allow applications to make use
+of the Wayland wlr-layer-shell protocol. This protocol is used for
+panels, notifications, and other desktop shell components.
+"""
+homepage = "https://invent.kde.org/plasma/layer-shell-qt"
+license = "LGPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/layer-shell-qt-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+wayland = ">= 1.20"
+wayland-protocols = ">= 1.25"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+wayland = ">= 1.20"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf layer-shell-qt-*
+tar xf $ROOKPKG_SOURCES/layer-shell-qt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/layer-shell-qt-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/layer-shell-qt-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/layer-shell-qt-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libLayerShellQtInterface.so" = { mode = 755 }
+"usr/include/LayerShellQt/" = {}
+"usr/lib/cmake/LayerShellQt/" = {}
+"usr/lib/qt6/plugins/wayland-shell-integration/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["layer-shell", "wayland", "kde", "plasma", "qt6"]
+categories = ["libraries", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

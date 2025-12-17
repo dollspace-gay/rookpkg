@@ -1,0 +1,100 @@
+[package]
+name = "breeze-gtk"
+version = "6.2.4"
+release = 1
+summary = "Breeze theme for GTK applications"
+description = """
+Breeze-GTK provides the Breeze visual style for GTK2 and GTK3
+applications, ensuring visual consistency between Qt and GTK
+applications in KDE Plasma.
+"""
+homepage = "https://invent.kde.org/plasma/breeze-gtk"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/breeze-gtk-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+python = ">= 3.10"
+sassc = ">= 3.6"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+gtk3 = ">= 3.24"
+
+[optional_depends]
+gtk4 = ">= 4.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf breeze-gtk-*
+tar xf $ROOKPKG_SOURCES/breeze-gtk-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/breeze-gtk-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/breeze-gtk-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/breeze-gtk-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/themes/Breeze/" = {}
+"usr/share/themes/Breeze-Dark/" = {}
+"usr/share/gtksourceview-4/styles/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["breeze-gtk", "gtk", "theme", "kde", "plasma"]
+categories = ["themes", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

@@ -1,0 +1,103 @@
+[package]
+name = "kapidox"
+version = "6.17.0"
+release = 1
+summary = "KDE API documentation generator"
+description = """
+KApiDox is a tool for generating API documentation for KDE projects.
+It uses Doxygen and produces documentation in a consistent KDE style.
+Part of KDE Frameworks 6.
+"""
+homepage = "https://invent.kde.org/frameworks/kapidox"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/kapidox-6.17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.17"
+python = ">= 3.10"
+python-jinja2 = ">= 3.0"
+python-pyyaml = ">= 6.0"
+doxygen = ">= 1.9"
+
+[depends]
+glibc = ">= 2.39"
+python = ">= 3.10"
+python-jinja2 = ">= 3.0"
+python-pyyaml = ">= 6.0"
+doxygen = ">= 1.9"
+
+[optional_depends]
+graphviz = ">= 9.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kapidox-*
+tar xf $ROOKPKG_SOURCES/kapidox-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kapidox-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kapidox-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kapidox-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/kapidox-generate" = { mode = 755 }
+"usr/bin/kapidox_generate" = { mode = 755 }
+"usr/lib/python3/dist-packages/kapidox/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kapidox", "api", "documentation", "doxygen", "kde"]
+categories = ["development", "documentation", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

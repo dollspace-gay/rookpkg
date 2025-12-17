@@ -1,0 +1,208 @@
+[package]
+name = "plasma-workspace"
+version = "6.2.4"
+release = 1
+summary = "KDE Plasma workspace and shell"
+description = """
+Plasma Workspace provides the core components of the KDE Plasma desktop
+including the panel, desktop containments, system tray, lockscreen,
+and other essential desktop shell functionality.
+"""
+homepage = "https://invent.kde.org/plasma/plasma-workspace"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-workspace-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-baloo = ">= 6.0"
+kf6-karchive = ">= 6.0"
+kf6-kauth = ">= 6.0"
+kf6-kcmutils = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-kglobalaccel = ">= 6.0"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-kidletime = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-knotifyconfig = ">= 6.0"
+kf6-kpackage = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-krunner = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-kstatusnotifieritem = ">= 6.0"
+kf6-ksvg = ">= 6.0"
+kf6-ktexteditor = ">= 6.0"
+kf6-ktextwidgets = ">= 6.0"
+kf6-kunitconversion = ">= 6.0"
+kf6-kwallet = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+kf6-prison = ">= 6.0"
+kf6-solid = ">= 6.0"
+kf6-networkmanager-qt = ">= 6.0"
+breeze = ">= 6.2"
+kactivitymanagerd = ">= 6.2"
+kdecoration = ">= 6.2"
+kglobalacceld = ">= 6.2"
+kpipewire = ">= 6.2"
+kscreenlocker = ">= 6.2"
+kwayland = ">= 6.2"
+kwin = ">= 6.2"
+layer-shell-qt = ">= 6.2"
+libkscreen = ">= 6.2"
+libksysguard = ">= 6.2"
+libplasma = ">= 6.2"
+plasma5support = ">= 6.2"
+plasma-activities = ">= 6.2"
+plasma-activities-stats = ">= 6.2"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-baloo = ">= 6.0"
+kf6-karchive = ">= 6.0"
+kf6-kauth = ">= 6.0"
+kf6-kcmutils = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-kglobalaccel = ">= 6.0"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-kidletime = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-knotifyconfig = ">= 6.0"
+kf6-kpackage = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-krunner = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-kstatusnotifieritem = ">= 6.0"
+kf6-ksvg = ">= 6.0"
+kf6-ktexteditor = ">= 6.0"
+kf6-ktextwidgets = ">= 6.0"
+kf6-kunitconversion = ">= 6.0"
+kf6-kwallet = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+kf6-prison = ">= 6.0"
+kf6-solid = ">= 6.0"
+kf6-networkmanager-qt = ">= 6.0"
+breeze = ">= 6.2"
+kactivitymanagerd = ">= 6.2"
+kdecoration = ">= 6.2"
+kglobalacceld = ">= 6.2"
+kpipewire = ">= 6.2"
+kscreenlocker = ">= 6.2"
+kwayland = ">= 6.2"
+kwin = ">= 6.2"
+layer-shell-qt = ">= 6.2"
+libkscreen = ">= 6.2"
+libksysguard = ">= 6.2"
+libplasma = ">= 6.2"
+plasma5support = ">= 6.2"
+plasma-activities = ">= 6.2"
+plasma-activities-stats = ">= 6.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf plasma-workspace-*
+tar xf $ROOKPKG_SOURCES/plasma-workspace-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/plasma-workspace-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -DGLIBC_LOCALE_PREGENERATED=ON \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/plasma-workspace-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/plasma-workspace-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/plasmashell" = { mode = 755 }
+"usr/bin/ksmserver" = { mode = 755 }
+"usr/bin/krunner" = { mode = 755 }
+"usr/bin/startplasma-wayland" = { mode = 755 }
+"usr/bin/startplasma-x11" = { mode = 755 }
+"usr/lib/libkworkspace6.so" = { mode = 755 }
+"usr/lib/libplasma-geolocation-interface.so" = { mode = 755 }
+"usr/lib/libtaskmanager.so" = { mode = 755 }
+"usr/lib/libweather_ion.so" = { mode = 755 }
+"usr/lib/qt6/plugins/plasma/" = {}
+"usr/share/plasma/" = {}
+"usr/share/xsessions/plasmax11.desktop" = {}
+"usr/share/wayland-sessions/plasma.desktop" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["plasma-workspace", "plasma-shell", "kde", "plasma", "desktop"]
+categories = ["system", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

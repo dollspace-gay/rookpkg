@@ -77,7 +77,8 @@
       "Bash(Select-String -Path \"c:\\Users\\texas\\rookpkg\\scripts\\build_in_chroot.sh\" -Pattern \"Shadow|Sed\" -Context 2,30)",
       "Bash(Select-Object -First 100)",
       "Bash(findstr:*)",
-      "Bash(bd stats:*)"
+      "Bash(bd stats:*)",
+      "Bash(wsl -d RookeryOS -u root bash -c:*)"
     ]
   }
 }

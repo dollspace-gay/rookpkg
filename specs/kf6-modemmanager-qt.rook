@@ -1,0 +1,101 @@
+[package]
+name = "kf6-modemmanager-qt"
+version = "6.17.0"
+release = 1
+summary = "Qt wrapper for ModemManager APIs"
+description = """
+ModemManagerQt provides a Qt wrapper for ModemManager API.
+Part of KDE Frameworks 6.
+"""
+homepage = "https://invent.kde.org/frameworks/modemmanager-qt"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/modemmanager-qt-6.17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+extra-cmake-modules = ">= 6.17"
+qt6 = ">= 6.5"
+pkgconf = ">= 1.0"
+modemmanager = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.5"
+modemmanager = ">= 1.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf modemmanager-qt-*
+tar xf $ROOKPKG_SOURCES/modemmanager-qt-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/modemmanager-qt-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \\
+      -D CMAKE_INSTALL_LIBEXECDIR=libexec \\
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_SKIP_INSTALL_RPATH=ON \\
+      -D CMAKE_BUILD_TYPE=Release \\
+      -D BUILD_TESTING=OFF \\
+      -W no-dev ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/modemmanager-qt-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/modemmanager-qt-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libKF6ModemManagerQt.so" = { mode = 755 }
+"usr/include/KF6/ModemManagerQt/" = {}
+"usr/lib/cmake/KF6ModemManagerQt/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kde", "kf6", "modemmanager-qt", "modem", "qt6"]
+categories = ["libraries", "kde", "networking"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

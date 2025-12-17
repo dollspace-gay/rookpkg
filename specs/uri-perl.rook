@@ -1,0 +1,90 @@
+[package]
+name = "uri-perl"
+version = "5.32"
+release = 1
+summary = "Perl URI module"
+description = """
+The URI module implements the URI class. Objects of this class
+represent Uniform Resource Identifier (URI) references as specified
+in RFC 3986. Required for various Perl-based build tools and KDE.
+"""
+homepage = "https://metacpan.org/pod/URI"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-5.32.tar.gz", sha256 = "5765c6ced4cd23217e85d349b58b1cf4c9c10ea76e30c2d826aa4a7618b76fa4" }
+
+[patches]
+
+[build_depends]
+perl = ">= 5.38"
+make = ">= 4.0"
+
+[depends]
+perl = ">= 5.38"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf URI-*
+tar xf $ROOKPKG_SOURCES/URI-5.32.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/URI-*
+perl Makefile.PL
+"""
+
+build = """
+cd $ROOKPKG_BUILD/URI-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/URI-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/URI-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/perl5/" = {}
+"usr/share/man/man3/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "5.32"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["perl", "uri", "url", "rfc3986"]
+categories = ["libraries", "perl"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

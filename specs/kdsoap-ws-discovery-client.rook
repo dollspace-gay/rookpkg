@@ -1,0 +1,104 @@
+[package]
+name = "kdsoap-ws-discovery-client"
+version = "0.4.0"
+release = 1
+summary = "WS-Discovery client library"
+description = """
+KDSoap WS-Discovery Client is a library for discovering WS-Discovery
+enabled devices on the network. It implements the OASIS WS-Discovery
+specification.
+"""
+homepage = "https://github.com/casablanca-project/WSDiscovery"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/kdsoap-ws-discovery-client/kdsoap-ws-discovery-client-0.4.0.tar.xz", sha256 = "2cd247c013e75f410659bac372aff93d22d71c5a54c059e137b9444af8b3427a" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+qt6 = ">= 6.5"
+kdsoap = ">= 2.2"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.5"
+kdsoap = ">= 2.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kdsoap-ws-discovery-client-*
+tar xf $ROOKPKG_SOURCES/kdsoap-ws-discovery-client-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kdsoap-ws-discovery-client-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr    \\
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_BUILD_TYPE=Release     \\
+      -D CMAKE_SKIP_INSTALL_RPATH=ON  \\
+      -D QT_MAJOR_VERSION=6           \\
+      -W no-dev ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kdsoap-ws-discovery-client-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kdsoap-ws-discovery-client-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+# Move docs to versioned directory
+if [ -d $ROOKPKG_DESTDIR/usr/share/doc/KDSoapWSDiscoveryClient ]; then
+    mv -v $ROOKPKG_DESTDIR/usr/share/doc/KDSoapWSDiscoveryClient $ROOKPKG_DESTDIR/usr/share/doc/KDSoapWSDiscoveryClient-0.4.0
+fi
+"""
+
+[files]
+"usr/lib/libKDSoapWSDiscoveryClient.so" = { mode = 755 }
+"usr/include/KDSoapWSDiscoveryClient/" = {}
+"usr/lib/cmake/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.4.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kdsoap", "ws-discovery", "qt6", "kde"]
+categories = ["libraries", "kde", "networking"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

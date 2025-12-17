@@ -216,17 +216,18 @@ impl PackageArchiveBuilder {
             for entry in fs::read_dir(dir)? {
                 let entry = entry?;
                 let path = entry.path();
-                let metadata = entry.metadata()?;
+                // Use symlink_metadata to not follow symlinks
+                let metadata = fs::symlink_metadata(&path)?;
 
                 // Get path relative to base, then make it absolute for the target system
                 let rel_path = path.strip_prefix(base)?;
                 let install_path = PathBuf::from("/").join(rel_path);
                 let path_str = install_path.to_string_lossy().to_string();
 
-                let file_type = if metadata.is_dir() {
-                    FileType::Directory
-                } else if metadata.file_type().is_symlink() {
+                let file_type = if metadata.file_type().is_symlink() {
                     FileType::Symlink
+                } else if metadata.is_dir() {
+                    FileType::Directory
                 } else {
                     FileType::Regular
                 };
@@ -256,6 +257,7 @@ impl PackageArchiveBuilder {
                     file_type,
                 });
 
+                // Only recurse into actual directories, not symlinks to directories
                 if metadata.is_dir() {
                     scan_recursive(&path, base, files, total_size, config_patterns)?;
                 }
@@ -333,11 +335,71 @@ impl PackageArchiveBuilder {
         let file = File::create(output)?;
         let mut builder = Builder::new(file);
 
-        // Add all files from source directory
-        builder.append_dir_all(".", &self.source_dir)
+        // Don't follow symlinks - we want to preserve them in the archive
+        builder.follow_symlinks(false);
+
+        // Manually walk and add files to properly handle symlinks
+        self.add_dir_recursive(&mut builder, &self.source_dir, Path::new(""))
             .context("Failed to add files to data tar")?;
 
         builder.finish()?;
+        Ok(())
+    }
+
+    /// Recursively add directory contents to tar, properly handling symlinks
+    fn add_dir_recursive(&self, builder: &mut Builder<File>, dir: &Path, prefix: &Path) -> Result<()> {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            let metadata = fs::symlink_metadata(&path)
+                .with_context(|| format!("Failed to get metadata for: {}", path.display()))?;
+            let name = entry.file_name();
+            let archive_path = prefix.join(&name);
+
+            if metadata.file_type().is_symlink() {
+                // Read the symlink target and add as a symlink entry
+                let target = fs::read_link(&path)
+                    .with_context(|| format!("Failed to read symlink: {}", path.display()))?;
+                let mut header = tar::Header::new_gnu();
+                header.set_entry_type(tar::EntryType::Symlink);
+                header.set_size(0);
+                #[cfg(unix)]
+                header.set_mode(0o777);
+                header.set_mtime(
+                    metadata.modified()
+                        .map(|t| t.duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs())
+                        .unwrap_or(0)
+                );
+                header.set_cksum();
+                builder.append_link(&mut header, &archive_path, &target)
+                    .with_context(|| format!("Failed to add symlink {} -> {}", archive_path.display(), target.display()))?;
+            } else if metadata.is_dir() {
+                // Add directory entry
+                let mut header = tar::Header::new_gnu();
+                header.set_entry_type(tar::EntryType::Directory);
+                header.set_size(0);
+                #[cfg(unix)]
+                header.set_mode(std::os::unix::fs::PermissionsExt::mode(&metadata.permissions()));
+                header.set_mtime(
+                    metadata.modified()
+                        .map(|t| t.duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs())
+                        .unwrap_or(0)
+                );
+                header.set_cksum();
+                // Directory paths in tar should end with /
+                let dir_path = format!("{}/", archive_path.display());
+                builder.append_data(&mut header, &dir_path, std::io::empty())
+                    .with_context(|| format!("Failed to add directory: {}", archive_path.display()))?;
+                // Recurse into the directory
+                self.add_dir_recursive(builder, &path, &archive_path)?;
+            } else {
+                // Regular file
+                let mut file = File::open(&path)
+                    .with_context(|| format!("Failed to open file: {}", path.display()))?;
+                builder.append_file(&archive_path, &mut file)
+                    .with_context(|| format!("Failed to add file: {}", archive_path.display()))?;
+            }
+        }
         Ok(())
     }
 

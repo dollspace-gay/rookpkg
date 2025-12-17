@@ -1,0 +1,103 @@
+[package]
+name = "kf6-syntax-highlighting"
+version = "6.17.0"
+release = 1
+summary = "Syntax highlighting engine"
+description = """
+KSyntaxHighlighting provides a syntax highlighting engine based on Kate's
+highlighting data, supporting hundreds of programming languages.
+Part of KDE Frameworks 6.
+"""
+homepage = "https://invent.kde.org/frameworks/syntax-highlighting"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/syntax-highlighting-6.17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+extra-cmake-modules = ">= 6.17"
+qt6 = ">= 6.5"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf syntax-highlighting-*
+tar xf $ROOKPKG_SOURCES/syntax-highlighting-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/syntax-highlighting-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \\
+      -D CMAKE_INSTALL_LIBEXECDIR=libexec \\
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_SKIP_INSTALL_RPATH=ON \\
+      -D CMAKE_BUILD_TYPE=Release \\
+      -D BUILD_TESTING=OFF \\
+      -W no-dev ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/syntax-highlighting-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/syntax-highlighting-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libKF6SyntaxHighlighting.so" = { mode = 755 }
+"usr/bin/kate-syntax-highlighter" = { mode = 755 }
+"usr/include/KF6/KSyntaxHighlighting/" = {}
+"usr/lib/cmake/KF6SyntaxHighlighting/" = {}
+"usr/share/org.kde.syntax-highlighting/" = {}
+"usr/lib/qt6/qml/org/kde/syntaxhighlighting/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kde", "kf6", "syntax-highlighting", "kate", "qt6"]
+categories = ["libraries", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

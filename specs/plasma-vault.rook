@@ -1,0 +1,118 @@
+[package]
+name = "plasma-vault"
+version = "6.2.4"
+release = 1
+summary = "KDE Plasma encrypted vault manager"
+description = """
+Plasma Vault provides encrypted folder management for KDE Plasma.
+It supports CryFS, EncFS, and gocryptfs backends.
+"""
+homepage = "https://invent.kde.org/plasma/plasma-vault"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-vault-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+plasma-activities = ">= 6.2"
+libplasma = ">= 6.2"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+plasma-activities = ">= 6.2"
+libplasma = ">= 6.2"
+
+[optional_depends]
+cryfs = ">= 0.11"
+encfs = ">= 1.9"
+gocryptfs = ">= 2.4"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf plasma-vault-*
+tar xf $ROOKPKG_SOURCES/plasma-vault-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/plasma-vault-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/plasma-vault-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/plasma-vault-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/qt6/plugins/kf6/kded/plasmavault.so" = { mode = 755 }
+"usr/share/plasma/plasmoids/org.kde.plasma.vault/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["plasma-vault", "encryption", "security", "kde", "plasma"]
+categories = ["system", "security", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

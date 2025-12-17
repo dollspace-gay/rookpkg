@@ -1,0 +1,97 @@
+[package]
+name = "xcb-util"
+version = "0.4.1"
+release = 1
+summary = "XCB utility library"
+description = """
+The xcb-util package provides additional extensions to the XCB library,
+many that were previously found in Xlib, but are not part of core X protocol.
+This is the base xcb-util module providing xcb_aux and xcb_event helpers.
+"""
+homepage = "https://xcb.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xcb.freedesktop.org/dist/xcb-util-0.4.1.tar.xz", sha256 = "5abe3bbbd8e54f0571cbed57f3d76b40409d94502523e9b10e8cbb7fb6e74e3a" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxcb = ">= 1.17"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+libxcb = ">= 1.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf xcb-util-*
+tar xf $ROOKPKG_SOURCES/xcb-util-0.4.1.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xcb-util-*
+./configure --prefix=/usr        \
+            --sysconfdir=/etc    \
+            --localstatedir=/var \
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xcb-util-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xcb-util-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xcb-util-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libxcb-util.so" = { mode = 755 }
+"usr/include/xcb/" = {}
+"usr/lib/pkgconfig/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.4.1"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xcb-util", "xcb", "x11", "utilities"]
+categories = ["x11", "libraries"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

@@ -1,0 +1,96 @@
+[package]
+name = "xcb-util-keysyms"
+version = "0.4.1"
+release = 1
+summary = "XCB utility library for keysyms handling"
+description = """
+The xcb-util-keysyms package provides standard X key constants and API
+functions for conversion to/from keycodes.
+"""
+homepage = "https://xcb.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xcb.freedesktop.org/dist/xcb-util-keysyms-0.4.1.tar.xz", sha256 = "7c260a5294412aed429df1da2f8afd3bd07b7cba3fec772fba15a613a6d5c638" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxcb = ">= 1.17"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+libxcb = ">= 1.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf xcb-util-keysyms-*
+tar xf $ROOKPKG_SOURCES/xcb-util-keysyms-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xcb-util-keysyms-*
+./configure --prefix=/usr        \\
+            --sysconfdir=/etc    \\
+            --localstatedir=/var \\
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xcb-util-keysyms-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xcb-util-keysyms-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xcb-util-keysyms-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libxcb-keysyms.so" = { mode = 755 }
+"usr/include/xcb/" = {}
+"usr/lib/pkgconfig/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.4.1"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xcb-util", "xcb", "x11", "keysyms"]
+categories = ["x11", "libraries"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

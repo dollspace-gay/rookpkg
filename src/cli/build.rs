@@ -25,6 +25,7 @@ pub fn run(
     batch: bool,
     update_index: bool,
     delta_from: Option<&Path>,
+    jobs: Option<usize>,
     config: &Config,
 ) -> Result<()> {
     // CRITICAL: Check for signing key FIRST
@@ -78,7 +79,12 @@ pub fn run(
     // Create build environment using PackageBuilder::build() with the parsed spec
     // (build_from_spec would re-parse, so using build() is more efficient)
     let builder = PackageBuilder::new(config.clone());
-    let build_env = builder.build(spec.clone())?;
+    let mut build_env = builder.build(spec.clone())?;
+
+    // Override jobs if specified on command line
+    if let Some(j) = jobs {
+        build_env.set_jobs(j as u32);
+    }
 
     println!(
         "  {} {}-{}-{}",

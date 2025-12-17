@@ -1,0 +1,106 @@
+[package]
+name = "kgamma"
+version = "6.2.4"
+release = 1
+summary = "KDE monitor gamma settings"
+description = """
+KGamma provides monitor gamma correction settings for KDE Plasma.
+It allows users to adjust brightness, contrast, and gamma for displays.
+"""
+homepage = "https://invent.kde.org/plasma/kgamma"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/kgamma-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kcmutils = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+libxxf86vm = ">= 1.1"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kcmutils = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+libxxf86vm = ">= 1.1"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kgamma-*
+tar xf $ROOKPKG_SOURCES/kgamma-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kgamma-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kgamma-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kgamma-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/qt6/plugins/plasma/kcms/systemsettings/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kgamma", "gamma", "display", "kde", "plasma"]
+categories = ["system", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

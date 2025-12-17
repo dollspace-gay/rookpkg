@@ -1,0 +1,102 @@
+[package]
+name = "xcb-util-cursor"
+version = "0.1.5"
+release = 1
+summary = "XCB utility library for cursor handling"
+description = """
+The xcb-util-cursor package provides port of Xlib's libXcursor functions
+for loading cursors.
+"""
+homepage = "https://xcb.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xcb.freedesktop.org/dist/xcb-util-cursor-0.1.5.tar.xz", sha256 = "0e9c5446dc6f3beb8af6ebfcc9e27bcc6da6fe2860d5de2c9494778eed7bf5ff" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxcb = ">= 1.17"
+xcb-util = ">= 0.4"
+xcb-util-image = ">= 0.4"
+xcb-util-renderutil = ">= 0.3"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+libxcb = ">= 1.17"
+xcb-util = ">= 0.4"
+xcb-util-image = ">= 0.4"
+xcb-util-renderutil = ">= 0.3"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf xcb-util-cursor-*
+tar xf $ROOKPKG_SOURCES/xcb-util-cursor-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xcb-util-cursor-*
+./configure --prefix=/usr        \\
+            --sysconfdir=/etc    \\
+            --localstatedir=/var \\
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xcb-util-cursor-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xcb-util-cursor-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xcb-util-cursor-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libxcb-cursor.so" = { mode = 755 }
+"usr/include/xcb/" = {}
+"usr/lib/pkgconfig/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.1.5"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xcb-util", "xcb", "x11", "cursor"]
+categories = ["x11", "libraries"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

@@ -1,0 +1,96 @@
+[package]
+name = "xcb-util-renderutil"
+version = "0.3.10"
+release = 1
+summary = "XCB utility library for render extension"
+description = """
+The xcb-util-renderutil package provides convenience functions for the
+Render extension.
+"""
+homepage = "https://xcb.freedesktop.org/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://xcb.freedesktop.org/dist/xcb-util-renderutil-0.3.10.tar.xz", sha256 = "3e15d4f0e22d8ddbfbb9f5d77db43eacd7a304029bf25a6166cc63caa96d04ba" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+libxcb = ">= 1.17"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+libxcb = ">= 1.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf xcb-util-renderutil-*
+tar xf $ROOKPKG_SOURCES/xcb-util-renderutil-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xcb-util-renderutil-*
+./configure --prefix=/usr        \\
+            --sysconfdir=/etc    \\
+            --localstatedir=/var \\
+            --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xcb-util-renderutil-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xcb-util-renderutil-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xcb-util-renderutil-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libxcb-render-util.so" = { mode = 755 }
+"usr/include/xcb/" = {}
+"usr/lib/pkgconfig/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.3.10"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["xcb-util", "xcb", "x11", "render"]
+categories = ["x11", "libraries"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

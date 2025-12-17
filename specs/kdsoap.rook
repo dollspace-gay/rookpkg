@@ -1,0 +1,103 @@
+[package]
+name = "kdsoap"
+version = "2.2.0"
+release = 1
+summary = "Qt SOAP library"
+description = """
+KD Soap is a Qt-based client-side and server-side SOAP component.
+It can be used to create client applications for web services and
+also provides the means to create web services without the need for
+any further component such as a dedicated web server.
+"""
+homepage = "https://github.com/KDAB/KDSoap"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/KDAB/KDSoap/releases/download/kdsoap-2.2.0/kdsoap-2.2.0.tar.gz", sha256 = "d9ef11948442197c9fa44bd6fde5e8db86a15226c3162018a85a98cea2e79a89" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+qt6 = ">= 6.5"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kdsoap-*
+tar xf $ROOKPKG_SOURCES/kdsoap-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kdsoap-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \\
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_BUILD_TYPE=Release  \\
+      -D KDSoap_QT6=ON             \\
+      -D CMAKE_INSTALL_DOCDIR=/usr/share/doc/kdsoap-2.2.0 \\
+      -W no-dev ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kdsoap-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kdsoap-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libkdsoap.so" = { mode = 755 }
+"usr/lib/libkdsoap-server.so" = { mode = 755 }
+"usr/include/KDSoap/" = {}
+"usr/include/KDSoapClient/" = {}
+"usr/include/KDSoapServer/" = {}
+"usr/lib/cmake/" = {}
+"usr/lib/pkgconfig/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.2.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kdsoap", "soap", "qt6", "kde"]
+categories = ["libraries", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

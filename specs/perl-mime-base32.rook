@@ -1,0 +1,90 @@
+[package]
+name = "perl-mime-base32"
+version = "1.303"
+release = 1
+summary = "Perl module for Base32 encoding/decoding"
+description = """
+MIME::Base32 provides Base32 encoding and decoding functions for Perl.
+Base32 is a notation for encoding arbitrary byte data using a restricted
+set of symbols that can be conveniently used by humans.
+"""
+homepage = "https://metacpan.org/pod/MIME::Base32"
+license = "Artistic-1.0-Perl OR GPL-1.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://cpan.metacpan.org/authors/id/R/RE/REHSACK/MIME-Base32-1.303.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+perl = ">= 5.38"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+perl = ">= 5.38"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf MIME-Base32-*
+tar xf $ROOKPKG_SOURCES/MIME-Base32-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/MIME-Base32-*
+perl Makefile.PL INSTALLDIRS=vendor
+"""
+
+build = """
+cd $ROOKPKG_BUILD/MIME-Base32-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/MIME-Base32-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/MIME-Base32-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/perl5/vendor_perl/MIME/Base32.pm" = {}
+"usr/share/man/man3/MIME::Base32.3pm" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.303"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package"
+]
+
+[metadata]
+keywords = ["perl", "mime", "base32", "encoding"]
+categories = ["development", "perl"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

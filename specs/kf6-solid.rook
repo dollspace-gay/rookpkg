@@ -1,0 +1,105 @@
+[package]
+name = "kf6-solid"
+version = "6.17.0"
+release = 1
+summary = "Hardware integration and detection library"
+description = """
+Solid provides a way to query and interact with hardware devices
+independently of the underlying platform. It supports UDev and UDisks2.
+Part of KDE Frameworks 6.
+"""
+homepage = "https://invent.kde.org/frameworks/solid"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/frameworks/6.17/solid-6.17.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+extra-cmake-modules = ">= 6.17"
+qt6 = ">= 6.5"
+pkgconf = ">= 1.0"
+eudev = ">= 3.2"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.5"
+eudev = ">= 3.2"
+
+[optional_depends]
+udisks = ">= 2.10"
+upower = ">= 0.99"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf solid-*
+tar xf $ROOKPKG_SOURCES/solid-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/solid-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr \\
+      -D CMAKE_INSTALL_LIBEXECDIR=libexec \\
+      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_SKIP_INSTALL_RPATH=ON \\
+      -D CMAKE_BUILD_TYPE=Release \\
+      -D BUILD_TESTING=OFF \\
+      -W no-dev ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/solid-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/solid-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libKF6Solid.so" = { mode = 755 }
+"usr/include/KF6/Solid/" = {}
+"usr/lib/cmake/KF6Solid/" = {}
+"usr/lib/qt6/qml/org/kde/solid/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.17.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kde", "kf6", "solid", "hardware", "qt6"]
+categories = ["libraries", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

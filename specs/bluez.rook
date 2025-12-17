@@ -38,7 +38,7 @@ systemd = ">= 256"
 prep = """
 cd $ROOKPKG_BUILD
 rm -rf bluez-*
-tar xf $ROOKPKG_SOURCES/bluez-*.tar.xz
+tar xf $ROOKPKG_SOURCES/bluez-5*.tar.xz
 """
 
 configure = """

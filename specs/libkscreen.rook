@@ -1,0 +1,109 @@
+[package]
+name = "libkscreen"
+version = "6.2.4"
+release = 1
+summary = "KDE screen management library"
+description = """
+LibKScreen is a library that provides access to screen configuration
+data. It is used by KScreen and other KDE components to query and
+control display settings.
+"""
+homepage = "https://invent.kde.org/plasma/libkscreen"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/libkscreen-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kwayland = ">= 6.2"
+wayland = ">= 1.20"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kwayland = ">= 6.2"
+wayland = ">= 1.20"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf libkscreen-*
+tar xf $ROOKPKG_SOURCES/libkscreen-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libkscreen-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libkscreen-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/libkscreen-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libKScreenDpms.so" = { mode = 755 }
+"usr/lib/libKScreen.so" = { mode = 755 }
+"usr/include/KScreen/" = {}
+"usr/lib/cmake/KScreen/" = {}
+"usr/libexec/kscreen_backend_launcher" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["libkscreen", "screen", "kde", "plasma", "qt6"]
+categories = ["libraries", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

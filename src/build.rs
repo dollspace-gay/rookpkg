@@ -38,6 +38,9 @@ pub struct BuildEnvironment {
 
     /// Downloader for fetching sources
     downloader: Downloader,
+
+    /// Verbose mode - stream output to terminal
+    verbose: bool,
 }
 
 /// Result of a build phase
@@ -136,7 +139,22 @@ impl BuildEnvironment {
             env,
             jobs,
             downloader,
+            verbose: false,
         })
+    }
+
+    /// Enable verbose mode (stream build output to terminal)
+    pub fn set_verbose(&mut self, verbose: bool) {
+        self.verbose = verbose;
+    }
+
+    /// Override the number of parallel jobs
+    pub fn set_jobs(&mut self, jobs: u32) {
+        self.jobs = jobs;
+        // Update environment variables
+        self.env.insert("ROOKPKG_JOBS".to_string(), jobs.to_string());
+        self.env.insert("MAKEFLAGS".to_string(), format!("-j{}", jobs));
+        self.env.insert("NINJAJOBS".to_string(), jobs.to_string());
     }
 
     /// Get the build directory
@@ -302,36 +320,53 @@ impl BuildEnvironment {
         // Execute the script
         let start = std::time::Instant::now();
 
-        let output = Command::new("/bin/bash")
-            .arg(&script_path)
-            .current_dir(&work_dir)
-            .envs(&self.env)
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .output()
-            .with_context(|| format!("Failed to execute {} phase", phase_name))?;
+        let (exit_code, stdout, stderr) = if self.verbose {
+            // Verbose mode: stream output directly to terminal
+            let status = Command::new("/bin/bash")
+                .arg(&script_path)
+                .current_dir(&work_dir)
+                .envs(&self.env)
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
+                .status()
+                .with_context(|| format!("Failed to execute {} phase", phase_name))?;
 
-        let duration = start.elapsed();
+            (status.code().unwrap_or(-1), String::new(), String::new())
+        } else {
+            // Quiet mode: capture output
+            let output = Command::new("/bin/bash")
+                .arg(&script_path)
+                .current_dir(&work_dir)
+                .envs(&self.env)
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .output()
+                .with_context(|| format!("Failed to execute {} phase", phase_name))?;
 
-        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
-        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
-        let exit_code = output.status.code().unwrap_or(-1);
+            let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+            let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+            let exit_code = output.status.code().unwrap_or(-1);
 
-        // Log output
-        if !stdout.is_empty() {
-            for line in stdout.lines() {
-                tracing::debug!("[{}:stdout] {}", phase_name, line);
-            }
-        }
-        if !stderr.is_empty() {
-            for line in stderr.lines() {
-                if exit_code == 0 {
-                    tracing::debug!("[{}:stderr] {}", phase_name, line);
-                } else {
-                    tracing::error!("[{}:stderr] {}", phase_name, line);
+            // Log output
+            if !stdout.is_empty() {
+                for line in stdout.lines() {
+                    tracing::debug!("[{}:stdout] {}", phase_name, line);
                 }
             }
-        }
+            if !stderr.is_empty() {
+                for line in stderr.lines() {
+                    if exit_code == 0 {
+                        tracing::debug!("[{}:stderr] {}", phase_name, line);
+                    } else {
+                        tracing::error!("[{}:stderr] {}", phase_name, line);
+                    }
+                }
+            }
+
+            (exit_code, stdout, stderr)
+        };
+
+        let duration = start.elapsed();
 
         let result = PhaseResult {
             phase: phase_name.to_string(),

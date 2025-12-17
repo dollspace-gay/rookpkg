@@ -24,6 +24,8 @@ pub fn run(
     output: Option<&Path>,
     continue_on_error: bool,
     jobs: Option<usize>,
+    skip_built: bool,
+    verbose: bool,
     config: &Config,
 ) -> Result<()> {
     let start_time = Instant::now();
@@ -115,6 +117,46 @@ pub fn run(
         println!("  {} Parallel builds: {}", "→".cyan(), j);
     }
 
+    // Filter out already-built packages if --skip-built is set
+    let mut skipped_count = 0;
+    if skip_built {
+        let original_count = spec_files.len();
+        spec_files.retain(|spec_path| {
+            // Parse spec to get name/version
+            if let Ok(spec) = crate::spec::PackageSpec::from_file(spec_path) {
+                let pkg_filename = format!(
+                    "{}-{}-{}.{}.rookpkg",
+                    spec.package.name,
+                    spec.package.version,
+                    spec.package.release,
+                    std::env::consts::ARCH
+                );
+                let pkg_path = output_dir.join(&pkg_filename);
+                if pkg_path.exists() {
+                    return false; // Skip this one
+                }
+            }
+            true // Keep this one
+        });
+        skipped_count = original_count - spec_files.len();
+        if skipped_count > 0 {
+            println!(
+                "  {} Skipping {} already-built packages",
+                "→".cyan(),
+                skipped_count
+            );
+        }
+    }
+
+    if spec_files.is_empty() {
+        println!();
+        println!(
+            "{} All packages already built!",
+            "✓".green().bold()
+        );
+        return Ok(());
+    }
+
     println!();
     println!(
         "{}",
@@ -150,6 +192,8 @@ pub fn run(
             spec_path,
             output_dir,
             &signing_key,
+            verbose,
+            jobs,
             config,
         );
 
@@ -254,18 +298,25 @@ pub fn run(
     }
 
     // Overall stats
+    let skipped_str = if skipped_count > 0 {
+        format!(", {} skipped", skipped_count)
+    } else {
+        String::new()
+    };
     if fail_count > 0 {
         println!(
-            "Total: {} succeeded, {} failed, {:.1}s elapsed",
+            "Total: {} succeeded, {} failed{}, {:.1}s elapsed",
             success_count.to_string().green(),
             fail_count.to_string().red(),
+            skipped_str,
             total_duration
         );
     } else {
         println!(
-            "Total: {} succeeded, {} failed, {:.1}s elapsed",
+            "Total: {} succeeded, {} failed{}, {:.1}s elapsed",
             success_count.to_string().green(),
             fail_count.to_string(),
+            skipped_str,
             total_duration
         );
     }
@@ -297,6 +348,8 @@ fn build_single_package(
     spec_path: &Path,
     output_dir: &Path,
     signing_key: &signing::LoadedSigningKey,
+    verbose: bool,
+    jobs: Option<usize>,
     config: &Config,
 ) -> Result<(String, String, std::path::PathBuf)> {
     use crate::archive::PackageArchiveBuilder;
@@ -311,7 +364,15 @@ fn build_single_package(
 
     // Create build environment
     let builder = PackageBuilder::new(config.clone());
-    let build_env = builder.build(spec.clone())?;
+    let mut build_env = builder.build(spec.clone())?;
+
+    // Enable verbose mode if requested
+    build_env.set_verbose(verbose);
+
+    // Override jobs if specified
+    if let Some(j) = jobs {
+        build_env.set_jobs(j as u32);
+    }
 
     // Run build_all for batch execution (quiet mode)
     build_env.fetch_sources()?;

@@ -1,0 +1,110 @@
+[package]
+name = "kpipewire"
+version = "6.2.4"
+release = 1
+summary = "KDE PipeWire integration"
+description = """
+KPipewire provides KDE Plasma integration with PipeWire multimedia
+server. It includes components for screen capture, audio routing,
+and other multimedia functions.
+"""
+homepage = "https://invent.kde.org/plasma/kpipewire"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/kpipewire-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kcoreaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+pipewire = ">= 1.0"
+ffmpeg = ">= 6.0"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kcoreaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+pipewire = ">= 1.0"
+ffmpeg = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kpipewire-*
+tar xf $ROOKPKG_SOURCES/kpipewire-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kpipewire-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kpipewire-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kpipewire-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libKPipeWire.so" = { mode = 755 }
+"usr/lib/libKPipeWireDmaBuf.so" = { mode = 755 }
+"usr/lib/libKPipeWireRecord.so" = { mode = 755 }
+"usr/include/KPipeWire/" = {}
+"usr/lib/cmake/KPipeWire/" = {}
+"usr/lib/qt6/qml/org/kde/pipewire/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kpipewire", "pipewire", "kde", "plasma", "qt6"]
+categories = ["libraries", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

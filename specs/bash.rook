@@ -61,8 +61,9 @@ install = """
 cd $ROOKPKG_BUILD/bash-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
-# Create sh symlink
-ln -sf bash $ROOKPKG_DESTDIR/bin/sh
+# Create sh symlink in /bin pointing to /usr/bin/bash
+mkdir -p $ROOKPKG_DESTDIR/bin
+ln -sf /usr/bin/bash $ROOKPKG_DESTDIR/bin/sh
 """
 
 [files]

@@ -154,6 +154,10 @@ pub enum Commands {
         /// Generate delta from a previous package version
         #[arg(long)]
         delta_from: Option<std::path::PathBuf>,
+
+        /// Number of parallel jobs for compilation
+        #[arg(short, long)]
+        jobs: Option<usize>,
     },
 
     /// Build all .rook spec files in a directory
@@ -167,12 +171,20 @@ pub enum Commands {
         output: Option<std::path::PathBuf>,
 
         /// Continue building remaining packages on failure
-        #[arg(long, name = "continue")]
+        #[arg(long = "continue")]
         continue_on_error: bool,
 
-        /// Number of parallel builds (not yet implemented)
+        /// Number of parallel jobs for compilation
         #[arg(short, long)]
         jobs: Option<usize>,
+
+        /// Skip packages that already have a .rookpkg file in the output directory
+        #[arg(long)]
+        skip_built: bool,
+
+        /// Show real-time build output (stream to terminal)
+        #[arg(long)]
+        stream: bool,
     },
 
     /// Generate a new signing key
@@ -504,11 +516,11 @@ pub fn execute(command: Commands, config: &Config) -> Result<()> {
         Commands::Search { query } => {
             search::run(&query, config)
         }
-        Commands::Build { spec, install, output, batch, index, delta_from } => {
-            build::run(&spec, install, output.as_deref(), batch, index, delta_from.as_deref(), config)
+        Commands::Build { spec, install, output, batch, index, delta_from, jobs } => {
+            build::run(&spec, install, output.as_deref(), batch, index, delta_from.as_deref(), jobs, config)
         }
-        Commands::Buildall { spec_dir, output, continue_on_error, jobs } => {
-            buildall::run(&spec_dir, output.as_deref(), continue_on_error, jobs, config)
+        Commands::Buildall { spec_dir, output, continue_on_error, jobs, skip_built, stream } => {
+            buildall::run(&spec_dir, output.as_deref(), continue_on_error, jobs, skip_built, stream, config)
         }
         Commands::Keygen { name, email, output } => {
             keygen::run(&name, &email, output.as_deref(), config)

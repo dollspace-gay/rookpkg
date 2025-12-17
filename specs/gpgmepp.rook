@@ -1,0 +1,98 @@
+[package]
+name = "gpgmepp"
+version = "2.0.0"
+release = 1
+summary = "C++ bindings for GPGME"
+description = """
+GpgME++ is a C++ wrapper for GPGME, the GnuPG Made Easy library.
+It provides a high-level object-oriented API for accessing GnuPG
+functionality from C++ applications. Required by KDE Frameworks
+for encryption functionality.
+"""
+homepage = "https://gnupg.org/software/gpgme/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gnupg.org/ftp/gcrypt/gpgme/gpgmepp-2.0.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+gpgme = ">= 2.0"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+gpgme = ">= 2.0"
+libgpg-error = ">= 1.45"
+libassuan = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf gpgmepp-*
+tar xf $ROOKPKG_SOURCES/gpgmepp-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gpgmepp-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gpgmepp-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/gpgmepp-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/lib/libGpgmepp.so" = { mode = 755 }
+"usr/lib/libQGpgmeQt6.so" = { mode = 755 }
+"usr/include/gpgme++/" = {}
+"usr/include/QGpgME/" = {}
+"usr/lib/cmake/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "2.0.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["gpgme", "gpg", "encryption", "c++", "kde"]
+categories = ["libraries", "security"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

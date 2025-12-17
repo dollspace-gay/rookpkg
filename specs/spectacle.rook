@@ -1,0 +1,145 @@
+[package]
+name = "spectacle"
+version = "24.12.0"
+release = 1
+summary = "KDE screenshot utility"
+description = """
+Spectacle is the KDE screenshot application. It provides capture of
+fullscreen, window, rectangular region, and timed screenshots.
+"""
+homepage = "https://invent.kde.org/graphics/spectacle"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/release-service/24.12.0/src/spectacle-24.12.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kconfigwidgets = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-kglobalaccel = ">= 6.0"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-kpipewire = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-kstatusnotifieritem = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+kf6-purpose = ">= 6.0"
+kf6-prison = ">= 6.0"
+kpipewire = ">= 6.2"
+layer-shell-qt = ">= 6.2"
+opencv = ">= 4.8"
+zxing-cpp = ">= 2.2"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kconfigwidgets = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-kglobalaccel = ">= 6.0"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-kstatusnotifieritem = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+kf6-purpose = ">= 6.0"
+kf6-prison = ">= 6.0"
+kpipewire = ">= 6.2"
+layer-shell-qt = ">= 6.2"
+opencv = ">= 4.8"
+
+[optional_depends]
+zxing-cpp = ">= 2.2"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf spectacle-*
+tar xf $ROOKPKG_SOURCES/spectacle-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/spectacle-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/spectacle-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/spectacle-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/spectacle" = { mode = 755 }
+"usr/share/applications/org.kde.spectacle.desktop" = {}
+"usr/share/kglobalaccel/org.kde.spectacle.desktop" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "24.12.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["spectacle", "screenshot", "kde", "plasma"]
+categories = ["utilities", "graphics", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

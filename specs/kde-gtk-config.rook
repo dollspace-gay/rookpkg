@@ -1,0 +1,119 @@
+[package]
+name = "kde-gtk-config"
+version = "6.2.4"
+release = 1
+summary = "KDE GTK configuration"
+description = """
+KDE GTK Config provides configuration for GTK applications in KDE Plasma.
+It allows users to set GTK themes, fonts, and icon themes to match the
+Plasma desktop.
+"""
+homepage = "https://invent.kde.org/plasma/kde-gtk-config"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/kde-gtk-config-6.2.4.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-ksvg = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+gtk3 = ">= 3.24"
+gsettings-desktop-schemas = ">= 40"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-ksvg = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+gtk3 = ">= 3.24"
+gsettings-desktop-schemas = ">= 40"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kde-gtk-config-*
+tar xf $ROOKPKG_SOURCES/kde-gtk-config-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kde-gtk-config-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kde-gtk-config-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kde-gtk-config-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/qt6/plugins/plasma/kcms/systemsettings/" = {}
+"usr/libexec/gtk_preview" = { mode = 755 }
+"usr/libexec/gtk3_preview" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.2.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 build instructions"
+]
+
+[metadata]
+keywords = ["kde-gtk-config", "gtk", "settings", "kde", "plasma"]
+categories = ["system", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
