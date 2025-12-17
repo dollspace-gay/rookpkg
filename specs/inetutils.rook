@@ -21,9 +21,16 @@ source0 = { url = "https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz", sha2
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
+libcap = ">= 2.69"
+libpam = ">= 1.0"
+libreadline = ">= 1.0"
+libxcrypt = ">= 1.0"
+linux-pam = ">= 1.0"
+readline = ">= 8.2"
 
 [optional_depends]
 ncurses = ">= 6.0"

@@ -39,6 +39,7 @@ kf6-ki18n = ">= 6.17"
 kf6-kio = ">= 6.17"
 kf6-kitemmodels = ">= 6.17"
 kf6-kservice = ">= 6.17"
+kf6-kwindowsystem = ">= 1.0"
 
 [optional_depends]
 

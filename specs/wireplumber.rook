@@ -32,6 +32,7 @@ pipewire = ">= 1.0"
 glib2 = ">= 2.70"
 lua = ">= 5.4"
 systemd = ">= 250"
+libwireplumber = ">= 1.0"
 
 [optional_depends]
 dbus = ">= 1.12"

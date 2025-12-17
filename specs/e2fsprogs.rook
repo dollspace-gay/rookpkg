@@ -21,11 +21,16 @@ source0 = { url = "https://downloads.sourceforge.net/e2fsprogs/e2fsprogs-1.47.3.
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+fuse3 = ">= 1.0"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"
+util-linux = ">= 1.0"
 
 [optional_depends]
+lvm2 = ">= 1.0"
+smtp-forwarder = ">= 1.0"
 
 [environment]
 

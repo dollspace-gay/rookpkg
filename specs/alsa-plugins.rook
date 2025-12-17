@@ -22,6 +22,11 @@ source0 = { url = "https://www.alsa-project.org/files/pub/plugins/alsa-plugins-1
 gcc = ">= 10.0"
 make = ">= 4.0"
 alsa-lib = ">= 1.2.13"
+dbus = ">= 1.14"
+ffmpeg = ">= 7.0"
+libavtp = ">= 1.0"
+libsamplerate = ">= 0.2"
+speexdsp = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -30,6 +35,11 @@ alsa-lib = ">= 1.2.13"
 [optional_depends]
 pulseaudio = ">= 17.0"
 pipewire = ">= 1.0"
+dbus = ">= 1.14"
+ffmpeg = ">= 7.0"
+libavtp = ">= 1.0"
+libsamplerate = ">= 0.2"
+speexdsp = ">= 1.0"
 
 [environment]
 

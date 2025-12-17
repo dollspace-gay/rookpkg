@@ -25,8 +25,10 @@ ninja = ">= 1.8"
 
 [depends]
 glibc = ">= 2.39"
+libpciaccess = ">= 1.0"
 
 [optional_depends]
+cairo = ">= 1.18"
 
 [environment]
 

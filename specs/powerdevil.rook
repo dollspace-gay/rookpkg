@@ -43,6 +43,7 @@ kf6-networkmanager-qt = ">= 6.0"
 libkscreen = ">= 6.2"
 plasma-activities = ">= 6.2"
 pkgconf = ">= 1.0"
+plasma-wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -65,8 +66,20 @@ kf6-bluez-qt = ">= 6.0"
 kf6-networkmanager-qt = ">= 6.0"
 libkscreen = ">= 6.2"
 plasma-activities = ">= 6.2"
+ddcutil = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kservice = ">= 1.0"
+libplasma = ">= 1.0"
+libxcb = ">= 1.16"
+plasma-workspace = ">= 1.0"
+qcoro = ">= 1.0"
+systemd = ">= 255"
+wayland = ">= 1.22"
 
 [optional_depends]
+kinfocenter = ">= 1.0"
+power-profiles-daemon = ">= 1.0"
+tlp = ">= 1.0"
 
 [environment]
 

@@ -23,6 +23,7 @@ gcc = ">= 10.0"
 cmake = ">= 3.20"
 spirv-tools = ">= 1.4.303"
 spirv-headers = ">= 1.4.303"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"

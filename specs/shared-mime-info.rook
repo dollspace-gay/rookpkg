@@ -24,6 +24,7 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 glib2 = ">= 2.70"
 libxml2 = ">= 2.12"
+gettext = ">= 0.22"
 
 [depends]
 glibc = ">= 2.39"

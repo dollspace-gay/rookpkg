@@ -28,6 +28,7 @@ libcap-ng = ">= 0.8"
 systemd = ">= 256"
 
 [optional_depends]
+s-nail = ">= 1.0"
 
 [environment]
 

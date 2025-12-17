@@ -23,10 +23,14 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 glib2 = ">= 2.70"
 graphviz = ">= 2.0"
+autoconf-archive = ">= 1.0"
+libxslt = ">= 1.1"
 
 [depends]
 glibc = ">= 2.39"
 glib2 = ">= 2.70"
+pkgconf = ">= 1.0"
+ttf-font = ">= 1.0"
 
 [optional_depends]
 graphviz = ">= 2.0"

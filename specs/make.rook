@@ -23,6 +23,7 @@ gcc = ">= 10.0"
 
 [depends]
 glibc = ">= 2.39"
+guile = ">= 1.0"
 
 [optional_depends]
 

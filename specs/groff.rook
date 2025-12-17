@@ -21,11 +21,18 @@ source0 = { url = "https://ftp.gnu.org/gnu/groff/groff-1.23.0.tar.gz", sha256 = 
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+libxaw = ">= 1.0"
+netpbm = ">= 1.0"
+psutils = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
+perl = ">= 5.38"
 
 [optional_depends]
+libxaw = ">= 1.0"
+netpbm = ">= 1.0"
+psutils = ">= 1.0"
 
 [environment]
 

@@ -24,6 +24,7 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+acl = ">= 2.3"
 
 [optional_depends]
 

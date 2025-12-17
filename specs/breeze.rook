@@ -47,8 +47,14 @@ kf6-kiconthemes = ">= 6.0"
 kf6-kirigami = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 kdecoration = ">= 6.2"
+breeze-icons = ">= 1.0"
+kf6-frameworkintegration = ">= 1.0"
+kf6-kcmutils = ">= 1.0"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
 
 [optional_depends]
+breeze-gtk = ">= 1.0"
 
 [environment]
 

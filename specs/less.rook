@@ -24,6 +24,7 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+pcre2 = ">= 10.42"
 
 [optional_depends]
 ncurses = ">= 6.0"

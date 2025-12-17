@@ -23,12 +23,14 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 libxml2 = ">= 2.12"
+libxslt = ">= 1.1"
 
 [depends]
 glibc = ">= 2.39"
 libffi = ">= 3.4"
 expat = ">= 2.5"
 libxml2 = ">= 2.12"
+default-cursors = ">= 1.0"
 
 [optional_depends]
 

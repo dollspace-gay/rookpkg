@@ -56,6 +56,11 @@ kf6-kservice = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 libksysguard = ">= 6.2"
 libplasma = ">= 6.2"
+kf6-kcrash = ">= 1.0"
+kf6-kiconthemes = ">= 1.0"
+kf6-kquickcharts = ">= 1.0"
+kirigami-addons = ">= 1.0"
+ksystemstats = ">= 1.0"
 
 [optional_depends]
 

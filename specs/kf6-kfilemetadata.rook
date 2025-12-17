@@ -28,6 +28,9 @@ kf6-kconfig = ">= 6.17"
 kf6-kcoreaddons = ">= 6.17"
 kf6-ki18n = ">= 6.17"
 pkgconf = ">= 1.0"
+catdoc = ">= 1.0"
+kdegraphics-mobipocket = ">= 1.0"
+libappimage = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -36,8 +39,17 @@ kf6-karchive = ">= 6.17"
 kf6-kconfig = ">= 6.17"
 kf6-kcoreaddons = ">= 6.17"
 kf6-ki18n = ">= 6.17"
+ebook-tools = ">= 1.0"
+exiv2 = ">= 1.0"
+ffmpeg = ">= 7.0"
+kf6-kcodecs = ">= 1.0"
+poppler = ">= 1.0"
+taglib = ">= 1.0"
 
 [optional_depends]
+catdoc = ">= 1.0"
+kdegraphics-mobipocket = ">= 1.0"
+libappimage = ">= 1.0"
 
 [environment]
 

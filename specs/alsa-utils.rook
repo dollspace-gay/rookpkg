@@ -23,11 +23,15 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 alsa-lib = ">= 1.2.13"
 ncurses = ">= 6.4"
+libsamplerate = ">= 0.2"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"
 alsa-lib = ">= 1.2.13"
 ncurses = ">= 6.4"
+libsamplerate = ">= 0.2"
+pciutils = ">= 3.10"
 
 [optional_depends]
 fftw = ">= 3.0"

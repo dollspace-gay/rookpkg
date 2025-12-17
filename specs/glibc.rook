@@ -29,11 +29,15 @@ bison = ">= 3.0"
 gawk = ">= 5.0"
 python = ">= 3.6"
 texinfo = ">= 7.0"
+gd = ">= 1.0"
 
 [depends]
+linux = ">= 1.0"
 # glibc has no runtime dependencies - it IS the base
 
 [optional_depends]
+gd = ">= 1.0"
+perl = ">= 5.38"
 
 [environment]
 # Glibc build environment

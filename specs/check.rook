@@ -23,9 +23,12 @@ source0 = { url = "https://github.com/libcheck/check/releases/download/0.15.2/ch
 gcc = ">= 10.0"
 make = ">= 4.0"
 pkgconf = ">= 1.0"
+texi2html = ">= 1.0"
+texlive-bin = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
+awk = ">= 1.0"
 
 [optional_depends]
 

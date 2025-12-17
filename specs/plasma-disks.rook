@@ -52,6 +52,7 @@ kf6-knotifications = ">= 6.0"
 kf6-kservice = ">= 6.0"
 kf6-solid = ">= 6.0"
 smartmontools = ">= 7.4"
+kinfocenter = ">= 1.0"
 
 [optional_depends]
 

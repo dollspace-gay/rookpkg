@@ -21,11 +21,19 @@ source0 = { url = "https://ftp.gnu.org/gnu/gettext/gettext-0.26.tar.xz", sha256 
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+emacs = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
+acl = ">= 2.3"
+attr = ">= 2.5"
+gnulib-l10n = ">= 1.0"
+libunistring = ">= 1.0"
+libxml2 = ">= 2.12"
+ncurses = ">= 6.4"
 
 [optional_depends]
+appstream = ">= 1.0"
 
 [environment]
 

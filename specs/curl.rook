@@ -23,12 +23,21 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 openssl = ">= 3.0"
 libpsl = ">= 0.21"
+patchelf = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 openssl = ">= 3.0"
 libpsl = ">= 0.21"
 zlib = ">= 1.0"
+brotli = ">= 1.0"
+krb5 = ">= 1.0"
+libbrotlidec = ">= 1.0"
+libgssapi_krb5 = ">= 1.0"
+libidn2 = ">= 1.0"
+libzstd = ">= 1.0"
+nghttp3 = ">= 1.0"
+zstd = ">= 1.5"
 
 [optional_depends]
 c-ares = ">= 1.0"

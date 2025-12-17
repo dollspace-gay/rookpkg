@@ -23,6 +23,7 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 rust = ">= 1.70"
 vala = ">= 0.56"
+cargo-c = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -31,6 +32,10 @@ pango = ">= 1.54"
 cairo = ">= 1.18"
 gdk-pixbuf = ">= 2.42"
 libxml2 = ">= 2.12"
+dav1d = ">= 1.0"
+freetype = ">= 2.13"
+gdk-pixbuf2 = ">= 2.42"
+harfbuzz = ">= 8.0"
 
 [optional_depends]
 gobject-introspection = ">= 1.80"

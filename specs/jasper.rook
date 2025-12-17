@@ -21,10 +21,16 @@ source0 = { url = "https://github.com/jasper-software/jasper/archive/version-4.2
 [build_depends]
 gcc = ">= 10.0"
 cmake = ">= 3.20"
+freeglut = ">= 1.0"
+glu = ">= 1.0"
+libxmu = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 libjpeg-turbo = ">= 3.0"
+freeglut = ">= 1.0"
+glu = ">= 1.0"
+libglvnd = ">= 1.0"
 
 [optional_depends]
 

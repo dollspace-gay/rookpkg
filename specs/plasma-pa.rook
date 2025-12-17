@@ -56,6 +56,11 @@ libplasma = ">= 6.2"
 plasma5support = ">= 6.2"
 pulseaudio = ">= 16.0"
 libcanberra = ">= 0.30"
+glib2 = ">= 2.78"
+kf6-kitemmodels = ">= 1.0"
+plasma-workspace = ">= 1.0"
+pulse-native-provider = ">= 1.0"
+pulseaudio-qt = ">= 1.0"
 
 [optional_depends]
 

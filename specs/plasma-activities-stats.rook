@@ -29,6 +29,7 @@ boost = ">= 1.85"
 glibc = ">= 2.39"
 qt6 = ">= 6.7"
 plasma-activities = ">= 6.2"
+kf6-kconfig = ">= 1.0"
 
 [optional_depends]
 

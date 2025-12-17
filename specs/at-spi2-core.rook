@@ -24,6 +24,7 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 glib2 = ">= 2.70"
 dbus = ">= 1.12"
+libxml2 = ">= 2.12"
 
 [depends]
 glibc = ">= 2.39"
@@ -31,6 +32,10 @@ glib2 = ">= 2.70"
 dbus = ">= 1.12"
 xorg-libraries = ">= 7.8"
 systemd = ">= 250"
+gsettings-desktop-schemas = ">= 46.0"
+libx11 = ">= 1.8"
+libxi = ">= 1.8"
+libxtst = ">= 1.2"
 
 [optional_depends]
 gobject-introspection = ">= 1.80"

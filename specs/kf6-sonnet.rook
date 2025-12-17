@@ -25,6 +25,9 @@ extra-cmake-modules = ">= 6.17"
 qt6 = ">= 6.5"
 pkgconf = ">= 1.0"
 aspell = ">= 0.60"
+hspell = ">= 1.0"
+hunspell = ">= 1.0"
+libvoikko = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -32,6 +35,9 @@ qt6 = ">= 6.5"
 aspell = ">= 0.60"
 
 [optional_depends]
+hspell = ">= 1.0"
+hunspell = ">= 1.0"
+libvoikko = ">= 1.0"
 
 [environment]
 

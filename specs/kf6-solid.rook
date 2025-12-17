@@ -30,6 +30,12 @@ eudev = ">= 3.2"
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
 eudev = ">= 3.2"
+libimobiledevice = ">= 1.0"
+libplist = ">= 1.0"
+media-player-info = ">= 1.0"
+systemd = ">= 255"
+udisks2 = ">= 1.0"
+util-linux = ">= 1.0"
 
 [optional_depends]
 udisks = ">= 2.10"

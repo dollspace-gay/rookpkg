@@ -22,10 +22,16 @@ source0 = { url = "https://sourceware.org/elfutils/ftp/0.193/elfutils-0.193.tar.
 gcc = ">= 10.0"
 make = ">= 4.0"
 zlib = ">= 1.0"
+curl = ">= 8.0"
+json-c = ">= 0.17"
+libarchive = ">= 3.7"
+libmicrohttpd = ">= 1.0"
+sqlite = ">= 3.45"
 
 [depends]
 glibc = ">= 2.39"
 zlib = ">= 1.0"
+libarchive = ">= 3.7"
 
 [optional_depends]
 bzip2 = ">= 1.0"

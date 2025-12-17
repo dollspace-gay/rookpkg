@@ -23,6 +23,8 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 gperf = ">= 3.0"
 freetype = ">= 2.13"
+docbook-sgml = ">= 1.0"
+docbook-utils = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

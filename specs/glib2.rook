@@ -23,15 +23,22 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 python = ">= 3.11"
+dconf = ">= 1.0"
+gettext = ">= 0.22"
 
 [depends]
 glibc = ">= 2.39"
 pcre2 = ">= 10.42"
 libffi = ">= 3.4"
 zlib = ">= 1.2"
+libmount = ">= 1.0"
+libsysprof-capture = ">= 1.0"
+util-linux = ">= 1.0"
 
 [optional_depends]
 dbus = ">= 1.12"
+dconf = ">= 1.0"
+gvfs = ">= 1.0"
 
 [environment]
 

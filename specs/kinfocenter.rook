@@ -36,6 +36,8 @@ plasma-activities = ">= 6.2"
 libkscreen = ">= 6.2"
 wayland = ">= 1.20"
 pkgconf = ">= 1.0"
+fwupd = ">= 1.0"
+vulkan-headers = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -52,8 +54,26 @@ kf6-solid = ">= 6.0"
 plasma-activities = ">= 6.2"
 libkscreen = ">= 6.2"
 wayland = ">= 1.20"
+aha = ">= 1.0"
+clinfo = ">= 1.0"
+dmidecode = ">= 1.0"
+glu = ">= 1.0"
+iproute2 = ">= 1.0"
+kf6-kauth = ">= 1.0"
+kf6-kdeclarative = ">= 1.0"
+libdisplay-info = ">= 1.0"
+libdrm = ">= 2.4"
+lm_sensors = ">= 1.0"
+mesa-utils = ">= 1.0"
+pulseaudio = ">= 17.0"
+systemd = ">= 255"
+systemsettings = ">= 1.0"
+vulkan-tools = ">= 1.0"
+xorg-xdpyinfo = ">= 1.0"
 
 [optional_depends]
+fwupd = ">= 1.0"
+plasma-disks = ">= 1.0"
 
 [environment]
 

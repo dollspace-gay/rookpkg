@@ -26,6 +26,18 @@ extra-cmake-modules = ">= 6.0"
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.7"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kconfig = ">= 1.0"
+kf6-kcoreaddons = ">= 1.0"
+kf6-kcrash = ">= 1.0"
+kf6-kglobalaccel = ">= 1.0"
+kf6-kguiaddons = ">= 1.0"
+kf6-ki18n = ">= 1.0"
+kf6-kiconthemes = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-ksvg = ">= 1.0"
+kf6-sonnet = ">= 1.0"
 
 [optional_depends]
 

@@ -55,6 +55,7 @@ libplasma = ">= 6.2"
 plasma5support = ">= 6.2"
 plasma-activities = ">= 6.2"
 pkgconf = ">= 1.0"
+qtwebengine = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -89,8 +90,18 @@ kf6-sonnet = ">= 6.0"
 libplasma = ">= 6.2"
 plasma5support = ">= 6.2"
 plasma-activities = ">= 6.2"
+icu = ">= 74"
+kf6-kauth = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kjobwidgets = ">= 1.0"
+kf6-kpackage = ">= 1.0"
+kirigami-addons = ">= 1.0"
+kwin = ">= 1.0"
+plasma-workspace = ">= 1.0"
 
 [optional_depends]
+qtwebengine = ">= 1.0"
+quota-tools = ">= 1.0"
 
 [environment]
 

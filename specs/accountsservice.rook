@@ -30,6 +30,7 @@ glibc = ">= 2.39"
 glib2 = ">= 2.80"
 polkit = ">= 124"
 systemd = ">= 256"
+libxcrypt = ">= 1.0"
 
 [optional_depends]
 

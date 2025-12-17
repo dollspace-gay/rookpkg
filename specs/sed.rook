@@ -21,9 +21,11 @@ source0 = { url = "https://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz", sha256 = "6e226b
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+gettext = ">= 0.22"
 
 [depends]
 glibc = ">= 2.39"
+acl = ">= 2.3"
 
 [optional_depends]
 

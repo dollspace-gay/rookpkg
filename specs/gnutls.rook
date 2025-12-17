@@ -25,16 +25,25 @@ make = ">= 4.0"
 nettle = ">= 3.8"
 libtasn1 = ">= 4.0"
 p11-kit = ">= 0.25"
+tpm2-tss = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 nettle = ">= 3.8"
 libtasn1 = ">= 4.0"
 p11-kit = ">= 0.25"
+brotli = ">= 1.0"
+gmp = ">= 1.0"
+leancrypto = ">= 1.0"
+libp11-kit = ">= 1.0"
+libunistring = ">= 1.0"
+zlib = ">= 1.3"
+zstd = ">= 1.5"
 
 [optional_depends]
 libidn2 = ">= 2.0"
 unbound = ">= 1.0"
+tpm2-tss = ">= 1.0"
 
 [environment]
 

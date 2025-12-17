@@ -25,6 +25,8 @@ extra-cmake-modules = ">= 6.17"
 qt6 = ">= 6.5"
 kf6-karchive = ">= 6.17"
 pkgconf = ">= 1.0"
+jxrlib = ">= 1.0"
+openjpeg = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -32,6 +34,8 @@ qt6 = ">= 6.5"
 kf6-karchive = ">= 6.17"
 
 [optional_depends]
+jxrlib = ">= 1.0"
+openjpeg = ">= 1.0"
 
 [environment]
 

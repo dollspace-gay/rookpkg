@@ -29,6 +29,7 @@ glib2 = ">= 2.80"
 polkit = ">= 124"
 systemd = ">= 256"
 upower = ">= 1.90"
+libgudev = ">= 1.0"
 
 [optional_depends]
 

@@ -30,6 +30,7 @@ glibc = ">= 2.39"
 libgpg-error = ">= 1.46"
 libassuan = ">= 2.5"
 gnupg = ">= 2.4"
+glib2 = ">= 2.78"
 
 [optional_depends]
 python = ">= 3.6"

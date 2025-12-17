@@ -21,6 +21,7 @@ source0 = { url = "https://github.com/webmproject/libwebp/archive/v1.6.0/libwebp
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+giflib = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -29,6 +30,7 @@ libjpeg-turbo = ">= 3.0"
 libtiff = ">= 4.0"
 
 [optional_depends]
+libwebp-utils = ">= 1.0"
 
 [environment]
 

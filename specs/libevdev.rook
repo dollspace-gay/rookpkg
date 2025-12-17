@@ -22,6 +22,7 @@ source0 = { url = "https://freedesktop.org/software/libevdev/libevdev-1.13.4.tar
 gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"

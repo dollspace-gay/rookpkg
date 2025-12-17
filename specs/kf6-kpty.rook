@@ -32,6 +32,7 @@ glibc = ">= 2.39"
 qt6 = ">= 6.5"
 kf6-kcoreaddons = ">= 6.17"
 kf6-ki18n = ">= 6.17"
+libutempter = ">= 1.0"
 
 [optional_depends]
 

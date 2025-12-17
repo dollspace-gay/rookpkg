@@ -25,6 +25,7 @@ xcb-proto = ">= 1.17"
 libxau = ">= 1.0"
 libxdmcp = ">= 1.1"
 python = ">= 3.11"
+libxslt = ">= 1.1"
 
 [depends]
 glibc = ">= 2.39"

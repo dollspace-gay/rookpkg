@@ -22,10 +22,24 @@ source0 = { url = "https://github.com/shadow-maint/shadow/releases/download/4.18
 gcc = ">= 10.0"
 make = ">= 4.0"
 libxcrypt = ">= 4.4"
+acl = ">= 2.3"
+attr = ">= 2.5"
+audit = ">= 1.0"
+libcap = ">= 2.69"
+libxslt = ">= 1.1"
+linux-pam = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 libxcrypt = ">= 4.4"
+acl = ">= 2.3"
+attr = ">= 2.5"
+audit = ">= 1.0"
+libacl = ">= 1.0"
+libaudit = ">= 1.0"
+libpam = ">= 1.0"
+libpam_misc = ">= 1.0"
+linux-pam = ">= 1.0"
 
 [optional_depends]
 

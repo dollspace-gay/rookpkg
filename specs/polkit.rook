@@ -25,12 +25,16 @@ ninja = ">= 1.8"
 glib = ">= 2.70"
 linux-pam = ">= 1.5"
 duktape = ">= 2.6"
+dbus = ">= 1.14"
+glib2 = ">= 2.78"
 
 [depends]
 glibc = ">= 2.39"
 glib = ">= 2.70"
 linux-pam = ">= 1.5"
 duktape = ">= 2.6"
+expat = ">= 2.6"
+glib2 = ">= 2.78"
 
 [optional_depends]
 systemd = ">= 250"

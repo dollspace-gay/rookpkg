@@ -27,6 +27,8 @@ pkgconf = ">= 1.0"
 wayland = ">= 1.15"
 libxcb = ">= 1.17"
 plasma-wayland-protocols = ">= 1.14"
+libxscrnsaver = ">= 1.0"
+wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -35,6 +37,9 @@ wayland = ">= 1.15"
 libxcb = ">= 1.17"
 
 [optional_depends]
+libx11 = ">= 1.8"
+libxext = ">= 1.3"
+libxscrnsaver = ">= 1.0"
 
 [environment]
 

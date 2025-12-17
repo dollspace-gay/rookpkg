@@ -25,13 +25,16 @@ extra-cmake-modules = ">= 6.17"
 qt6 = ">= 6.5"
 pkgconf = ">= 1.0"
 gettext = ">= 0.21"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
 gettext = ">= 0.21"
+iso-codes = ">= 1.0"
 
 [optional_depends]
+python = ">= 3.12"
 
 [environment]
 

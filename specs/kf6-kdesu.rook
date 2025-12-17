@@ -36,6 +36,7 @@ kf6-kconfig = ">= 6.17"
 kf6-kcoreaddons = ">= 6.17"
 kf6-ki18n = ">= 6.17"
 kf6-kpty = ">= 6.17"
+libx11 = ">= 1.8"
 
 [optional_depends]
 

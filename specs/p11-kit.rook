@@ -23,11 +23,13 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 libtasn1 = ">= 4.0"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"
 libtasn1 = ">= 4.0"
 libffi = ">= 3.0"
+libp11-kit = ">= 1.0"
 
 [optional_depends]
 

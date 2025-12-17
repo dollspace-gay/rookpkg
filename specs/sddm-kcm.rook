@@ -48,6 +48,8 @@ kf6-kio = ">= 6.0"
 kf6-knewstuff = ">= 6.0"
 kf6-kservice = ">= 6.0"
 sddm = ">= 0.20"
+kf6-kirigami = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
 
 [optional_depends]
 

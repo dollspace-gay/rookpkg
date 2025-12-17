@@ -78,7 +78,9 @@
       "Bash(Select-Object -First 100)",
       "Bash(findstr:*)",
       "Bash(bd stats:*)",
-      "Bash(wsl -d RookeryOS -u root bash -c:*)"
+      "Bash(wsl -d RookeryOS -u root bash -c:*)",
+      "Bash(git checkout:*)",
+      "Bash(git -C \"c:\\Users\\texas\\rookpkg\" checkout specs/bash.rook)"
     ]
   }
 }

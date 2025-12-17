@@ -44,6 +44,8 @@ plasma-activities = ">= 6.2"
 xdg-desktop-portal = ">= 1.18"
 wayland = ">= 1.20"
 pkgconf = ">= 1.0"
+plasma-wayland-protocols = ">= 1.0"
+wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -67,6 +69,13 @@ plasma5support = ">= 6.2"
 plasma-activities = ">= 6.2"
 xdg-desktop-portal = ">= 1.18"
 wayland = ">= 1.20"
+kf6-kcrash = ">= 1.0"
+kf6-kiconthemes = ">= 1.0"
+kf6-kitemviews = ">= 1.0"
+kio-fuse = ">= 1.0"
+kirigami-addons = ">= 1.0"
+libxkbcommon = ">= 1.6"
+plasma-workspace = ">= 1.0"
 
 [optional_depends]
 

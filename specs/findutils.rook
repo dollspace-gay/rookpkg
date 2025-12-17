@@ -21,6 +21,7 @@ source0 = { url = "https://ftp.gnu.org/gnu/findutils/findutils-4.10.0.tar.xz", s
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"

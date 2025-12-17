@@ -21,6 +21,10 @@ source0 = { url = "https://www.kernel.org/pub/linux/bluetooth/bluez-5.83.tar.xz"
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+alsa-lib = ">= 1.2"
+cups = ">= 2.4"
+ell = ">= 1.0"
+json-c = ">= 0.17"
 
 [depends]
 glibc = ">= 2.39"
@@ -29,6 +33,7 @@ dbus = ">= 1.14"
 libical = ">= 3.0"
 readline = ">= 8.2"
 systemd = ">= 256"
+alsa-lib = ">= 1.2"
 
 [optional_depends]
 

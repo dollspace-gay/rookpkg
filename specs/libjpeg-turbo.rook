@@ -22,11 +22,14 @@ source0 = { url = "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo
 gcc = ">= 10.0"
 cmake = ">= 3.20"
 nasm = ">= 2.13"
+java-environment = ">= 1.0"
+strip-nondeterminism = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 
 [optional_depends]
+java-runtime = ">= 1.0"
 
 [environment]
 

@@ -23,11 +23,15 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 libmnl = ">= 1.0"
 libnftnl = ">= 1.2"
+linux = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 libmnl = ">= 1.0"
 libnftnl = ">= 1.2"
+libnetfilter_conntrack = ">= 1.0"
+libnfnetlink = ">= 1.0"
+libpcap = ">= 1.0"
 
 [optional_depends]
 

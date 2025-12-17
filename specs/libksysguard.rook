@@ -47,6 +47,13 @@ kf6-kpackage = ">= 6.0"
 kf6-kservice = ">= 6.0"
 libpcap = ">= 1.10"
 lm_sensors = ">= 3.6"
+kf6-kauth = ">= 1.0"
+kf6-kdeclarative = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kquickcharts = ">= 1.0"
+kf6-solid = ">= 1.0"
+libdrm = ">= 2.4"
 
 [optional_depends]
 

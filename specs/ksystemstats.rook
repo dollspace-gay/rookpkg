@@ -44,8 +44,10 @@ kf6-solid = ">= 6.0"
 kf6-networkmanager-qt = ">= 6.0"
 libksysguard = ">= 6.2"
 lm_sensors = ">= 3.6"
+kf6-kcrash = ">= 1.0"
 
 [optional_depends]
+systemd = ">= 255"
 
 [environment]
 

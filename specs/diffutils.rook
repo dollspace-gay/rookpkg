@@ -21,6 +21,7 @@ source0 = { url = "https://ftp.gnu.org/gnu/diffutils/diffutils-3.12.tar.xz", sha
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"

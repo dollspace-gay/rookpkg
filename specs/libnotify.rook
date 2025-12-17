@@ -30,6 +30,7 @@ gdk-pixbuf = ">= 2.42"
 glibc = ">= 2.39"
 glib2 = ">= 2.70"
 gdk-pixbuf = ">= 2.42"
+gdk-pixbuf2 = ">= 2.42"
 
 [optional_depends]
 gobject-introspection = ">= 1.80"

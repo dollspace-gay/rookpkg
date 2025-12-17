@@ -22,6 +22,9 @@ source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-
 gcc = ">= 10.0"
 make = ">= 4.0"
 xorg-server = ">= 21.1"
+X-ABI-XINPUT_VERSION = ">= 1.0"
+libx11 = ">= 1.8"
+libxi = ">= 1.8"
 
 [depends]
 glibc = ">= 2.39"

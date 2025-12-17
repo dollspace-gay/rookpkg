@@ -30,6 +30,7 @@ kf6-kirigami = ">= 6.17"
 kf6-knotifications = ">= 6.17"
 kf6-kservice = ">= 6.17"
 pkgconf = ">= 1.0"
+intltool = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -41,8 +42,17 @@ kf6-kio = ">= 6.17"
 kf6-kirigami = ">= 6.17"
 kf6-knotifications = ">= 6.17"
 kf6-kservice = ">= 6.17"
+accounts-qml-module = ">= 1.0"
+kaccounts-integration = ">= 1.0"
+kf6-kcmutils = ">= 1.0"
+libaccounts-qt = ">= 1.0"
 
 [optional_depends]
+bluedevil = ">= 1.0"
+kdeconnect = ">= 1.0"
+kf6-kdeclarative = ">= 1.0"
+kf6-prison = ">= 1.0"
+telegram-desktop = ">= 1.0"
 
 [environment]
 

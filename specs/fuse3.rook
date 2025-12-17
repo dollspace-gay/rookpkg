@@ -22,9 +22,12 @@ source0 = { url = "https://github.com/libfuse/libfuse/releases/download/fuse-3.1
 gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
+pkgconf = ">= 1.0"
+udev = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
+fuse-common = ">= 1.0"
 
 [optional_depends]
 

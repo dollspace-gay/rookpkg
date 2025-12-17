@@ -22,9 +22,11 @@ source0 = { url = "https://ftp.gnu.org/gnu/grep/grep-3.12.tar.xz", sha256 = "264
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
+pcre2 = ">= 10.42"
 
 [optional_depends]
 

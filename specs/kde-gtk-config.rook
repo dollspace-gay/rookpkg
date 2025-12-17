@@ -35,6 +35,7 @@ kf6-kwindowsystem = ">= 6.0"
 gtk3 = ">= 3.24"
 gsettings-desktop-schemas = ">= 40"
 pkgconf = ">= 1.0"
+sassc = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -49,6 +50,12 @@ kf6-ksvg = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 gtk3 = ">= 3.24"
 gsettings-desktop-schemas = ">= 40"
+glib2 = ">= 2.78"
+kdecoration = ">= 1.0"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kguiaddons = ">= 1.0"
+xdg-desktop-portal-gtk = ">= 1.0"
+xsettingsd = ">= 1.0"
 
 [optional_depends]
 

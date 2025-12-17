@@ -25,6 +25,9 @@ flac = ">= 1.4"
 libogg = ">= 1.3"
 libvorbis = ">= 1.3"
 opus = ">= 1.4"
+lame = ">= 1.0"
+python = ">= 3.12"
+sqlite = ">= 3.45"
 
 [depends]
 glibc = ">= 2.39"
@@ -32,6 +35,12 @@ flac = ">= 1.4"
 libogg = ">= 1.3"
 libvorbis = ">= 1.3"
 opus = ">= 1.4"
+lame = ">= 1.0"
+libFLAC = ">= 1.0"
+libmp3lame = ">= 1.0"
+libmpg123 = ">= 1.0"
+libopus = ">= 1.0"
+libvorbisenc = ">= 1.0"
 
 [optional_depends]
 alsa-lib = ">= 1.2"

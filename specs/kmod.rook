@@ -24,12 +24,14 @@ make = ">= 4.0"
 xz = ">= 5.0"
 zstd = ">= 1.0"
 zlib = ">= 1.0"
+scdoc = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 xz = ">= 5.0"
 zstd = ">= 1.0"
 zlib = ">= 1.0"
+openssl = ">= 3.0"
 
 [optional_depends]
 

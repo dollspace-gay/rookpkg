@@ -23,11 +23,15 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 zlib = ">= 1.0"
 bzip2 = ">= 1.0"
+patchutils = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 zlib = ">= 1.0"
 bzip2 = ">= 1.0"
+db5.3 = ">= 1.0"
+gdbm = ">= 1.0"
+libxcrypt = ">= 1.0"
 
 [optional_depends]
 

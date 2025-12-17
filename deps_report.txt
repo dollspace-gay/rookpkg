@@ -1,0 +1,6282 @@
+
+============================================================
+Package: 7zip
+Arch equivalent: 7zip (25.01)
+
+  Missing build dependencies:
+    - uasm
+
+============================================================
+Package: accountsservice
+Arch equivalent: accountsservice (23.13.9)
+
+  Missing runtime dependencies:
+    - libcrypt.so
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libsystemd.so
+    - libxcrypt
+    - shadow
+
+  Missing build dependencies:
+    - docbook-xsl
+    - git
+    - gtk-doc
+    - python-packaging
+    - xmlto
+
+============================================================
+Package: alsa-lib
+Arch equivalent: alsa-lib (1.2.14)
+
+  Missing runtime dependencies:
+    - alsa-topology-conf
+    - alsa-ucm-conf
+
+============================================================
+Package: alsa-plugins
+Arch equivalent: alsa-plugins (1.2.12)
+
+  Missing runtime dependencies:
+    - libasound.so
+
+  Missing build dependencies:
+    - dbus
+    - ffmpeg
+    - jack
+    - libavtp
+    - libpulse
+    - libsamplerate
+    - speexdsp
+
+  Missing optional dependencies:
+    - dbus
+    - ffmpeg
+    - jack
+    - libavtp
+    - libpulse
+    - libsamplerate
+    - speexdsp
+
+============================================================
+Package: alsa-utils
+Arch equivalent: alsa-utils (1.2.14)
+
+  Missing runtime dependencies:
+    - libasound.so
+    - libatopology.so
+    - libformw.so
+    - libmenuw.so
+    - libncursesw.so
+    - libpanelw.so
+    - libsamplerate
+    - libsamplerate.so
+    - pciutils
+    - psmisc
+
+  Missing build dependencies:
+    - docbook-xsl
+    - fftw
+    - libsamplerate
+    - python-docutils
+    - systemd
+    - xmlto
+
+============================================================
+Package: appstream
+Arch equivalent: appstream (1.1.1)
+
+  Missing runtime dependencies:
+    - cairo
+    - fontconfig
+    - freetype
+    - gdk-pixbuf2
+    - libfyaml
+    - librsvg
+    - libstemmer
+    - libxmlb
+    - pango
+    - zstd
+
+  Missing build dependencies:
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gperf
+    - itstool
+    - qt6
+    - vala
+    - xmlto
+
+============================================================
+Package: aspell
+Arch equivalent: aspell (0.60.8.1)
+
+  Missing runtime dependencies:
+    - libncursesw.so
+
+  Missing optional dependencies:
+    - perl
+
+============================================================
+Package: at-spi2-core
+Arch equivalent: at-spi2-core (2.58.2)
+
+  Missing runtime dependencies:
+    - gsettings-desktop-schemas
+    - libx11
+    - libxi
+    - libxtst
+    - xorg-xprop
+
+  Missing build dependencies:
+    - dbus-broker
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - libxml2
+    - python-sphinx
+
+============================================================
+Package: attr
+Arch equivalent: attr (2.5.2)
+
+  Missing build dependencies:
+    - gettext
+
+============================================================
+Package: avahi
+Arch equivalent: avahi (0.9rc2)
+
+  Missing runtime dependencies:
+    - dbus
+    - expat
+    - gdbm
+    - glib2
+    - libcap
+    - libdbus-1.so
+    - systemd
+
+  Missing build dependencies:
+    - doxygen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - graphviz
+    - gtk3
+    - libevent
+    - python-dbus
+    - python-gobject
+    - systemd
+    - xmltoman
+
+  Missing optional dependencies:
+    - libevent
+    - nss-mdns
+    - python-dbus
+    - python-gobject
+    - python-twisted
+
+============================================================
+Package: bash
+Arch equivalent: bash (5.3.9)
+
+  Missing runtime dependencies:
+    - libreadline.so
+    - ncurses
+
+  Missing optional dependencies:
+    - bash-completion
+
+============================================================
+Package: bc
+Arch equivalent: bc (1.08.2)
+
+  Missing runtime dependencies:
+    - readline
+
+  Missing build dependencies:
+    - ed
+
+============================================================
+Package: binutils
+Arch equivalent: binutils (2.45.1)
+
+  Missing runtime dependencies:
+    - jansson
+    - libelf
+    - zstd
+
+  Missing build dependencies:
+    - git
+
+  Missing optional dependencies:
+    - debuginfod
+
+============================================================
+Package: bison
+Arch equivalent: bison (3.8.2)
+
+  Missing runtime dependencies:
+    - gettext
+
+============================================================
+Package: bluedevil
+Arch equivalent: bluedevil (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kdeclarative
+    - kf6-kservice
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+  Missing optional dependencies:
+    - bluez-obex
+    - pulseaudio-bluetooth
+
+============================================================
+Package: bluez
+Arch equivalent: bluez (5.85)
+
+  Missing runtime dependencies:
+    - alsa-lib
+
+  Missing build dependencies:
+    - alsa-lib
+    - cups
+    - ell
+    - json-c
+    - python-docutils
+    - python-pygments
+
+============================================================
+Package: boost
+Arch equivalent: boost (1.89.0)
+
+  Missing runtime dependencies:
+    - boost-libs
+
+  Missing build dependencies:
+    - openmpi
+    - python
+    - python-numpy
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: breeze-icons
+Arch equivalent: breeze-icons (6.21.0)
+
+  Missing runtime dependencies:
+    - glibc
+
+  Missing build dependencies:
+    - python-lxml
+
+============================================================
+Package: breeze
+Arch equivalent: breeze (6.5.4)
+
+  Missing runtime dependencies:
+    - breeze-icons
+    - kf6-frameworkintegration
+    - kf6-kcmutils
+    - kf6-kcolorscheme
+    - kf6-kwidgetsaddons
+
+  Missing build dependencies:
+    - frameworkintegration5
+    - kconfigwidgets5
+    - kiconthemes5
+    - kirigami2
+    - kwindowsystem5
+
+  Missing optional dependencies:
+    - breeze-gtk
+    - breeze5
+
+============================================================
+Package: brotli
+Arch equivalent: brotli (1.1.0)
+
+  Missing build dependencies:
+    - git
+    - python-build
+    - python-installer
+    - python-setuptools
+    - python-wheel
+
+============================================================
+Package: bubblewrap
+Arch equivalent: bubblewrap (0.11.0)
+
+  Missing build dependencies:
+    - bash-completion
+    - docbook-xsl
+    - git
+    - libxslt
+
+============================================================
+Package: c-ares
+Arch equivalent: c-ares (1.34.6)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: cairo
+Arch equivalent: cairo (1.18.4)
+
+  Missing runtime dependencies:
+    - libx11
+    - libxcb
+    - libxext
+    - libxrender
+    - lzo
+    - zlib
+
+  Missing build dependencies:
+    - git
+    - gtk-doc
+    - valgrind
+
+============================================================
+Package: cargo-c
+Arch equivalent: cargo-c (0.10.19)
+
+  Missing runtime dependencies:
+    - cargo
+    - curl
+    - gcc
+    - libcurl.so
+    - libssl.so
+    - libz.so
+    - zlib
+
+============================================================
+Package: check
+Arch equivalent: check (0.15.2)
+
+  Missing runtime dependencies:
+    - awk
+
+  Missing build dependencies:
+    - cmake
+    - doxygen
+    - git
+    - ninja
+    - texi2html
+    - texlive-bin
+
+  Missing optional dependencies:
+    - check-docs
+
+============================================================
+Package: cmake
+Arch equivalent: cmake (4.2.1)
+
+  Missing runtime dependencies:
+    - cppdap
+    - jsoncpp
+    - rhash
+
+  Missing build dependencies:
+    - emacs
+    - git
+    - nlohmann-json
+    - python-sphinx
+    - qt6
+
+  Missing optional dependencies:
+    - make
+    - ninja
+    - qt6
+
+============================================================
+Package: coreutils
+Arch equivalent: coreutils (9.9)
+
+  Missing runtime dependencies:
+    - acl
+    - attr
+    - gmp
+    - libcap
+    - openssl
+
+  Missing build dependencies:
+    - git
+    - gperf
+    - python
+    - wget
+
+============================================================
+Package: cracklib
+Arch equivalent: cracklib (2.10.3)
+
+  Missing runtime dependencies:
+    - zlib
+
+============================================================
+Package: cryptsetup
+Arch equivalent: cryptsetup (2.8.1)
+
+  Missing runtime dependencies:
+    - device-mapper
+    - libblkid.so
+    - libcrypto.so
+    - libdevmapper.so
+    - libjson-c.so
+    - libuuid.so
+    - util-linux-libs
+
+  Missing build dependencies:
+    - asciidoctor
+
+============================================================
+Package: cups
+Arch equivalent: cups (2.4.16)
+
+  Missing runtime dependencies:
+    - acl
+    - avahi
+    - cups-filters
+    - libcups
+    - libpaper
+    - pam
+
+  Missing build dependencies:
+    - acl
+    - avahi
+    - cups-filters
+    - libpaper
+    - pam
+
+  Missing optional dependencies:
+    - cups-browsed
+    - ipp-usb
+    - logrotate
+
+============================================================
+Package: curl
+Arch equivalent: curl (8.17.0)
+
+  Missing runtime dependencies:
+    - brotli
+    - ca-certificates
+    - krb5
+    - libbrotlidec.so
+    - libcrypto.so
+    - libgssapi_krb5.so
+    - libidn2
+    - libidn2.so
+    - libnghttp2
+    - libnghttp2.so
+    - libnghttp3
+    - libnghttp3.so
+    - libpsl.so
+    - libssh2
+    - libssh2.so
+    - libssl.so
+    - libz.so
+    - libzstd.so
+    - zstd
+
+  Missing build dependencies:
+    - git
+    - patchelf
+
+============================================================
+Package: dbus
+Arch equivalent: dbus (1.16.2)
+
+  Missing runtime dependencies:
+    - audit
+    - libaudit.so
+    - libcap-ng
+    - libcap-ng.so
+    - libexpat.so
+    - libsystemd.so
+    - systemd
+
+  Missing build dependencies:
+    - docbook-xsl
+    - doxygen
+    - git
+    - glib2
+    - mallard-ducktype
+    - python
+    - qt5-tools
+    - systemd
+    - xmlto
+    - yelp-tools
+
+============================================================
+Package: dconf
+Arch equivalent: dconf (0.49.0)
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - glib2-devel
+    - gtk-doc
+    - python
+    - systemd
+
+============================================================
+Package: desktop-file-utils
+Arch equivalent: desktop-file-utils (0.28)
+
+  Missing runtime dependencies:
+    - libglib-2.0.so
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: dhcpcd
+Arch equivalent: dhcpcd (10.3.0)
+
+  Missing runtime dependencies:
+    - openssl
+    - systemd
+
+  Missing optional dependencies:
+    - openresolv
+
+============================================================
+Package: diffutils
+Arch equivalent: diffutils (3.12)
+
+  Missing build dependencies:
+    - git
+    - gperf
+    - help2man
+    - python
+    - wget
+
+============================================================
+Package: double-conversion
+Arch equivalent: double-conversion (3.4.0)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: drkonqi
+Arch equivalent: drkonqi (6.5.4)
+
+  Missing runtime dependencies:
+    - elfutils
+    - gdb
+    - kf6-kcmutils
+    - kf6-kirigami
+    - kf6-kitemmodels
+    - polkit-qt6
+    - python
+    - python-psutil
+    - python-pygdbmi
+    - python-sentry_sdk
+    - systemd
+
+============================================================
+Package: e2fsprogs
+Arch equivalent: e2fsprogs (1.47.3)
+
+  Missing runtime dependencies:
+    - util-linux-libs
+
+  Missing build dependencies:
+    - fuse3
+    - git
+    - systemd
+
+  Missing optional dependencies:
+    - lvm2
+    - smtp-forwarder
+
+============================================================
+Package: elfutils
+Arch equivalent: elfutils (0.194)
+
+  Missing runtime dependencies:
+    - libarchive
+    - libarchive.so
+    - libelf
+
+  Missing build dependencies:
+    - bzip2
+    - curl
+    - git
+    - json-c
+    - libarchive
+    - libmicrohttpd
+    - sqlite
+    - xz
+    - zstd
+
+============================================================
+Package: expat
+Arch equivalent: expat (2.7.3)
+
+  Missing build dependencies:
+    - cmake
+    - git
+
+============================================================
+Package: ffmpeg
+Arch equivalent: ffmpeg (8.0.1)
+
+  Missing runtime dependencies:
+    - aom
+    - bzip2
+    - cairo
+    - dav1d
+    - fontconfig
+    - fribidi
+    - glib2
+    - glslang
+    - gmp
+    - gnutls
+    - gsm
+    - harfbuzz
+    - jack
+    - libass.so
+    - libavc1394
+    - libbluray
+    - libbluray.so
+    - libbs2b
+    - libbs2b.so
+    - libdav1d.so
+    - libdrm
+    - libdvdnav
+    - libdvdread
+    - libfreetype.so
+    - libgl
+    - libharfbuzz.so
+    - libiec61883
+    - libjxl
+    - libjxl.so
+    - libmodplug
+    - libopenmpt
+    - libopenmpt.so
+    - libplacebo
+    - libplacebo.so
+    - libpulse
+    - librav1e.so
+    - libraw1394
+    - librsvg
+    - librsvg-2.so
+    - librubberband.so
+    - libsoxr
+    - libssh
+    - libva-drm.so
+    - libva-x11.so
+    - libva.so
+    - libvidstab.so
+    - libvorbis.so
+    - libvorbisenc.so
+    - libvpx.so
+    - libwebp
+    - libx11
+    - libx264.so
+    - libx265.so
+    - libxcb
+    - libxext
+    - libxml2
+    - libxv
+    - libxvidcore.so
+    - libzimg.so
+    - libzmq.so
+    - ocl-icd
+    - onevpl
+    - opencore-amr
+    - openjpeg2
+    - rav1e
+    - rubberband
+    - sdl2
+    - snappy
+    - speex
+    - srt
+    - svt-av1
+    - v4l-utils
+    - vapoursynth
+    - vid.stab
+    - vmaf
+    - vulkan-loader
+    - xvidcore
+    - xz
+    - zeromq
+    - zimg
+    - zlib
+
+  Missing build dependencies:
+    - amf-headers
+    - avisynthplus
+    - clang
+    - ffnvcodec-headers
+    - frei0r-plugins
+    - git
+    - ladspa
+    - mesa
+    - opencl-headers
+    - vulkan-headers
+
+  Missing optional dependencies:
+    - avisynthplus
+    - frei0r-plugins
+    - intel-media-sdk
+    - ladspa
+    - nvidia-utils
+    - onevpl-intel-gpu
+
+============================================================
+Package: file
+Arch equivalent: file (5.46)
+
+  Missing runtime dependencies:
+    - bzip2
+    - libbz2.so
+    - liblzma.so
+    - libseccomp
+    - libseccomp.so
+    - libz.so
+    - libzstd.so
+    - xz
+    - zlib
+    - zstd
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: findutils
+Arch equivalent: findutils (4.10.0)
+
+  Missing build dependencies:
+    - git
+    - python
+    - wget
+
+============================================================
+Package: flac
+Arch equivalent: flac (1.5.0)
+
+  Missing build dependencies:
+    - cmake
+    - doxygen
+    - git
+    - nasm
+    - ninja
+    - pandoc-cli
+
+============================================================
+Package: flex
+Arch equivalent: flex (2.6.4)
+
+  Missing build dependencies:
+    - help2man
+
+============================================================
+Package: fontconfig
+Arch equivalent: fontconfig (2.17.1)
+
+  Missing runtime dependencies:
+    - libexpat.so
+    - libfreetype.so
+
+  Missing build dependencies:
+    - docbook-sgml
+    - docbook-utils
+    - git
+    - meson
+    - perl-sgmls
+
+============================================================
+Package: fribidi
+Arch equivalent: fribidi (1.0.16)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: fuse3
+Arch equivalent: fuse3 (3.17.4)
+
+  Missing runtime dependencies:
+    - fuse-common
+
+  Missing build dependencies:
+    - pkg-config
+    - udev
+
+============================================================
+Package: gawk
+Arch equivalent: gawk (5.3.2)
+
+  Missing runtime dependencies:
+    - mpfr
+
+============================================================
+Package: gcc
+Arch equivalent: gcc (15.2.1+r301+gf24307422d1d)
+
+  Missing runtime dependencies:
+    - gcc
+    - libisl.so
+    - libmpc
+    - zstd
+
+  Missing build dependencies:
+    - doxygen
+    - gcc-ada
+    - gcc-d
+    - git
+    - lib32-gcc-libs
+    - lib32-glibc
+    - libisl
+    - libmpc
+    - python
+    - rust
+    - zstd
+
+  Missing optional dependencies:
+    - lib32-gcc-libs
+
+============================================================
+Package: gdbm
+Arch equivalent: gdbm (1.26)
+
+  Missing runtime dependencies:
+    - libreadline.so
+    - readline
+
+  Missing build dependencies:
+    - git
+    - readline
+
+============================================================
+Package: gdk-pixbuf
+Arch equivalent: gdk-pixbuf (0.22.0-13)
+
+  Missing runtime dependencies:
+    - gtk
+
+  Missing build dependencies:
+    - libxt
+
+============================================================
+Package: gettext
+Arch equivalent: gettext (0.26)
+
+  Missing runtime dependencies:
+    - acl
+    - attr
+    - gnulib-l10n
+    - libunistring
+    - libxml2
+    - ncurses
+
+  Missing build dependencies:
+    - emacs
+
+  Missing optional dependencies:
+    - appstream
+    - git
+
+============================================================
+Package: glib2
+Arch equivalent: glib2 (2.86.3)
+
+  Missing runtime dependencies:
+    - libffi.so
+    - libmount.so
+    - libsysprof-capture
+    - util-linux-libs
+
+  Missing build dependencies:
+    - dbus
+    - dconf
+    - gettext
+    - gi-docgen
+    - git
+    - gobject-introspection
+    - libelf
+    - python-docutils
+    - python-packaging
+
+  Missing optional dependencies:
+    - dconf
+    - glib2-devel
+    - gvfs
+
+============================================================
+Package: glibc
+Arch equivalent: glibc (2.42+r33+gde1fe81f4714)
+
+  Missing runtime dependencies:
+    - tzdata
+
+  Missing build dependencies:
+    - gd
+    - git
+    - lib32-gcc-libs
+
+  Missing optional dependencies:
+    - gd
+    - perl
+
+============================================================
+Package: glslang
+Arch equivalent: glslang (1.4.335.0)
+
+  Missing build dependencies:
+    - git
+    - ninja
+    - python
+
+============================================================
+Package: glu
+Arch equivalent: glu (9.0.3)
+
+  Missing runtime dependencies:
+    - libgl
+
+============================================================
+Package: gnupg
+Arch equivalent: gnupg (2.4.8)
+
+  Missing runtime dependencies:
+    - bzip2
+    - gnutls
+    - libassuan.so
+    - libbz2.so
+    - libldap
+    - libnpth.so
+    - libreadline.so
+    - libusb
+    - readline
+    - sqlite
+    - tpm2-tss
+    - zlib
+
+  Missing build dependencies:
+    - bzip2
+    - fig2dev
+    - git
+    - imagemagick
+    - librsvg
+    - pcsclite
+    - readline
+
+  Missing optional dependencies:
+    - pcsclite
+
+============================================================
+Package: gnutls
+Arch equivalent: gnutls (3.8.11)
+
+  Missing runtime dependencies:
+    - brotli
+    - gmp
+    - leancrypto
+    - libidn2
+    - libidn2.so
+    - libp11-kit
+    - libunistring
+    - zlib
+    - zstd
+
+  Missing build dependencies:
+    - gtk-doc
+    - tpm2-tss
+
+  Missing optional dependencies:
+    - tpm2-tss
+
+============================================================
+Package: gobject-introspection
+Arch equivalent: gobject-introspection (1.86.0)
+
+  Missing runtime dependencies:
+    - gobject-introspection-runtime
+    - libgirepository
+    - python-mako
+    - python-markdown
+    - python-setuptools
+
+  Missing build dependencies:
+    - cairo
+    - git
+    - gtk-doc
+    - python-mako
+    - python-markdown
+    - python-setuptools
+    - python-sphinx
+
+============================================================
+Package: gpgme
+Arch equivalent: gpgme (2.0.1)
+
+  Missing runtime dependencies:
+    - glib2
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: gpgmepp
+Arch equivalent: gpgmepp (2.0.0)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: graphene
+Arch equivalent: graphene (1.10.8)
+
+  Missing build dependencies:
+    - git
+    - gobject-introspection
+    - gtk-doc
+
+============================================================
+Package: grep
+Arch equivalent: grep (3.12)
+
+  Missing runtime dependencies:
+    - pcre2
+
+  Missing build dependencies:
+    - git
+    - gperf
+    - python
+    - texinfo
+    - wget
+
+============================================================
+Package: groff
+Arch equivalent: groff (1.23.0)
+
+  Missing runtime dependencies:
+    - perl
+
+  Missing build dependencies:
+    - git
+    - libxaw
+    - netpbm
+    - perl-file-homedir
+    - psutils
+
+  Missing optional dependencies:
+    - libxaw
+    - netpbm
+    - perl-file-homedir
+    - psutils
+
+============================================================
+Package: grub
+Arch equivalent: grub (2.14rc1.r54.g29f3131a)
+
+  Missing runtime dependencies:
+    - device-mapper
+    - gettext
+    - xz
+
+  Missing build dependencies:
+    - autogen
+    - device-mapper
+    - freetype
+    - fuse3
+    - gettext
+    - git
+    - help2man
+    - libusb
+    - rsync
+    - sdl
+    - texinfo
+    - ttf-dejavu
+    - wget
+    - xz
+
+  Missing optional dependencies:
+    - dosfstools
+    - efibootmgr
+    - freetype
+    - fuse3
+    - libisoburn
+    - libusb
+    - lzop
+    - mtools
+    - os-prober
+    - sdl
+
+============================================================
+Package: gst-libav
+Arch equivalent: gst-libav (1.26.9)
+
+  Missing runtime dependencies:
+    - glib2
+    - gst-plugins-base-libs
+    - gstreamer
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - alsa-lib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - flac
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdrm
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - libjpeg-turbo
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libogg
+    - libopenmpt
+    - libpng
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libva
+    - libvorbis
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mesa
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - opus
+    - orc
+    - pango
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-loader
+    - vulkan-validation-layers
+    - wavpack
+    - wayland
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x264
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+============================================================
+Package: gst-plugins-bad
+Arch equivalent: gst-plugins-bad (1.26.9)
+
+  Missing runtime dependencies:
+    - aom
+    - bzip2
+    - cairo
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - fluidsynth
+    - glib2
+    - gsm
+    - gst-plugins-bad-libs
+    - gst-plugins-base-libs
+    - gstreamer
+    - imath
+    - json-glib
+    - lcms2
+    - libass
+    - libavtp
+    - libbs2b
+    - libdc1394
+    - libdca
+    - libde265
+    - libdvdnav
+    - libdvdread
+    - libfdk-aac
+    - libfreeaptx
+    - libgme
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libopenmpt
+    - librsvg
+    - libsndfile
+    - libsrtp
+    - libwebp
+    - libxml2
+    - lilv
+    - mjpegtools
+    - neon
+    - nettle
+    - openal
+    - openexr
+    - openh264
+    - openjpeg2
+    - openssl
+    - opus
+    - orc
+    - pango
+    - qrencode
+    - rtmpdump
+    - sbc
+    - soundtouch
+    - spandsp
+    - srt
+    - svt-av1
+    - svt-hevc
+    - webrtc-audio-processing-1
+    - wildmidi
+    - x265
+    - zbar
+    - zvbi
+    - zxing-cpp
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - alsa-lib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - ffmpeg
+    - flac
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - libjpeg-turbo
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libogg
+    - libopenmpt
+    - libpng
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libvorbis
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mesa
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - opus
+    - orc
+    - pango
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-validation-layers
+    - wavpack
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x264
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+============================================================
+Package: gst-plugins-base
+Arch equivalent: gst-plugins-base (1.26.9)
+
+  Missing runtime dependencies:
+    - cairo
+    - cdparanoia
+    - glib2
+    - gst-plugins-base-libs
+    - libtheora
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - ffmpeg
+    - flac
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdrm
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - libjpeg-turbo
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libopenmpt
+    - libpng
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libva
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - orc
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-loader
+    - vulkan-validation-layers
+    - wavpack
+    - wayland
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x264
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+============================================================
+Package: gst-plugins-good
+Arch equivalent: gst-plugins-good (1.26.9)
+
+  Missing runtime dependencies:
+    - aalib
+    - bzip2
+    - cairo
+    - gdk-pixbuf2
+    - glib2
+    - gst-plugins-base-libs
+    - gstreamer
+    - lame
+    - libavc1394
+    - libcaca
+    - libdv
+    - libgudev
+    - libiec61883
+    - libpulse
+    - libraw1394
+    - libshout
+    - libsoup3
+    - libvpx
+    - libx11
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxml2
+    - libxtst
+    - mpg123
+    - nettle
+    - opencore-amr
+    - orc
+    - speex
+    - taglib
+    - twolame
+    - v4l-utils
+    - wavpack
+    - zlib
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - alsa-lib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - ffmpeg
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdrm
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libogg
+    - libopenmpt
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libva
+    - libvorbis
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mesa
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - opus
+    - orc
+    - pango
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-loader
+    - vulkan-validation-layers
+    - wavpack
+    - wayland
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x264
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+  Missing optional dependencies:
+    - jack
+
+============================================================
+Package: gst-plugins-ugly
+Arch equivalent: gst-plugins-ugly (1.26.9)
+
+  Missing runtime dependencies:
+    - a52dec
+    - glib2
+    - gst-plugins-base-libs
+    - gstreamer
+    - libcdio
+    - libdvdread
+    - libmpeg2
+    - orc
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - alsa-lib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - ffmpeg
+    - flac
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdrm
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - libjpeg-turbo
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libogg
+    - libopenmpt
+    - libpng
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libva
+    - libvorbis
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mesa
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - opus
+    - orc
+    - pango
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-loader
+    - vulkan-validation-layers
+    - wavpack
+    - wayland
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+============================================================
+Package: gstreamer
+Arch equivalent: gstreamer (1.26.9)
+
+  Missing runtime dependencies:
+    - libcap
+    - libelf
+    - libunwind
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - alsa-lib
+    - aom
+    - bash-completion
+    - bluez-libs
+    - bzip2
+    - cairo
+    - cdparanoia
+    - chromaprint
+    - curl
+    - faac
+    - faad2
+    - ffmpeg
+    - flac
+    - fluidsynth
+    - gdk-pixbuf2
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - graphene
+    - gsm
+    - gtk3
+    - imath
+    - iso-codes
+    - jack2
+    - json-glib
+    - ladspa
+    - lame
+    - lcms2
+    - libass
+    - libavc1394
+    - libavtp
+    - libbs2b
+    - libcaca
+    - libcap
+    - libcdio
+    - libdc1394
+    - libdca
+    - libde265
+    - libdrm
+    - libdv
+    - libdvdnav
+    - libdvdread
+    - libelf
+    - libfdk-aac
+    - libfreeaptx
+    - libglvnd
+    - libgme
+    - libgudev
+    - libiec61883
+    - libjpeg-turbo
+    - liblc3
+    - libldac
+    - liblrdf
+    - libltc
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libnice
+    - libogg
+    - libopenmpt
+    - libpng
+    - libpulse
+    - libraw1394
+    - librsvg
+    - libshout
+    - libsndfile
+    - libsoup3
+    - libsrtp
+    - libtheora
+    - libunwind
+    - libusb
+    - libva
+    - libvorbis
+    - libvpl
+    - libvpx
+    - libwebp
+    - libwpe
+    - libx11
+    - libxcb
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - libxkbcommon-x11
+    - libxml2
+    - libxrandr
+    - libxtst
+    - libxv
+    - lilv
+    - lv2
+    - mesa
+    - mjpegtools
+    - mpg123
+    - nasm
+    - neon
+    - nettle
+    - onnxruntime
+    - openal
+    - opencore-amr
+    - opencv
+    - openexr
+    - openh264
+    - openjpeg2
+    - openmpi
+    - openssl
+    - opentimelineio
+    - opus
+    - orc
+    - pango
+    - python
+    - python-cairo
+    - python-gobject
+    - python-lxml
+    - python-setuptools
+    - qrencode
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+    - qt5-wayland
+    - qt5-x11extras
+    - qt6
+    - qt6-shadertools
+    - rtmpdump
+    - rust
+    - sbc
+    - sdl2
+    - shaderc
+    - soundtouch
+    - spandsp
+    - speex
+    - srt
+    - svt-av1
+    - svt-hevc
+    - systemd
+    - taglib
+    - twolame
+    - v4l-utils
+    - valgrind
+    - vulkan-headers
+    - vulkan-loader
+    - vulkan-validation-layers
+    - wavpack
+    - wayland
+    - wayland-protocols
+    - webrtc-audio-processing-1
+    - wildmidi
+    - wpebackend-fdo
+    - wpewebkit
+    - x264
+    - x265
+    - zbar
+    - zlib
+    - zvbi
+    - zxing-cpp
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: gtk3
+Arch equivalent: gtk3 (3.24.51)
+
+  Missing runtime dependencies:
+    - adwaita-fonts
+    - adwaita-icon-theme
+    - dconf
+    - fontconfig
+    - fribidi
+    - gdk-pixbuf2
+    - gtk-update-icon-cache
+    - harfbuzz
+    - iso-codes
+    - libcloudproviders
+    - libcolord
+    - libcups
+    - libegl
+    - libgl
+    - librsvg
+    - libx11
+    - libxcomposite
+    - libxcursor
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxinerama
+    - libxrandr
+    - libxrender
+    - tinysparql
+
+  Missing build dependencies:
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - gtk-doc
+    - sassc
+
+  Missing optional dependencies:
+    - evince
+
+============================================================
+Package: gtk4
+Arch equivalent: gtk4 (4.20.3)
+
+  Missing runtime dependencies:
+    - adwaita-fonts
+    - adwaita-icon-theme
+    - at-spi2-core
+    - dconf
+    - fontconfig
+    - gdk-pixbuf2
+    - gst-plugins-bad-libs
+    - gst-plugins-base-libs
+    - gstreamer
+    - gtk-update-icon-cache
+    - harfbuzz
+    - iso-codes
+    - libcloudproviders
+    - libcolord
+    - libcups
+    - libegl
+    - libgl
+    - libjpeg-turbo
+    - libpng
+    - librsvg
+    - libtiff
+    - libx11
+    - libxcursor
+    - libxdamage
+    - libxext
+    - libxfixes
+    - libxi
+    - libxinerama
+    - libxrandr
+    - libxrender
+    - tinysparql
+
+  Missing build dependencies:
+    - docbook-xsl
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - libsysprof-capture
+    - python-docutils
+    - python-gobject
+    - sassc
+    - shaderc
+    - vulkan-headers
+
+  Missing optional dependencies:
+    - evince
+    - xdg-desktop-portal-gtk
+
+============================================================
+Package: gzip
+Arch equivalent: gzip (1.14)
+
+  Missing build dependencies:
+    - git
+    - less
+    - python
+    - wget
+
+  Missing optional dependencies:
+    - diffutils
+    - less
+
+============================================================
+Package: harfbuzz
+Arch equivalent: harfbuzz (12.2.0)
+
+  Missing runtime dependencies:
+    - graphite
+    - libfreetype.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libgraphite2.so
+
+  Missing build dependencies:
+    - chafa
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - gtk-doc
+    - help2man
+    - python
+    - ragel
+
+  Missing optional dependencies:
+    - harfbuzz-utils
+
+============================================================
+Package: ibus
+Arch equivalent: ibus (1.5.33)
+
+  Missing runtime dependencies:
+    - at-spi2-core
+    - cairo
+    - gdk-pixbuf2
+    - graphene
+    - libdbusmenu-glib
+    - libdbusmenu-gtk3
+    - libibus
+    - libx11
+    - libxfixes
+    - libxi
+    - libxkbcommon
+    - pango
+    - python
+    - python-gobject
+    - wayland
+
+  Missing build dependencies:
+    - glib2-devel
+    - gtk-doc
+    - qt5-base
+    - unicode-character-database
+    - unicode-cldr
+    - unicode-emoji
+    - wayland-protocols
+
+============================================================
+Package: icu
+Arch equivalent: icu (78.1)
+
+  Missing build dependencies:
+    - python
+
+============================================================
+Package: inetutils
+Arch equivalent: inetutils (2.6)
+
+  Missing runtime dependencies:
+    - libcap
+    - libcrypt.so
+    - libncursesw.so
+    - libpam.so
+    - libreadline.so
+    - libxcrypt
+    - ncurses
+    - pam
+    - readline
+
+  Missing build dependencies:
+    - git
+    - help2man
+    - python
+
+============================================================
+Package: iproute2
+Arch equivalent: iproute2 (6.18.0)
+
+  Missing runtime dependencies:
+    - libbpf
+    - libbpf.so
+    - libcap
+    - libcap.so
+    - libelf
+    - libxtables.so
+
+  Missing build dependencies:
+    - db5.3
+    - git
+    - iptables
+    - linux-atm
+
+  Missing optional dependencies:
+    - db5.3
+    - linux-atm
+    - python
+
+============================================================
+Package: iptables
+Arch equivalent: iptables (1.8.11)
+
+  Missing runtime dependencies:
+    - libnetfilter_conntrack
+    - libnfnetlink
+    - libpcap
+
+============================================================
+Package: jasper
+Arch equivalent: jasper (4.2.8)
+
+  Missing runtime dependencies:
+    - freeglut
+    - glu
+    - libglvnd
+
+  Missing build dependencies:
+    - doxygen
+    - freeglut
+    - glu
+    - libxmu
+
+  Missing optional dependencies:
+    - jasper-doc
+
+============================================================
+Package: json-c
+Arch equivalent: json-c (0.18)
+
+  Missing build dependencies:
+    - git
+    - ninja
+
+============================================================
+Package: json-glib
+Arch equivalent: json-glib (1.10.8)
+
+  Missing runtime dependencies:
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+
+  Missing build dependencies:
+    - docbook-xsl
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - python-docutils
+
+============================================================
+Package: kactivitymanagerd
+Arch equivalent: kactivitymanagerd (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kservice
+
+  Missing build dependencies:
+    - boost
+
+============================================================
+Package: kbd
+Arch equivalent: kbd (2.9.0)
+
+  Missing runtime dependencies:
+    - gzip
+    - pam
+
+  Missing build dependencies:
+    - check
+    - git
+
+============================================================
+Package: kde-cli-tools
+Arch equivalent: kde-cli-tools (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcompletion
+    - kf6-kwidgetsaddons
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: kde-gtk-config
+Arch equivalent: kde-gtk-config (6.5.4)
+
+  Missing runtime dependencies:
+    - glib2
+    - kdecoration
+    - kf6-kcolorscheme
+    - kf6-kguiaddons
+    - xdg-desktop-portal-gtk
+    - xsettingsd
+
+  Missing build dependencies:
+    - sassc
+
+============================================================
+Package: kdeplasma-addons
+Arch equivalent: kdeplasma-addons (6.5.4)
+
+  Missing runtime dependencies:
+    - icu
+    - kf6-kauth
+    - kf6-kitemmodels
+    - kf6-kjobwidgets
+    - kf6-kpackage
+    - kirigami-addons
+    - kwin
+    - plasma-workspace
+    - qt6-5compat
+    - qt6-quick3d
+
+  Missing build dependencies:
+    - qt6-webengine
+
+  Missing optional dependencies:
+    - qt6-webengine
+    - quota-tools
+
+============================================================
+Package: kdsoap-ws-discovery-client
+Arch equivalent: kdsoap-ws-discovery-client (0.4.0)
+
+  Missing runtime dependencies:
+    - kdsoap-qt6
+
+  Missing build dependencies:
+    - doxygen
+    - extra-cmake-modules
+
+============================================================
+Package: keyutils
+Arch equivalent: keyutils (1.6.3)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: kf6-attica
+Arch equivalent: attica (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-baloo
+Arch equivalent: baloo (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+
+============================================================
+Package: kf6-bluez-qt
+Arch equivalent: bluez-qt (6.21.0)
+
+  Missing runtime dependencies:
+    - bluez
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-frameworkintegration
+Arch equivalent: frameworkintegration (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-knewstuff
+
+  Missing build dependencies:
+    - appstream-qt
+    - packagekit-qt6
+
+  Missing optional dependencies:
+    - appstream-qt
+    - packagekit-qt6
+
+============================================================
+Package: kf6-karchive
+Arch equivalent: karchive (6.21.0)
+
+  Missing runtime dependencies:
+    - openssl
+    - zstd
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kauth
+Arch equivalent: kauth (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kwindowsystem
+    - polkit-qt6
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kbookmarks
+Arch equivalent: kbookmarks (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcalendarcore
+Arch equivalent: kcalendarcore (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcmutils
+Arch equivalent: kcmutils (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kirigami
+    - kf6-kservice
+    - kf6-kwidgetsaddons
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcodecs
+Arch equivalent: kcodecs (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - gperf
+
+============================================================
+Package: kf6-kcolorscheme
+Arch equivalent: kcolorscheme (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcompletion
+Arch equivalent: kcompletion (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kcodecs
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kconfig
+Arch equivalent: kconfig (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kconfigwidgets
+Arch equivalent: kconfigwidgets (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcontacts
+Arch equivalent: kcontacts (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kcoreaddons
+Arch equivalent: kcoreaddons (6.21.0)
+
+  Missing runtime dependencies:
+    - systemd
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-kcrash
+Arch equivalent: kcrash (6.21.0)
+
+  Missing runtime dependencies:
+    - libx11
+
+  Missing build dependencies:
+    - doxygen
+
+  Missing optional dependencies:
+    - drkonqi
+
+============================================================
+Package: kf6-kdav
+Arch equivalent: kdav (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kdbusaddons
+Arch equivalent: kdbusaddons (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kdeclarative
+Arch equivalent: kdeclarative (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - qt6-shadertools
+
+============================================================
+Package: kf6-kded
+Arch equivalent: kded (6.21.0)
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: kf6-kdesu
+Arch equivalent: kdesu (6.21.0)
+
+  Missing runtime dependencies:
+    - libx11
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kdnssd
+Arch equivalent: kdnssd (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kdoctools
+Arch equivalent: kdoctools (6.21.0)
+
+  Missing runtime dependencies:
+    - docbook-xsl
+
+  Missing build dependencies:
+    - doxygen
+    - perl-uri
+
+============================================================
+Package: kf6-kfilemetadata
+Arch equivalent: kfilemetadata (6.21.0)
+
+  Missing runtime dependencies:
+    - ebook-tools
+    - exiv2
+    - ffmpeg
+    - kf6-kcodecs
+    - poppler-qt6
+    - taglib
+
+  Missing build dependencies:
+    - catdoc
+    - doxygen
+    - kdegraphics-mobipocket
+    - libappimage
+
+  Missing optional dependencies:
+    - catdoc
+    - kdegraphics-mobipocket
+    - libappimage
+
+============================================================
+Package: kf6-kglobalaccel
+Arch equivalent: kglobalaccel (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kguiaddons
+Arch equivalent: kguiaddons (6.21.0)
+
+  Missing runtime dependencies:
+    - libx11
+
+  Missing build dependencies:
+    - doxygen
+    - plasma-wayland-protocols
+    - pyside6
+    - python-build
+    - python-setuptools
+    - wayland-protocols
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-kholidays
+Arch equivalent: kholidays (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-ki18n
+Arch equivalent: ki18n (6.21.0)
+
+  Missing runtime dependencies:
+    - iso-codes
+
+  Missing build dependencies:
+    - doxygen
+    - python
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: kf6-kiconthemes
+Arch equivalent: kiconthemes (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kidletime
+Arch equivalent: kidletime (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - libxss
+    - wayland-protocols
+
+  Missing optional dependencies:
+    - libx11
+    - libxext
+    - libxss
+
+============================================================
+Package: kf6-kimageformats
+Arch equivalent: kimageformats (6.21.0)
+
+  Missing build dependencies:
+    - jxrlib
+    - libavif
+    - libheif
+    - libjxl
+    - libraw
+    - openexr
+    - openjpeg2
+
+  Missing optional dependencies:
+    - imath
+    - jxrlib
+    - libavif
+    - libheif
+    - libjxl
+    - libraw
+    - openexr
+    - openjpeg2
+
+============================================================
+Package: kf6-kio
+Arch equivalent: kio (6.21.0)
+
+  Missing runtime dependencies:
+    - libxml2
+    - libxslt
+    - util-linux-libs
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+
+  Missing optional dependencies:
+    - audiocd-kio
+    - kf6-kded
+    - kf6-kdoctools
+    - kio-extras
+    - kio-fuse
+    - switcheroo-control
+
+============================================================
+Package: kf6-kirigami
+Arch equivalent: kirigami (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - qt6-shadertools
+
+============================================================
+Package: kf6-kitemmodels
+Arch equivalent: kitemmodels (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kitemviews
+Arch equivalent: kitemviews (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kjobwidgets
+Arch equivalent: kjobwidgets (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-knewstuff
+Arch equivalent: knewstuff (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kcmutils
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-knotifications
+Arch equivalent: knotifications (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-knotifyconfig
+Arch equivalent: knotifyconfig (6.21.0)
+
+  Missing runtime dependencies:
+    - libcanberra
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kpackage
+Arch equivalent: kpackage (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+
+============================================================
+Package: kf6-kparts
+Arch equivalent: kparts (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kpeople
+Arch equivalent: kpeople (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kplotting
+Arch equivalent: kplotting (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kpty
+Arch equivalent: kpty (6.21.0)
+
+  Missing runtime dependencies:
+    - libutempter
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kquickcharts
+Arch equivalent: kquickcharts (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kirigami
+
+  Missing build dependencies:
+    - qt6-shadertools
+
+============================================================
+Package: kf6-krunner
+Arch equivalent: krunner (6.21.0)
+
+  Missing runtime dependencies:
+    - kf6-kwindowsystem
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+
+============================================================
+Package: kf6-kservice
+Arch equivalent: kservice (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+
+============================================================
+Package: kf6-kstatusnotifieritem
+Arch equivalent: kstatusnotifieritem (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-ksvg
+Arch equivalent: ksvg (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-ktexteditor
+Arch equivalent: ktexteditor (6.21.0)
+
+  Missing runtime dependencies:
+    - editorconfig-core-c
+    - kf6-kauth
+    - kf6-kcodecs
+    - kf6-kcolorscheme
+    - kf6-kcompletion
+    - kf6-kconfigwidgets
+    - kf6-kcoreaddons
+    - kf6-kitemviews
+    - kf6-kwidgetsaddons
+    - kf6-kxmlgui
+    - qt6-speech
+
+  Missing build dependencies:
+    - doxygen
+
+  Missing optional dependencies:
+    - git
+
+============================================================
+Package: kf6-ktexttemplate
+Arch equivalent: ktexttemplate (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-ktextwidgets
+Arch equivalent: ktextwidgets (6.21.0)
+
+  Missing runtime dependencies:
+    - qt6-speech
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-kunitconversion
+Arch equivalent: kunitconversion (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-kuserfeedback
+Arch equivalent: kuserfeedback (6.21.0)
+
+  Missing build dependencies:
+    - clang
+    - qt6-charts
+
+  Missing optional dependencies:
+    - qt6-charts
+
+============================================================
+Package: kf6-kwallet
+Arch equivalent: kwallet (6.21.0)
+
+  Missing runtime dependencies:
+    - glib2
+    - kf6-kcrash
+    - libsecret
+    - qca-qt6
+
+  Missing build dependencies:
+    - doxygen
+    - kf6-kdoctools
+    - kf6-kservice
+
+  Missing optional dependencies:
+    - kwalletmanager
+
+============================================================
+Package: kf6-kwidgetsaddons
+Arch equivalent: kwidgetsaddons (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-kwindowsystem
+Arch equivalent: kwindowsystem (6.21.0)
+
+  Missing runtime dependencies:
+    - libx11
+    - libxfixes
+    - xcb-util-keysyms
+
+  Missing build dependencies:
+    - doxygen
+    - wayland-protocols
+
+============================================================
+Package: kf6-kxmlgui
+Arch equivalent: kxmlgui (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - pyside6
+    - python-build
+    - python-setuptools
+
+  Missing optional dependencies:
+    - pyside6
+
+============================================================
+Package: kf6-modemmanager-qt
+Arch equivalent: modemmanager-qt (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-networkmanager-qt
+Arch equivalent: networkmanager-qt (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-prison
+Arch equivalent: prison (6.21.0)
+
+  Missing runtime dependencies:
+    - libdmtx
+    - qrencode
+    - qt6-multimedia
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-purpose
+Arch equivalent: purpose (6.21.0)
+
+  Missing runtime dependencies:
+    - accounts-qml-module
+    - kaccounts-integration
+    - kf6-kcmutils
+    - libaccounts-qt
+
+  Missing build dependencies:
+    - intltool
+
+  Missing optional dependencies:
+    - bluedevil
+    - kdeconnect
+    - kf6-kdeclarative
+    - kf6-prison
+    - telegram-desktop
+
+============================================================
+Package: kf6-solid
+Arch equivalent: solid (6.21.0)
+
+  Missing runtime dependencies:
+    - libimobiledevice
+    - libplist
+    - media-player-info
+    - systemd
+    - udisks2
+    - upower
+    - util-linux-libs
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-sonnet
+Arch equivalent: sonnet (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+    - hspell
+    - hunspell
+    - libvoikko
+
+  Missing optional dependencies:
+    - hspell
+    - hunspell
+    - libvoikko
+
+============================================================
+Package: kf6-syndication
+Arch equivalent: syndication (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-syntax-highlighting
+Arch equivalent: syntax-highlighting (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kf6-threadweaver
+Arch equivalent: threadweaver (6.21.0)
+
+  Missing build dependencies:
+    - doxygen
+
+============================================================
+Package: kgamma
+Arch equivalent: kgamma (6.5.4)
+
+  Missing runtime dependencies:
+    - libx11
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: kglobalacceld
+Arch equivalent: kglobalacceld (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kjobwidgets
+    - libx11
+    - libxcb
+    - xcb-util-keysyms
+
+============================================================
+Package: kinfocenter
+Arch equivalent: kinfocenter (6.5.4)
+
+  Missing runtime dependencies:
+    - aha
+    - clinfo
+    - dmidecode
+    - glu
+    - iproute2
+    - kf6-kauth
+    - kf6-kdeclarative
+    - libdisplay-info
+    - libdrm
+    - libpulse
+    - libusb
+    - lm_sensors
+    - mesa-utils
+    - systemd
+    - systemsettings
+    - vulkan-tools
+    - wayland-utils
+    - xorg-xdpyinfo
+
+  Missing build dependencies:
+    - fwupd
+    - kf6-kdoctools
+    - vulkan-headers
+
+  Missing optional dependencies:
+    - fwupd
+    - plasma-disks
+
+============================================================
+Package: kio-extras
+Arch equivalent: kio-extras (25.12.0)
+
+  Missing runtime dependencies:
+    - kdsoap-qt6
+    - kdsoap-ws-discovery-client
+    - kf6-karchive
+    - kf6-kcmutils
+    - kf6-kconfig
+    - kf6-kcoreaddons
+    - kf6-kdbusaddons
+    - kf6-kdnssd
+    - kf6-ki18n
+    - kf6-kio
+    - kf6-knotifications
+    - kf6-kservice
+    - kf6-kwidgetsaddons
+    - kf6-solid
+    - kf6-syntax-highlighting
+    - libimobiledevice
+    - libkexiv2
+    - libplist
+    - libproxy
+    - libtirpc
+    - libxcursor
+    - plasma-activities
+    - ripgrep-all
+    - smbclient
+
+  Missing build dependencies:
+    - gperf
+    - kf6-kdoctools
+    - libappimage
+    - plasma-activities-stats
+    - qcoro
+
+  Missing optional dependencies:
+    - kf6-kimageformats
+    - libappimage
+    - perl
+    - plasma-activities-stats
+    - qt6-imageformats
+
+============================================================
+Package: kirigami-addons
+Arch equivalent: kirigami-addons (1.10.0)
+
+  Missing runtime dependencies:
+    - kf6-kcolorscheme
+    - kf6-kconfig
+    - kf6-kcoreaddons
+    - kf6-kcrash
+    - kf6-kglobalaccel
+    - kf6-kguiaddons
+    - kf6-ki18n
+    - kf6-kiconthemes
+    - kf6-kirigami
+    - kf6-kitemmodels
+    - kf6-ksvg
+    - kf6-sonnet
+    - qt6-multimedia
+
+============================================================
+Package: kmenuedit
+Arch equivalent: kmenuedit (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcompletion
+    - kf6-kcrash
+    - kf6-kitemviews
+    - kf6-kservice
+    - kf6-kwidgetsaddons
+    - kf6-kwindowsystem
+    - kf6-sonnet
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: kmod
+Arch equivalent: kmod (34.2)
+
+  Missing runtime dependencies:
+    - openssl
+
+  Missing build dependencies:
+    - git
+    - meson
+    - scdoc
+
+============================================================
+Package: kpipewire
+Arch equivalent: kpipewire (6.5.4)
+
+  Missing runtime dependencies:
+    - libdrm
+    - libepoxy
+    - libpipewire
+    - libva
+    - mesa
+
+============================================================
+Package: kscreen
+Arch equivalent: kscreen (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcrash
+    - kf6-kimageformats
+    - kf6-kirigami
+    - kf6-kitemmodels
+    - kf6-kwindowsystem
+    - libx11
+    - libxcb
+    - libxi
+    - plasma5support
+    - wayland
+
+  Missing build dependencies:
+    - wayland-protocols
+
+============================================================
+Package: kscreenlocker
+Arch equivalent: kscreenlocker (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kio
+    - kf6-kirigami
+    - libplasma
+    - libx11
+    - libxcb
+    - libxi
+    - pam
+    - wayland
+    - xcb-util-keysyms
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: ksshaskpass
+Arch equivalent: ksshaskpass (6.5.4)
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: ksystemstats
+Arch equivalent: ksystemstats (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcrash
+
+  Missing build dependencies:
+    - libnl
+
+  Missing optional dependencies:
+    - libnl
+    - systemd
+
+============================================================
+Package: kwallet-pam
+Arch equivalent: kwallet-pam (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kwallet
+    - pam
+    - socat
+
+============================================================
+Package: kwin
+Arch equivalent: kwin (6.5.4)
+
+  Missing runtime dependencies:
+    - aurorae
+    - kf6-kcolorscheme
+    - kf6-kguiaddons
+    - kf6-kirigami
+    - kf6-kitemmodels
+    - kf6-kquickcharts
+    - kf6-kwidgetsaddons
+    - knighttime
+    - libcanberra
+    - libdisplay-info
+    - libei
+    - libepoxy
+    - libpipewire
+    - libqaccessibilityclient-qt6
+    - libxcvt
+    - pipewire-session-manager
+    - qt6-5compat
+    - qt6-sensors
+    - systemd
+    - xcb-util-keysyms
+    - xcb-util-wm
+
+  Missing build dependencies:
+    - kf6-kdoctools
+    - python
+    - xorg-xwayland
+
+  Missing optional dependencies:
+    - plasma-keyboard
+
+============================================================
+Package: kwrited
+Arch equivalent: kwrited (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kdbusaddons
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: less
+Arch equivalent: less (685)
+
+  Missing runtime dependencies:
+    - ncurses
+    - pcre2
+
+============================================================
+Package: libatasmart
+Arch equivalent: libatasmart (0.19)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libblockdev
+Arch equivalent: libblockdev (3.4.0)
+
+  Missing runtime dependencies:
+    - kmod
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libkmod.so
+    - libudev.so
+
+  Missing build dependencies:
+    - autoconf-archive
+    - btrfs-progs
+    - device-mapper
+    - dosfstools
+    - e2fsprogs
+    - exfatprogs
+    - gtk-doc
+    - json-glib
+    - keyutils
+    - kmod
+    - libatasmart
+    - mdadm
+    - ndctl
+    - nss
+    - python
+    - util-linux-libs
+    - volume_key
+
+  Missing optional dependencies:
+    - libblockdev-btrfs
+    - libblockdev-crypto
+    - libblockdev-dm
+    - libblockdev-fs
+    - libblockdev-loop
+    - libblockdev-lvm
+    - libblockdev-mdraid
+    - libblockdev-mpath
+    - libblockdev-nvdimm
+    - libblockdev-nvme
+    - libblockdev-part
+    - libblockdev-smart
+    - libblockdev-swap
+    - python-libblockdev
+
+============================================================
+Package: libbytesize
+Arch equivalent: libbytesize (2.11)
+
+  Missing runtime dependencies:
+    - pcre2
+
+============================================================
+Package: libcanberra
+Arch equivalent: libcanberra (0.30+r2+gc0620e4)
+
+  Missing runtime dependencies:
+    - libltdl
+    - libpulse
+    - tdb
+
+  Missing build dependencies:
+    - git
+    - gtk-doc
+
+============================================================
+Package: libcap
+Arch equivalent: libcap (2.77)
+
+  Missing runtime dependencies:
+    - pam
+
+  Missing build dependencies:
+    - git
+    - go
+
+============================================================
+Package: libdaemon
+Arch equivalent: libdaemon (0.14)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libdisplay-info
+Arch equivalent: libdisplay-info (0.3.0)
+
+  Missing build dependencies:
+    - hwdata
+    - python
+
+============================================================
+Package: libdrm
+Arch equivalent: libdrm (2.4.131)
+
+  Missing runtime dependencies:
+    - libpciaccess
+
+  Missing build dependencies:
+    - python-docutils
+
+  Missing optional dependencies:
+    - cairo
+
+============================================================
+Package: libepoxy
+Arch equivalent: libepoxy (1.5.10)
+
+  Missing runtime dependencies:
+    - libglvnd
+    - libx11
+
+  Missing build dependencies:
+    - doxygen
+    - git
+    - graphviz
+    - mesa-libgl
+    - systemd
+
+============================================================
+Package: libevdev
+Arch equivalent: libevdev (1.13.6)
+
+  Missing build dependencies:
+    - check
+    - python
+    - valgrind
+
+============================================================
+Package: libevent
+Arch equivalent: libevent (2.1.12)
+
+  Missing build dependencies:
+    - cmake
+    - doxygen
+    - ninja
+    - python
+    - zlib
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: libgudev
+Arch equivalent: libgudev (238)
+
+  Missing runtime dependencies:
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libsystemd
+    - libudev.so
+
+  Missing build dependencies:
+    - git
+    - glib2-devel
+    - glibc-locales
+    - gtk-doc
+    - umockdev
+    - vala
+
+============================================================
+Package: libical
+Arch equivalent: libical (3.0.20)
+
+  Missing build dependencies:
+    - doxygen
+    - gtk-doc
+    - ninja
+
+============================================================
+Package: libidn2
+Arch equivalent: libidn2 (2.3.8)
+
+  Missing runtime dependencies:
+    - libunistring.so
+
+  Missing build dependencies:
+    - ruby-ronn-ng
+
+============================================================
+Package: libinput
+Arch equivalent: libinput (1.30.1)
+
+  Missing runtime dependencies:
+    - lua
+
+  Missing build dependencies:
+    - cairo
+    - check
+    - git
+    - glib2
+    - gtk4
+    - libx11
+    - python
+    - python-libevdev
+    - python-pyudev
+    - python-yaml
+    - wayland
+    - wayland-protocols
+
+  Missing optional dependencies:
+    - libinput-tools
+
+============================================================
+Package: libjpeg-turbo
+Arch equivalent: libjpeg-turbo (3.1.2)
+
+  Missing build dependencies:
+    - java-environment
+    - ninja
+    - strip-nondeterminism
+
+  Missing optional dependencies:
+    - java-runtime
+
+============================================================
+Package: libkscreen
+Arch equivalent: libkscreen (6.5.4)
+
+  Missing runtime dependencies:
+    - libxcb
+
+  Missing build dependencies:
+    - plasma-wayland-protocols
+
+============================================================
+Package: libksysguard
+Arch equivalent: libksysguard (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kauth
+    - kf6-kdeclarative
+    - kf6-kirigami
+    - kf6-kitemmodels
+    - kf6-kquickcharts
+    - kf6-solid
+    - libdrm
+    - libnl
+    - qt6-5compat
+
+============================================================
+Package: libmbim
+Arch equivalent: libmbim (1.32.0)
+
+  Missing runtime dependencies:
+    - glib2
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - gobject-introspection
+    - gtk-doc
+    - help2man
+
+============================================================
+Package: libndp
+Arch equivalent: libndp (1.9)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libnl
+Arch equivalent: libnl (3.12.0)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libnotify
+Arch equivalent: libnotify (0.8.7)
+
+  Missing runtime dependencies:
+    - gdk-pixbuf2
+
+  Missing build dependencies:
+    - docbook-xsl
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - xmlto
+
+============================================================
+Package: libnvme
+Arch equivalent: libnvme (1.16.1)
+
+  Missing runtime dependencies:
+    - dbus
+    - keyutils
+    - liburing
+
+  Missing build dependencies:
+    - asciidoc
+    - python
+    - swig
+
+============================================================
+Package: libogg
+Arch equivalent: libogg (1.3.6)
+
+  Missing build dependencies:
+    - cmake
+    - git
+    - ninja
+
+============================================================
+Package: libpcap
+Arch equivalent: libpcap (1.10.5)
+
+  Missing runtime dependencies:
+    - libdbus-1.so
+    - libnl
+
+  Missing build dependencies:
+    - bluez-libs
+    - dbus
+    - git
+
+============================================================
+Package: libplasma
+Arch equivalent: libplasma (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcolorscheme
+    - kf6-kglobalaccel
+    - kf6-kwidgetsaddons
+    - libglvnd
+    - libx11
+    - libxcb
+    - qt6-5compat
+    - wayland
+
+  Missing build dependencies:
+    - kf6-kdoctools
+    - plasma-wayland-protocols
+
+============================================================
+Package: libpng
+Arch equivalent: libpng (1.6.53)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libproxy
+Arch equivalent: libproxy (0.5.12)
+
+  Missing build dependencies:
+    - gi-docgen
+    - git
+    - gsettings-desktop-schemas
+
+============================================================
+Package: libpsl
+Arch equivalent: libpsl (0.21.5)
+
+  Missing runtime dependencies:
+    - libidn2.so
+    - libunistring.so
+
+  Missing build dependencies:
+    - gtk-doc
+    - libxslt
+    - publicsuffix-list
+    - python
+
+============================================================
+Package: libpwquality
+Arch equivalent: libpwquality (1.4.5)
+
+  Missing runtime dependencies:
+    - pam
+
+  Missing build dependencies:
+    - git
+    - python-setuptools
+
+============================================================
+Package: libqalculate
+Arch equivalent: libqalculate (5.8.2)
+
+  Missing build dependencies:
+    - doxygen
+    - git
+
+  Missing optional dependencies:
+    - gnuplot
+
+============================================================
+Package: libqmi
+Arch equivalent: libqmi (1.36.0)
+
+  Missing runtime dependencies:
+    - glib2
+    - libmbim
+    - libqrtr-glib
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - gobject-introspection
+    - gtk-doc
+    - help2man
+
+============================================================
+Package: librsvg
+Arch equivalent: librsvg (2.61.3)
+
+  Missing runtime dependencies:
+    - dav1d
+    - freetype
+    - gdk-pixbuf2
+    - harfbuzz
+
+  Missing build dependencies:
+    - cargo-c
+    - gi-docgen
+    - git
+    - gobject-introspection
+    - llvm
+    - python-docutils
+
+============================================================
+Package: libsamplerate
+Arch equivalent: libsamplerate (0.2.2)
+
+  Missing build dependencies:
+    - alsa-lib
+    - cmake
+    - libsndfile
+    - opus
+
+============================================================
+Package: libsecret
+Arch equivalent: libsecret (0.21.7)
+
+  Missing runtime dependencies:
+    - tpm2-tss
+
+  Missing build dependencies:
+    - bash-completion
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+
+  Missing optional dependencies:
+    - org.freedesktop.secrets
+
+============================================================
+Package: libsndfile
+Arch equivalent: libsndfile (1.2.2)
+
+  Missing runtime dependencies:
+    - lame
+    - libFLAC.so
+    - libmp3lame.so
+    - libmpg123.so
+    - libogg.so
+    - libopus.so
+    - libvorbis.so
+    - libvorbisenc.so
+    - mpg123
+
+  Missing build dependencies:
+    - alsa-lib
+    - cmake
+    - lame
+    - mpg123
+    - python
+    - sqlite
+
+============================================================
+Package: libtiff
+Arch equivalent: libtiff (4.7.1)
+
+  Missing runtime dependencies:
+    - jbigkit
+    - libdeflate
+    - libjpeg.so
+    - libwebp
+
+  Missing build dependencies:
+    - freeglut
+    - git
+    - glu
+    - mesa
+
+  Missing optional dependencies:
+    - freeglut
+
+============================================================
+Package: libtool
+Arch equivalent: libtool (2.6.0)
+
+  Missing runtime dependencies:
+    - tar
+
+  Missing build dependencies:
+    - git
+    - help2man
+
+============================================================
+Package: libusb
+Arch equivalent: libusb (1.0.29)
+
+  Missing runtime dependencies:
+    - libudev.so
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libuv
+Arch equivalent: libuv (1.51.0)
+
+  Missing runtime dependencies:
+    - libnsl
+
+  Missing build dependencies:
+    - git
+    - python-sphinx
+
+============================================================
+Package: libva
+Arch equivalent: libva (2.22.0)
+
+  Missing runtime dependencies:
+    - libgl
+    - libx11
+    - libxext
+    - libxfixes
+
+  Missing build dependencies:
+    - git
+    - libglvnd
+    - mesa
+
+  Missing optional dependencies:
+    - intel-media-driver
+    - libva-intel-driver
+    - libva-mesa-driver
+
+============================================================
+Package: libvdpau
+Arch equivalent: libvdpau (1.5)
+
+  Missing runtime dependencies:
+    - libxext
+
+  Missing build dependencies:
+    - git
+    - xorgproto
+
+  Missing optional dependencies:
+    - libvdpau-va-gl
+    - mesa-vdpau
+    - nvidia-utils
+
+============================================================
+Package: libvorbis
+Arch equivalent: libvorbis (1.3.7)
+
+  Missing runtime dependencies:
+    - libogg.so
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libvpx
+Arch equivalent: libvpx (1.15.2)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: libwacom
+Arch equivalent: libwacom (2.17.0)
+
+  Missing build dependencies:
+    - libxml2
+    - python-libevdev
+    - python-pytest
+    - python-pyudev
+
+  Missing optional dependencies:
+    - python-libevdev
+    - python-pyudev
+
+============================================================
+Package: libwebp
+Arch equivalent: libwebp (1.6.0)
+
+  Missing build dependencies:
+    - cmake
+    - giflib
+    - ninja
+
+  Missing optional dependencies:
+    - libwebp-utils
+
+============================================================
+Package: libxau
+Arch equivalent: libxau (1.0.12)
+
+  Missing build dependencies:
+    - meson
+
+============================================================
+Package: libxcb
+Arch equivalent: libxcb (1.17.0)
+
+  Missing build dependencies:
+    - libxslt
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: libxdmcp
+Arch equivalent: libxdmcp (1.1.5)
+
+  Missing build dependencies:
+    - xorg-util-macros
+
+============================================================
+Package: libxkbcommon
+Arch equivalent: libxkbcommon (1.13.1)
+
+  Missing runtime dependencies:
+    - libxml2
+
+  Missing build dependencies:
+    - bash-completion
+    - doxygen
+    - git
+    - graphviz
+    - libxml2
+    - xorgproto
+
+  Missing optional dependencies:
+    - libxkbcommon-x11
+
+============================================================
+Package: libxml2
+Arch equivalent: libxml2 (2.15.1)
+
+  Missing runtime dependencies:
+    - libicuuc.so
+    - readline
+
+  Missing build dependencies:
+    - docbook-xsl
+    - doxygen
+    - git
+    - meson
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: libxmlb
+Arch equivalent: libxmlb (0.3.24)
+
+  Missing runtime dependencies:
+    - glib2
+    - libstemmer
+
+  Missing build dependencies:
+    - gobject-introspection
+    - gtk-doc
+
+============================================================
+Package: libxslt
+Arch equivalent: libxslt (1.1.45)
+
+  Missing runtime dependencies:
+    - libgcrypt
+    - xz
+
+  Missing build dependencies:
+    - git
+    - python
+
+  Missing optional dependencies:
+    - python
+
+============================================================
+Package: llvm
+Arch equivalent: llvm (21.1.6)
+
+  Missing runtime dependencies:
+    - curl
+    - llvm-libs
+    - perl
+
+  Missing build dependencies:
+    - curl
+    - libedit
+    - python-build
+    - python-installer
+    - python-myst-parser
+    - python-psutil
+    - python-setuptools
+    - python-sphinx
+    - python-wheel
+
+============================================================
+Package: lmdb
+Arch equivalent: lmdb (0.9.33)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: lvm2
+Arch equivalent: lvm2 (2.03.38)
+
+  Missing runtime dependencies:
+    - device-mapper
+    - libaio.so
+    - libblkid.so
+    - libreadline.so
+    - libudev.so
+    - readline
+    - util-linux-libs
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: lz4
+Arch equivalent: lz4 (1.10.0)
+
+  Missing build dependencies:
+    - git
+    - meson
+    - ninja
+
+============================================================
+Package: make
+Arch equivalent: make (4.4.1)
+
+  Missing runtime dependencies:
+    - guile
+
+============================================================
+Package: man-db
+Arch equivalent: man-db (2.13.1)
+
+  Missing runtime dependencies:
+    - gdbm
+    - less
+    - libseccomp
+    - zlib
+
+  Missing build dependencies:
+    - po4a
+
+  Missing optional dependencies:
+    - gzip
+
+============================================================
+Package: mesa
+Arch equivalent: mesa (25.3.1)
+
+  Missing runtime dependencies:
+    - libelf
+    - libglvnd
+    - libx11
+    - libxext
+    - libxshmfence
+    - libxxf86vm
+    - llvm-libs
+    - lm_sensors
+    - spirv-tools
+
+  Missing build dependencies:
+    - cbindgen
+    - clang
+    - cmake
+    - directx-headers
+    - elfutils
+    - glslang
+    - libclc
+    - libdisplay-info
+    - libelf
+    - libglvnd
+    - libpng
+    - libsysprof-capture
+    - libva
+    - libx11
+    - libxext
+    - libxml2
+    - libxrandr
+    - libxshmfence
+    - libxxf86vm
+    - llvm-libs
+    - lm_sensors
+    - python-mako
+    - python-packaging
+    - python-ply
+    - python-sphinx
+    - python-sphinx-hawkmoth
+    - python-yaml
+    - rust
+    - rust-bindgen
+    - spirv-llvm-translator
+    - spirv-tools
+    - systemd
+    - valgrind
+    - vulkan-loader
+    - xcb-util-keysyms
+    - xorgproto
+
+  Missing optional dependencies:
+    - opengl-man-pages
+
+============================================================
+Package: milou
+Arch equivalent: milou (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kirigami
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: modemmanager
+Arch equivalent: modemmanager (1.24.2)
+
+  Missing runtime dependencies:
+    - glib2
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgmodule-2.0.so
+    - libgobject-2.0.so
+    - libgudev-1.0.so
+    - libmbim
+    - libmbim-glib.so
+    - libmm-glib
+    - libmm-glib.so
+    - libqmi
+    - libqmi-glib.so
+    - libqrtr-glib
+    - libsystemd.so
+    - mobile-broadband-provider-info
+    - ppp
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - gtk-doc
+    - vala
+
+  Missing optional dependencies:
+    - usb_modeswitch
+
+============================================================
+Package: mpc
+Arch equivalent: mpc (0.35)
+
+  Missing runtime dependencies:
+    - libmpdclient
+    - libmpdclient.so
+
+  Missing build dependencies:
+    - libmpdclient
+    - meson
+    - python-sphinx
+    - rsync
+
+============================================================
+Package: nano
+Arch equivalent: nano (8.7)
+
+  Missing runtime dependencies:
+    - file
+
+============================================================
+Package: nasm
+Arch equivalent: nasm (3.01)
+
+  Missing runtime dependencies:
+    - zlib
+
+  Missing build dependencies:
+    - asciidoc
+    - diffutils
+    - fontconfig
+    - ghostscript
+    - perl-font-ttf
+    - perl-sort-versions
+    - ttf-roboto
+    - ttf-roboto-mono
+    - xmlto
+
+============================================================
+Package: ncurses
+Arch equivalent: ncurses (6.5)
+
+  Missing build dependencies:
+    - autoconf-archive
+    - git
+
+============================================================
+Package: networkmanager
+Arch equivalent: networkmanager (1.54.3)
+
+  Missing runtime dependencies:
+    - audit
+    - glib2
+    - iproute2
+    - jansson
+    - libmm-glib
+    - libnewt
+    - libnm
+    - libteam
+    - mobile-broadband-provider-info
+    - nspr
+    - nss
+    - readline
+    - wpa_supplicant
+
+  Missing build dependencies:
+    - audit
+    - dhcpcd
+    - dnsmasq
+    - git
+    - glib2
+    - glib2-devel
+    - gobject-introspection
+    - gtk-doc
+    - iproute2
+    - iptables
+    - iwd
+    - jansson
+    - libmm-glib
+    - libnewt
+    - libnvme
+    - libteam
+    - modemmanager
+    - nftables
+    - nspr
+    - nss
+    - openresolv
+    - pacrunner
+    - perl-yaml
+    - ppp
+    - python-gobject
+    - readline
+    - vala
+    - wpa_supplicant
+
+  Missing optional dependencies:
+    - bluez
+    - dnsmasq
+    - firewalld
+    - iptables
+    - iwd
+    - libnvme
+    - nftables
+    - openresolv
+    - pacrunner
+    - ppp
+
+============================================================
+Package: nghttp2
+Arch equivalent: nghttp2 (1.67.1-1)
+
+  Missing runtime dependencies:
+    - c-ares
+    - jansson
+    - jemalloc
+    - libev
+    - libnghttp2
+    - libxml2
+    - python
+    - systemd
+
+============================================================
+Package: ninja
+Arch equivalent: ninja (1.13.2)
+
+  Missing build dependencies:
+    - cmake
+    - gtest
+    - re2c
+
+============================================================
+Package: nodejs
+Arch equivalent: nodejs (25.2.1)
+
+  Missing runtime dependencies:
+    - libnghttp2
+    - libnghttp3
+    - libngtcp2
+    - simdjson
+
+  Missing build dependencies:
+    - git
+    - procps-ng
+
+  Missing optional dependencies:
+    - npm
+
+============================================================
+Package: nspr
+Arch equivalent: nspr (4.38.2)
+
+  Missing build dependencies:
+    - mercurial
+    - zip
+
+============================================================
+Package: nss
+Arch equivalent: nss (3.119.1)
+
+  Missing runtime dependencies:
+    - p11-kit
+
+  Missing build dependencies:
+    - gyp
+    - mercurial
+    - perl
+    - python
+
+============================================================
+Package: opencv
+Arch equivalent: opencv (4.12.0)
+
+  Missing runtime dependencies:
+    - abseil-cpp
+    - cblas
+    - freetype
+    - glib2
+    - gst-plugins-base-libs
+    - harfbuzz
+    - lapack
+    - libdc1394
+    - libglvnd
+    - libjxl
+    - openexr
+    - openjpeg2
+    - protobuf
+    - tbb
+    - verdict
+    - zlib
+
+  Missing build dependencies:
+    - ant
+    - cuda
+    - cudnn
+    - fmt
+    - git
+    - glew
+    - hdf5
+    - java-environment
+    - lapacke
+    - mesa
+    - nlohmann-json
+    - openmpi
+    - pugixml
+    - python-numpy
+    - python-setuptools
+    - qt6-5compat
+    - vtk
+
+  Missing optional dependencies:
+    - glew
+    - hdf5
+    - java-runtime
+    - opencl-icd-loader
+    - opencv-samples
+    - qt6
+    - vtk
+
+============================================================
+Package: openssl
+Arch equivalent: openssl (3.6.0)
+
+  Missing optional dependencies:
+    - ca-certificates
+    - perl
+
+============================================================
+Package: opus
+Arch equivalent: opus (1.6)
+
+  Missing build dependencies:
+    - doxygen
+    - meson
+
+============================================================
+Package: p11-kit
+Arch equivalent: p11-kit (0.25.10)
+
+  Missing runtime dependencies:
+    - libp11-kit
+    - libp11-kit.so
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - gtk-doc
+    - systemd
+
+============================================================
+Package: pango
+Arch equivalent: pango (1.57.0)
+
+  Missing runtime dependencies:
+    - libsysprof-capture
+    - libthai
+    - libx11
+    - libxft
+    - libxrender
+
+  Missing build dependencies:
+    - gi-docgen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - help2man
+    - python-docutils
+
+============================================================
+Package: patch
+Arch equivalent: patch (2.8)
+
+  Missing runtime dependencies:
+    - attr
+
+  Missing build dependencies:
+    - ed
+    - git
+    - python
+
+  Missing optional dependencies:
+    - ed
+
+============================================================
+Package: pciutils
+Arch equivalent: pciutils (3.14.0)
+
+  Missing runtime dependencies:
+    - kmod
+
+  Missing build dependencies:
+    - git
+
+  Missing optional dependencies:
+    - curl
+
+============================================================
+Package: pcre2
+Arch equivalent: pcre2 (10.47)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: perl
+Arch equivalent: perl (5.42.0)
+
+  Missing runtime dependencies:
+    - db5.3
+    - gdbm
+    - libcrypt.so
+    - libxcrypt
+
+  Missing build dependencies:
+    - git
+    - patchutils
+
+============================================================
+Package: pinentry
+Arch equivalent: pinentry (1.3.2)
+
+  Missing runtime dependencies:
+    - glib2
+    - libglib-2.0.so
+    - libncursesw.so
+    - libsecret
+    - libsecret-1.so
+
+  Missing build dependencies:
+    - gcr
+    - gtk2-compat
+    - kf6-kguiaddons
+    - kf6-kwindowsystem
+    - kwayland5
+    - qt5-x11extras
+    - qt6
+
+  Missing optional dependencies:
+    - gcr
+    - kf6-kguiaddons
+    - kf6-kwindowsystem
+    - kwayland5
+    - qt5-x11extras
+
+============================================================
+Package: pipewire
+Arch equivalent: pipewire (1.4.9)
+
+  Missing runtime dependencies:
+    - libdbus-1.so
+    - libglib-2.0.so
+    - libncursesw.so
+    - libpipewire
+    - libpipewire-0.3.so
+    - libreadline.so
+    - libsystemd.so
+    - libudev.so
+    - ncurses
+    - readline
+
+  Missing build dependencies:
+    - avahi
+    - bluez-libs
+    - doxygen
+    - git
+    - glib2-devel
+    - graphviz
+    - gst-plugins-base
+    - jack2
+    - libcamera
+    - libcanberra
+    - libebur128
+    - libfdk-aac
+    - libffado
+    - libfreeaptx
+    - liblc3
+    - libldac
+    - libmysofa
+    - libpulse
+    - libsndfile
+    - libusb
+    - libx11
+    - libxfixes
+    - lilv
+    - ncurses
+    - opus
+    - python-docutils
+    - readline
+    - roc-toolkit
+    - rtkit
+    - sbc
+    - sdl2
+    - valgrind
+    - webrtc-audio-processing-1
+
+  Missing optional dependencies:
+    - gst-plugin-pipewire
+    - pipewire-alsa
+    - pipewire-audio
+    - pipewire-docs
+    - pipewire-ffado
+    - pipewire-jack
+    - pipewire-jack-client
+    - pipewire-libcamera
+    - pipewire-pulse
+    - pipewire-roc
+    - pipewire-session-manager
+    - pipewire-v4l2
+    - pipewire-x11-bell
+    - pipewire-zeroconf
+    - realtime-privileges
+    - rtkit
+
+============================================================
+Package: pixman
+Arch equivalent: pixman (0.46.4)
+
+  Missing build dependencies:
+    - libpng
+
+============================================================
+Package: pkgconf
+Arch equivalent: pkgconf (2.5.1)
+
+  Missing build dependencies:
+    - git
+    - meson
+
+============================================================
+Package: plasma-activities-stats
+Arch equivalent: plasma-activities-stats (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kconfig
+
+============================================================
+Package: plasma-activities
+Arch equivalent: plasma-activities (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kconfig
+    - kf6-kcoreaddons
+
+============================================================
+Package: plasma-desktop
+Arch equivalent: plasma-desktop (6.5.4)
+
+  Missing runtime dependencies:
+    - emoji-font
+    - kf6-attica
+    - kf6-kbookmarks
+    - kf6-kcodecs
+    - kf6-kcompletion
+    - kf6-kconfigwidgets
+    - kf6-kitemmodels
+    - kf6-kitemviews
+    - kf6-kjobwidgets
+    - kf6-knotifyconfig
+    - kf6-kwidgetsaddons
+    - kf6-sonnet
+    - kirigami-addons
+    - kmenuedit
+    - libcanberra
+    - libwacom
+    - libx11
+    - libxcb
+    - libxcursor
+    - libxi
+    - libxkbcommon
+    - polkit-kde-agent
+    - powerdevil
+    - qt6-5compat
+    - sdl2
+    - systemd
+    - systemsettings
+    - wayland
+    - xcb-util-keysyms
+    - xdg-user-dirs
+
+  Missing build dependencies:
+    - intltool
+    - kaccounts-integration
+    - kf6-kdoctools
+    - libibus
+    - packagekit-qt6
+    - scim
+    - wayland-protocols
+    - xf86-input-libinput
+    - xorg-server-devel
+
+  Missing optional dependencies:
+    - bluedevil
+    - glib2
+    - ibus
+    - kaccounts-integration
+    - kscreen
+    - libaccounts-qt
+    - packagekit-qt6
+    - plasma-nm
+    - plasma-pa
+    - scim
+
+============================================================
+Package: plasma-disks
+Arch equivalent: plasma-disks (6.5.4)
+
+  Missing runtime dependencies:
+    - kinfocenter
+
+============================================================
+Package: plasma-firewall
+Arch equivalent: plasma-firewall (6.5.4)
+
+  Missing build dependencies:
+    - python
+
+  Missing optional dependencies:
+    - iproute2
+    - python
+
+============================================================
+Package: plasma-integration
+Arch equivalent: plasma-integration (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcolorscheme
+    - kf6-kcompletion
+    - kf6-kguiaddons
+    - kf6-kservice
+    - kf6-kwidgetsaddons
+    - kf6-qqc2-desktop-style
+    - libxcb
+    - libxcursor
+    - noto-fonts
+    - qqc2-breeze-style
+    - ttf-hack
+    - wayland
+    - xdg-desktop-portal-kde
+
+  Missing build dependencies:
+    - kconfig5
+    - ki18n5
+    - kiconthemes5
+    - kio5
+    - knotifications5
+    - kwayland5
+    - kwindowsystem5
+    - kxmlgui5
+    - plasma-wayland-protocols
+    - qt5-base
+    - qt5-declarative
+    - qt5-quickcontrols2
+    - qt5-wayland
+    - qt5-x11extras
+
+============================================================
+Package: plasma-nm
+Arch equivalent: plasma-nm (6.5.4)
+
+  Missing runtime dependencies:
+    - glib2
+    - kf6-kcolorscheme
+    - kf6-kcompletion
+    - kf6-kdeclarative
+    - kf6-kquickcharts
+    - kf6-kwidgetsaddons
+    - kirigami-addons
+    - libnm
+    - plasma-workspace
+    - qca-qt6
+    - qcoro
+
+  Missing build dependencies:
+    - openconnect
+    - qt6-webengine
+
+  Missing optional dependencies:
+    - openconnect
+    - qt6-webengine
+
+============================================================
+Package: plasma-pa
+Arch equivalent: plasma-pa (6.5.4)
+
+  Missing runtime dependencies:
+    - glib2
+    - kf6-kitemmodels
+    - libpulse
+    - plasma-workspace
+    - pulse-native-provider
+    - pulseaudio-qt
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: plasma-systemmonitor
+Arch equivalent: plasma-systemmonitor (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcrash
+    - kf6-kiconthemes
+    - kf6-kquickcharts
+    - kirigami-addons
+    - ksystemstats
+
+============================================================
+Package: plasma-vault
+Arch equivalent: plasma-vault (6.5.4)
+
+  Missing runtime dependencies:
+    - fuse3
+    - gocryptfs
+    - kf6-kitemmodels
+    - kf6-kservice
+    - kf6-networkmanager-qt
+    - libksysguard
+    - plasma-workspace
+
+============================================================
+Package: plasma-welcome
+Arch equivalent: plasma-welcome (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcmutils
+    - kf6-kjobwidgets
+    - kf6-kuserfeedback
+    - kirigami-addons
+    - plasma-nm
+    - plasma5support
+    - qt6-5compat
+
+============================================================
+Package: plasma-workspace
+Arch equivalent: plasma-workspace (6.5.4)
+
+  Missing runtime dependencies:
+    - accountsservice
+    - appstream-qt
+    - dbus
+    - fontconfig
+    - freetype
+    - icu
+    - kde-cli-tools
+    - kf6-kbookmarks
+    - kf6-kcolorscheme
+    - kf6-kcompletion
+    - kf6-kconfigwidgets
+    - kf6-kded
+    - kf6-kholidays
+    - kf6-kitemmodels
+    - kf6-kjobwidgets
+    - kf6-kquickcharts
+    - kf6-kuserfeedback
+    - kf6-kwidgetsaddons
+    - kio-extras
+    - kio-fuse
+    - kirigami-addons
+    - knighttime
+    - ksystemstats
+    - libcanberra
+    - libice
+    - libkexiv2
+    - libqalculate
+    - libsm
+    - libx11
+    - libxau
+    - libxcb
+    - libxcrypt
+    - libxcursor
+    - libxfixes
+    - libxft
+    - libxtst
+    - milou
+    - ocean-sound-theme
+    - plasma-integration
+    - qt6-5compat
+    - qt6-location
+    - qt6-positioning
+    - qt6-virtualkeyboard
+    - systemd
+    - wayland
+    - xcb-util
+    - xcb-util-cursor
+    - xcb-util-image
+    - xorg-xmessage
+    - xorg-xrdb
+    - xorg-xwayland
+    - zlib
+
+  Missing build dependencies:
+    - kf6-kdoctools
+    - phonon-qt6
+    - plasma-wayland-protocols
+    - qcoro
+
+  Missing optional dependencies:
+    - appmenu-gtk-module
+    - discover
+    - kdepim-addons
+    - kwayland-integration
+    - kwin-x11
+    - plasma-workspace-wallpapers
+    - plasma5-integration
+    - xdg-desktop-portal-gtk
+
+============================================================
+Package: plasma5support
+Arch equivalent: plasma5support (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kholidays
+    - kf6-kidletime
+    - kf6-kjobwidgets
+    - kf6-kunitconversion
+    - libksysguard
+    - libx11
+    - libxfixes
+
+  Missing build dependencies:
+    - gpsd
+    - kf6-networkmanager-qt
+    - plasma-activities
+
+  Missing optional dependencies:
+    - gpsd
+    - kf6-networkmanager-qt
+    - plasma-activities
+
+============================================================
+Package: polkit-kde-agent
+Arch equivalent: polkit-kde-agent (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kirigami
+    - kf6-knotifications
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: polkit
+Arch equivalent: polkit (126)
+
+  Missing runtime dependencies:
+    - expat
+    - glib2
+    - pam
+    - systemd
+
+  Missing build dependencies:
+    - dbus
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - gtk-doc
+    - systemd
+
+============================================================
+Package: power-profiles-daemon
+Arch equivalent: power-profiles-daemon (0.30)
+
+  Missing runtime dependencies:
+    - libgudev
+
+  Missing build dependencies:
+    - bash-completion
+    - git
+    - glib2-devel
+    - python-argparse-manpage
+    - python-shtab
+
+  Missing optional dependencies:
+    - python-gobject
+
+============================================================
+Package: powerdevil
+Arch equivalent: powerdevil (6.5.4)
+
+  Missing runtime dependencies:
+    - ddcutil
+    - kf6-kitemmodels
+    - kf6-kservice
+    - libplasma
+    - libxcb
+    - plasma-workspace
+    - qcoro
+    - systemd
+    - wayland
+
+  Missing build dependencies:
+    - kf6-kdoctools
+    - plasma-wayland-protocols
+
+  Missing optional dependencies:
+    - kinfocenter
+    - power-profiles-daemon
+    - tlp
+
+============================================================
+Package: print-manager
+Arch equivalent: print-manager (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kitemmodels
+    - libcups
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+  Missing optional dependencies:
+    - system-config-printer
+
+============================================================
+Package: procps-ng
+Arch equivalent: procps-ng (4.0.5)
+
+  Missing runtime dependencies:
+    - libncursesw.so
+    - ncurses
+    - systemd
+
+  Missing build dependencies:
+    - gettext
+    - git
+    - po4a
+    - systemd
+
+============================================================
+Package: psmisc
+Arch equivalent: psmisc (23.7)
+
+  Missing runtime dependencies:
+    - ncurses
+
+  Missing build dependencies:
+    - git
+    - po4a
+
+============================================================
+Package: pulseaudio-qt
+Arch equivalent: pulseaudio-qt (1.7.0)
+
+  Missing runtime dependencies:
+    - libpulse
+
+============================================================
+Package: pulseaudio
+Arch equivalent: pulseaudio (17.0+r93+gbe2efb69b)
+
+  Missing runtime dependencies:
+    - fftw
+    - libcap
+    - libice
+    - libltdl
+    - libpulse
+    - libsm
+    - libsoxr
+    - libx11
+    - libxcb
+    - libxtst
+    - orc
+    - rtkit
+    - tdb
+    - webrtc-audio-processing-1
+
+  Missing build dependencies:
+    - attr
+    - avahi
+    - bluez
+    - bluez-libs
+    - check
+    - doxygen
+    - fftw
+    - git
+    - gst-plugins-base
+    - gst-plugins-base-libs
+    - gst-plugins-good
+    - gstreamer
+    - gtk3
+    - jack2
+    - libasyncns
+    - libcap
+    - libice
+    - libltdl
+    - libsm
+    - libsoxr
+    - libx11
+    - libxcb
+    - libxtst
+    - lirc
+    - openssl
+    - orc
+    - python
+    - python-dbus
+    - python-pyqt5
+    - rtkit
+    - sbc
+    - tdb
+    - valgrind
+    - webrtc-audio-processing-1
+    - xmltoman
+
+  Missing optional dependencies:
+    - pulseaudio-alsa
+    - pulseaudio-bluetooth
+    - pulseaudio-equalizer
+    - pulseaudio-jack
+    - pulseaudio-lirc
+    - pulseaudio-rtp
+    - pulseaudio-zeroconf
+
+============================================================
+Package: python
+Arch equivalent: python (3.13.11)
+
+  Missing runtime dependencies:
+    - gdbm
+    - libnsl
+    - libxcrypt
+    - mpdecimal
+    - tzdata
+
+  Missing build dependencies:
+    - bluez-libs
+    - gdb
+    - llvm
+    - sqlite
+    - tk
+    - ttf-font
+    - xorg-server-xvfb
+
+  Missing optional dependencies:
+    - python-pip
+    - python-pipx
+    - python-setuptools
+    - tk
+
+============================================================
+Package: qcoro
+Arch equivalent: qcoro (0.12.0)
+
+  Missing runtime dependencies:
+    - qt6-websockets
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: readline
+Arch equivalent: readline (8.3.003)
+
+  Missing runtime dependencies:
+    - libncursesw.so
+
+============================================================
+Package: rust
+Arch equivalent: rust (1.92.0)
+
+  Missing runtime dependencies:
+    - compiler-rt
+    - libssh2
+    - lld
+    - llvm-libs
+    - zlib
+
+  Missing build dependencies:
+    - aarch64-linux-gnu-gcc
+    - aarch64-linux-gnu-glibc
+    - clang
+    - lib32-gcc-libs
+    - lib32-glibc
+    - libffi
+    - musl
+    - musl-aarch64
+    - perl
+    - rust
+    - wasi-libc
+    - wasm-component-ld
+
+  Missing optional dependencies:
+    - gdb
+    - lldb
+
+============================================================
+Package: sddm-kcm
+Arch equivalent: sddm-kcm (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kirigami
+    - kf6-kwidgetsaddons
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: sddm
+Arch equivalent: sddm (0.21.0)
+
+  Missing runtime dependencies:
+    - libxau
+    - libxcb
+    - pam
+    - ttf-font
+    - xorg-server
+    - xorg-xauth
+
+  Missing build dependencies:
+    - python-docutils
+    - qt5-base
+    - qt5-declarative
+    - qt5-tools
+
+  Missing optional dependencies:
+    - qt5-declarative
+
+============================================================
+Package: sed
+Arch equivalent: sed (4.9)
+
+  Missing runtime dependencies:
+    - acl
+
+  Missing build dependencies:
+    - gettext
+
+============================================================
+Package: shaderc
+Arch equivalent: shaderc (2025.5)
+
+  Missing build dependencies:
+    - asciidoctor
+    - ninja
+
+============================================================
+Package: shadow
+Arch equivalent: shadow (4.18.0)
+
+  Missing runtime dependencies:
+    - acl
+    - attr
+    - audit
+    - libacl.so
+    - libattr.so
+    - libaudit.so
+    - libcrypt.so
+    - libpam.so
+    - libpam_misc.so
+    - pam
+
+  Missing build dependencies:
+    - acl
+    - attr
+    - audit
+    - docbook-xsl
+    - git
+    - itstool
+    - libcap
+    - libxslt
+    - pam
+
+============================================================
+Package: shared-mime-info
+Arch equivalent: shared-mime-info (2.4)
+
+  Missing build dependencies:
+    - docbook-xsl
+    - gettext
+    - git
+    - xmlto
+
+============================================================
+Package: smartmontools
+Arch equivalent: smartmontools (7.5)
+
+  Missing optional dependencies:
+    - s-nail
+
+============================================================
+Package: socat
+Arch equivalent: socat (1.8.1.0)
+
+  Missing runtime dependencies:
+    - libreadline.so
+    - libssl.so
+
+============================================================
+Package: spectacle
+Arch equivalent: spectacle (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcrash
+    - kf6-kjobwidgets
+    - libxcb
+    - qt6-imageformats
+    - qt6-multimedia
+    - wayland
+    - xcb-util
+    - xcb-util-cursor
+    - xcb-util-image
+
+  Missing build dependencies:
+    - kf6-kdoctools
+    - plasma-wayland-protocols
+
+============================================================
+Package: spirv-tools
+Arch equivalent: spirv-tools (1.4.335.0)
+
+  Missing build dependencies:
+    - git
+    - ninja
+
+============================================================
+Package: sqlite
+Arch equivalent: sqlite (3.51.1)
+
+  Missing build dependencies:
+    - tcl
+
+============================================================
+Package: sudo
+Arch equivalent: sudo (1.9.17.p2)
+
+  Missing runtime dependencies:
+    - libcrypto.so
+    - libldap
+    - libssl.so
+    - openssl
+    - pam
+    - zlib
+
+============================================================
+Package: systemd
+Arch equivalent: systemd (258.3)
+
+  Missing runtime dependencies:
+    - acl
+    - audit
+    - cryptsetup
+    - dbus
+    - dbus-units
+    - hwdata
+    - kbd
+    - libacl.so
+    - libaudit.so
+    - libblkid.so
+    - libcap.so
+    - libcrypt.so
+    - libcrypto.so
+    - libcryptsetup.so
+    - libelf
+    - libgcrypt
+    - libidn2
+    - libmount.so
+    - libseccomp
+    - libseccomp.so
+    - libssl.so
+    - libxcrypt
+    - lz4
+    - openssl
+    - pam
+    - pcre2
+    - systemd
+    - xz
+
+  Missing build dependencies:
+    - acl
+    - apparmor
+    - audit
+    - bash-completion
+    - bpf
+    - clang
+    - cryptsetup
+    - curl
+    - docbook-xsl
+    - git
+    - gnutls
+    - intltool
+    - iptables
+    - kexec-tools
+    - lib32-gcc-libs
+    - libarchive
+    - libbpf
+    - libelf
+    - libfido2
+    - libgcrypt
+    - libidn2
+    - libmicrohttpd
+    - libpwquality
+    - libseccomp
+    - libxcrypt
+    - libxkbcommon
+    - libxslt
+    - linux-headers
+    - llvm
+    - lz4
+    - p11-kit
+    - pam
+    - pcre2
+    - python-jinja
+    - python-lxml
+    - python-pefile
+    - python-pyelftools
+    - qrencode
+    - quota-tools
+    - rsync
+    - shadow
+    - systemd
+    - tpm2-tss
+    - xz
+
+  Missing optional dependencies:
+    - apparmor
+    - curl
+    - gnutls
+    - iptables
+    - libarchive
+    - libbpf
+    - libfido2
+    - libmicrohttpd
+    - libp11-kit
+    - libpwquality
+    - polkit
+    - qrencode
+    - quota-tools
+    - systemd-sysvcompat
+    - systemd-ukify
+    - tpm2-tss
+
+============================================================
+Package: systemsettings
+Arch equivalent: systemsettings (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcolorscheme
+    - kf6-kconfigwidgets
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: taglib
+Arch equivalent: taglib (2.1.1)
+
+  Missing build dependencies:
+    - git
+    - utf8cpp
+
+============================================================
+Package: tar
+Arch equivalent: tar (1.35)
+
+  Missing runtime dependencies:
+    - acl
+
+============================================================
+Package: texinfo
+Arch equivalent: texinfo (7.2)
+
+  Missing runtime dependencies:
+    - gzip
+    - ncurses
+
+  Missing optional dependencies:
+    - perl-archive-zip
+
+============================================================
+Package: upower
+Arch equivalent: upower (1.91.0)
+
+  Missing runtime dependencies:
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libimobiledevice
+    - libplist
+
+  Missing build dependencies:
+    - docbook-xsl
+    - git
+    - glib2-devel
+    - gtk-doc
+    - python
+    - usbmuxd
+
+  Missing optional dependencies:
+    - usbmuxd
+
+============================================================
+Package: util-linux
+Arch equivalent: util-linux (2.41.3)
+
+  Missing runtime dependencies:
+    - file
+    - libcap-ng
+    - libcrypt.so
+    - libmagic.so
+    - libncursesw.so
+    - libsystemd.so
+    - libudev.so
+    - libxcrypt
+    - ncurses
+    - pam
+    - readline
+    - shadow
+    - systemd
+    - util-linux-libs
+    - zlib
+
+  Missing build dependencies:
+    - asciidoctor
+    - bash-completion
+    - git
+    - libcap-ng
+    - libxcrypt
+    - meson
+    - po4a
+    - python
+    - sqlite
+    - systemd
+
+  Missing optional dependencies:
+    - words
+
+============================================================
+Package: vala
+Arch equivalent: vala (0.56.18)
+
+  Missing runtime dependencies:
+    - gtk-doc
+    - pkg-config
+    - ttf-font
+
+  Missing build dependencies:
+    - autoconf-archive
+    - git
+    - help2man
+    - libxslt
+    - vala
+
+============================================================
+Package: vlc
+Arch equivalent: vlc (3.0.21)
+
+  Missing runtime dependencies:
+    - vlc-gui-qt
+
+  Missing build dependencies:
+    - a52dec
+    - aalib
+    - abseil-cpp
+    - aom
+    - aribb24
+    - aribb25
+    - avahi
+    - cairo
+    - dav1d
+    - faad2
+    - ffmpeg4.4
+    - flac
+    - fluidsynth
+    - fontconfig
+    - freetype
+    - fribidi
+    - gdk-pixbuf2
+    - glib2
+    - gst-plugins-base-libs
+    - gtk3
+    - harfbuzz
+    - jack
+    - libarchive
+    - libass
+    - libavc1394
+    - libbluray
+    - libcaca
+    - libcddb
+    - libdc1394
+    - libdca
+    - libdvbpsi
+    - libdvdcss
+    - libdvdnav
+    - libdvdread
+    - libglvnd
+    - libgme
+    - libgoom2
+    - libjpeg-turbo
+    - libkate
+    - libmad
+    - libmatroska
+    - libmicrodns
+    - libmodplug
+    - libmpcdec
+    - libmpeg2
+    - libmtp
+    - libnfs
+    - libnotify
+    - libogg
+    - libpng
+    - libproxy
+    - libpulse
+    - librsvg
+    - libsamplerate
+    - libshout
+    - libsoxr
+    - libssh2
+    - libtheora
+    - libtiger
+    - libupnp
+    - libvorbis
+    - libvpx
+    - libx11
+    - libxcb
+    - libxinerama
+    - libxml2
+    - libxpm
+    - lirc
+    - live-media
+    - mesa
+    - mpg123
+    - opus
+    - pcsclite
+    - projectm
+    - protobuf
+    - qt5-base
+    - qt5-svg
+    - qt5-x11extras
+    - sdl12-compat
+    - sdl_image
+    - smbclient
+    - speex
+    - speexdsp
+    - srt
+    - systemd
+    - taglib
+    - twolame
+    - wayland
+    - wayland-protocols
+    - x264
+    - x265
+    - xosd
+    - zlib
+    - zvbi
+
+  Missing optional dependencies:
+    - vlc-gui-ncurses
+    - vlc-gui-skins2
+    - vlc-plugin-aalib
+    - vlc-plugin-aom
+    - vlc-plugin-aribb24
+    - vlc-plugin-aribb25
+    - vlc-plugin-ass
+    - vlc-plugin-avahi
+    - vlc-plugin-bluray
+    - vlc-plugin-caca
+    - vlc-plugin-cddb
+    - vlc-plugin-chromecast
+    - vlc-plugin-dca
+    - vlc-plugin-dvb
+    - vlc-plugin-dvd
+    - vlc-plugin-ffmpeg
+    - vlc-plugin-firewire
+    - vlc-plugin-fluidsynth
+    - vlc-plugin-freetype
+    - vlc-plugin-gme
+    - vlc-plugin-gstreamer
+    - vlc-plugin-jack
+    - vlc-plugin-kate
+    - vlc-plugin-kwallet
+    - vlc-plugin-libsecret
+    - vlc-plugin-lirc
+    - vlc-plugin-live555
+    - vlc-plugin-mad
+    - vlc-plugin-matroska
+    - vlc-plugin-mdns
+    - vlc-plugin-modplug
+    - vlc-plugin-mpeg2
+    - vlc-plugin-mtp
+    - vlc-plugin-musepack
+    - vlc-plugin-nfs
+    - vlc-plugin-notify
+    - vlc-plugin-quicksync
+    - vlc-plugin-samplerate
+    - vlc-plugin-sdl
+    - vlc-plugin-sftp
+    - vlc-plugin-smb
+    - vlc-plugin-soxr
+    - vlc-plugin-srt
+    - vlc-plugin-svg
+    - vlc-plugin-udev
+    - vlc-plugin-upnp
+    - vlc-plugin-x264
+    - vlc-plugin-x265
+    - vlc-plugin-zvbi
+    - vlc-plugins-all
+    - vlc-plugins-extra
+    - vlc-plugins-visualization
+
+============================================================
+Package: wacomtablet
+Arch equivalent: wacomtablet (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kio
+    - kf6-kirigami
+    - kf6-kservice
+    - kf6-ksvg
+    - libxcb
+    - libxi
+    - plasma5support
+
+  Missing build dependencies:
+    - kf6-kdoctools
+
+============================================================
+Package: wayland
+Arch equivalent: wayland (1.24.0)
+
+  Missing runtime dependencies:
+    - default-cursors
+
+  Missing build dependencies:
+    - docbook-xsl
+    - doxygen
+    - graphviz
+    - libxslt
+    - xmlto
+
+============================================================
+Package: wget
+Arch equivalent: wget (1.25.0)
+
+  Missing runtime dependencies:
+    - gnutls
+    - libidn2
+    - libidn2.so
+    - libnettle.so
+    - libpsl.so
+    - libuuid.so
+    - nettle
+    - pcre2
+    - util-linux-libs
+    - zlib
+
+  Missing build dependencies:
+    - autoconf-archive
+    - git
+    - gperf
+    - perl
+
+  Missing optional dependencies:
+    - ca-certificates
+
+============================================================
+Package: wireplumber
+Arch equivalent: wireplumber (0.5.12)
+
+  Missing runtime dependencies:
+    - libgio-2.0.so
+    - libglib-2.0.so
+    - libgobject-2.0.so
+    - libpipewire
+    - libpipewire-0.3.so
+    - libsystemd.so
+    - libwireplumber
+
+  Missing build dependencies:
+    - doxygen
+    - git
+    - glib2-devel
+    - gobject-introspection
+    - graphviz
+    - libpipewire
+    - python-breathe
+    - python-lxml
+    - python-sphinx
+    - python-sphinx_rtd_theme
+
+  Missing optional dependencies:
+    - wireplumber-docs
+
+============================================================
+Package: x264
+Arch equivalent: x264 (0.165.r3222.b35605a)
+
+  Missing runtime dependencies:
+    - liblsmash.so
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Package: x265
+Arch equivalent: x265 (4.1)
+
+  Missing build dependencies:
+    - git
+    - ninja
+
+============================================================
+Package: xcb-util-cursor
+Arch equivalent: xcb-util-cursor (0.1.6)
+
+  Missing build dependencies:
+    - xorgproto
+
+============================================================
+Package: xcb-util-image
+Arch equivalent: xcb-util-image (0.4.1)
+
+  Missing build dependencies:
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: xcb-util-keysyms
+Arch equivalent: xcb-util-keysyms (0.4.1)
+
+  Missing build dependencies:
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: xcb-util-renderutil
+Arch equivalent: xcb-util-renderutil (0.3.10)
+
+  Missing build dependencies:
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: xcb-util-wm
+Arch equivalent: xcb-util-wm (0.4.2)
+
+  Missing build dependencies:
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: xcb-util
+Arch equivalent: xcb-util (0.4.1)
+
+  Missing build dependencies:
+    - gperf
+    - xorg-util-macros
+    - xorgproto
+
+============================================================
+Package: xdg-desktop-portal-kde
+Arch equivalent: xdg-desktop-portal-kde (6.5.4)
+
+  Missing runtime dependencies:
+    - kf6-kcrash
+    - kf6-kiconthemes
+    - kf6-kitemviews
+    - kio-fuse
+    - kirigami-addons
+    - libxkbcommon
+    - plasma-workspace
+
+  Missing build dependencies:
+    - plasma-wayland-protocols
+    - wayland-protocols
+
+============================================================
+Package: xdg-desktop-portal
+Arch equivalent: xdg-desktop-portal (1.20.3)
+
+  Missing runtime dependencies:
+    - gdk-pixbuf2
+    - gst-plugins-base-libs
+    - gstreamer
+    - libgudev
+    - libpipewire
+    - rtkit
+
+  Missing build dependencies:
+    - docbook-xsl
+    - flatpak
+    - git
+    - glib2-devel
+    - gst-plugins-good
+    - libportal
+    - python-dbus
+    - python-dbusmock
+    - python-docutils
+    - python-gobject
+    - python-pytest
+    - python-sphinx
+    - python-sphinx-copybutton
+    - python-sphinx-furo
+    - python-sphinxext-opengraph
+    - umockdev
+    - xmlto
+
+  Missing optional dependencies:
+    - xdg-desktop-portal-impl
+
+============================================================
+Package: xf86-input-evdev
+Arch equivalent: xf86-input-evdev (2.11.0)
+
+  Missing runtime dependencies:
+    - systemd
+
+  Missing build dependencies:
+    - X-ABI-XINPUT_VERSION
+    - xorg-server-devel
+    - xorgproto
+
+============================================================
+Package: xf86-input-libinput
+Arch equivalent: xf86-input-libinput (1.5.0)
+
+  Missing build dependencies:
+    - X-ABI-XINPUT_VERSION
+    - libx11
+    - libxi
+    - xorg-server-devel
+    - xorgproto
+
+============================================================
+Package: xf86-input-wacom
+Arch equivalent: xf86-input-wacom (1.2.4)
+
+  Missing runtime dependencies:
+    - libx11
+    - libxi
+    - libxinerama
+    - libxrandr
+    - systemd
+
+  Missing build dependencies:
+    - X-ABI-XINPUT_VERSION
+    - gobject-introspection
+    - meson
+    - python-attrs
+    - python-gobject
+    - python-libevdev
+    - python-pytest
+    - python-yaml
+    - xorg-server-devel
+
+============================================================
+Package: xorg-server
+Arch equivalent: xorg-server (21.1.21)
+
+  Missing runtime dependencies:
+    - dbus
+    - libgl
+    - libpciaccess
+    - libtirpc
+    - libunwind
+    - libxau
+    - libxcvt
+    - libxdmcp
+    - libxfont2
+    - libxshmfence
+    - nettle
+    - systemd
+    - xf86-input-libinput
+    - xorg-server-common
+
+  Missing build dependencies:
+    - git
+    - libpciaccess
+    - libunwind
+    - libx11
+    - libxaw
+    - libxcvt
+    - libxfont2
+    - libxi
+    - libxmu
+    - libxrender
+    - libxres
+    - libxshmfence
+    - libxtst
+    - libxv
+    - mesa-libgl
+    - systemd
+    - xcb-util
+    - xcb-util-image
+    - xcb-util-keysyms
+    - xcb-util-renderutil
+    - xcb-util-wm
+    - xorg-font-util
+    - xorg-util-macros
+    - xorg-xkbcomp
+    - xtrans
+
+============================================================
+Package: xz
+Arch equivalent: xz (5.8.1)
+
+  Missing build dependencies:
+    - doxygen
+    - git
+    - po4a
+
+============================================================
+Package: zstd
+Arch equivalent: zstd (1.5.7)
+
+  Missing runtime dependencies:
+    - lz4
+    - xz
+    - zlib
+
+  Missing build dependencies:
+    - cmake
+    - gtest
+    - ninja
+
+============================================================
+Package: zxing-cpp
+Arch equivalent: zxing-cpp (2.3.0)
+
+  Missing build dependencies:
+    - git
+
+============================================================
+Summary:
+  Packages checked: 451
+  Packages with issues: 329
+  Total missing dependencies: 3730

@@ -28,6 +28,7 @@ pkgconf = ">= 1.0"
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
+systemd = ">= 255"
 
 [optional_depends]
 

@@ -64,6 +64,7 @@ libinput = ">= 1.25"
 lcms2 = ">= 2.16"
 pipewire = ">= 1.0"
 pkgconf = ">= 1.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
@@ -105,8 +106,27 @@ libxkbcommon = ">= 1.6"
 libinput = ">= 1.25"
 lcms2 = ">= 2.16"
 pipewire = ">= 1.0"
+aurorae = ">= 1.0"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kguiaddons = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kquickcharts = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
+knighttime = ">= 1.0"
+libcanberra = ">= 1.0"
+libdisplay-info = ">= 1.0"
+libei = ">= 1.0"
+libepoxy = ">= 1.0"
+libqaccessibilityclient-qt6 = ">= 1.0"
+libxcvt = ">= 1.0"
+systemd = ">= 255"
+wireplumber = ">= 1.0"
+xcb-util-keysyms = ">= 1.0"
+xcb-util-wm = ">= 1.0"
 
 [optional_depends]
+plasma-keyboard = ">= 1.0"
 
 [environment]
 

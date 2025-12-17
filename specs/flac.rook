@@ -22,6 +22,8 @@ source0 = { url = "https://downloads.xiph.org/releases/flac/flac-1.5.0.tar.xz", 
 gcc = ">= 10.0"
 make = ">= 4.0"
 libogg = ">= 1.3"
+nasm = ">= 1.0"
+pandoc-cli = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

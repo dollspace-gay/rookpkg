@@ -29,6 +29,7 @@ zxing-cpp = ">= 2.0"
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
 zxing-cpp = ">= 2.0"
+libdmtx = ">= 1.0"
 
 [optional_depends]
 

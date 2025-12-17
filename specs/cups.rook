@@ -21,6 +21,10 @@ source0 = { url = "https://github.com/OpenPrinting/cups/releases/download/v2.4.1
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+acl = ">= 2.3"
+cups-filters = ">= 1.0"
+libpaper = ">= 1.0"
+linux-pam = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -29,8 +33,15 @@ libusb = ">= 1.0"
 dbus = ">= 1.14"
 colord = ">= 1.4"
 systemd = ">= 256"
+acl = ">= 2.3"
+cups-filters = ">= 1.0"
+libpaper = ">= 1.0"
+linux-pam = ">= 1.0"
 
 [optional_depends]
+cups-browsed = ">= 1.0"
+ipp-usb = ">= 1.0"
+logrotate = ">= 1.0"
 
 [environment]
 

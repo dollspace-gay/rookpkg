@@ -56,6 +56,13 @@ plasma-activities = ">= 6.2"
 libplasma = ">= 6.2"
 libwacom = ">= 2.10"
 xf86-input-wacom = ">= 1.2"
+kf6-kio = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kservice = ">= 1.0"
+kf6-ksvg = ">= 1.0"
+libxcb = ">= 1.16"
+libxi = ">= 1.8"
+plasma5support = ">= 1.0"
 
 [optional_depends]
 

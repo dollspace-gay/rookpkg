@@ -25,6 +25,13 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 libevdev = ">= 1.11"
 mtdev = ">= 1.1"
+cairo = ">= 1.18"
+glib2 = ">= 2.78"
+gtk4 = ">= 4.12"
+libx11 = ">= 1.8"
+python = ">= 3.12"
+wayland = ">= 1.22"
+wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -32,8 +39,10 @@ libevdev = ">= 1.11"
 mtdev = ">= 1.1"
 systemd = ">= 250"
 libwacom = ">= 2.0"
+lua = ">= 1.0"
 
 [optional_depends]
+libinput-tools = ">= 1.0"
 
 [environment]
 

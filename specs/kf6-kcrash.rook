@@ -32,8 +32,10 @@ glibc = ">= 2.39"
 qt6 = ">= 6.5"
 kf6-kcoreaddons = ">= 6.17"
 kf6-kwindowsystem = ">= 6.17"
+libx11 = ">= 1.8"
 
 [optional_depends]
+drkonqi = ">= 1.0"
 
 [environment]
 

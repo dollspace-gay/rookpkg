@@ -24,6 +24,9 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 libidn2 = ">= 2.0"
 libunistring = ">= 1.0"
+libxslt = ">= 1.1"
+publicsuffix-list = ">= 1.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"

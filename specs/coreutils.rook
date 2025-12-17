@@ -25,9 +25,15 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 autoconf = ">= 2.69"
 automake = ">= 1.15"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
+acl = ">= 2.3"
+attr = ">= 2.5"
+gmp = ">= 1.0"
+libcap = ">= 2.69"
+openssl = ">= 3.0"
 
 [optional_depends]
 

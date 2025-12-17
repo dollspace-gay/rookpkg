@@ -69,6 +69,8 @@ kf6-kwindowsystem = ">= 6.0"
 kf6-kxmlgui = ">= 6.0"
 plasma-activities = ">= 6.2"
 plasma-activities-stats = ">= 6.2"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kconfigwidgets = ">= 1.0"
 
 [optional_depends]
 

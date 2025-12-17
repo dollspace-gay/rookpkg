@@ -25,6 +25,7 @@ glslang = ">= 15.0"
 spirv-tools = ">= 1.4.303"
 spirv-headers = ">= 1.4.303"
 python = ">= 3.11"
+asciidoctor = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

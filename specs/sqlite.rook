@@ -22,6 +22,7 @@ source0 = { url = "https://www.sqlite.org/2025/sqlite-autoconf-3500400.tar.gz", 
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+tcl = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

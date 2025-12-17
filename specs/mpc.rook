@@ -24,11 +24,13 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 gmp = ">= 6.0"
 mpfr = ">= 4.0"
+libmpdclient = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 gmp = ">= 6.0"
 mpfr = ">= 4.0"
+libmpdclient = ">= 1.0"
 
 [optional_depends]
 

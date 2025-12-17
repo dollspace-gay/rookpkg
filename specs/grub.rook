@@ -24,13 +24,30 @@ make = ">= 4.0"
 flex = ">= 2.6"
 bison = ">= 3.0"
 python = ">= 3.6"
+autogen = ">= 1.0"
+device-mapper = ">= 1.0"
+freetype = ">= 2.13"
+fuse3 = ">= 1.0"
+gettext = ">= 0.22"
+sdl = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
+device-mapper = ">= 1.0"
+gettext = ">= 0.22"
 
 [optional_depends]
 xz = ">= 5.0"
 lvm2 = ">= 2.0"
+dosfstools = ">= 1.0"
+efibootmgr = ">= 1.0"
+freetype = ">= 2.13"
+fuse3 = ">= 1.0"
+libisoburn = ">= 1.0"
+lzop = ">= 1.0"
+mtools = ">= 1.0"
+os-prober = ">= 1.0"
+sdl = ">= 1.0"
 
 [environment]
 

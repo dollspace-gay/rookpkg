@@ -21,6 +21,7 @@ source0 = { url = "https://www.kernel.org/pub/linux/utils/cryptsetup/v2.8/crypts
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+asciidoctor = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -29,6 +30,12 @@ popt = ">= 1.19"
 json-c = ">= 0.17"
 openssl = ">= 3.3"
 argon2 = ">= 20190702"
+device-mapper = ">= 1.0"
+libblkid = ">= 1.0"
+libdevmapper = ">= 1.0"
+libjson-c = ">= 1.0"
+libuuid = ">= 1.0"
+util-linux = ">= 1.0"
 
 [optional_depends]
 

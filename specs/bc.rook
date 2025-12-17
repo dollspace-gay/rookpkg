@@ -24,6 +24,7 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+readline = ">= 8.2"
 
 [optional_depends]
 

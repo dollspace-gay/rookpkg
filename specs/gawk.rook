@@ -24,6 +24,7 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+mpfr = ">= 1.0"
 
 [optional_depends]
 

@@ -46,6 +46,13 @@ kf6-ki18n = ">= 6.0"
 kf6-kiconthemes = ">= 6.0"
 kf6-kio = ">= 6.0"
 kf6-kxmlgui = ">= 6.0"
+kf6-kcompletion = ">= 1.0"
+kf6-kcrash = ">= 1.0"
+kf6-kitemviews = ">= 1.0"
+kf6-kservice = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
+kf6-kwindowsystem = ">= 1.0"
+kf6-sonnet = ">= 1.0"
 
 [optional_depends]
 

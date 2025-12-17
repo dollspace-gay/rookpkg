@@ -24,6 +24,11 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+jansson = ">= 1.0"
+jemalloc = ">= 1.0"
+libev = ">= 1.0"
+python = ">= 3.12"
+systemd = ">= 255"
 
 [optional_depends]
 openssl = ">= 3.0"

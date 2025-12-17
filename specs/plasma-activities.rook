@@ -27,6 +27,8 @@ extra-cmake-modules = ">= 6.0"
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.7"
+kf6-kconfig = ">= 1.0"
+kf6-kcoreaddons = ">= 1.0"
 
 [optional_depends]
 

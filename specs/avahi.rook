@@ -24,16 +24,23 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 glib = ">= 2.70"
 libdaemon = ">= 0.14"
+glib2 = ">= 2.78"
+libevent = ">= 2.1"
 
 [depends]
 glibc = ">= 2.39"
 glib = ">= 2.70"
 libdaemon = ">= 0.14"
+expat = ">= 2.6"
+gdbm = ">= 1.0"
+glib2 = ">= 2.78"
+libcap = ">= 2.69"
 
 [optional_depends]
 dbus = ">= 1.12"
 systemd = ">= 250"
 gtk3 = ">= 3.24"
+libevent = ">= 2.1"
 
 [environment]
 

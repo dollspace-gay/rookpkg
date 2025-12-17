@@ -46,6 +46,12 @@ kf6-kirigami = ">= 6.0"
 kf6-kwidgetsaddons = ">= 6.0"
 plasma-activities = ">= 6.2"
 libplasma = ">= 6.2"
+fuse3 = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kservice = ">= 1.0"
+kf6-networkmanager-qt = ">= 1.0"
+libksysguard = ">= 1.0"
+plasma-workspace = ">= 1.0"
 
 [optional_depends]
 cryfs = ">= 0.11"

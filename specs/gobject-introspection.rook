@@ -24,12 +24,15 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 python = ">= 3.11"
 glib2 = ">= 2.80"
+cairo = ">= 1.18"
 
 [depends]
 glibc = ">= 2.39"
 glib2 = ">= 2.80"
 python = ">= 3.11"
 libffi = ">= 3.4"
+gobject-introspection-runtime = ">= 1.0"
+libgirepository = ">= 1.0"
 
 [optional_depends]
 

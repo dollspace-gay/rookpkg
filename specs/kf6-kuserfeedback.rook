@@ -24,12 +24,14 @@ cmake = ">= 3.20"
 extra-cmake-modules = ">= 6.17"
 qt6 = ">= 6.5"
 pkgconf = ">= 1.0"
+qt6-charts = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
 
 [optional_depends]
+qt6-charts = ">= 1.0"
 
 [environment]
 

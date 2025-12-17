@@ -27,6 +27,7 @@ glib = ">= 2.70"
 [depends]
 glibc = ">= 2.39"
 glib = ">= 2.70"
+glib2 = ">= 2.78"
 
 [optional_depends]
 

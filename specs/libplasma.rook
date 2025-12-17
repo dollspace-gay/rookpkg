@@ -38,6 +38,7 @@ kf6-ksvg = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 plasma-activities = ">= 6.2"
 pkgconf = ">= 1.0"
+plasma-wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -55,6 +56,13 @@ kf6-kpackage = ">= 6.0"
 kf6-ksvg = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 plasma-activities = ">= 6.2"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kglobalaccel = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
+libglvnd = ">= 1.0"
+libx11 = ">= 1.8"
+libxcb = ">= 1.16"
+wayland = ">= 1.22"
 
 [optional_depends]
 

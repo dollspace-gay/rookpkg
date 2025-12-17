@@ -21,9 +21,11 @@ source0 = { url = "https://ftp.gnu.org/gnu/patch/patch-2.8.tar.xz", sha256 = "f8
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
+attr = ">= 2.5"
 
 [optional_depends]
 

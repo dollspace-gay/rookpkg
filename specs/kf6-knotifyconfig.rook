@@ -37,6 +37,7 @@ kf6-kconfig = ">= 6.17"
 kf6-ki18n = ">= 6.17"
 kf6-kio = ">= 6.17"
 kf6-knotifications = ">= 6.17"
+libcanberra = ">= 1.0"
 
 [optional_depends]
 

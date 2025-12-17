@@ -56,6 +56,13 @@ kf6-kwallet = ">= 6.0"
 kf6-kwidgetsaddons = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 kf6-syntax-highlighting = ">= 6.0"
+gdb = ">= 1.0"
+kf6-kcmutils = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+polkit-qt6 = ">= 1.0"
+python = ">= 3.12"
+systemd = ">= 255"
 
 [optional_depends]
 

@@ -23,10 +23,13 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 mesa = ">= 24.0"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"
 mesa = ">= 24.0"
+libglvnd = ">= 1.0"
+libx11 = ">= 1.8"
 
 [optional_depends]
 

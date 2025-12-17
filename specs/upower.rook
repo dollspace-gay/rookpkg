@@ -23,6 +23,8 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 gobject-introspection = ">= 1.80"
+python = ">= 3.12"
+usbmuxd = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -31,8 +33,11 @@ libgudev = ">= 238"
 dbus = ">= 1.14"
 polkit = ">= 124"
 systemd = ">= 256"
+libimobiledevice = ">= 1.0"
+libplist = ">= 1.0"
 
 [optional_depends]
+usbmuxd = ">= 1.0"
 
 [environment]
 

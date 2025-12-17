@@ -25,8 +25,10 @@ make = ">= 4.0"
 [depends]
 glibc = ">= 2.39"
 hwdata = ">= 0.385"
+kmod = ">= 1.0"
 
 [optional_depends]
+curl = ">= 8.0"
 
 [environment]
 

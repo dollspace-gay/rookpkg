@@ -21,11 +21,13 @@ source0 = { url = "https://ftp.gnu.org/gnu/gzip/gzip-1.14.tar.xz", sha256 = "01a
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+python = ">= 3.12"
 
 [depends]
 glibc = ">= 2.39"
 
 [optional_depends]
+diffutils = ">= 1.0"
 
 [environment]
 

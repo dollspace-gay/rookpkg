@@ -62,6 +62,14 @@ kwayland = ">= 6.2"
 layer-shell-qt = ">= 6.2"
 libkscreen = ">= 6.2"
 linux-pam = ">= 1.6"
+kf6-kio = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+libplasma = ">= 1.0"
+libx11 = ">= 1.8"
+libxcb = ">= 1.16"
+libxi = ">= 1.8"
+wayland = ">= 1.22"
+xcb-util-keysyms = ">= 1.0"
 
 [optional_depends]
 

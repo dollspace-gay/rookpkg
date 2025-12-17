@@ -27,6 +27,7 @@ m4 = ">= 1.4"
 [depends]
 glibc = ">= 2.39"
 m4 = ">= 1.4"
+gettext = ">= 0.22"
 
 [optional_depends]
 

@@ -27,6 +27,7 @@ libtool = ">= 2.4"
 
 [depends]
 glibc = ">= 2.39"
+libnsl = ">= 1.0"
 
 [optional_depends]
 

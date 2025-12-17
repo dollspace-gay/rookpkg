@@ -25,6 +25,12 @@ mpfr = ">= 4.2"
 mpc = ">= 1.3"
 zlib = ">= 1.2"
 make = ">= 4.0"
+gcc-ada = ">= 1.0"
+gcc-d = ">= 1.0"
+libisl = ">= 1.0"
+libmpc = ">= 1.0"
+python = ">= 3.12"
+zstd = ">= 1.5"
 
 [depends]
 glibc = ">= 2.39"
@@ -33,6 +39,9 @@ gmp = ">= 6.3"
 mpfr = ">= 4.2"
 mpc = ">= 1.3"
 zlib = ">= 1.2"
+libisl = ">= 1.0"
+libmpc = ">= 1.0"
+zstd = ">= 1.5"
 
 [optional_depends]
 

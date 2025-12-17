@@ -22,12 +22,17 @@ source0 = { url = "https://github.com/linux-nvme/libnvme/archive/v1.15/libnvme-1
 gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
+python = ">= 3.12"
+swig = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 json-c = ">= 0.17"
 openssl = ">= 3.3"
 systemd = ">= 256"
+dbus = ">= 1.14"
+keyutils = ">= 1.0"
+liburing = ">= 1.0"
 
 [optional_depends]
 

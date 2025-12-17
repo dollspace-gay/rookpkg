@@ -24,9 +24,11 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+openssl = ">= 3.0"
 
 [optional_depends]
 systemd = ">= 250"
+openresolv = ">= 1.0"
 
 [environment]
 

@@ -28,6 +28,7 @@ pkgconf = ">= 1.0"
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
+kf6-kirigami = ">= 1.0"
 
 [optional_depends]
 

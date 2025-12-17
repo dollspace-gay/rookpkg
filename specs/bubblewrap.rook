@@ -22,6 +22,7 @@ source0 = { url = "https://github.com/containers/bubblewrap/releases/download/v0
 gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
+libxslt = ">= 1.1"
 
 [depends]
 glibc = ">= 2.39"

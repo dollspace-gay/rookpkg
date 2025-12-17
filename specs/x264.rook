@@ -25,6 +25,7 @@ nasm = ">= 2.15"
 
 [depends]
 glibc = ">= 2.39"
+liblsmash = ">= 1.0"
 
 [optional_depends]
 ffmpeg = ">= 7.0"

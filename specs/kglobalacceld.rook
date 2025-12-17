@@ -44,6 +44,10 @@ kf6-kglobalaccel = ">= 6.0"
 kf6-kio = ">= 6.0"
 kf6-kservice = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
+kf6-kjobwidgets = ">= 1.0"
+libx11 = ">= 1.8"
+libxcb = ">= 1.16"
+xcb-util-keysyms = ">= 1.0"
 
 [optional_depends]
 

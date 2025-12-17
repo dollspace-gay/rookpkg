@@ -29,6 +29,11 @@ zlib = ">= 1.0"
 bzip2 = ">= 1.0"
 xz = ">= 5.0"
 openssl = ">= 3.0"
+bluez = ">= 5.72"
+gdb = ">= 1.0"
+tk = ">= 1.0"
+ttf-font = ">= 1.0"
+xorg-server-xvfb = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -38,11 +43,16 @@ zlib = ">= 1.0"
 bzip2 = ">= 1.0"
 xz = ">= 5.0"
 openssl = ">= 3.0"
+gdbm = ">= 1.0"
+libnsl = ">= 1.0"
+libxcrypt = ">= 1.0"
+mpdecimal = ">= 1.0"
 
 [optional_depends]
 readline = ">= 8.0"
 ncurses = ">= 6.0"
 sqlite = ">= 3.0"
+tk = ">= 1.0"
 
 [environment]
 

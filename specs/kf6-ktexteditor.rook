@@ -46,6 +46,16 @@ kf6-kparts = ">= 6.17"
 kf6-sonnet = ">= 6.17"
 kf6-syntax-highlighting = ">= 6.17"
 kf6-ktextwidgets = ">= 6.17"
+editorconfig-core-c = ">= 1.0"
+kf6-kauth = ">= 1.0"
+kf6-kcodecs = ">= 1.0"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kcompletion = ">= 1.0"
+kf6-kconfigwidgets = ">= 1.0"
+kf6-kcoreaddons = ">= 1.0"
+kf6-kitemviews = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
+kf6-kxmlgui = ">= 1.0"
 
 [optional_depends]
 

@@ -23,16 +23,28 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 libgpg-error = ">= 1.46"
 libassuan = ">= 2.5"
+gcr = ">= 1.0"
+gtk2-compat = ">= 1.0"
+kf6-kguiaddons = ">= 1.0"
+kf6-kwindowsystem = ">= 1.0"
+kwayland5 = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 libgpg-error = ">= 1.46"
 libassuan = ">= 2.5"
 ncurses = ">= 6.0"
+glib2 = ">= 2.78"
+libsecret = ">= 0.21"
+libsecret-1 = ">= 1.0"
 
 [optional_depends]
 gtk3 = ">= 3.24"
 qt6 = ">= 6.0"
+gcr = ">= 1.0"
+kf6-kguiaddons = ">= 1.0"
+kf6-kwindowsystem = ">= 1.0"
+kwayland5 = ">= 1.0"
 
 [environment]
 

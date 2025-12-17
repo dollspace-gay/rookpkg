@@ -37,6 +37,10 @@ kf6-kcoreaddons = ">= 6.0"
 kf6-ki18n = ">= 6.0"
 pipewire = ">= 1.0"
 ffmpeg = ">= 6.0"
+libdrm = ">= 2.4"
+libepoxy = ">= 1.0"
+libva = ">= 1.0"
+mesa = ">= 24.0"
 
 [optional_depends]
 

@@ -22,6 +22,7 @@ source0 = { url = "https://archive.mozilla.org/pub/nspr/releases/v4.37/src/nspr-
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+zip = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

@@ -23,6 +23,8 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 gobject-introspection = ">= 1.80"
+umockdev = ">= 1.0"
+vala = ">= 0.56"
 
 [depends]
 glibc = ">= 2.39"

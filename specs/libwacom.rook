@@ -24,6 +24,7 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 libgudev = ">= 230"
 libevdev = ">= 1.11"
+libxml2 = ">= 2.12"
 
 [depends]
 glibc = ">= 2.39"

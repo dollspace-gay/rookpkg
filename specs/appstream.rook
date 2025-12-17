@@ -23,6 +23,8 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 gobject-introspection = ">= 1.80"
+qt6 = ">= 6.6"
+vala = ">= 0.56"
 
 [depends]
 glibc = ">= 2.39"
@@ -32,6 +34,13 @@ libyaml = ">= 0.2"
 curl = ">= 8.9"
 lmdb = ">= 0.9"
 systemd = ">= 256"
+cairo = ">= 1.18"
+fontconfig = ">= 2.14"
+freetype = ">= 2.13"
+gdk-pixbuf2 = ">= 2.42"
+librsvg = ">= 2.58"
+pango = ">= 1.52"
+zstd = ">= 1.5"
 
 [optional_depends]
 

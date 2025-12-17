@@ -22,6 +22,7 @@ source0 = { url = "https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz", sha256 =
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+autoconf-archive = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

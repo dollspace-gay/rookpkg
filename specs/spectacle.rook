@@ -48,6 +48,7 @@ layer-shell-qt = ">= 6.2"
 opencv = ">= 4.8"
 zxing-cpp = ">= 2.2"
 pkgconf = ">= 1.0"
+plasma-wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -74,6 +75,13 @@ kf6-prison = ">= 6.0"
 kpipewire = ">= 6.2"
 layer-shell-qt = ">= 6.2"
 opencv = ">= 4.8"
+kf6-kcrash = ">= 1.0"
+kf6-kjobwidgets = ">= 1.0"
+libxcb = ">= 1.16"
+wayland = ">= 1.22"
+xcb-util = ">= 1.0"
+xcb-util-cursor = ">= 1.0"
+xcb-util-image = ">= 1.0"
 
 [optional_depends]
 zxing-cpp = ">= 2.2"

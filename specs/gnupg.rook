@@ -26,6 +26,12 @@ libgcrypt = ">= 1.9"
 libassuan = ">= 2.5"
 libksba = ">= 1.6"
 npth = ">= 1.6"
+bzip2 = ">= 1.0"
+fig2dev = ">= 1.0"
+imagemagick = ">= 1.0"
+librsvg = ">= 2.58"
+pcsclite = ">= 1.0"
+readline = ">= 8.2"
 
 [depends]
 glibc = ">= 2.39"
@@ -35,11 +41,21 @@ libassuan = ">= 2.5"
 libksba = ">= 1.6"
 npth = ">= 1.6"
 pinentry = ">= 1.0"
+bzip2 = ">= 1.0"
+gnutls = ">= 1.0"
+libbz2 = ">= 1.0"
+libldap = ">= 1.0"
+libnpth = ">= 1.0"
+libreadline = ">= 1.0"
+readline = ">= 8.2"
+tpm2-tss = ">= 1.0"
+zlib = ">= 1.3"
 
 [optional_depends]
 openldap = ">= 2.4"
 libusb = ">= 1.0"
 sqlite = ">= 3.0"
+pcsclite = ">= 1.0"
 
 [environment]
 

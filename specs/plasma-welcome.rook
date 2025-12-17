@@ -56,6 +56,12 @@ kf6-ksvg = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 plasma-activities = ">= 6.2"
 libplasma = ">= 6.2"
+kf6-kcmutils = ">= 1.0"
+kf6-kjobwidgets = ">= 1.0"
+kf6-kuserfeedback = ">= 1.0"
+kirigami-addons = ">= 1.0"
+plasma-nm = ">= 1.0"
+plasma5support = ">= 1.0"
 
 [optional_depends]
 

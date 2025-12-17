@@ -28,6 +28,8 @@ glibc = ">= 2.39"
 zlib = ">= 1.2"
 xz = ">= 5.0"
 icu = ">= 74.0"
+libicuuc = ">= 1.0"
+readline = ">= 8.2"
 
 [optional_depends]
 

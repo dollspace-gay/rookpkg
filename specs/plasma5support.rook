@@ -34,6 +34,9 @@ kf6-kservice = ">= 6.0"
 kf6-solid = ">= 6.0"
 libplasma = ">= 6.2"
 pkgconf = ">= 1.0"
+gpsd = ">= 1.0"
+kf6-networkmanager-qt = ">= 1.0"
+plasma-activities = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -47,8 +50,18 @@ kf6-knotifications = ">= 6.0"
 kf6-kservice = ">= 6.0"
 kf6-solid = ">= 6.0"
 libplasma = ">= 6.2"
+kf6-kholidays = ">= 1.0"
+kf6-kidletime = ">= 1.0"
+kf6-kjobwidgets = ">= 1.0"
+kf6-kunitconversion = ">= 1.0"
+libksysguard = ">= 1.0"
+libx11 = ">= 1.8"
+libxfixes = ">= 6.0"
 
 [optional_depends]
+gpsd = ">= 1.0"
+kf6-networkmanager-qt = ">= 1.0"
+plasma-activities = ">= 1.0"
 
 [environment]
 

@@ -46,6 +46,8 @@ kf6-kiconthemes = ">= 6.0"
 kf6-kwidgetsaddons = ">= 6.0"
 kf6-kwindowsystem = ">= 6.0"
 polkit-qt6 = ">= 0.175"
+kf6-kirigami = ">= 1.0"
+kf6-knotifications = ">= 1.0"
 
 [optional_depends]
 

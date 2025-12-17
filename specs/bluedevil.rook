@@ -58,8 +58,12 @@ kf6-kwindowsystem = ">= 6.0"
 kf6-bluez-qt = ">= 6.0"
 libplasma = ">= 6.2"
 bluez = ">= 5.70"
+kf6-kdeclarative = ">= 1.0"
+kf6-kservice = ">= 1.0"
 
 [optional_depends]
+bluez-obex = ">= 1.0"
+pulseaudio-bluetooth = ">= 1.0"
 
 [environment]
 

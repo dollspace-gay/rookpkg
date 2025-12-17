@@ -22,6 +22,10 @@ source0 = { url = "https://github.com/flatpak/xdg-desktop-portal/releases/downlo
 gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
+flatpak = ">= 1.0"
+gst-plugins-good = ">= 1.0"
+libportal = ">= 1.0"
+umockdev = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -33,8 +37,14 @@ json-glib = ">= 1.8"
 geoclue = ">= 2.7"
 bubblewrap = ">= 0.9"
 systemd = ">= 256"
+gdk-pixbuf2 = ">= 2.42"
+gst-plugins-base = ">= 1.0"
+gstreamer = ">= 1.24"
+libgudev = ">= 1.0"
+rtkit = ">= 1.0"
 
 [optional_depends]
+xdg-desktop-portal-impl = ">= 1.0"
 
 [environment]
 

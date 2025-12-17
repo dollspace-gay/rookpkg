@@ -23,9 +23,11 @@ gcc = ">= 10.0"
 make = ">= 4.0"
 flex = ">= 2.6"
 bison = ">= 3.0"
+dbus = ">= 1.14"
 
 [depends]
 glibc = ">= 2.39"
+libdbus-1 = ">= 1.0"
 
 [optional_depends]
 bluez = ">= 5.0"

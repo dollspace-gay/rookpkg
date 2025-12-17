@@ -27,6 +27,7 @@ python = ">= 3.12"
 glibc = ">= 2.39"
 gmp = ">= 6.3"
 mpfr = ">= 4.2"
+pcre2 = ">= 10.42"
 
 [optional_depends]
 

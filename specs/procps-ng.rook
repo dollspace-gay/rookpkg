@@ -20,9 +20,12 @@ source0 = { url = "https://sourceforge.net/projects/procps-ng/files/Production/p
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+gettext = ">= 0.22"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"
+systemd = ">= 255"
 
 [optional_depends]
 ncurses = ">= 6.0"

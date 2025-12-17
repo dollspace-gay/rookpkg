@@ -23,10 +23,12 @@ source0 = { url = "https://kernel.org/pub/linux/libs/security/linux-privs/libcap
 gcc = ">= 10.0"
 make = ">= 4.0"
 attr = ">= 2.5"
+linux = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 attr = ">= 2.5"
+linux-pam = ">= 1.0"
 
 [optional_depends]
 

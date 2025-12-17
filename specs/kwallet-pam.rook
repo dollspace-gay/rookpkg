@@ -30,6 +30,8 @@ pkgconf = ">= 1.0"
 glibc = ">= 2.39"
 linux-pam = ">= 1.6"
 libgcrypt = ">= 1.10"
+kf6-kwallet = ">= 1.0"
+socat = ">= 1.0"
 
 [optional_depends]
 

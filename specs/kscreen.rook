@@ -38,6 +38,7 @@ layer-shell-qt = ">= 6.2"
 libkscreen = ">= 6.2"
 libplasma = ">= 6.2"
 pkgconf = ">= 1.0"
+wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -55,6 +56,16 @@ kf6-kxmlgui = ">= 6.0"
 layer-shell-qt = ">= 6.2"
 libkscreen = ">= 6.2"
 libplasma = ">= 6.2"
+kf6-kcrash = ">= 1.0"
+kf6-kimageformats = ">= 1.0"
+kf6-kirigami = ">= 1.0"
+kf6-kitemmodels = ">= 1.0"
+kf6-kwindowsystem = ">= 1.0"
+libx11 = ">= 1.8"
+libxcb = ">= 1.16"
+libxi = ">= 1.8"
+plasma5support = ">= 1.0"
+wayland = ">= 1.22"
 
 [optional_depends]
 

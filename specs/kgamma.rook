@@ -38,6 +38,7 @@ kf6-kconfig = ">= 6.0"
 kf6-kcoreaddons = ">= 6.0"
 kf6-ki18n = ">= 6.0"
 libxxf86vm = ">= 1.1"
+libx11 = ">= 1.8"
 
 [optional_depends]
 

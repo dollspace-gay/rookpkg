@@ -46,6 +46,8 @@ networkmanager = ">= 1.40"
 mobile-broadband-provider-info = ">= 20231201"
 qca = ">= 2.3"
 pkgconf = ">= 1.0"
+openconnect = ">= 1.0"
+qtwebengine = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -70,9 +72,21 @@ libplasma = ">= 6.2"
 plasma5support = ">= 6.2"
 networkmanager = ">= 1.40"
 qca = ">= 2.3"
+glib2 = ">= 2.78"
+kf6-kcolorscheme = ">= 1.0"
+kf6-kcompletion = ">= 1.0"
+kf6-kdeclarative = ">= 1.0"
+kf6-kquickcharts = ">= 1.0"
+kf6-kwidgetsaddons = ">= 1.0"
+kirigami-addons = ">= 1.0"
+plasma-workspace = ">= 1.0"
+qca-qt6 = ">= 1.0"
+qcoro = ">= 1.0"
 
 [optional_depends]
 mobile-broadband-provider-info = ">= 20231201"
+openconnect = ">= 1.0"
+qtwebengine = ">= 1.0"
 
 [environment]
 

@@ -24,6 +24,15 @@ make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
+bzip2 = ">= 1.0"
+libbz2 = ">= 1.0"
+liblzma = ">= 1.0"
+libseccomp = ">= 1.0"
+libz = ">= 1.0"
+libzstd = ">= 1.0"
+xz = ">= 5.4"
+zlib = ">= 1.3"
+zstd = ">= 1.5"
 
 [optional_depends]
 

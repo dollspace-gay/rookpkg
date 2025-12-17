@@ -29,6 +29,7 @@ glibc = ">= 2.39"
 glib = ">= 2.70"
 xz = ">= 5.0"
 zstd = ">= 1.5"
+glib2 = ">= 2.78"
 
 [optional_depends]
 

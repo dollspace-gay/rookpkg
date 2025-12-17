@@ -26,6 +26,7 @@ readline = ">= 8.0"
 [depends]
 glibc = ">= 2.39"
 readline = ">= 8.0"
+ncurses = ">= 6.4"
 
 [optional_depends]
 

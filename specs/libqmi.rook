@@ -29,6 +29,8 @@ libgudev = ">= 230"
 glibc = ">= 2.39"
 glib = ">= 2.70"
 libgudev = ">= 230"
+glib2 = ">= 2.78"
+libqrtr-glib = ">= 1.0"
 
 [optional_depends]
 libmbim = ">= 1.28"

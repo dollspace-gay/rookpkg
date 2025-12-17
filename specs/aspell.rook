@@ -27,6 +27,7 @@ glibc = ">= 2.39"
 ncurses = ">= 6.5"
 
 [optional_depends]
+perl = ">= 5.38"
 
 [environment]
 

@@ -27,6 +27,11 @@ glibc = ">= 2.39"
 libaio = ">= 0.3"
 thin-provisioning-tools = ">= 1.0"
 systemd = ">= 256"
+device-mapper = ">= 1.0"
+libblkid = ">= 1.0"
+libreadline = ">= 1.0"
+readline = ">= 8.2"
+util-linux = ">= 1.0"
 
 [optional_depends]
 

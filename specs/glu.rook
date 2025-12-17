@@ -27,6 +27,7 @@ mesa = ">= 24.0"
 [depends]
 glibc = ">= 2.39"
 mesa = ">= 24.0"
+libgl = ">= 1.0"
 
 [optional_depends]
 

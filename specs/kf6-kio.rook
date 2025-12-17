@@ -72,8 +72,16 @@ kf6-kwindowsystem = ">= 6.17"
 kf6-kwallet = ">= 6.17"
 kf6-solid = ">= 6.17"
 acl = ">= 2.3"
+libxml2 = ">= 2.12"
+libxslt = ">= 1.1"
+util-linux = ">= 1.0"
 
 [optional_depends]
+audiocd-kio = ">= 1.0"
+kf6-kded = ">= 1.0"
+kio-extras = ">= 1.0"
+kio-fuse = ">= 1.0"
+switcheroo-control = ">= 1.0"
 
 [environment]
 

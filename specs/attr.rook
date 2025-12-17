@@ -21,6 +21,7 @@ source0 = { url = "https://download.savannah.gnu.org/releases/attr/attr-2.5.2.ta
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+gettext = ">= 0.22"
 
 [depends]
 glibc = ">= 2.39"

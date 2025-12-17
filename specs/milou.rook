@@ -46,6 +46,7 @@ kf6-krunner = ">= 6.0"
 kf6-kservice = ">= 6.0"
 kf6-ksvg = ">= 6.0"
 libplasma = ">= 6.2"
+kf6-kirigami = ">= 1.0"
 
 [optional_depends]
 

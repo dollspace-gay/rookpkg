@@ -23,6 +23,7 @@ gcc = ">= 10.0"
 meson = ">= 0.60"
 ninja = ">= 1.8"
 glib2 = ">= 2.70"
+libxt = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -31,6 +32,7 @@ libpng = ">= 1.6"
 libjpeg-turbo = ">= 3.0"
 libtiff = ">= 4.0"
 shared-mime-info = ">= 2.0"
+gtk = ">= 1.0"
 
 [optional_depends]
 gobject-introspection = ">= 1.80"

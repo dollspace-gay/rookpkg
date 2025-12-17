@@ -21,6 +21,8 @@ source0 = { url = "https://github.com/libsndfile/libsamplerate/releases/download
 [build_depends]
 gcc = ">= 10.0"
 make = ">= 4.0"
+alsa-lib = ">= 1.2"
+opus = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"

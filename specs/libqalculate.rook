@@ -33,6 +33,7 @@ icu = ">= 75.1"
 readline = ">= 8.2"
 
 [optional_depends]
+gnuplot = ">= 1.0"
 
 [environment]
 

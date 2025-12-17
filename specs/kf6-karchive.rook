@@ -33,6 +33,8 @@ qt6 = ">= 6.5"
 zlib = ">= 1.2"
 bzip2 = ">= 1.0"
 xz = ">= 5.0"
+openssl = ">= 3.0"
+zstd = ">= 1.5"
 
 [optional_depends]
 

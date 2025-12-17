@@ -24,6 +24,8 @@ meson = ">= 0.60"
 ninja = ">= 1.8"
 vala = ">= 0.56"
 glib2 = ">= 2.70"
+python = ">= 3.12"
+systemd = ">= 255"
 
 [depends]
 glibc = ">= 2.39"

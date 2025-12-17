@@ -26,12 +26,15 @@ qt6 = ">= 6.5"
 pkgconf = ">= 1.0"
 wayland = ">= 1.15"
 libxcb = ">= 1.17"
+plasma-wayland-protocols = ">= 1.0"
+wayland-protocols = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
 qt6 = ">= 6.5"
 wayland = ">= 1.15"
 libxcb = ">= 1.17"
+libx11 = ">= 1.8"
 
 [optional_depends]
 
