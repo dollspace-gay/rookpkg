@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/release-service/25.08.0/src/kio-extras-25.08.0.tar.xz", sha256 = "0a5dc865c5810b7a0cd280d34d4cbf8860433b78a657417b245cc71e33652405" }
+source0 = { url = "http://corvidae.social/RookerySource/kio-extras-25.08.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

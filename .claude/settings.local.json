@@ -80,7 +80,8 @@
       "Bash(bd stats:*)",
       "Bash(wsl -d RookeryOS -u root bash -c:*)",
       "Bash(git checkout:*)",
-      "Bash(git -C \"c:\\Users\\texas\\rookpkg\" checkout specs/bash.rook)"
+      "Bash(git -C \"c:\\Users\\texas\\rookpkg\" checkout specs/bash.rook)",
+      "Bash(python3:*)"
     ]
   }
 }

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-evdev-2.11.0.tar.xz", sha256 = "730022de934cc366bb12439daf202a7bfff52a028cf4573e457642e25a071315" }
+source0 = { url = "http://corvidae.social/RookerySource/xf86-input-evdev-2.11.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

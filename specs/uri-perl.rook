@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-5.32.tar.gz", sha256 = "5765c6ced4cd23217e85d349b58b1cf4c9c10ea76e30c2d826aa4a7618b76fa4" }
+source0 = { url = "http://corvidae.social/RookerySource/URI-5.32.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.26.5.tar.xz", sha256 = "d6de05884ef42376dd8cde89940f7b50ced96f4f6f52888e764cd8233e74f052" }
+source0 = { url = "http://corvidae.social/RookerySource/gst-libav-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

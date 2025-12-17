@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.freedesktop.org/software/appstream/releases/AppStream-1.0.6.tar.xz", sha256 = "db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d" }
+source0 = { url = "http://corvidae.social/RookerySource/AppStream-1.0.6.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

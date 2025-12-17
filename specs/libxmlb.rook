@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/hughsie/libxmlb/releases/download/0.3.23/libxmlb-0.3.23.tar.xz", sha256 = "ab86eb2073592448a4e0263ab56e222de092c0a3964b66a8d696cac071c8ee3c" }
+source0 = { url = "http://corvidae.social/RookerySource/libxmlb-0.3.23.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

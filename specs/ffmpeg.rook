@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz", sha256 = "733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a03b1" }
+source0 = { url = "http://corvidae.social/RookerySource/ffmpeg-7.1.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -112,7 +112,7 @@ srt = ">= 1.0"
 svt-av1 = ">= 1.0"
 v4l-utils = ">= 1.0"
 vapoursynth = ">= 1.0"
-vid.stab = ">= 1.0"
+"vid.stab" = ">= 1.0"
 vmaf = ">= 1.0"
 vulkan-loader = ">= 1.0"
 xvidcore = ">= 1.0"

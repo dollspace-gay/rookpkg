@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xcb.freedesktop.org/dist/xcb-util-0.4.1.tar.xz", sha256 = "5abe3bbbd8e54f0571cbed57f3d76b40409d94502523e9b10e8cbb7fb6e74e3a" }
+source0 = { url = "http://corvidae.social/RookerySource/xcb-util-0.4.1.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

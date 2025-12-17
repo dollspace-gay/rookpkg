@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/html5lib/html5lib-python/archive/1.1/html5lib-1.1.tar.gz", sha256 = "66e9e24a53c10c27abb6be8a3cf2cf55824c6ea1cef8570a633cb223ec46e894" }
+source0 = { url = "http://corvidae.social/RookerySource/html5lib-1.1.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

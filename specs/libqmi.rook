@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/mobile-broadband/libqmi/-/archive/1.36.0/libqmi-1.36.0.tar.gz", sha256 = "e254fafdd916a78a27126e6d72ae436662487f59c7de84d4d40286059af89093" }
+source0 = { url = "http://corvidae.social/RookerySource/libqmi-1.36.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

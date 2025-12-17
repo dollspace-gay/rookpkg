@@ -1,6 +1,6 @@
 [package]
 name = "libffi"
-version = "3.4.6"
+version = "3.5.2"
 release = 1
 summary = "Foreign Function Interface library"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz", sha256 = "b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e" }
+source0 = { url = "http://corvidae.social/RookerySource/libffi-3.5.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 
@@ -77,8 +77,8 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "3.4.6"
-date = "2025-12-15"
+version = "3.5.2"
+date = "2025-12-17"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [
     "Initial Rookery OS package",

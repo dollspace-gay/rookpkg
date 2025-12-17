@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/Qalculate/libqalculate/releases/download/v5.7.0/libqalculate-5.7.0.tar.gz", sha256 = "b0aa7e7f6b729ad88f41c3562e81bdc349e072f4df0e62ce152304d979702cfe" }
+source0 = { url = "http://corvidae.social/RookerySource/libqalculate-5.7.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

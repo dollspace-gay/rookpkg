@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-1.11.2.tar.bz2", sha256 = "6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac" }
+source0 = { url = "http://corvidae.social/RookerySource/libgcrypt-1.11.2.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

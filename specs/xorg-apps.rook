@@ -13,39 +13,39 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/archive/individual/app/iceauth-1.0.10.tar.xz", sha256 = "3deefb7da26af9dc799b5628d929d91c9af68c78575639944db3b955f29aa029" }
-source1 = { url = "https://xorg.freedesktop.org/archive/individual/app/mkfontscale-1.2.3.tar.xz", sha256 = "2921cdc344f1acee04bcd6ea1e29565c1308263006e134a9ee38cf9c9d6fe75e" }
-source2 = { url = "https://xorg.freedesktop.org/archive/individual/app/sessreg-1.1.4.tar.xz", sha256 = "4e85b52f4f65a93449753bfb00ceb5d77f3317e24d07dc23147f2f116c785350" }
-source3 = { url = "https://xorg.freedesktop.org/archive/individual/app/setxkbmap-1.3.4.tar.xz", sha256 = "be8d8554d40e981d1b93b5ff82497c9ad2259f59f675b38f1b5e84624c07fade" }
-source4 = { url = "https://xorg.freedesktop.org/archive/individual/app/smproxy-1.0.8.tar.xz", sha256 = "fee584eae2ec1ce2d178d72d3b484920271ba68a27935769cefbafbc3a2ff6c8" }
-source5 = { url = "https://xorg.freedesktop.org/archive/individual/app/xauth-1.1.4.tar.xz", sha256 = "e9318141464ad7b4dc0f8564a580f0d20f977c85a388cc40d5a766206151c690" }
-source6 = { url = "https://xorg.freedesktop.org/archive/individual/app/xcmsdb-1.0.7.tar.xz", sha256 = "5ec4068e488187b05ea92ee1362c96b78a90f19ccc7a1844c5921d70626bbc38" }
-source7 = { url = "https://xorg.freedesktop.org/archive/individual/app/xcursorgen-1.0.9.tar.xz", sha256 = "0cc9e156ac84ca16ea902710af35e0faffa51d13797071e3b4b6cc7cbd493bbc" }
-source8 = { url = "https://xorg.freedesktop.org/archive/individual/app/xdpyinfo-1.4.0.tar.xz", sha256 = "dc1de6e6e091ed46c4837b0ae9811e8182f7be0d2af638cab3e530ff081a48b6" }
-source9 = { url = "https://xorg.freedesktop.org/archive/individual/app/xdriinfo-1.0.8.tar.xz", sha256 = "00463056435b82261c227ad0de1873fd4536101607fbc57540e28e4a0a9b71f7" }
-source10 = { url = "https://xorg.freedesktop.org/archive/individual/app/xev-1.2.6.tar.xz", sha256 = "61e1c5e008ac9973aca7cdddf36e9df7410e77083b030eb04f4dc737c51807d7" }
-source11 = { url = "https://xorg.freedesktop.org/archive/individual/app/xgamma-1.0.8.tar.xz", sha256 = "98f9f69e53a11c354a6637ea5c3d7699ceb5c5b1f8ad6f0a14d9931e5a10d079" }
-source12 = { url = "https://xorg.freedesktop.org/archive/individual/app/xhost-1.0.10.tar.xz", sha256 = "a8afd70059479c712948b895e41c35a4a8bfcede3ba2d5a4b855c88bbb725be1" }
-source13 = { url = "https://xorg.freedesktop.org/archive/individual/app/xinput-1.6.4.tar.xz", sha256 = "ad04d00d656884d133110eeddc34e9c69e626ebebbbab04dc95791c2907057c8" }
-source14 = { url = "https://xorg.freedesktop.org/archive/individual/app/xkbcomp-1.4.7.tar.xz", sha256 = "0a288114e5f44e31987042c79aecff1ffad53a8154b8ec971c24a69a80f81f77" }
-source15 = { url = "https://xorg.freedesktop.org/archive/individual/app/xkbevd-1.1.6.tar.xz", sha256 = "d9b401f84cf8568342ff63b1ffc6aecd3877579256d89fe6408645e2741b073e" }
-source16 = { url = "https://xorg.freedesktop.org/archive/individual/app/xkbutils-1.0.6.tar.xz", sha256 = "31a2bbee1e09ccba01de92897b8f540b545de812f318d31de07bd3a5a75ee25e" }
-source17 = { url = "https://xorg.freedesktop.org/archive/individual/app/xkill-1.0.6.tar.xz", sha256 = "e5a8aa78c475677b11504646da8d93dacc30744258076a2ca418a24438aeb907" }
-source18 = { url = "https://xorg.freedesktop.org/archive/individual/app/xlsatoms-1.1.4.tar.xz", sha256 = "f4bfa15f56c066d326a5d5b292646708f25b9247506840b9047cd2687dcc71b7" }
-source19 = { url = "https://xorg.freedesktop.org/archive/individual/app/xlsclients-1.1.5.tar.xz", sha256 = "68baee57e70250ac4a7759fb78221831f97d88bc8e51dcc2e64eb3f8ca56bae3" }
-source20 = { url = "https://xorg.freedesktop.org/archive/individual/app/xmessage-1.0.7.tar.xz", sha256 = "703fccb7a0b772d61d7e603c189b9739866aa97ba985c727275420f829a30356" }
-source21 = { url = "https://xorg.freedesktop.org/archive/individual/app/xmodmap-1.0.11.tar.xz", sha256 = "9a2f8168f7b0bc382828847403902cb6bf175e17658b36189eac87edda877e81" }
-source22 = { url = "https://xorg.freedesktop.org/archive/individual/app/xpr-1.2.0.tar.xz", sha256 = "8b9402f8331309f0a9d8143d4d6129c4a7479ff9449616849b9f1e2a5835cec3" }
-source23 = { url = "https://xorg.freedesktop.org/archive/individual/app/xprop-1.2.8.tar.xz", sha256 = "d689e2adb7ef7b439f6469b51cda8a7daefc83243854c2a3b8f84d0f029d67ee" }
-source24 = { url = "https://xorg.freedesktop.org/archive/individual/app/xrandr-1.5.3.tar.xz", sha256 = "f8dd7566adb74147fab9964680b6bbadee87cf406a7fcff51718a5e6949b841c" }
-source25 = { url = "https://xorg.freedesktop.org/archive/individual/app/xrdb-1.2.2.tar.xz", sha256 = "31f5fcab231b38f255b00b066cf7ea3b496df712c9eb2d0d50c670b63e5033f4" }
-source26 = { url = "https://xorg.freedesktop.org/archive/individual/app/xrefresh-1.1.0.tar.xz", sha256 = "29ed592d5ece35a3029004d8c46f3002f92970870a96c11e38baf7f1122b8b5f" }
-source27 = { url = "https://xorg.freedesktop.org/archive/individual/app/xset-1.2.5.tar.xz", sha256 = "9f692d55635b3862cd63633b1222a87680ec283c7a8e8ed6dd698a3147f75e2f" }
-source28 = { url = "https://xorg.freedesktop.org/archive/individual/app/xsetroot-1.1.3.tar.xz", sha256 = "6081b45a9eb4426e045d259d1e144b32417fb635e5b96aa90647365ac96638d1" }
-source29 = { url = "https://xorg.freedesktop.org/archive/individual/app/xvinfo-1.1.5.tar.xz", sha256 = "3ede71ecb26d9614ccbc6916720285e95a2c7e0c5e19b8570eaaf72ad7c5c404" }
-source30 = { url = "https://xorg.freedesktop.org/archive/individual/app/xwd-1.0.9.tar.xz", sha256 = "dc121b84947eb4a3d1131bff1e9844cfa2124d95b47b35f9932340fa931fbd3f" }
-source31 = { url = "https://xorg.freedesktop.org/archive/individual/app/xwininfo-1.1.6.tar.xz", sha256 = "3518897c17448df9ba99ad6d9bb1ca0f17bc0ed7c0fd61281b34ceed29a9253f" }
-source32 = { url = "https://xorg.freedesktop.org/archive/individual/app/xwud-1.0.7.tar.xz", sha256 = "e55cbedab36d7a5f671abf8e594888afc48caa116d51d429ea53ea317ec0c61e" }
+source0 = { url = "http://corvidae.social/RookerySource/iceauth-1.0.10.tar.xz", sha256 = "FIXME" }
+source1 = { url = "http://corvidae.social/RookerySource/mkfontscale-1.2.3.tar.xz", sha256 = "FIXME" }
+source2 = { url = "http://corvidae.social/RookerySource/sessreg-1.1.4.tar.xz", sha256 = "FIXME" }
+source3 = { url = "http://corvidae.social/RookerySource/setxkbmap-1.3.4.tar.xz", sha256 = "FIXME" }
+source4 = { url = "http://corvidae.social/RookerySource/smproxy-1.0.8.tar.xz", sha256 = "FIXME" }
+source5 = { url = "http://corvidae.social/RookerySource/xauth-1.1.4.tar.xz", sha256 = "FIXME" }
+source6 = { url = "http://corvidae.social/RookerySource/xcmsdb-1.0.7.tar.xz", sha256 = "FIXME" }
+source7 = { url = "http://corvidae.social/RookerySource/xcursorgen-1.0.9.tar.xz", sha256 = "FIXME" }
+source8 = { url = "http://corvidae.social/RookerySource/xdpyinfo-1.4.0.tar.xz", sha256 = "FIXME" }
+source9 = { url = "http://corvidae.social/RookerySource/xdriinfo-1.0.8.tar.xz", sha256 = "FIXME" }
+source10 = { url = "http://corvidae.social/RookerySource/xev-1.2.6.tar.xz", sha256 = "FIXME" }
+source11 = { url = "http://corvidae.social/RookerySource/xgamma-1.0.8.tar.xz", sha256 = "FIXME" }
+source12 = { url = "http://corvidae.social/RookerySource/xhost-1.0.10.tar.xz", sha256 = "FIXME" }
+source13 = { url = "http://corvidae.social/RookerySource/xinput-1.6.4.tar.xz", sha256 = "FIXME" }
+source14 = { url = "http://corvidae.social/RookerySource/xkbcomp-1.4.7.tar.xz", sha256 = "FIXME" }
+source15 = { url = "http://corvidae.social/RookerySource/xkbevd-1.1.6.tar.xz", sha256 = "FIXME" }
+source16 = { url = "http://corvidae.social/RookerySource/xkbutils-1.0.6.tar.xz", sha256 = "FIXME" }
+source17 = { url = "http://corvidae.social/RookerySource/xkill-1.0.6.tar.xz", sha256 = "FIXME" }
+source18 = { url = "http://corvidae.social/RookerySource/xlsatoms-1.1.4.tar.xz", sha256 = "FIXME" }
+source19 = { url = "http://corvidae.social/RookerySource/xlsclients-1.1.5.tar.xz", sha256 = "FIXME" }
+source20 = { url = "http://corvidae.social/RookerySource/xmessage-1.0.7.tar.xz", sha256 = "FIXME" }
+source21 = { url = "http://corvidae.social/RookerySource/xmodmap-1.0.11.tar.xz", sha256 = "FIXME" }
+source22 = { url = "http://corvidae.social/RookerySource/xpr-1.2.0.tar.xz", sha256 = "FIXME" }
+source23 = { url = "http://corvidae.social/RookerySource/xprop-1.2.8.tar.xz", sha256 = "FIXME" }
+source24 = { url = "http://corvidae.social/RookerySource/xrandr-1.5.3.tar.xz", sha256 = "FIXME" }
+source25 = { url = "http://corvidae.social/RookerySource/xrdb-1.2.2.tar.xz", sha256 = "FIXME" }
+source26 = { url = "http://corvidae.social/RookerySource/xrefresh-1.1.0.tar.xz", sha256 = "FIXME" }
+source27 = { url = "http://corvidae.social/RookerySource/xset-1.2.5.tar.xz", sha256 = "FIXME" }
+source28 = { url = "http://corvidae.social/RookerySource/xsetroot-1.1.3.tar.xz", sha256 = "FIXME" }
+source29 = { url = "http://corvidae.social/RookerySource/xvinfo-1.1.5.tar.xz", sha256 = "FIXME" }
+source30 = { url = "http://corvidae.social/RookerySource/xwd-1.0.9.tar.xz", sha256 = "FIXME" }
+source31 = { url = "http://corvidae.social/RookerySource/xwininfo-1.1.6.tar.xz", sha256 = "FIXME" }
+source32 = { url = "http://corvidae.social/RookerySource/xwud-1.0.7.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/jpirko/libndp/archive/v1.9/libndp-1.9.tar.gz", sha256 = "e564f5914a6b1b799c3afa64c258824a801c1b79a29e2fe6525b682249c65261" }
+source0 = { url = "http://corvidae.social/RookerySource/libndp-1.9.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

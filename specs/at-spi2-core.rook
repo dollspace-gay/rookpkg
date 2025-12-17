@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/at-spi2-core/2.56/at-spi2-core-2.56.4.tar.xz", sha256 = "dbe35b951499e1d6f1fb552c2e0a09cea7cba2adf6c2eba0b2c85b6c094a3a02" }
+source0 = { url = "http://corvidae.social/RookerySource/at-spi2-core-2.56.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

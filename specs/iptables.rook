@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.netfilter.org/projects/iptables/files/iptables-1.8.11.tar.xz", sha256 = "d87303d55ef8c92bcad4dd3f978b26d272013642b029425775f5bad1009fe7b2" }
+source0 = { url = "http://corvidae.social/RookerySource/iptables-1.8.11.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.cpan.org/src/5.0/perl-5.42.0.tar.xz", sha256 = "73cf6cc1ea2b2b1c110a18c14bbbc73a362073003893ffcedc26d22ebdbdd0c3" }
+source0 = { url = "http://corvidae.social/RookerySource/perl-5.42.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

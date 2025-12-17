@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://xorg.freedesktop.org/releases/individual/driver/xf86-input-libinput-1.5.0.tar.xz", sha256 = "2524c35f196554ea11aef3bba1cf324759454e1d49f98ac026ace2f6003580e6" }
+source0 = { url = "http://corvidae.social/RookerySource/xf86-input-libinput-1.5.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

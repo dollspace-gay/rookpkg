@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.gnome.org/sources/pygobject/3.54/pygobject-3.54.5.tar.gz", sha256 = "b6656f6348f5245606cf15ea48c384c7f05156c75ead206c1b246c80a22fb585" }
+source0 = { url = "http://corvidae.social/RookerySource/pygobject-3.54.5.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

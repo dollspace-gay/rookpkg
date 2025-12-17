@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/upower/upower/-/archive/v1.90.6/upower-v1.90.6.tar.bz2", sha256 = "aed4e42a21307512ad236ad58d7ee4e0196670c8524a168a0edccdc32964ea0c" }
+source0 = { url = "http://corvidae.social/RookerySource/upower-v1.90.6.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

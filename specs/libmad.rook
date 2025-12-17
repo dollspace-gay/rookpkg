@@ -13,8 +13,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/mad/libmad-0.15.1b.tar.gz", sha256 = "6504dafb0081976ef94e5ecbe56773fca9652660c9e9aaf4d152817c044edce1" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/libmad-0.15.1b-fixes-1.patch", sha256 = "94d488d8288f557de45f0e83e90320c5127cf67a0d6a4f4a67b41b2517d58445" }
+source0 = { url = "http://corvidae.social/RookerySource/libmad-0.15.1b.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/libmad-0.15.1b-fixes-1.patch", sha256 = "FIXME" }
 
 [patches]
 

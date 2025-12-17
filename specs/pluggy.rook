@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://github.com/pytest-dev/pluggy/archive/1.5.0/pluggy-1.5.0.tar.gz", sha256 = "6e9b6c46ae3b0c82087df05d866a8ba2787480dfb2c93b51b78ffc15deaf51b9" }
+source0 = { url = "http://corvidae.social/RookerySource/pluggy-1.5.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

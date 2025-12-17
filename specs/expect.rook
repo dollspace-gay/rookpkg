@@ -14,8 +14,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/expect/expect5.45.4.tar.gz", sha256 = "dfb04b3a1d1590ac0247a7231d9715db79f3dd362e33102fa714561af03f76c5" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/expect-5.45.4-gcc15-1.patch", sha256 = "ab5fc0af9e2e0f80d7623c1a3a3dbeb1da3d8c9134276792199df401f9eb2cec" }
+source0 = { url = "http://corvidae.social/RookerySource/expect5.45.4.tar.gz", sha256 = "FIXME" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/12.4/expect-5.45.4-gcc15-1.patch", sha256 = "FIXME" }
 
 [patches]
 

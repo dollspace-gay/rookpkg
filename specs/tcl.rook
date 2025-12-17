@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/tcl/tcl8.6.16-src.tar.gz", sha256 = "e472acf0fd0d7d5df9c559556601f2e36250dc663400ac2d1c9452f92a990871" }
+source0 = { url = "http://corvidae.social/RookerySource/tcl8.6.16-src.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

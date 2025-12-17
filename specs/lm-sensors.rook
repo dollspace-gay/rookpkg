@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/hramrach/lm-sensors/archive/V3-6-2/lm-sensors-3-6-2.tar.gz", sha256 = "c6a0587e565778a40d88891928bf8943f27d353f382d5b745a997d635978a8f0" }
+source0 = { url = "http://corvidae.social/RookerySource/lm-sensors-3-6-2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

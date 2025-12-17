@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/1.4.7/pipewire-1.4.7.tar.bz2", sha256 = "17599eab9cf1ac98bce41954057b1b66d16c99aef341e16d41dbc7302f4fa960" }
+source0 = { url = "http://corvidae.social/RookerySource/pipewire-1.4.7.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

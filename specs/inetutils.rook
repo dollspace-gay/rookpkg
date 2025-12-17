@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://ftp.gnu.org/gnu/inetutils/inetutils-2.6.tar.xz", sha256 = "68bedbfeaf73f7d86be2a7d99bcfbd4093d829f52770893919ae174c0b2357ca" }
+source0 = { url = "http://corvidae.social/RookerySource/inetutils-2.6.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

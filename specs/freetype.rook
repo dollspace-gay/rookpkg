@@ -15,8 +15,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://downloads.sourceforge.net/freetype/freetype-2.13.3.tar.xz", sha256 = "c6e261d690192d91b8e494d1d0ad16feb594e39756949ff5b65ef38150b3298f" }
-source1 = { url = "https://downloads.sourceforge.net/freetype/freetype-doc-2.13.3.tar.xz", sha256 = "ebf97734a2e537808ba2cb19a549dc9567555193bafe9c990513ebd67fc2bdd1" }
+source0 = { url = "http://corvidae.social/RookerySource/freetype-2.13.3.tar.xz", sha256 = "FIXME" }
+source1 = { url = "http://corvidae.social/RookerySource/freetype-doc-2.13.3.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

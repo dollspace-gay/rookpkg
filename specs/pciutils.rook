@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://mj.ucw.cz/download/linux/pci/pciutils-3.14.0.tar.gz", sha256 = "e31c79722dbbe9d2906b92996ce295268e54d4342fefe3ff476caa613e51be2a" }
+source0 = { url = "http://corvidae.social/RookerySource/pciutils-3.14.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

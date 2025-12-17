@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "https://files.pythonhosted.org/packages/source/p/pygdbmi/pygdbmi-0.11.0.0.tar.gz", sha256 = "7a286be2fcf25650d9f66e11adc46e972cf078a466864a700cd44739ad261fb0" }
+source0 = { url = "http://corvidae.social/RookerySource/pygdbmi-0.11.0.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

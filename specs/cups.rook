@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/OpenPrinting/cups/releases/download/v2.4.12/cups-2.4.12-source.tar.gz", sha256 = "b1dde191a4ae2760c47220c82ca6155a28c382701e6c1a0159d1054990231d59" }
+source0 = { url = "http://corvidae.social/RookerySource/cups-2.4.12-source.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

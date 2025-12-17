@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/gpgme/gpgme-2.0.0.tar.bz2", sha256 = "ddf161d3c41ff6a3fcbaf4be6c6e305ca4ef1cc3f1ecdfce0c8c2a167c0cc36d" }
+source0 = { url = "http://corvidae.social/RookerySource/gpgme-2.0.0.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

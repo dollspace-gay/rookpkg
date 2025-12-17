@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/NetworkConfiguration/dhcpcd/releases/download/v10.2.4/dhcpcd-10.2.4.tar.xz", sha256 = "6721e606609226dbf4d864a78802a9e96beec0ee034a1bd84138b3e037bba7d9" }
+source0 = { url = "http://corvidae.social/RookerySource/dhcpcd-10.2.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

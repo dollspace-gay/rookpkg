@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/webmproject/libvpx/archive/v1.15.2/libvpx-1.15.2.tar.gz", sha256 = "26fcd3db88045dee380e581862a6ef106f49b74b6396ee95c2993a260b4636aa" }
+source0 = { url = "http://corvidae.social/RookerySource/libvpx-1.15.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

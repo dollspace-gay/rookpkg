@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/libpwquality/libpwquality/releases/download/libpwquality-1.4.5/libpwquality-1.4.5.tar.bz2", sha256 = "6fcf18b75d305d99d04d2e42982ed5b787a081af2842220ed63287a2d6a10988" }
+source0 = { url = "http://corvidae.social/RookerySource/libpwquality-1.4.5.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.26.5.tar.xz", sha256 = "eb0862e93404b073e98ec50350ece7e6685ea2936cab8118c2b8e938e2cbea8b" }
+source0 = { url = "http://corvidae.social/RookerySource/gst-plugins-good-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

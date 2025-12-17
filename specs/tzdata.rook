@@ -16,7 +16,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.iana.org/time-zones/repository/releases/tzdata2025b.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/tzdata2025b.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/lz4/lz4/archive/v1.10.0/lz4-1.10.0.tar.gz", sha256 = "537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b" }
+source0 = { url = "http://corvidae.social/RookerySource/lz4-1.10.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

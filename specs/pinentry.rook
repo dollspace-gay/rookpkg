@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gnupg.org/ftp/gcrypt/pinentry/pinentry-1.3.2.tar.bz2", sha256 = "8e986ed88561b4da6e9efe0c54fa4ca8923035c99264df0b0464497c5fb94e9e" }
+source0 = { url = "http://corvidae.social/RookerySource/pinentry-1.3.2.tar.bz2", sha256 = "FIXME" }
 
 [patches]
 

@@ -1,6 +1,6 @@
 [package]
 name = "plasma-workspace-wallpapers"
-version = "6.2.4"
+version = "6.4.4"
 release = 1
 summary = "KDE Plasma wallpapers"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma-workspace-wallpapers-6.2.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-workspace-wallpapers-6.4.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -72,7 +72,7 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "6.2.4"
+version = "6.4.4"
 date = "2025-12-17"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

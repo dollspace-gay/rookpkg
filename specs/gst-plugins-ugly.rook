@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.26.5.tar.xz", sha256 = "3dfc43435be97e110816bac6d602b0f206a038546279683d9d25372ff127db52" }
+source0 = { url = "http://corvidae.social/RookerySource/gst-plugins-ugly-1.26.5.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

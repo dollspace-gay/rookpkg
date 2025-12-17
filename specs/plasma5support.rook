@@ -1,6 +1,6 @@
 [package]
 name = "plasma5support"
-version = "6.2.4"
+version = "6.4.4"
 release = 1
 summary = "Plasma 5 compatibility library"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://download.kde.org/stable/plasma/6.2.4/plasma5support-6.2.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma5support-6.4.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -112,7 +112,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "6.2.4"
+version = "6.4.4"
 date = "2025-12-17"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

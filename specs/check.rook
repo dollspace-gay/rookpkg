@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/libcheck/check/releases/download/0.15.2/check-0.15.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/check-0.15.2.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/KDAB/KDSoap/releases/download/kdsoap-2.2.0/kdsoap-2.2.0.tar.gz", sha256 = "d9ef11948442197c9fa44bd6fde5e8db86a15226c3162018a85a98cea2e79a89" }
+source0 = { url = "http://corvidae.social/RookerySource/kdsoap-2.2.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

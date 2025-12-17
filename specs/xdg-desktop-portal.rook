@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://github.com/flatpak/xdg-desktop-portal/releases/download/1.18.4/xdg-desktop-portal-1.18.4.tar.xz", sha256 = "b858aa1e74e80c862790dbb912906e6eab8b1e4db9339cd759473af62b461e65" }
+source0 = { url = "http://corvidae.social/RookerySource/xdg-desktop-portal-1.18.4.tar.xz", sha256 = "FIXME" }
 
 [patches]
 

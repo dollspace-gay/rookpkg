@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://dist.libuv.org/dist/v1.51.0/libuv-v1.51.0.tar.gz", sha256 = "5f0557b90b1106de71951a3c3931de5e0430d78da1d9a10287ebc7a3f78ef8eb" }
+source0 = { url = "http://corvidae.social/RookerySource/libuv-v1.51.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

@@ -1,6 +1,6 @@
 [package]
 name = "iproute2"
-version = "6.13.0"
+version = "6.16.0"
 release = 1
 summary = "Linux networking utilities"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-6.13.0.tar.xz", sha256 = "a43aa43338d882b44d01e549f3f105a92ae9feea32a82fae45a88e7a49302819" }
+source0 = { url = "http://corvidae.social/RookerySource/iproute2-6.16.0.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -68,8 +68,8 @@ cd $ROOKPKG_BUILD/iproute2-*
 make SBINDIR=/usr/sbin DESTDIR=$ROOKPKG_DESTDIR install
 
 # Install documentation
-mkdir -pv $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.13.0
-cp -v COPYING README* $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.13.0
+mkdir -pv $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.16.0
+cp -v COPYING README* $ROOKPKG_DESTDIR/usr/share/doc/iproute2-6.16.0
 """
 
 [files]
@@ -96,8 +96,8 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "6.13.0"
-date = "2025-12-15"
+version = "6.16.0"
+date = "2025-12-17"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [
     "Initial Rookery OS package",
