@@ -48,8 +48,8 @@ kf6-knotifications = ">= 6.17"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf kirigami-*
-tar xf $ROOKPKG_SOURCES/kirigami-*.tar.xz
+rm -rf kirigami-6*
+tar xf $ROOKPKG_SOURCES/kirigami-6*.tar.xz
 """
 
 configure = """

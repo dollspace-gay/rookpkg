@@ -88,8 +88,8 @@ switcheroo-control = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf kio-*
-tar xf $ROOKPKG_SOURCES/kio-*.tar.xz
+rm -rf kio-6*
+tar xf $ROOKPKG_SOURCES/kio-6*.tar.xz
 """
 
 configure = """

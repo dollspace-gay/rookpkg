@@ -61,8 +61,8 @@ kwalletmanager = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf kwallet-*
-tar xf $ROOKPKG_SOURCES/kwallet-*.tar.xz
+rm -rf kwallet-6*
+tar xf $ROOKPKG_SOURCES/kwallet-6*.tar.xz
 """
 
 configure = """

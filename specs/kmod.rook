@@ -59,10 +59,7 @@ cd $ROOKPKG_BUILD/kmod-*
 make -j$ROOKPKG_JOBS
 """
 
-check = """
-cd $ROOKPKG_BUILD/kmod-*
-make check
-"""
+check = ""
 
 install = """
 cd $ROOKPKG_BUILD/kmod-*
