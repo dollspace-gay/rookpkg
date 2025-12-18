@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/layer-shell-qt-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/layer-shell-qt-6.4.4.tar.xz", sha256 = "84b31a3e73b150fa611fb51150987600eddd0edc578888e953e7fd37f550643d" }
 
 [patches]
 

@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/markupsafe-3.0.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/markupsafe-3.0.2.tar.gz", sha256 = "ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0" }
 
 [patches]
 

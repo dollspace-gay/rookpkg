@@ -1,6 +1,6 @@
 [package]
 name = "libcap"
-version = "2.70"
+version = "2.76"
 release = 1
 summary = "POSIX capabilities library"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libcap-2.70.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libcap-2.76.tar.xz", sha256 = "629da4ab29900d0f7fcc36227073743119925fd711c99a1689bbf5c9b40c8e6f" }
 
 [patches]
 
@@ -87,11 +87,11 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "2.70"
+version = "2.76"
 date = "2025-12-16"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [
-    "Corrected version to 2.70 per LFS 12.4"
+    "Corrected version to 2.76 per LFS 12.4"
 ]
 
 [[changelog]]

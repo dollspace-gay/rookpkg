@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kcalendarcore-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kcalendarcore-6.17.0.tar.xz", sha256 = "4a0675c6211caf183a067194b24093dc63015a1a59be07b864cf45f7acd18e13" }
 
 [patches]
 

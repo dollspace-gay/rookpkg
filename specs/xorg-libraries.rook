@@ -15,38 +15,38 @@ arch = "x86_64"
 
 [sources]
 # BLFS: 32 X11 libraries in build order
-source0 = { url = "http://corvidae.social/RookerySource/xtrans-1.6.0.tar.gz", sha256 = "FIXME" }
-source1 = { url = "http://corvidae.social/RookerySource/libX11-1.8.12.tar.xz", sha256 = "FIXME" }
-source2 = { url = "http://corvidae.social/RookerySource/libXext-1.3.6.tar.xz", sha256 = "FIXME" }
-source3 = { url = "http://corvidae.social/RookerySource/libFS-1.0.10.tar.gz", sha256 = "FIXME" }
-source4 = { url = "http://corvidae.social/RookerySource/libICE-1.1.2.tar.xz", sha256 = "FIXME" }
-source5 = { url = "http://corvidae.social/RookerySource/libSM-1.2.6.tar.xz", sha256 = "FIXME" }
-source6 = { url = "http://corvidae.social/RookerySource/libXScrnSaver-1.2.4.tar.xz", sha256 = "FIXME" }
-source7 = { url = "http://corvidae.social/RookerySource/libXt-1.3.1.tar.xz", sha256 = "FIXME" }
-source8 = { url = "http://corvidae.social/RookerySource/libXmu-1.2.1.tar.xz", sha256 = "FIXME" }
-source9 = { url = "http://corvidae.social/RookerySource/libXpm-3.5.17.tar.xz", sha256 = "FIXME" }
-source10 = { url = "http://corvidae.social/RookerySource/libXaw-1.0.16.tar.xz", sha256 = "FIXME" }
-source11 = { url = "http://corvidae.social/RookerySource/libXfixes-6.0.1.tar.xz", sha256 = "FIXME" }
-source12 = { url = "http://corvidae.social/RookerySource/libXcomposite-0.4.6.tar.xz", sha256 = "FIXME" }
-source13 = { url = "http://corvidae.social/RookerySource/libXrender-0.9.12.tar.xz", sha256 = "FIXME" }
-source14 = { url = "http://corvidae.social/RookerySource/libXcursor-1.2.3.tar.xz", sha256 = "FIXME" }
-source15 = { url = "http://corvidae.social/RookerySource/libXdamage-1.1.6.tar.xz", sha256 = "FIXME" }
-source16 = { url = "http://corvidae.social/RookerySource/libfontenc-1.1.8.tar.xz", sha256 = "FIXME" }
-source17 = { url = "http://corvidae.social/RookerySource/libXfont2-2.0.7.tar.xz", sha256 = "FIXME" }
-source18 = { url = "http://corvidae.social/RookerySource/libXft-2.3.9.tar.xz", sha256 = "FIXME" }
-source19 = { url = "http://corvidae.social/RookerySource/libXi-1.8.2.tar.xz", sha256 = "FIXME" }
-source20 = { url = "http://corvidae.social/RookerySource/libXinerama-1.1.5.tar.xz", sha256 = "FIXME" }
-source21 = { url = "http://corvidae.social/RookerySource/libXrandr-1.5.4.tar.xz", sha256 = "FIXME" }
-source22 = { url = "http://corvidae.social/RookerySource/libXres-1.2.2.tar.xz", sha256 = "FIXME" }
-source23 = { url = "http://corvidae.social/RookerySource/libXtst-1.2.5.tar.xz", sha256 = "FIXME" }
-source24 = { url = "http://corvidae.social/RookerySource/libXv-1.0.13.tar.xz", sha256 = "FIXME" }
-source25 = { url = "http://corvidae.social/RookerySource/libXvMC-1.0.14.tar.xz", sha256 = "FIXME" }
-source26 = { url = "http://corvidae.social/RookerySource/libXxf86dga-1.1.6.tar.xz", sha256 = "FIXME" }
-source27 = { url = "http://corvidae.social/RookerySource/libXxf86vm-1.1.6.tar.xz", sha256 = "FIXME" }
-source28 = { url = "http://corvidae.social/RookerySource/libpciaccess-0.18.1.tar.xz", sha256 = "FIXME" }
-source29 = { url = "http://corvidae.social/RookerySource/libxkbfile-1.1.3.tar.xz", sha256 = "FIXME" }
-source30 = { url = "http://corvidae.social/RookerySource/libxshmfence-1.3.3.tar.xz", sha256 = "FIXME" }
-source31 = { url = "http://corvidae.social/RookerySource/libXpresent-1.0.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/xtrans-1.6.0.tar.gz", sha256 = "936b74c60b19c317c3f3cb1b114575032528dbdaf428740483200ea874c2ca0a" }
+source1 = { url = "http://corvidae.social/RookerySource/libX11-1.8.12.tar.xz", sha256 = "fa026f9bb0124f4d6c808f9aef4057aad65e7b35d8ff43951cef0abe06bb9a9a" }
+source2 = { url = "http://corvidae.social/RookerySource/libXext-1.3.6.tar.xz", sha256 = "edb59fa23994e405fdc5b400afdf5820ae6160b94f35e3dc3da4457a16e89753" }
+source3 = { url = "http://corvidae.social/RookerySource/libFS-1.0.10.tar.gz", sha256 = "38daddf6aaad25d93c6ff762c9629b8f10b19e8c4b70fcf117ec38c440ff9ae2" }
+source4 = { url = "http://corvidae.social/RookerySource/libICE-1.1.2.tar.xz", sha256 = "974e4ed414225eb3c716985df9709f4da8d22a67a2890066bc6dfc89ad298625" }
+source5 = { url = "http://corvidae.social/RookerySource/libSM-1.2.6.tar.xz", sha256 = "be7c0abdb15cbfd29ac62573c1c82e877f9d4047ad15321e7ea97d1e43d835be" }
+source6 = { url = "http://corvidae.social/RookerySource/libXScrnSaver-1.2.4.tar.xz", sha256 = "75cd2859f38e207a090cac980d76bc71e9da99d48d09703584e00585abc920fe" }
+source7 = { url = "http://corvidae.social/RookerySource/libXt-1.3.1.tar.xz", sha256 = "e0a774b33324f4d4c05b199ea45050f87206586d81655f8bef4dba434d931288" }
+source8 = { url = "http://corvidae.social/RookerySource/libXmu-1.2.1.tar.xz", sha256 = "fcb27793248a39e5fcc5b9c4aec40cc0734b3ca76aac3d7d1c264e7f7e14e8b2" }
+source9 = { url = "http://corvidae.social/RookerySource/libXpm-3.5.17.tar.xz", sha256 = "64b31f81019e7d388c822b0b28af8d51c4622b83f1f0cb6fa3fc95e271226e43" }
+source10 = { url = "http://corvidae.social/RookerySource/libXaw-1.0.16.tar.xz", sha256 = "731d572b54c708f81e197a6afa8016918e2e06dfd3025e066ca642a5b8c39c8f" }
+source11 = { url = "http://corvidae.social/RookerySource/libXfixes-6.0.1.tar.xz", sha256 = "b695f93cd2499421ab02d22744458e650ccc88c1d4c8130d60200213abc02d58" }
+source12 = { url = "http://corvidae.social/RookerySource/libXcomposite-0.4.6.tar.xz", sha256 = "fe40bcf0ae1a09070eba24088a5eb9810efe57453779ec1e20a55080c6dc2c87" }
+source13 = { url = "http://corvidae.social/RookerySource/libXrender-0.9.12.tar.xz", sha256 = "b832128da48b39c8d608224481743403ad1691bf4e554e4be9c174df171d1b97" }
+source14 = { url = "http://corvidae.social/RookerySource/libXcursor-1.2.3.tar.xz", sha256 = "fde9402dd4cfe79da71e2d96bb980afc5e6ff4f8a7d74c159e1966afb2b2c2c0" }
+source15 = { url = "http://corvidae.social/RookerySource/libXdamage-1.1.6.tar.xz", sha256 = "52733c1f5262fca35f64e7d5060c6fcd81a880ba8e1e65c9621cf0727afb5d11" }
+source16 = { url = "http://corvidae.social/RookerySource/libfontenc-1.1.8.tar.xz", sha256 = "7b02c3d405236e0d86806b1de9d6868fe60c313628b38350b032914aa4fd14c6" }
+source17 = { url = "http://corvidae.social/RookerySource/libXfont2-2.0.7.tar.xz", sha256 = "8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb" }
+source18 = { url = "http://corvidae.social/RookerySource/libXft-2.3.9.tar.xz", sha256 = "60a25b78945ed6932635b3bb1899a517d31df7456e69867ffba27f89ff3976f5" }
+source19 = { url = "http://corvidae.social/RookerySource/libXi-1.8.2.tar.xz", sha256 = "d0e0555e53d6e2114eabfa44226ba162d2708501a25e18d99cfb35c094c6c104" }
+source20 = { url = "http://corvidae.social/RookerySource/libXinerama-1.1.5.tar.xz", sha256 = "5094d1f0fcc1828cb1696d0d39d9e866ae32520c54d01f618f1a3c1e30c2085c" }
+source21 = { url = "http://corvidae.social/RookerySource/libXrandr-1.5.4.tar.xz", sha256 = "1ad5b065375f4a85915aa60611cc6407c060492a214d7f9daf214be752c3b4d3" }
+source22 = { url = "http://corvidae.social/RookerySource/libXres-1.2.2.tar.xz", sha256 = "9a7446f3484b9b7538ac5ee30d2c1ce9e5b7fbbaf1440e02f6cca186a1fa745f" }
+source23 = { url = "http://corvidae.social/RookerySource/libXtst-1.2.5.tar.xz", sha256 = "b50d4c25b97009a744706c1039c598f4d8e64910c9fde381994e1cae235d9242" }
+source24 = { url = "http://corvidae.social/RookerySource/libXv-1.0.13.tar.xz", sha256 = "7d34910958e1c1f8d193d828fea1b7da192297280a35437af0692f003ba03755" }
+source25 = { url = "http://corvidae.social/RookerySource/libXvMC-1.0.14.tar.xz", sha256 = "e4be9eb6b6bafdbbf81f47f7163047215376e45e2dc786d0ea6181c930725ed9" }
+source26 = { url = "http://corvidae.social/RookerySource/libXxf86dga-1.1.6.tar.xz", sha256 = "be44427579808fe3a217d59f51cae756a26913eb6e4c8738ccab65ff56d7980f" }
+source27 = { url = "http://corvidae.social/RookerySource/libXxf86vm-1.1.6.tar.xz", sha256 = "96af414c73ce1d5449ad04be7f9f27fa8330f844b6dda843ef22e3e1befb3ee3" }
+source28 = { url = "http://corvidae.social/RookerySource/libpciaccess-0.18.1.tar.xz", sha256 = "4af43444b38adb5545d0ed1c2ce46d9608cc47b31c2387fc5181656765a6fa76" }
+source29 = { url = "http://corvidae.social/RookerySource/libxkbfile-1.1.3.tar.xz", sha256 = "a9b63eea997abb9ee6a8b4fbb515831c841f471af845a09de443b28003874bec" }
+source30 = { url = "http://corvidae.social/RookerySource/libxshmfence-1.3.3.tar.xz", sha256 = "d4a4df096aba96fea02c029ee3a44e11a47eb7f7213c1a729be83e85ec3fde10" }
+source31 = { url = "http://corvidae.social/RookerySource/libXpresent-1.0.1.tar.gz", sha256 = "8ebf8567a8f6afe5a64275a2ecfd4c84e957970c27299d964350f60be9f3541d" }
 
 [patches]
 

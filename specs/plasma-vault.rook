@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/plasma-vault-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-vault-6.4.4.tar.xz", sha256 = "2d843b1e37cb41b099c74142ad0d746942fdb447186d3e372ca6b7a3b051bc81" }
 
 [patches]
 

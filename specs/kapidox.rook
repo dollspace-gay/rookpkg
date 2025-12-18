@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kapidox-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kapidox-6.17.0.tar.xz", sha256 = "a7a3c2c209cf5f810af48264a361e526dbac91f179c2c0208fa02dc416f9f0d2" }
 
 [patches]
 

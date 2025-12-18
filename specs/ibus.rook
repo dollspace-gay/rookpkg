@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ibus-1.5.32.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ibus-1.5.32.tar.gz", sha256 = "fa367d991d88f88a538a55626fb1456b8db7c483dc6dee11f04858c161191c8b" }
 
 [patches]
 

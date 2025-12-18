@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kwallet-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kwallet-6.17.0.tar.xz", sha256 = "44caf691f47ba246f2efb13f9c8f7123c7e6745d4281560228b8158cc8b93d7d" }
 
 [patches]
 

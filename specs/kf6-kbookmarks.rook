@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kbookmarks-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kbookmarks-6.17.0.tar.xz", sha256 = "041b9667d3d4851b0e6fa62a9fc112a9938a487b4ca520eedde1b535636217f2" }
 
 [patches]
 

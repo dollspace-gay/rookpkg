@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/curl-8.15.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/curl-8.15.0.tar.xz", sha256 = "6cd0a8a5b126ddfda61c94dc2c3fc53481ba7a35461cf7c5ab66aa9d6775b609" }
 
 [patches]
 

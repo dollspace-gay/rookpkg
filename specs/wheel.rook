@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/wheel-0.46.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/wheel-0.46.1.tar.gz", sha256 = "fd477efb5da0f7df1d3c76c73c14394002c844451bd63229d8570f376f5e6a38" }
 
 [patches]
 

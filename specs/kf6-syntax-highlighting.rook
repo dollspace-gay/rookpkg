@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/syntax-highlighting-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/syntax-highlighting-6.17.0.tar.xz", sha256 = "3d16bec0fbeb853be684c35f47550d59814db1f4b707ec77b862f3650f353fcc" }
 
 [patches]
 

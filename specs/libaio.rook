@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libaio-libaio-0.3.113.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libaio-0.3.113.tar.gz", sha256 = "1c561c20670c5c09cc8437a622008c0693c6a7816c1f30332da3796953b2f454" }
 
 [patches]
 

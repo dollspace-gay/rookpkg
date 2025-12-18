@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kcolorscheme-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kcolorscheme-6.17.0.tar.xz", sha256 = "c8bd45eb248fc38d816e4eb0fd949d909c09a3a5a90848ef6d4040c35973f7b4" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libblockdev-3.3.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libblockdev-3.3.1.tar.gz", sha256 = "a2e2e448a19d420480b8cce5e0752197482a65cb62a9ed55d88b237da36600d1" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ocean-sound-theme-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ocean-sound-theme-6.4.4.tar.xz", sha256 = "ddd87c9021947a5eff06e2f92566b9d81fe06ea444430745e896d647994e37eb" }
 
 [patches]
 

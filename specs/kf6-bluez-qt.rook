@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/bluez-qt-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/bluez-qt-6.17.0.tar.xz", sha256 = "736e6b0c315897c5ea844544feeef52fd1e9948ec4ff24f2c52c5fd718a0e65d" }
 
 [patches]
 

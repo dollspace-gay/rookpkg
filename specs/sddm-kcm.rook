@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/sddm-kcm-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/sddm-kcm-6.4.4.tar.xz", sha256 = "83366c4d58042d1c0993d8e3197c19c33a7eedccde642263a26812b5c4b16bfb" }
 
 [patches]
 

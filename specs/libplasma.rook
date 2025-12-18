@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libplasma-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libplasma-6.4.4.tar.xz", sha256 = "ab0f4b426829821e0abf479052f326a5ce01c3b604e890c9f79949c3eb5fdebe" }
 
 [patches]
 

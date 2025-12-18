@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kimageformats-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kimageformats-6.17.0.tar.xz", sha256 = "180b670f766bae740340e5afd2044ea08242ea935459bb95bc80313d062066a8" }
 
 [patches]
 

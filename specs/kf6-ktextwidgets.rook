@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ktextwidgets-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ktextwidgets-6.17.0.tar.xz", sha256 = "33d46ecdd03ff68582da5cef251921a8c6e7a5db7ad9bfd0432cb00712ac29e3" }
 
 [patches]
 

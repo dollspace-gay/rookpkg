@@ -1,6 +1,6 @@
 [package]
 name = "llvm"
-version = "19.1.4"
+version = "20.1.8"
 release = 1
 summary = "LLVM compiler infrastructure"
 description = """
@@ -14,17 +14,19 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/llvm-project-19.1.4.src.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/llvm-20.1.8.src.tar.xz", sha256 = "e1363888216b455184dbb8a74a347bf5612f56a3f982369e1cba6c7e0726cde1" }
+source1 = { url = "http://corvidae.social/RookerySource/llvm-cmake-20.1.8.src.tar.xz", sha256 = "3319203cfd1172bbac50f06fa68e318af84dcb5d65353310c0586354069d6634" }
+source2 = { url = "http://corvidae.social/RookerySource/llvm-third-party-20.1.8.src.tar.xz", sha256 = "9a4e452a8163732d417db067a89190fcda823cb3aa33199e834ac7c028923f4b" }
+source3 = { url = "http://corvidae.social/RookerySource/clang-20.1.8.src.tar.xz", sha256 = "b7a1b7b0af7b9c7596af6bd46e36d11321926eaa66a7a7dc957ab0a1375ee4b0" }
+source4 = { url = "http://corvidae.social/RookerySource/compiler-rt-20.1.8.src.tar.xz", sha256 = "15277402f6fd63397c0917a5c7171cda82d16d226094b828c1ed0f58f73b9c69" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-cmake = ">= 3.20"
+cmake = ">= 4.0"
 ninja = ">= 1.8"
 python = ">= 3.12"
-curl = ">= 8.0"
-libedit = ">= 1.0"
 
 [depends]
 glibc = ">= 2.39"
@@ -42,62 +44,96 @@ perl = ">= 5.38"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf llvm-project-*
-tar xf $ROOKPKG_SOURCES/llvm-project-*.tar.xz
+rm -rf llvm-*
+tar xf $ROOKPKG_SOURCES/llvm-20.1.8.src.tar.xz
+cd llvm-20.1.8.src
+
+# Extract supporting tarballs
+tar xf $ROOKPKG_SOURCES/llvm-cmake-20.1.8.src.tar.xz
+tar xf $ROOKPKG_SOURCES/llvm-third-party-20.1.8.src.tar.xz
+
+# Fix paths to supporting tarballs
+sed '/LLVM_COMMON_CMAKE_UTILS/s@../cmake@cmake-20.1.8.src@' -i CMakeLists.txt
+sed '/LLVM_THIRD_PARTY_DIR/s@../third-party@third-party-20.1.8.src@' -i cmake/modules/HandleLLVMOptions.cmake
+
+# Install Clang source
+tar xf $ROOKPKG_SOURCES/clang-20.1.8.src.tar.xz -C tools
+mv tools/clang-20.1.8.src tools/clang
+
+# Install Compiler-RT source
+tar xf $ROOKPKG_SOURCES/compiler-rt-20.1.8.src.tar.xz -C projects
+mv projects/compiler-rt-20.1.8.src projects/compiler-rt
+
+# Fix Python scripts
+grep -rl '#!.*python' | xargs sed -i '1s/python$/python3/'
+
+# Ensure FileCheck installation
+sed 's/utility/tool/' -i utils/FileCheck/CMakeLists.txt
 """
 
 configure = """
-cd $ROOKPKG_BUILD/llvm-project-*/llvm
+cd $ROOKPKG_BUILD/llvm-20.1.8.src
 mkdir -p build
 cd build
-cmake ..                                        \
-      -DCMAKE_INSTALL_PREFIX=/usr               \
-      -DCMAKE_BUILD_TYPE=Release                \
-      -DLLVM_ENABLE_PROJECTS="clang;lld;clang-tools-extra" \
-      -DLLVM_ENABLE_RUNTIMES="compiler-rt;libcxx;libcxxabi" \
-      -DLLVM_ENABLE_FFI=ON                      \
-      -DLLVM_BUILD_LLVM_DYLIB=ON                \
-      -DLLVM_LINK_LLVM_DYLIB=ON                 \
-      -DLLVM_TARGETS_TO_BUILD="X86;AMDGPU"      \
-      -DLLVM_INCLUDE_BENCHMARKS=OFF             \
-      -DLLVM_INSTALL_UTILS=ON                   \
-      -DCLANG_DEFAULT_PIE_ON_LINUX=ON           \
-      -G Ninja
+CC=gcc CXX=g++ cmake -D CMAKE_INSTALL_PREFIX=/usr          \
+      -D CMAKE_SKIP_INSTALL_RPATH=ON                       \
+      -D LLVM_ENABLE_FFI=ON                                \
+      -D CMAKE_BUILD_TYPE=Release                          \
+      -D LLVM_BUILD_LLVM_DYLIB=ON                          \
+      -D LLVM_LINK_LLVM_DYLIB=ON                           \
+      -D LLVM_ENABLE_RTTI=ON                               \
+      -D LLVM_TARGETS_TO_BUILD="host;AMDGPU"               \
+      -D LLVM_BINUTILS_INCDIR=/usr/include                 \
+      -D LLVM_INCLUDE_BENCHMARKS=OFF                       \
+      -D CLANG_DEFAULT_PIE_ON_LINUX=ON                     \
+      -D CLANG_CONFIG_FILE_SYSTEM_DIR=/etc/clang           \
+      -W no-dev -G Ninja ..
 """
 
 build = """
-cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
+cd $ROOKPKG_BUILD/llvm-20.1.8.src/build
 ninja -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
-ninja check-all || true
+cd $ROOKPKG_BUILD/llvm-20.1.8.src/build
+# Apply workaround for compiler-rt tests
+sed -e 's/config.has_no_default_config_flag/True/' \
+    -e 's/"-fuse-ld=gold"//' \
+    -i ../projects/compiler-rt/test/lit.common.cfg.py
+sh -c 'ulimit -c 0 && ninja check-all' || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/llvm-project-*/llvm/build
+cd $ROOKPKG_BUILD/llvm-20.1.8.src/build
 DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Create SSP configuration for Clang
+mkdir -pv $ROOKPKG_DESTDIR/etc/clang
+for i in clang clang++; do
+  echo -fstack-protector-strong > $ROOKPKG_DESTDIR/etc/clang/$i.cfg
+done
 """
 
 [files]
 "usr/bin/clang" = { mode = 755 }
 "usr/bin/clang++" = { mode = 755 }
 "usr/bin/llvm-*" = { mode = 755 }
-"usr/bin/lld" = { mode = 755 }
-"usr/bin/ld.lld" = { mode = 755 }
 "usr/lib/libLLVM*.so" = { mode = 755 }
 "usr/lib/libclang*.so" = { mode = 755 }
-"usr/lib/libc++*.so" = { mode = 755 }
 "usr/lib/libLTO.so" = { mode = 755 }
+"usr/lib/clang/" = {}
 "usr/include/llvm/" = {}
+"usr/include/llvm-c/" = {}
 "usr/include/clang/" = {}
-"usr/include/c++/" = {}
+"usr/include/clang-c/" = {}
 "usr/lib/cmake/llvm/" = {}
 "usr/lib/cmake/clang/" = {}
 "usr/share/man/man1/" = {}
 
 [config_files]
+"etc/clang/clang.cfg" = {}
+"etc/clang/clang++.cfg" = {}
 
 [scripts]
 pre_install = ""
@@ -106,6 +142,19 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "20.1.8"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 20.1.8 per BLFS stable",
+    "Corrected source filenames (llvm-*.src.tar.xz not llvm-project)",
+    "Added separate cmake, third-party, clang, and compiler-rt sources",
+    "Added LLVM_ENABLE_RTTI=ON for Mesa compatibility",
+    "Added clang configuration files for SSP",
+    "Removed lld and libc++ (separate packages in BLFS)"
+]
 
 [[changelog]]
 version = "19.1.4"
@@ -117,7 +166,7 @@ changes = [
 ]
 
 [metadata]
-keywords = ["llvm", "clang", "compiler", "lld", "c++"]
+keywords = ["llvm", "clang", "compiler", "c++"]
 categories = ["development", "compilers"]
 
 [signing]

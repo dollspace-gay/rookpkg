@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kcrash-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kcrash-6.17.0.tar.xz", sha256 = "52f4bddc642e68e96f8f18b34bba803b8f9f93cb8cf5e1d1aabccfd3c5285e13" }
 
 [patches]
 

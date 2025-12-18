@@ -1,6 +1,6 @@
 [package]
 name = "pulseaudio-qt"
-version = "1.5.0"
+version = "1.7.0"
 release = 1
 summary = "Qt bindings for PulseAudio"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/pulseaudio-qt-1.5.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/pulseaudio-qt-1.7.0.tar.xz", sha256 = "6a18db76dd2bcc3df7d9a9379c025295817264baa1f2ed8caaac7da44e04e931" }
 
 [patches]
 
@@ -80,6 +80,14 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.7.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.7.0 to match source mirror"
+]
 
 [[changelog]]
 version = "1.5.0"

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kuserfeedback-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kuserfeedback-6.17.0.tar.xz", sha256 = "0f1b5361ffa6fff12ec3dfd7a3e4b1b2aa6ebadc4afcc03a9d31c2d49bec7caf" }
 
 [patches]
 

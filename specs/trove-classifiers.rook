@@ -1,6 +1,6 @@
 [package]
 name = "trove-classifiers"
-version = "2024.10.21.16"
+version = "2025.8.6.13"
 release = 1
 summary = "Canonical source for trove classifiers on PyPI"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/trove-classifiers-2024.10.21.16.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/trove-classifiers-2025.8.6.13.tar.gz", sha256 = "5a0abad839d2ed810f213ab133d555d267124ddea29f1d8a50d6eca12a50ae6e" }
 
 [patches]
 
@@ -32,7 +32,7 @@ python = ">= 3.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf trove-classifiers-*
+rm -rf trove_classifiers-*
 tar xf $ROOKPKG_SOURCES/trove-classifiers-*.tar.gz
 """
 
@@ -55,7 +55,7 @@ pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$R
 """
 
 [files]
-"usr/lib/python3.12/site-packages/trove_classifiers/" = {}
+"usr/lib/python3.12/site-packages/trove-classifiers/" = {}
 
 [config_files]
 
@@ -66,6 +66,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "2025.8.6.13"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 2025.8.6.13 to match source mirror"
+]
 
 [[changelog]]
 version = "2024.10.21.16"

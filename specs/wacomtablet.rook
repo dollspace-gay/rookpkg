@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/wacomtablet-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/wacomtablet-6.4.4.tar.xz", sha256 = "79c3d6b2ac730de0abec46db272bfcb07a89a382a4981bd3d3ce494d625f5469" }
 
 [patches]
 

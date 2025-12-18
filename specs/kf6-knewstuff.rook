@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/knewstuff-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/knewstuff-6.17.0.tar.xz", sha256 = "1059cb7cdb9ba8170de82a08c6833490007a152a46e4bdbe24304eeddc263d66" }
 
 [patches]
 

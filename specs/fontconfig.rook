@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/fontconfig-2.17.1.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/fontconfig-2.17.1.tar.xz", sha256 = "9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541" }
 
 [patches]
 

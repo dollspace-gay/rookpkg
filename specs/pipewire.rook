@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/pipewire-1.4.7.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/pipewire-1.4.7.tar.bz2", sha256 = "17599eab9cf1ac98bce41954057b1b66d16c99aef341e16d41dbc7302f4fa960" }
 
 [patches]
 
@@ -53,7 +53,7 @@ glib2 = ">= 2.70"
 dbus = ">= 1.12"
 systemd = ">= 250"
 libncursesw = ">= 1.0"
-libpipewire-0.3 = ">= 1.0"
+"libpipewire-0.3" = ">= 1.0"
 libreadline = ">= 1.0"
 ncurses = ">= 6.4"
 readline = ">= 8.2"

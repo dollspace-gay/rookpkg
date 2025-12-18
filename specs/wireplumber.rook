@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/wireplumber-0.5.10.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/wireplumber-0.5.10.tar.bz2", sha256 = "c89fa29694e89939c0e57cade5c9a7da8e5da21c19071862978ef5f3a346f1e7" }
 
 [patches]
 

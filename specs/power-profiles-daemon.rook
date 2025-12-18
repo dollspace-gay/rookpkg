@@ -1,6 +1,6 @@
 [package]
 name = "power-profiles-daemon"
-version = "0.23"
+version = "0.30"
 release = 1
 summary = "Power profiles management daemon"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/power-profiles-daemon-0.23.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/power-profiles-daemon-0.30.tar.gz", sha256 = "90f2c95024861d9f4062abedd514084939224e7a49edd468f001af7260ec8e6c" }
 
 [patches]
 
@@ -39,7 +39,7 @@ libgudev = ">= 1.0"
 prep = """
 cd $ROOKPKG_BUILD
 rm -rf power-profiles-daemon-*
-tar xf $ROOKPKG_SOURCES/power-profiles-daemon-*.tar.bz2
+tar xf $ROOKPKG_SOURCES/power-profiles-daemon-*.tar.gz
 """
 
 configure = """
@@ -83,6 +83,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "0.30"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 0.30 to match source mirror"
+]
 
 [[changelog]]
 version = "0.23"

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libwebp-1.6.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libwebp-1.6.0.tar.gz", sha256 = "e4ab7009bf0629fd11982d4c2aa83964cf244cffba7347ecd39019a9e38c4564" }
 
 [patches]
 

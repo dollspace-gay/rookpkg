@@ -1,6 +1,6 @@
 [package]
 name = "plasma-wayland-protocols"
-version = "1.14.0"
+version = "1.18.0"
 release = 1
 summary = "Wayland protocols used by KDE Plasma"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/plasma-wayland-protocols-1.14.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-wayland-protocols-1.18.0.tar.xz", sha256 = "2567472671ad5d989f88b51baef9dd59353a5e7c3f2ed7e6b989755cb9004233" }
 
 [patches]
 
@@ -73,6 +73,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.18.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.18.0 to match source mirror"
+]
 
 [[changelog]]
 version = "1.14.0"

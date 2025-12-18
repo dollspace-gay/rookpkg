@@ -1,6 +1,6 @@
 [package]
 name = "spectacle"
-version = "24.12.0"
+version = "6.4.4"
 release = 1
 summary = "KDE screenshot utility"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/spectacle-24.12.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/spectacle-6.4.4.tar.xz", sha256 = "9108a739c1acc43b23e0a6aa17ba4194a564ab1548c6887328c76a073bf3d373" }
 
 [patches]
 
@@ -132,6 +132,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "6.4.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 6.4.4 to match source mirror"
+]
 
 [[changelog]]
 version = "24.12.0"

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kitemviews-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kitemviews-6.17.0.tar.xz", sha256 = "31d1c8ff64b28eef216e63a443accdc621c53f51ec23e6a137d9e08629742fd1" }
 
 [patches]
 

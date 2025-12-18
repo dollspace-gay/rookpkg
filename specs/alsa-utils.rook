@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/alsa-utils-1.2.14.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/alsa-utils-1.2.14.tar.bz2", sha256 = "0794c74d33fed943e7c50609c13089e409312b6c403d6ae8984fc429c0960741" }
 
 [patches]
 

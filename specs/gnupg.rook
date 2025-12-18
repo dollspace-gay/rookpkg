@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/gnupg-2.5.14.tar.bz2", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/gnupg-2.5.14.tar.bz2", sha256 = "25a622e625a1cc9078b5e3f7adf2bd02b86759170e2fbb8542bca8e907214610" }
 
 [patches]
 

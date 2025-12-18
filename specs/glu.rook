@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/glu-9.0.3.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/glu-9.0.3.tar.xz", sha256 = "bd43fe12f374b1192eb15fe20e45ff456b9bc26ab57f0eee919f96ca0f8a330f" }
 
 [patches]
 

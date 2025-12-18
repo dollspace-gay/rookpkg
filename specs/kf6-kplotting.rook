@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kplotting-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kplotting-6.17.0.tar.xz", sha256 = "6654965b63d0857c31c21817e56931684c32dddf035e83169ca6ea7d6b9a2643" }
 
 [patches]
 

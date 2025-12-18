@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/cryptsetup-2.8.1.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/cryptsetup-2.8.1.tar.xz", sha256 = "2c3379eb76597dcab50911449b013e2697c4bffcc716dbbf0d9b0e8fbbb46fb4" }
 
 [patches]
 

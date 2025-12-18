@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kunitconversion-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kunitconversion-6.17.0.tar.xz", sha256 = "f2625a4ba25b3329fb9730249073bcd349b7a346362148c7fa97989efc7e5cca" }
 
 [patches]
 

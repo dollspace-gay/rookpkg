@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libaom-3.12.1.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libaom-3.12.1.tar.gz", sha256 = "9e9775180dec7dfd61a79e00bda3809d43891aee6b2e331ff7f26986207ea22e" }
 
 [patches]
 

@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kquickcharts-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kquickcharts-6.17.0.tar.xz", sha256 = "1e206a9684d882ce2c147e436392dc3ef6cda79e4bc2ddf5aa0398d2e2ddc5a4" }
 
 [patches]
 

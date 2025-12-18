@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/breeze-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/breeze-6.4.4.tar.xz", sha256 = "307cfcb5505bd376d959b364f5231cac4a280af938a938ce3a4e3b7a9f71f70d" }
 
 [patches]
 

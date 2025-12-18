@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/plasma-firewall-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-firewall-6.4.4.tar.xz", sha256 = "6b7b29043d8b0979da99f92ed7f9db9074b8da42d025c3ed497f2df862898842" }
 
 [patches]
 

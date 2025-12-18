@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kcoreaddons-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kcoreaddons-6.17.0.tar.xz", sha256 = "0303d6d1e9e76cf9ec06a41acd1a52088a40df3a2805e97e1c327baf607842aa" }
 
 [patches]
 

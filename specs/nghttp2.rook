@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/nghttp2-1.67.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/nghttp2-1.67.0.tar.xz", sha256 = "d21cf317837f5176b76bed7eded54a4e4583dfa378c9f915913329d9d4a1be86" }
 
 [patches]
 

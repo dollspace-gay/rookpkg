@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/hatchling-1.27.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/hatchling-1.27.0.tar.gz", sha256 = "971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6" }
 
 [patches]
 

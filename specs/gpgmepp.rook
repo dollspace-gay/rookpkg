@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/gpgmepp-2.0.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/gpgmepp-2.0.0.tar.xz", sha256 = "d4796049c06708a26f3096f748ef095347e1a3c1e570561701fe952c3f565382" }
 
 [patches]
 

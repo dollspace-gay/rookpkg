@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kwidgetsaddons-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kwidgetsaddons-6.17.0.tar.xz", sha256 = "dcb33387953cd0429d4297d628b4872e7a3a970cce5ea84b446677d8b7487ea1" }
 
 [patches]
 

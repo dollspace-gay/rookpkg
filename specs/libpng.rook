@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libpng-1.6.50.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libpng-1.6.50.tar.xz", sha256 = "4df396518620a7aa3651443e87d1b2862e4e88cad135a8b93423e01706232307" }
 
 [patches]
 

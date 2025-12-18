@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libffi-3.5.2.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libffi-3.5.2.tar.gz", sha256 = "f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc" }
 
 [patches]
 

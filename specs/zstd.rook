@@ -1,6 +1,6 @@
 [package]
 name = "zstd"
-version = "1.5.6"
+version = "1.5.7"
 release = 1
 summary = "Fast real-time compression algorithm"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/zstd-1.5.6.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/zstd-1.5.7.tar.gz", sha256 = "eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3" }
 
 [patches]
 
@@ -87,7 +87,7 @@ pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
 
 [[changelog]]
-version = "1.5.6"
+version = "1.5.7"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

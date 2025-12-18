@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/prison-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/prison-6.17.0.tar.xz", sha256 = "5542dd0733e06beae6f8cf8bf27ff981f34205fe98125d910be2c53fff47007c" }
 
 [patches]
 

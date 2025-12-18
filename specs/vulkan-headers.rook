@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/Vulkan-Headers-1.4.321.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/Vulkan-Headers-1.4.321.tar.gz", sha256 = "7c1874f9186d9e7d5245e279cdccaa77a66ed8f52871b428630aeb771dc7623c" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/bluedevil-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/bluedevil-6.4.4.tar.xz", sha256 = "7e5d386a7c42a1b4ef00e79469c8f47300944c9c42023647f2efd3a12ecc3175" }
 
 [patches]
 

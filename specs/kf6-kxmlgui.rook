@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kxmlgui-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kxmlgui-6.17.0.tar.xz", sha256 = "a1807169ca2c386a8d3e25cb2b066554e49663a6e3f632f1a1968ef5476430e3" }
 
 [patches]
 

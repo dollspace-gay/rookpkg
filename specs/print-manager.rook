@@ -1,6 +1,6 @@
 [package]
 name = "print-manager"
-version = "24.12.0"
+version = "6.4.4"
 release = 1
 summary = "KDE print manager"
 description = """
@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/print-manager-24.12.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/print-manager-6.4.4.tar.xz", sha256 = "23daaa8a939bdb89047576f9e24461a3d16efd8a4556e4d1f0ece576dc2ef79f" }
 
 [patches]
 
@@ -108,6 +108,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "6.4.4"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 6.4.4 to match source mirror"
+]
 
 [[changelog]]
 version = "24.12.0"

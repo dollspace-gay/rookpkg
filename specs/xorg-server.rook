@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/xorg-server-21.1.18.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/xorg-server-21.1.18.tar.xz", sha256 = "c878d1930d87725d4a5bf498c24f4be8130d5b2646a9fd0f2994deff90116352" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ksystemstats-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ksystemstats-6.4.4.tar.xz", sha256 = "9a3a74d2cea2077dd87533dc85edfe011b6f6fc2ef1ab0a0a35d550319454667" }
 
 [patches]
 

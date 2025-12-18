@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kholidays-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kholidays-6.17.0.tar.xz", sha256 = "5b8e7df887bf790eddd6533910eefa9b00a77f2675260da71f36b95cb764fab2" }
 
 [patches]
 

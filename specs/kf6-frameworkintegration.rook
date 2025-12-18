@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/frameworkintegration-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/frameworkintegration-6.17.0.tar.xz", sha256 = "9d9e011fac9d9967d94c43ed2a213d851263805e1db5dad08d812fe3f0e6ad12" }
 
 [patches]
 

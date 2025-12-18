@@ -1,6 +1,6 @@
 [package]
 name = "setuptools-scm"
-version = "8.1.0"
+version = "8.3.1"
 release = 1
 summary = "Setuptools plugin for VCS-based versioning"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/setuptools-scm-8.1.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/setuptools-scm-8.3.1.tar.gz", sha256 = "3d555e92b75dacd037d32bafdf94f97af51ea29ae8c7b234cf94b7a5bd242a63" }
 
 [patches]
 
@@ -43,7 +43,7 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/setuptools_scm-*
+cd $ROOKPKG_BUILD/setuptools-scm-*
 pip3 wheel -w dist --no-build-isolation --no-deps .
 """
 
@@ -52,12 +52,12 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/setuptools_scm-*
+cd $ROOKPKG_BUILD/setuptools-scm-*
 pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR setuptools-scm
 """
 
 [files]
-"usr/lib/python3.12/site-packages/setuptools_scm/" = {}
+"usr/lib/python3.12/site-packages/setuptools-scm/" = {}
 
 [config_files]
 
@@ -68,6 +68,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "8.3.1"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 8.3.1 to match source mirror"
+]
 
 [[changelog]]
 version = "8.1.0"

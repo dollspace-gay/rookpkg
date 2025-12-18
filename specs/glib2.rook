@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/glib-2.84.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/glib-2.84.4.tar.xz", sha256 = "8a9ea10943c36fc117e253f80c91e477b673525ae45762942858aef57631bb90" }
 
 [patches]
 

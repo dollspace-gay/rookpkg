@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kdeclarative-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kdeclarative-6.17.0.tar.xz", sha256 = "b5363dfc7354d1fa1ed49d7175a0334a8ef66e82bb389ba4baffe6f778f2e2ba" }
 
 [patches]
 

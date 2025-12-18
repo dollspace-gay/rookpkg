@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/plasma-systemmonitor-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-systemmonitor-6.4.4.tar.xz", sha256 = "c9d4a27ef93f1ec29a9b181c56dbf16ce81aa1a6ad30c837ff987c3552888e78" }
 
 [patches]
 

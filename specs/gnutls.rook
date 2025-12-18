@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/gnutls-3.8.10.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/gnutls-3.8.10.tar.xz", sha256 = "db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7" }
 
 [patches]
 

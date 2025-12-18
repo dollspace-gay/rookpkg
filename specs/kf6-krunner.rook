@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/krunner-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/krunner-6.17.0.tar.xz", sha256 = "9d4a5c0c74b0cfa9e35c31de762633ddec0439c50fa44bc85bec28ada0106912" }
 
 [patches]
 

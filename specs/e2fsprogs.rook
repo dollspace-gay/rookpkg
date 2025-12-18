@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/e2fsprogs-1.47.3.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/e2fsprogs-1.47.3.tar.gz", sha256 = "2f5164e64dd7d91eadd1e0e8a77d92c06dd7837bb19f1d9189ce1939b363d2b4" }
 
 [patches]
 

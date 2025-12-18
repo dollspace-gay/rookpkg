@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/sonnet-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/sonnet-6.17.0.tar.xz", sha256 = "4afef6e9ca72edb6c22800b4acfb450df7121e5077c85213aca5f56ab9f4160b" }
 
 [patches]
 

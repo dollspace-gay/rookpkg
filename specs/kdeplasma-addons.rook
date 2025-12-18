@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kdeplasma-addons-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kdeplasma-addons-6.4.4.tar.xz", sha256 = "1561a31c4092d0b697ae95d4fc51b82dec70013114d26e0b69c878f17d65b4f8" }
 
 [patches]
 

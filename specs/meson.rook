@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/meson-1.8.3.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/meson-1.8.3.tar.gz", sha256 = "f118aa910fc0a137cc2dd0122232dbf82153d9a12fb5b0f5bb64896f6a157abf" }
 
 [patches]
 

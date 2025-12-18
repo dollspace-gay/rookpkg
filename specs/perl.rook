@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/perl-5.42.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/perl-5.42.0.tar.xz", sha256 = "73cf6cc1ea2b2b1c110a18c14bbbc73a362073003893ffcedc26d22ebdbdd0c3" }
 
 [patches]
 
@@ -29,7 +29,7 @@ patchutils = ">= 1.0"
 glibc = ">= 2.39"
 zlib = ">= 1.0"
 bzip2 = ">= 1.0"
-db5.3 = ">= 1.0"
+"db5.3" = ">= 1.0"
 gdbm = ">= 1.0"
 libxcrypt = ">= 1.0"
 

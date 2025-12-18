@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ncurses-6.5.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ncurses-6.5.tar.gz", sha256 = "b071468b8c79099a378ed9bea937a605509f71e720402e2541abe20ad753c555" }
 
 [patches]
 

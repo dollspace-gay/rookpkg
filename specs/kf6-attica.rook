@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/attica-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/attica-6.17.0.tar.xz", sha256 = "2fab4a2d32e98f62465b81bda6e416ff7fa99d6aa494c4b261f8772758f6b71a" }
 
 [patches]
 

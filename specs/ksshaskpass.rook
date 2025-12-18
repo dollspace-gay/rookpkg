@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/ksshaskpass-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/ksshaskpass-6.4.4.tar.xz", sha256 = "ab47b94b6024fab148c9a7a8f8c4403a81edea96eabbb0d5f805a120fc5df230" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kinfocenter-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kinfocenter-6.4.4.tar.xz", sha256 = "27629f287c4361e3f127daac38f01d0abb23355ca6da3822f418b398bf0ea0b1" }
 
 [patches]
 

@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/polkit-kde-agent-1-6.2.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/polkit-kde-agent-1-6.4.4.tar.xz", sha256 = "2c218f4e66f5f933b9cdd0c6886f53625a2bf7f1c8df64bb485835ae72877e3d" }
 
 [patches]
 

@@ -1,6 +1,6 @@
 [package]
 name = "pluggy"
-version = "1.5.0"
+version = "1.6.0"
 release = 1
 summary = "Plugin and hook calling mechanism for Python"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/pluggy-1.5.0.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/pluggy-1.6.0.tar.gz", sha256 = "7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3" }
 
 [patches]
 
@@ -67,6 +67,14 @@ pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
 post_upgrade = ""
+
+[[changelog]]
+version = "1.6.0"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 1.6.0 to match source mirror"
+]
 
 [[changelog]]
 version = "1.5.0"

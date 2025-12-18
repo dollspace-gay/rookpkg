@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/boost-1.89.0-b2-nodocs.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/boost-1.89.0-b2-nodocs.tar.xz", sha256 = "875cc413afa6b86922b6df3b2ad23dec4511c8a741753e57c1129e7fa753d700" }
 
 [patches]
 

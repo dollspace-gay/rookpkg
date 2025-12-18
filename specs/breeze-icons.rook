@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/breeze-icons-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/breeze-icons-6.17.0.tar.xz", sha256 = "4ffc75886e9a14a2a02da4871600b8c0b5a40756b8e99cbecfb515696d93c3b8" }
 
 [patches]
 

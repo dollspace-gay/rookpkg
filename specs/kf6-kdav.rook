@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kdav-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kdav-6.17.0.tar.xz", sha256 = "8d8a3b03c5c53f58a2660b589b89731d182ba3bc622c76e07bfe6cbf50a693c7" }
 
 [patches]
 

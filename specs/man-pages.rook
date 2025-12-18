@@ -1,6 +1,6 @@
 [package]
 name = "man-pages"
-version = "6.12"
+version = "6.15"
 release = 1
 summary = "Linux manual pages"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/man-pages-6.12.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/man-pages-6.15.tar.xz", sha256 = "03d8ebf618bd5df57cb4bf355efa3f4cd3a00b771efd623d4fd042b5dceb4465" }
 
 [patches]
 
@@ -72,7 +72,7 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "6.12"
+version = "6.15"
 date = "2025-12-15"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

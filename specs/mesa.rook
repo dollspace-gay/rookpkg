@@ -1,6 +1,6 @@
 [package]
 name = "mesa"
-version = "24.3.2"
+version = "25.1.8"
 release = 1
 summary = "OpenGL and Vulkan implementations"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/mesa-24.3.2.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/mesa-25.1.8.tar.xz", sha256 = "5cf1571d0d646d90047f3d93f57acc787cf88ec7e95efe172c555b492c30fb71" }
 
 [patches]
 
@@ -86,17 +86,15 @@ configure = """
 cd $ROOKPKG_BUILD/mesa-*
 mkdir -p build
 cd build
-meson setup ..                                  \
-      --prefix=/usr                             \
-      --buildtype=release                       \
-      -D platforms=x11,wayland                  \
-      -D gallium-drivers=r300,r600,radeonsi,nouveau,virgl,svga,swrast,iris,crocus,zink \
-      -D vulkan-drivers=amd,intel,intel_hasvk,swrast \
-      -D gallium-nine=false                     \
-      -D glx=dri                                \
-      -D valgrind=disabled                      \
-      -D libunwind=disabled                     \
-      -D video-codecs=all_free
+meson setup ..                   \
+      --prefix=/usr              \
+      --buildtype=release        \
+      -D platforms=x11,wayland   \
+      -D gallium-drivers=auto    \
+      -D vulkan-drivers=auto     \
+      -D valgrind=disabled       \
+      -D video-codecs=all        \
+      -D libunwind=disabled
 """
 
 build = """
@@ -148,6 +146,16 @@ pre_remove = ""
 post_remove = "/sbin/ldconfig"
 pre_upgrade = ""
 post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "25.1.8"
+date = "2025-12-17"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Updated to version 25.1.8 per BLFS 12.4",
+    "Simplified meson options using auto driver detection",
+    "Changed video-codecs from all_free to all"
+]
 
 [[changelog]]
 version = "24.3.2"

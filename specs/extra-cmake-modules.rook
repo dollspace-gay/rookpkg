@@ -14,8 +14,8 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/extra-cmake-modules-6.17.0.tar.xz", sha256 = "FIXME" }
-patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/extra-cmake-modules-6.17.0-upstream_fix-1.patch", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/extra-cmake-modules-6.17.0.tar.xz", sha256 = "dfecb17d0238f4de1dd3485b92a6606137d4a9c67b9e4ce40407fe0f2aec0a40" }
+patch0 = { url = "https://www.linuxfromscratch.org/patches/blfs/12.4/extra-cmake-modules-6.17.0-upstream_fix-1.patch", sha256 = "0136815bbf8155770e213f10c3df7950872ed4f8909a503abf3cb7161bbdfe42" }
 
 [patches]
 

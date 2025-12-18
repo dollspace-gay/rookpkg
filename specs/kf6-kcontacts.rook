@@ -13,7 +13,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kcontacts-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kcontacts-6.17.0.tar.xz", sha256 = "198db25bdc7e7fee11766effed13ad4438f6a211be8a16a1cd1e815e3ebcf21a" }
 
 [patches]
 

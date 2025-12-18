@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/kidletime-6.17.0.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/kidletime-6.17.0.tar.xz", sha256 = "1f67d26749de9f09f4ab0dc4b23e53ecb84d921b1d52d612822fdc53c34c3b37" }
 
 [patches]
 

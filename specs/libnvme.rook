@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/libnvme-1.15.tar.gz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/libnvme-1.15.tar.gz", sha256 = "c21cd9379390bdc52c9d9569a241274f8115fc247b76a5d922d639f48c8174a2" }
 
 [patches]
 

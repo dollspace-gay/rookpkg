@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/plasma-desktop-6.4.4.tar.xz", sha256 = "FIXME" }
+source0 = { url = "http://corvidae.social/RookerySource/plasma-desktop-6.4.4.tar.xz", sha256 = "4d70b9bf99f59b3bdea7b8240a0b7df803bd16c0ae9cc534ca3617a9f9c54013" }
 
 [patches]
 
