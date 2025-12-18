@@ -82,8 +82,8 @@ pulseaudio-zeroconf = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf pulseaudio-*
-tar xf $ROOKPKG_SOURCES/pulseaudio-*.tar.xz
+rm -rf pulseaudio-17*
+tar xf $ROOKPKG_SOURCES/pulseaudio-17*.tar.xz
 """
 
 configure = """
@@ -95,7 +95,8 @@ meson setup ..                        \
       --buildtype=release             \
       -D database=gdbm                \
       -D doxygen=false                \
-      -D bluez5=disabled
+      -D bluez5=disabled              \
+      -D tests=false
 """
 
 build = """

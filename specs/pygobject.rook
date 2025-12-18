@@ -38,7 +38,7 @@ pycairo = ">= 1.27"
 prep = """
 cd $ROOKPKG_BUILD
 rm -rf pygobject-*
-tar xf $ROOKPKG_SOURCES/pygobject-*.tar.xz
+tar xf $ROOKPKG_SOURCES/pygobject-*.tar.gz
 cd pygobject-*
 mv -v tests/test_gdbus.py{,.nouse}
 mv -v tests/test_overrides_gtk.py{,.nouse}

@@ -193,8 +193,8 @@ xdg-desktop-portal-gtk = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf plasma-workspace-*
-tar xf $ROOKPKG_SOURCES/plasma-workspace-*.tar.xz
+rm -rf plasma-workspace-6*
+tar xf $ROOKPKG_SOURCES/plasma-workspace-6*.tar.xz
 """
 
 configure = """
@@ -206,6 +206,7 @@ cmake .. \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_TESTING=OFF \
       -DGLIBC_LOCALE_PREGENERATED=ON \
+      -DGLIBC_LOCALE_GEN=OFF \
       -G Ninja
 """
 

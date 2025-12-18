@@ -49,7 +49,8 @@ cd build
 meson setup ..               \
       --prefix=/usr          \
       --buildtype=release    \
-      -D gtk_doc=false
+      -D gtk_doc=false       \
+      -D tests=false
 """
 
 build = """
