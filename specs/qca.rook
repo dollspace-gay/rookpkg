@@ -32,6 +32,9 @@ ca-certificates = ">= 2024"
 [optional_depends]
 
 [environment]
+CMAKE_PREFIX_PATH = "/opt/qt6"
+LC_ALL = "C.UTF-8"
+LANG = "C.UTF-8"
 
 [build]
 prep = """
@@ -49,7 +52,6 @@ mkdir -p build
 cd build
 cmake ..                                       \
       -DCMAKE_INSTALL_PREFIX=/opt/qt6          \
-      -DCMAKE_PREFIX_PATH=/opt/qt6             \
       -DCMAKE_BUILD_TYPE=Release               \
       -DQT6=ON                                 \
       -DQCA_INSTALL_IN_QT_PREFIX=ON            \
