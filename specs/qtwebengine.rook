@@ -52,6 +52,8 @@ libx11 = ">= 1.8"
 [optional_depends]
 
 [environment]
+LC_ALL = "C.UTF-8"
+LANG = "C.UTF-8"
 
 [build]
 prep = """
