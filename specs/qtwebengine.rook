@@ -81,7 +81,9 @@ cmake ..                                            \
 
 build = """
 cd $ROOKPKG_BUILD/qtwebengine-everywhere-src-*/build
-ninja -j$ROOKPKG_JOBS
+# Limit jobs - Chromium compilation is extremely memory-intensive
+# BLFS recommends ~1 core per 1.5GB RAM
+ninja -j12
 """
 
 check = """
