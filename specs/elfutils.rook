@@ -70,7 +70,8 @@ install = """
 cd $ROOKPKG_BUILD/elfutils-*
 # Install only libelf for now (full package would include all utilities)
 make -C libelf DESTDIR=$ROOKPKG_DESTDIR install
-install -vm644 config/libelf.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/pkgconfig
+install -vm644 config/libelf.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/libelf.pc
 # Remove static library
 rm -f $ROOKPKG_DESTDIR/usr/lib/libelf.a
 """

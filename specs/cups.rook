@@ -75,6 +75,7 @@ cd $ROOKPKG_BUILD/cups-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
 # BLFS: Create doc symlink
+mkdir -p $ROOKPKG_DESTDIR/usr/share/doc
 ln -svnf ../cups/doc-2.4.12 $ROOKPKG_DESTDIR/usr/share/doc/cups-2.4.12
 
 # BLFS: Create basic client configuration

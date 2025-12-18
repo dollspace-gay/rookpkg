@@ -18,8 +18,7 @@ source0 = { url = "http://corvidae.social/RookerySource/glibc-2.42.tar.xz", sha2
 patch0 = { url = "https://www.linuxfromscratch.org/patches/lfs/development/glibc-2.42-fhs-1.patch", sha256 = "643552db030e2f2d7ffde4f558e0f5f83d3fabf34a2e0e56ebdb49750ac27b0d" }
 
 [patches]
-# FHS compliance patch
-patch0 = { file = "glibc-2.42-fhs-1.patch", strip = 1 }
+# FHS compliance patch applied manually in prep phase
 
 [build_depends]
 binutils = ">= 2.43"

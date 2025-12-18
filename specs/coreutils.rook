@@ -77,7 +77,9 @@ cd $ROOKPKG_BUILD/coreutils-*
 make DESTDIR=$ROOKPKG_DESTDIR install
 
 # Move chroot to sbin
-mv -v $ROOKPKG_DESTDIR/usr/bin/chroot $ROOKPKG_DESTDIR/usr/sbin/
+mkdir -p $ROOKPKG_DESTDIR/usr/sbin
+mv -v $ROOKPKG_DESTDIR/usr/bin/chroot $ROOKPKG_DESTDIR/usr/sbin/chroot
+mkdir -p $ROOKPKG_DESTDIR/usr/share/man/man8
 mv -v $ROOKPKG_DESTDIR/usr/share/man/man1/chroot.1 $ROOKPKG_DESTDIR/usr/share/man/man8/chroot.8
 sed -i 's/"1"/"8"/' $ROOKPKG_DESTDIR/usr/share/man/man8/chroot.8
 """

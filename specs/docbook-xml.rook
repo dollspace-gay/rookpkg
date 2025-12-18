@@ -34,7 +34,8 @@ libxml2 = ">= 2.12"
 prep = """
 cd $ROOKPKG_BUILD
 rm -rf docbook-xml-*
-unzip $ROOKPKG_SOURCES/docbook-xml-4.5.zip -d docbook-xml-4.5
+mkdir -p docbook-xml-4.5
+7z x -odocbook-xml-4.5 $ROOKPKG_SOURCES/docbook-xml-4.5.zip
 """
 
 configure = """

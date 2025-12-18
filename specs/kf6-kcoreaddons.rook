@@ -51,6 +51,7 @@ cmake -D CMAKE_INSTALL_PREFIX=/usr \\
       -D CMAKE_SKIP_INSTALL_RPATH=ON \\
       -D CMAKE_BUILD_TYPE=Release \\
       -D BUILD_TESTING=OFF \\
+      -D BUILD_PYTHON_BINDINGS=OFF \\
       -W no-dev ..
 """
 

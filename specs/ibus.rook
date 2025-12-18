@@ -67,6 +67,11 @@ cd ibus-*
 sed -e 's@/desktop/ibus@/org/freedesktop/ibus@g' \
     -i data/dconf/org.freedesktop.ibus.gschema.xml
 
+# Remove gtk-doc references if gtkdocize is not present (per BLFS)
+if ! [ -e /usr/bin/gtkdocize ]; then
+  sed '/docs/d;/GTK_DOC/d' -i Makefile.am configure.ac
+fi
+
 # Run autogen.sh per BLFS
 SAVE_DIST_FILES=1 NOCONFIGURE=1 ./autogen.sh
 """

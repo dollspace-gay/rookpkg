@@ -38,16 +38,16 @@ prep = """
 cd $ROOKPKG_BUILD
 rm -rf fuse-*
 tar xf $ROOKPKG_SOURCES/fuse-*.tar.gz
+cd fuse-*
+# Disable udev rules installation per BLFS
+sed -i '/^udev/,$ s/^/#/' util/meson.build
 """
 
 configure = """
 cd $ROOKPKG_BUILD/fuse-*
 mkdir -p build
 cd build
-meson setup ..               \
-      --prefix=/usr          \
-      --buildtype=release    \
-      -D examples=false
+meson setup --prefix=/usr --buildtype=release ..
 """
 
 build = """
@@ -64,8 +64,7 @@ install = """
 cd $ROOKPKG_BUILD/fuse-*/build
 DESTDIR=$ROOKPKG_DESTDIR ninja install
 
-# Fix permissions on fusermount3
-chmod u+s $ROOKPKG_DESTDIR/usr/bin/fusermount3
+# Note: setuid bit (mode 4755) is set by the package manager via [files] section
 """
 
 [files]
@@ -76,7 +75,6 @@ chmod u+s $ROOKPKG_DESTDIR/usr/bin/fusermount3
 "usr/lib/pkgconfig/fuse3.pc" = {}
 "usr/share/man/man1/fusermount3.1" = {}
 "usr/share/man/man8/mount.fuse3.8" = {}
-"lib/udev/rules.d/99-fuse3.rules" = {}
 
 [config_files]
 "etc/fuse.conf" = {}

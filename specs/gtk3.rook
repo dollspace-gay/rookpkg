@@ -78,29 +78,29 @@ evince = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf gtk+-*
-tar xf $ROOKPKG_SOURCES/gtk+-*.tar.xz
+rm -rf gtk-3*
+tar xf $ROOKPKG_SOURCES/gtk-3*.tar.xz
 """
 
 configure = """
-cd $ROOKPKG_BUILD/gtk+-*
+cd $ROOKPKG_BUILD/gtk-3*
 mkdir -p build
 cd build
 meson setup --prefix=/usr --buildtype=release -Dman=true -Dbroadway_backend=true ..
 """
 
 build = """
-cd $ROOKPKG_BUILD/gtk+-*/build
+cd $ROOKPKG_BUILD/gtk-3*/build
 ninja -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/gtk+-*/build
+cd $ROOKPKG_BUILD/gtk-3*/build
 ninja test || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/gtk+-*/build
+cd $ROOKPKG_BUILD/gtk-3*/build
 DESTDIR=$ROOKPKG_DESTDIR ninja install
 """
 
