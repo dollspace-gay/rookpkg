@@ -33,8 +33,12 @@ libpng = ">= 1.6"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf qrencode-*
-tar xf $ROOKPKG_SOURCES/qrencode-*.tar.gz
+rm -rf qrencode-* libqrencode-*
+tar xf $ROOKPKG_SOURCES/libqrencode-*.tar.gz
+# Rename directory if needed for consistency
+if [ -d libqrencode-* ]; then
+    mv libqrencode-* qrencode-4.1.1
+fi
 """
 
 configure = """

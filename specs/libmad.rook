@@ -59,6 +59,7 @@ make check || true
 install = """
 cd $ROOKPKG_BUILD/libmad-*
 make DESTDIR=$ROOKPKG_DESTDIR install
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/pkgconfig
 cat > $ROOKPKG_DESTDIR/usr/lib/pkgconfig/mad.pc << "EOF"
 prefix=/usr
 exec_prefix=${prefix}

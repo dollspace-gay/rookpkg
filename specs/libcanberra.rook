@@ -70,7 +70,9 @@ make check || true
 
 install = """
 cd $ROOKPKG_BUILD/libcanberra-*
-make docdir=/usr/share/doc/libcanberra-0.30 DESTDIR=$ROOKPKG_DESTDIR install
+# Disable libtool relinking which fails during DESTDIR installs
+sed -i 's/need_relink=yes/need_relink=no/' libtool
+make -j1 docdir=/usr/share/doc/libcanberra-0.30 DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]
