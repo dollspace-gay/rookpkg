@@ -58,9 +58,9 @@ cargo test || true
 
 install = """
 cd $ROOKPKG_BUILD/cargo-c-*
-install -vDm755 target/release/cargo-cbuild $ROOKPKG_DESTDIR/usr/bin/
-install -vDm755 target/release/cargo-cinstall $ROOKPKG_DESTDIR/usr/bin/
-install -vDm755 target/release/cargo-ctest $ROOKPKG_DESTDIR/usr/bin/
+install -vDm755 target/release/cargo-cbuild $ROOKPKG_DESTDIR/usr/bin/cargo-cbuild
+install -vDm755 target/release/cargo-cinstall $ROOKPKG_DESTDIR/usr/bin/cargo-cinstall
+install -vDm755 target/release/cargo-ctest $ROOKPKG_DESTDIR/usr/bin/cargo-ctest
 """
 
 [files]

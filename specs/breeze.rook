@@ -61,8 +61,8 @@ breeze-gtk = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf breeze-*
-tar xf $ROOKPKG_SOURCES/breeze-*.tar.xz
+rm -rf breeze-6*
+tar xf $ROOKPKG_SOURCES/breeze-6*.tar.xz
 """
 
 configure = """
@@ -73,6 +73,7 @@ cmake .. \
       -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_TESTING=OFF \
+      -DBUILD_QT5=OFF \
       -G Ninja
 """
 
