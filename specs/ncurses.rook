@@ -62,18 +62,14 @@ check = """
 install = """
 cd $ROOKPKG_BUILD/ncurses-*
 
-# Install to temporary destination first
-make DESTDIR=$PWD/dest install
+# Create destination directories
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/pkgconfig
 
-# Install the wide-character library with correct permissions
-install -vm755 dest/usr/lib/libncursesw.so.6.5 $ROOKPKG_DESTDIR/usr/lib/
-rm -v dest/usr/lib/libncursesw.so.6.5
+# Install directly to DESTDIR
+make DESTDIR=$ROOKPKG_DESTDIR install
 
 # Fix curses.h for maximum compatibility
-sed -e 's/^#if.*XOPEN.*$/#if 1/' -i dest/usr/include/curses.h
-
-# Copy everything else
-cp -av dest/* $ROOKPKG_DESTDIR/
+sed -e 's/^#if.*XOPEN.*$/#if 1/' -i $ROOKPKG_DESTDIR/usr/include/curses.h
 
 # Create compatibility symlinks for non-wide libraries
 for lib in ncurses form panel menu; do

@@ -32,8 +32,10 @@ glibc = ">= 2.39"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf lmdb-*
-tar xf $ROOKPKG_SOURCES/lmdb-*.tar.gz
+rm -rf lmdb-* openldap-*
+tar xf $ROOKPKG_SOURCES/LMDB_*.tar.bz2
+# LMDB extracts to openldap-LMDB_X.X.X-<hash> format
+mv openldap-LMDB_* lmdb-0.9.33
 """
 
 configure = """
@@ -41,17 +43,18 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+cd $ROOKPKG_BUILD/lmdb-0.9.33/libraries/liblmdb
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+cd $ROOKPKG_BUILD/lmdb-0.9.33/libraries/liblmdb
 make test || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/lmdb-*/libraries/liblmdb
+cd $ROOKPKG_BUILD/lmdb-0.9.33/libraries/liblmdb
+sed -i 's| liblmdb.a||' Makefile
 make prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
 """
 

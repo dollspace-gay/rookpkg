@@ -32,7 +32,7 @@ python = ">= 3.12"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf python-pathspec-*
+rm -rf pathspec-*
 tar xf $ROOKPKG_SOURCES/pathspec-*.tar.gz
 """
 
@@ -41,17 +41,17 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/python-pathspec-*
+cd $ROOKPKG_BUILD/pathspec-*
 pip3 wheel -w dist --no-build-isolation --no-deps .
 """
 
 check = """
-cd $ROOKPKG_BUILD/python-pathspec-*
+cd $ROOKPKG_BUILD/pathspec-*
 python3 -m pytest || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/python-pathspec-*
+cd $ROOKPKG_BUILD/pathspec-*
 pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR pathspec
 """
 

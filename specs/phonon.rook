@@ -35,8 +35,8 @@ qt6 = ">= 6.7"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf phonon-*
-tar xf $ROOKPKG_SOURCES/phonon-*.tar.xz
+rm -rf phonon-4*
+tar xf $ROOKPKG_SOURCES/phonon-4*.tar.xz
 """
 
 configure = """

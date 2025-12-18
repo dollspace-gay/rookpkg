@@ -43,7 +43,7 @@ tar xf $ROOKPKG_SOURCES/p11-kit-*.tar.xz
 cd p11-kit-*
 
 # Prepare the distribution specific anchor hook
-sed '20,\\$ d' -i trust/trust-extract-compat
+sed -i '20,$ d' trust/trust-extract-compat
 
 cat >> trust/trust-extract-compat << "EOF"
 # Copy existing anchor modifications to /etc/ssl/local

@@ -37,8 +37,8 @@ kf6-kcoreaddons = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf plasma-activities-*
-tar xf $ROOKPKG_SOURCES/plasma-activities-*.tar.xz
+rm -rf plasma-activities-6*
+tar xf $ROOKPKG_SOURCES/plasma-activities-6*.tar.xz
 """
 
 configure = """

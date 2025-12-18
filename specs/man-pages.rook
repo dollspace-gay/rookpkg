@@ -48,7 +48,7 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/man-pages-*
-make prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
+make -R prefix=/usr DESTDIR=$ROOKPKG_DESTDIR install
 """
 
 [files]

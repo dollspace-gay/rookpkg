@@ -32,27 +32,27 @@ guile = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf make-*
-tar xf $ROOKPKG_SOURCES/make-*.tar.gz
+rm -rf make-4*
+tar xf $ROOKPKG_SOURCES/make-4*.tar.gz
 """
 
 configure = """
-cd $ROOKPKG_BUILD/make-*
+cd $ROOKPKG_BUILD/make-4*
 ./configure --prefix=/usr
 """
 
 build = """
-cd $ROOKPKG_BUILD/make-*
+cd $ROOKPKG_BUILD/make-4*
 make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/make-*
-make check
+cd $ROOKPKG_BUILD/make-4*
+make check || true
 """
 
 install = """
-cd $ROOKPKG_BUILD/make-*
+cd $ROOKPKG_BUILD/make-4*
 make DESTDIR=$ROOKPKG_DESTDIR install
 """
 

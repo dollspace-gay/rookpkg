@@ -86,19 +86,26 @@ configure = """
 cd $ROOKPKG_BUILD/mesa-*
 mkdir -p build
 cd build
-meson setup ..                   \
-      --prefix=/usr              \
-      --buildtype=release        \
-      -D platforms=x11,wayland   \
-      -D gallium-drivers=auto    \
-      -D vulkan-drivers=auto     \
-      -D valgrind=disabled       \
-      -D video-codecs=all        \
-      -D libunwind=disabled
+export PATH=/root/.cargo/bin:$PATH
+meson setup ..                      \
+      --prefix=/usr                 \
+      --buildtype=release           \
+      -D platforms=x11              \
+      -D gallium-drivers=softpipe,svga,nouveau,virgl \
+      -D vulkan-drivers=            \
+      -D valgrind=disabled          \
+      -D libunwind=disabled         \
+      -D glx=dri                    \
+      -D egl=enabled                \
+      -D gbm=enabled                \
+      -D gles1=enabled              \
+      -D gles2=enabled              \
+      -D shared-glapi=enabled
 """
 
 build = """
 cd $ROOKPKG_BUILD/mesa-*/build
+export PATH=/root/.cargo/bin:$PATH
 ninja -j$ROOKPKG_JOBS
 """
 

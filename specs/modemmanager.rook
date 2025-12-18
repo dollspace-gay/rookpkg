@@ -64,10 +64,6 @@ cd build
 meson setup ..                   \
       --prefix=/usr              \
       --buildtype=release        \
-      -D systemdsystemunitdir=/usr/lib/systemd/system \
-      -D udev_base_dir=/usr/lib/udev \
-      -D introspection=false     \
-      -D vapi=false              \
       -D bash_completion=false   \
       -D qrtr=false
 """
