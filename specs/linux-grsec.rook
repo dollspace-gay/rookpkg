@@ -1,0 +1,407 @@
+[package]
+name = "linux-grsec"
+version = "6.6.102"
+release = 1
+summary = "Linux kernel with grsecurity patches for Rookery OS"
+description = """
+The Linux kernel with grsecurity patches providing enhanced security features
+including RBAC, PaX, and various hardening options. Configured for desktop use
+with VM guest support. Includes kernel modules and linux-firmware.
+"""
+homepage = "https://grsecurity.net/"
+license = "GPL-2.0-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "file:///home/rookery/linux-6.6.102-grsec.tar.xz", sha256 = "407bdcbb417ec99ff418d216bd5f3a33ab225b4b2501ce868ce0cebdba4148b8" }
+source1 = { url = "http://corvidae.social/RookerySource/linux-firmware-20240811.tar.gz", sha256 = "b1c672868e36c19d51f943898d0fdb5534759dc649af72fe51b04be47663d153" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+bc = ">= 1.0"
+flex = ">= 2.6"
+bison = ">= 3.0"
+elfutils = ">= 0.189"
+openssl = ">= 3.0"
+perl = ">= 5.0"
+cpio = ">= 2.0"
+kmod = ">= 31"
+
+[depends]
+glibc = ">= 2.39"
+kmod = ">= 31"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf linux-*
+tar xf $ROOKPKG_SOURCES/linux-6.6.102-grsec.tar.xz
+tar xf $ROOKPKG_SOURCES/linux-firmware*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/linux-*grsec* || cd $ROOKPKG_BUILD/linux-6.6*
+
+# Clean build environment
+make mrproper
+
+# Start with defconfig for x86_64
+make defconfig
+
+# =========================================================================
+# Grsecurity configuration (desktop profile, VM guest)
+# =========================================================================
+scripts/config --enable CONFIG_GRKERNSEC || true
+scripts/config --enable CONFIG_GRKERNSEC_CONFIG_AUTO || true
+scripts/config --enable CONFIG_GRKERNSEC_CONFIG_DESKTOP || true
+scripts/config --enable CONFIG_GRKERNSEC_CONFIG_VIRT_GUEST || true
+scripts/config --enable CONFIG_GRKERNSEC_CONFIG_VIRT_KVM || true
+
+# Disable SELinux (grsecurity provides its own RBAC)
+scripts/config --disable CONFIG_SECURITY_SELINUX
+
+# =========================================================================
+# Module support (distro-style: build drivers as modules)
+# =========================================================================
+scripts/config --enable CONFIG_MODULES
+scripts/config --enable CONFIG_MODULE_UNLOAD
+scripts/config --enable CONFIG_MODULE_FORCE_UNLOAD
+scripts/config --enable CONFIG_MODVERSIONS
+scripts/config --enable CONFIG_MODULE_SRCVERSION_ALL
+
+# =========================================================================
+# Firmware loading
+# =========================================================================
+scripts/config --enable CONFIG_FW_LOADER
+scripts/config --disable CONFIG_FIRMWARE_IN_KERNEL
+scripts/config --set-str CONFIG_EXTRA_FIRMWARE ""
+
+# =========================================================================
+# Systemd requirements (built-in for boot)
+# =========================================================================
+scripts/config --enable CONFIG_DEVTMPFS
+scripts/config --enable CONFIG_DEVTMPFS_MOUNT
+scripts/config --enable CONFIG_CGROUPS
+scripts/config --enable CONFIG_CGROUP_SCHED
+scripts/config --enable CONFIG_CGROUP_PIDS
+scripts/config --enable CONFIG_CGROUP_FREEZER
+scripts/config --enable CONFIG_CGROUP_DEVICE
+scripts/config --enable CONFIG_CGROUP_CPUACCT
+scripts/config --enable CONFIG_CGROUP_PERF
+scripts/config --enable CONFIG_CGROUP_BPF
+scripts/config --enable CONFIG_NAMESPACES
+scripts/config --enable CONFIG_USER_NS
+scripts/config --enable CONFIG_PID_NS
+scripts/config --enable CONFIG_NET_NS
+scripts/config --enable CONFIG_UTS_NS
+scripts/config --enable CONFIG_IPC_NS
+scripts/config --enable CONFIG_INOTIFY_USER
+scripts/config --enable CONFIG_SIGNALFD
+scripts/config --enable CONFIG_TIMERFD
+scripts/config --enable CONFIG_EPOLL
+scripts/config --enable CONFIG_FHANDLE
+scripts/config --enable CONFIG_DMIID
+scripts/config --enable CONFIG_TMPFS
+scripts/config --enable CONFIG_TMPFS_POSIX_ACL
+scripts/config --enable CONFIG_TMPFS_XATTR
+scripts/config --enable CONFIG_SECCOMP
+scripts/config --enable CONFIG_SECCOMP_FILTER
+
+# =========================================================================
+# Serial console (built-in for QEMU -nographic)
+# =========================================================================
+scripts/config --enable CONFIG_SERIAL_8250
+scripts/config --enable CONFIG_SERIAL_8250_CONSOLE
+scripts/config --enable CONFIG_SERIAL_8250_PCI
+
+# =========================================================================
+# EXT4 filesystem (built-in for root)
+# =========================================================================
+scripts/config --enable CONFIG_EXT4_FS
+scripts/config --enable CONFIG_EXT4_FS_POSIX_ACL
+scripts/config --enable CONFIG_EXT4_FS_SECURITY
+
+# =========================================================================
+# Core storage drivers (BUILT-IN for initramfs/ISO boot)
+# =========================================================================
+scripts/config --enable CONFIG_SCSI
+scripts/config --enable CONFIG_SCSI_MOD
+scripts/config --enable CONFIG_BLK_DEV_SD
+scripts/config --enable CONFIG_BLK_DEV_SR
+scripts/config --enable CONFIG_CHR_DEV_SG
+scripts/config --enable CONFIG_SCSI_CONSTANTS
+scripts/config --enable CONFIG_SCSI_SPI_ATTRS
+
+# ATA/SATA
+scripts/config --enable CONFIG_ATA
+scripts/config --enable CONFIG_SATA_AHCI
+scripts/config --enable CONFIG_ATA_PIIX
+scripts/config --enable CONFIG_ATA_GENERIC
+scripts/config --module CONFIG_PATA_AMD
+scripts/config --module CONFIG_PATA_OLDPIIX
+
+# CD-ROM support
+scripts/config --enable CONFIG_CDROM
+
+# ISO9660 filesystem (for ISO boot)
+scripts/config --enable CONFIG_ISO9660_FS
+scripts/config --enable CONFIG_JOLIET
+scripts/config --enable CONFIG_ZISOFS
+
+# Squashfs (for live boot)
+scripts/config --enable CONFIG_SQUASHFS
+scripts/config --enable CONFIG_SQUASHFS_ZLIB
+scripts/config --enable CONFIG_SQUASHFS_LZ4
+scripts/config --enable CONFIG_SQUASHFS_LZO
+scripts/config --enable CONFIG_SQUASHFS_XZ
+scripts/config --enable CONFIG_SQUASHFS_ZSTD
+
+# Loop device (for mounting squashfs)
+scripts/config --enable CONFIG_BLK_DEV_LOOP
+
+# NVMe storage
+scripts/config --enable CONFIG_NVME_CORE
+scripts/config --module CONFIG_BLK_DEV_NVME
+
+# =========================================================================
+# VirtIO drivers (built-in for QEMU/KVM boot)
+# =========================================================================
+scripts/config --enable CONFIG_VIRTIO
+scripts/config --enable CONFIG_VIRTIO_PCI
+scripts/config --enable CONFIG_VIRTIO_BLK
+scripts/config --enable CONFIG_VIRTIO_SCSI
+scripts/config --module CONFIG_VIRTIO_NET
+scripts/config --module CONFIG_VIRTIO_CONSOLE
+scripts/config --module CONFIG_VIRTIO_BALLOON
+scripts/config --module CONFIG_VIRTIO_INPUT
+scripts/config --module CONFIG_VIRTIO_MMIO
+
+# =========================================================================
+# Network drivers
+# =========================================================================
+scripts/config --enable CONFIG_NET_VENDOR_INTEL
+scripts/config --module CONFIG_E1000
+scripts/config --module CONFIG_E1000E
+scripts/config --module CONFIG_IGB
+scripts/config --module CONFIG_IXGBE
+scripts/config --enable CONFIG_NET_VENDOR_REALTEK
+scripts/config --module CONFIG_8139TOO
+scripts/config --module CONFIG_8139CP
+scripts/config --module CONFIG_R8169
+scripts/config --enable CONFIG_NET_VENDOR_BROADCOM
+scripts/config --module CONFIG_BNX2
+scripts/config --module CONFIG_TIGON3
+
+# =========================================================================
+# USB controllers and devices
+# =========================================================================
+scripts/config --module CONFIG_USB
+scripts/config --module CONFIG_USB_XHCI_HCD
+scripts/config --module CONFIG_USB_XHCI_PCI
+scripts/config --module CONFIG_USB_EHCI_HCD
+scripts/config --module CONFIG_USB_EHCI_PCI
+scripts/config --module CONFIG_USB_UHCI_HCD
+scripts/config --module CONFIG_USB_OHCI_HCD
+scripts/config --module CONFIG_USB_STORAGE
+scripts/config --module CONFIG_USB_HID
+scripts/config --enable CONFIG_USB_HIDDEV
+
+# =========================================================================
+# HID (input devices)
+# =========================================================================
+scripts/config --module CONFIG_HID
+scripts/config --module CONFIG_HID_GENERIC
+scripts/config --enable CONFIG_INPUT_KEYBOARD
+scripts/config --enable CONFIG_INPUT_MOUSE
+scripts/config --module CONFIG_INPUT_EVDEV
+
+# =========================================================================
+# Audio
+# =========================================================================
+scripts/config --module CONFIG_SND
+scripts/config --enable CONFIG_SND_PCI
+scripts/config --module CONFIG_SND_HDA_INTEL
+scripts/config --module CONFIG_SND_HDA_CODEC_HDMI
+scripts/config --module CONFIG_SND_HDA_CODEC_REALTEK
+scripts/config --module CONFIG_SND_AC97_CODEC
+scripts/config --module CONFIG_SND_INTEL8X0
+
+# =========================================================================
+# GPU/DRM
+# =========================================================================
+scripts/config --module CONFIG_DRM
+scripts/config --module CONFIG_DRM_KMS_HELPER
+scripts/config --module CONFIG_DRM_I915
+scripts/config --module CONFIG_DRM_AMDGPU
+scripts/config --module CONFIG_DRM_NOUVEAU
+scripts/config --module CONFIG_DRM_VIRTIO_GPU
+scripts/config --module CONFIG_DRM_BOCHS
+scripts/config --module CONFIG_DRM_QXL
+scripts/config --enable CONFIG_FB
+scripts/config --enable CONFIG_FB_VESA
+
+# =========================================================================
+# Wireless
+# =========================================================================
+scripts/config --enable CONFIG_WLAN
+scripts/config --module CONFIG_CFG80211
+scripts/config --module CONFIG_MAC80211
+scripts/config --module CONFIG_IWLWIFI
+scripts/config --module CONFIG_IWLMVM
+scripts/config --module CONFIG_ATH9K
+scripts/config --module CONFIG_ATH10K
+scripts/config --module CONFIG_RTL8192CU
+scripts/config --module CONFIG_RTL8192CE
+scripts/config --module CONFIG_RTW88
+
+# =========================================================================
+# Overlay filesystem (for live boot)
+# =========================================================================
+scripts/config --enable CONFIG_OVERLAY_FS
+
+# =========================================================================
+# Other filesystems (as modules)
+# =========================================================================
+scripts/config --module CONFIG_BTRFS_FS
+scripts/config --module CONFIG_XFS_FS
+scripts/config --module CONFIG_VFAT_FS
+scripts/config --module CONFIG_FAT_FS
+scripts/config --module CONFIG_MSDOS_FS
+scripts/config --module CONFIG_NTFS3_FS
+scripts/config --module CONFIG_UDF_FS
+scripts/config --module CONFIG_FUSE_FS
+scripts/config --module CONFIG_NFS_FS
+scripts/config --module CONFIG_NFSD
+scripts/config --module CONFIG_CIFS
+
+# =========================================================================
+# Crypto acceleration
+# =========================================================================
+scripts/config --module CONFIG_CRYPTO_AES_NI_INTEL
+scripts/config --module CONFIG_CRYPTO_SHA256_SSSE3
+scripts/config --module CONFIG_CRYPTO_SHA512_SSSE3
+
+# =========================================================================
+# Finalize configuration
+# =========================================================================
+make olddefconfig
+"""
+
+build = """
+cd $ROOKPKG_BUILD/linux-*grsec* || cd $ROOKPKG_BUILD/linux-6.6*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Kernel has no test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/linux-*grsec* || cd $ROOKPKG_BUILD/linux-6.6*
+
+# Get the actual kernel version from the build
+ACTUAL_VERSION=$(make -s kernelrelease)
+
+# Install modules
+make INSTALL_MOD_PATH=$ROOKPKG_DESTDIR modules_install
+
+# Install kernel image and support files
+mkdir -p $ROOKPKG_DESTDIR/boot
+cp -fv arch/x86/boot/bzImage $ROOKPKG_DESTDIR/boot/vmlinuz-$ACTUAL_VERSION
+cp -fv System.map $ROOKPKG_DESTDIR/boot/System.map-$ACTUAL_VERSION
+cp -fv .config $ROOKPKG_DESTDIR/boot/config-$ACTUAL_VERSION
+
+# Create symlinks
+ln -sf vmlinuz-$ACTUAL_VERSION $ROOKPKG_DESTDIR/boot/vmlinuz
+ln -sf System.map-$ACTUAL_VERSION $ROOKPKG_DESTDIR/boot/System.map
+ln -sf config-$ACTUAL_VERSION $ROOKPKG_DESTDIR/boot/config
+
+# Run depmod to generate module dependencies
+depmod -a -b $ROOKPKG_DESTDIR "$ACTUAL_VERSION" || true
+
+# Install linux-firmware
+cd $ROOKPKG_BUILD
+mkdir -p $ROOKPKG_DESTDIR/lib/firmware
+cd linux-firmware-* || cd linux-firmware
+cp -a * $ROOKPKG_DESTDIR/lib/firmware/ 2>/dev/null || true
+
+# Configure automatic module loading
+mkdir -p $ROOKPKG_DESTDIR/etc/modules-load.d
+
+cat > $ROOKPKG_DESTDIR/etc/modules-load.d/virtio.conf << "VIRTIOEOF"
+# VirtIO modules for QEMU/KVM
+virtio_pci
+virtio_blk
+virtio_net
+virtio_console
+VIRTIOEOF
+
+cat > $ROOKPKG_DESTDIR/etc/modules-load.d/usb.conf << "USBEOF"
+# USB modules
+xhci_hcd
+ehci_hcd
+uhci_hcd
+usb_storage
+USBEOF
+"""
+
+[files]
+"boot/vmlinuz*" = { mode = 644 }
+"boot/System.map*" = { mode = 644 }
+"boot/config*" = { mode = 644 }
+"lib/modules/" = {}
+"lib/firmware/" = {}
+"etc/modules-load.d/" = {}
+
+[config_files]
+"etc/modules-load.d/virtio.conf" = {}
+"etc/modules-load.d/usb.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+# Run depmod for the installed kernel
+KERNEL_VERSION=$(ls /lib/modules/ | grep grsec | head -1)
+if [ -n "$KERNEL_VERSION" ]; then
+    depmod -a "$KERNEL_VERSION" || true
+fi
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = """
+# Run depmod for the installed kernel
+KERNEL_VERSION=$(ls /lib/modules/ | grep grsec | head -1)
+if [ -n "$KERNEL_VERSION" ]; then
+    depmod -a "$KERNEL_VERSION" || true
+fi
+"""
+
+[[changelog]]
+version = "6.6.102"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS grsecurity kernel package",
+    "Desktop profile with VM guest support",
+    "Includes linux-firmware",
+    "Configured for systemd and KDE Plasma desktop"
+]
+
+[metadata]
+keywords = ["linux", "kernel", "grsecurity", "grsec", "security", "hardened"]
+categories = ["system", "kernel", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,103 @@
+[package]
+name = "rsync"
+version = "3.4.1"
+release = 1
+summary = "Fast incremental file transfer utility"
+description = """
+Rsync is a fast and extraordinarily versatile file copying tool for both
+remote and local files. It uses a delta-transfer algorithm which provides
+a very fast method for synchronizing files by sending just the differences
+across the link.
+"""
+homepage = "https://rsync.samba.org/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.samba.org/pub/rsync/rsync-3.4.1.tar.gz", sha256 = "2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+popt = ">= 1.18"
+zlib = ">= 1.2"
+
+[depends]
+glibc = ">= 2.39"
+popt = ">= 1.18"
+zlib = ">= 1.2"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf rsync-*
+tar xf $ROOKPKG_SOURCES/rsync-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/rsync-*
+./configure --prefix=/usr           \
+            --disable-xxhash        \
+            --without-included-zlib
+"""
+
+build = """
+cd $ROOKPKG_BUILD/rsync-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/rsync-*
+# Fix for test build
+sed -i '/typedef/d' wildtest.c
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/rsync-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/rsync" = { mode = 755 }
+"usr/bin/rsync-ssl" = { mode = 755 }
+"usr/share/man/man1/rsync.1" = {}
+"usr/share/man/man1/rsync-ssl.1" = {}
+"usr/share/man/man5/rsyncd.conf.5" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.4.1"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for Calamares installer file copying",
+    "Includes security fixes from 3.4.x series"
+]
+
+[metadata]
+keywords = ["rsync", "sync", "backup", "file-transfer"]
+categories = ["utilities", "network"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

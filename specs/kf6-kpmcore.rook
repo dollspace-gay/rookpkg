@@ -1,0 +1,118 @@
+[package]
+name = "kf6-kpmcore"
+version = "25.12.0"
+release = 1
+summary = "KDE Partition Manager core library"
+description = """
+KPMcore is a library for examining and modifying partitions, disk devices,
+and filesystems on a Linux system. It provides a unified programming interface
+over external system-manipulation tools like parted. Used by Calamares and
+KDE Partition Manager.
+"""
+homepage = "https://invent.kde.org/system/kpmcore"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/release-service/25.12.0/src/kpmcore-25.12.0.tar.xz", sha256 = "f69cfc2eb03bd7c3c0fe1c56554338dd319bb9bd7c3a09ee8631fee720e4cecc" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-ki18n = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+parted = ">= 3.6"
+util-linux = ">= 2.39"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-ki18n = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+parted = ">= 3.6"
+util-linux = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+CMAKE_PREFIX_PATH = "/opt/qt6"
+LC_ALL = "C.UTF-8"
+LANG = "C.UTF-8"
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kpmcore-*
+tar xf $ROOKPKG_SOURCES/kpmcore-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kpmcore-*
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr    \
+      -D CMAKE_BUILD_TYPE=Release     \
+      -D CMAKE_INSTALL_LIBDIR=lib     \
+      -D BUILD_TESTING=OFF            \
+      -G Ninja                        \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kpmcore-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests disabled - require root and real devices
+"""
+
+install = """
+cd $ROOKPKG_BUILD/kpmcore-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libkpmcore.so*" = { mode = 755 }
+"usr/include/kpmcore/" = {}
+"usr/lib/cmake/KPMcore/" = {}
+"usr/share/locale/" = {}
+"usr/share/polkit-1/actions/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "25.12.0"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Built with Qt6 and KDE Frameworks 6",
+    "Required for Calamares installer"
+]
+
+[metadata]
+keywords = ["kpmcore", "partition", "disk", "kde", "calamares"]
+categories = ["libraries", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

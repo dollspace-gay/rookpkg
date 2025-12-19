@@ -1,0 +1,105 @@
+[package]
+name = "yaml-cpp"
+version = "0.8.0"
+release = 1
+summary = "A YAML parser and emitter in C++"
+description = """
+yaml-cpp is a YAML parser and emitter in C++ matching the YAML 1.2 spec.
+It provides a simple and intuitive API for parsing and emitting YAML documents.
+Used by Calamares and other applications for configuration file handling.
+"""
+homepage = "https://github.com/jbeder/yaml-cpp"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/jbeder/yaml-cpp/archive/refs/tags/0.8.0.tar.gz", sha256 = "fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf yaml-cpp-*
+tar xf $ROOKPKG_SOURCES/0.8.0.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/yaml-cpp-*
+
+# Fix for GCC 15 - add missing cstdint include
+sed -i '1i #include <cstdint>' src/emitterutils.cpp
+
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr         \
+      -D CMAKE_BUILD_TYPE=Release          \
+      -D CMAKE_POLICY_VERSION_MINIMUM=3.5  \
+      -D CMAKE_CXX_STANDARD=17             \
+      -D YAML_BUILD_SHARED_LIBS=ON         \
+      -D YAML_CPP_BUILD_TESTS=OFF          \
+      -G Ninja                             \
+      ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/yaml-cpp-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests disabled - require googletest
+"""
+
+install = """
+cd $ROOKPKG_BUILD/yaml-cpp-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/lib/libyaml-cpp.so*" = { mode = 755 }
+"usr/include/yaml-cpp/" = {}
+"usr/lib/cmake/yaml-cpp/" = {}
+"usr/lib/pkgconfig/yaml-cpp.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.8.0"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for Calamares installer"
+]
+
+[metadata]
+keywords = ["yaml", "yaml-cpp", "parser", "configuration"]
+categories = ["libraries", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

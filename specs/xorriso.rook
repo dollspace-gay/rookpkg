@@ -1,0 +1,120 @@
+[package]
+name = "xorriso"
+version = "1.5.6"
+release = 1
+summary = "ISO 9660 Rock Ridge filesystem manipulator"
+description = """
+xorriso copies files from POSIX filesystems into Rock Ridge enhanced ISO 9660
+filesystems and allows session-wise manipulation of such filesystems. It can
+load the management information of existing ISO images and write the modified
+image to optical media or as a file. It provides a mkisofs compatibility
+interface for creating bootable ISO images.
+"""
+homepage = "https://www.gnu.org/software/xorriso/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/xorriso/xorriso-1.5.6.tar.gz", sha256 = "d4b6b66bd04c49c6b358ee66475d806d6f6d7486e801106a47d331df1f2f8feb" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+zlib = ">= 1.2"
+bzip2 = ">= 1.0"
+readline = ">= 8.0"
+acl = ">= 2.3"
+attr = ">= 2.5"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+bzip2 = ">= 1.0"
+readline = ">= 8.0"
+acl = ">= 2.3"
+attr = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf xorriso-*
+tar xf $ROOKPKG_SOURCES/xorriso-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/xorriso-*
+./configure --prefix=/usr \
+            --enable-zlib \
+            --enable-bzip2 \
+            --enable-readline \
+            --disable-debug
+"""
+
+build = """
+cd $ROOKPKG_BUILD/xorriso-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/xorriso-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/xorriso-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Remove shared info/dir file to avoid conflicts
+rm -f $ROOKPKG_DESTDIR/usr/share/info/dir
+"""
+
+[files]
+"usr/bin/xorriso" = { mode = 755 }
+"usr/bin/xorrisofs" = { mode = 755 }
+"usr/bin/xorrecord" = { mode = 755 }
+"usr/bin/osirrox" = { mode = 755 }
+"usr/lib/libisofs*.so*" = { mode = 755 }
+"usr/lib/libburn*.so*" = { mode = 755 }
+"usr/lib/libisoburn*.so*" = { mode = 755 }
+"usr/include/libisofs/" = {}
+"usr/include/libburn/" = {}
+"usr/include/libisoburn/" = {}
+"usr/lib/pkgconfig/" = {}
+"usr/share/man/" = {}
+"usr/share/info/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "1.5.6"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for creating bootable ISO images"
+]
+
+[metadata]
+keywords = ["xorriso", "iso", "iso9660", "rockridge", "mkisofs"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

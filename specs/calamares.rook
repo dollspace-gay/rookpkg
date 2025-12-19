@@ -1,0 +1,401 @@
+[package]
+name = "calamares"
+version = "3.3.14"
+release = 1
+summary = "Distribution-independent installer framework"
+description = """
+Calamares is a distribution-independent system installer with an advanced
+partitioning feature for both manual and automated partitioning operations.
+It is designed to be customizable by distribution maintainers without need
+for cumbersome patching, thanks to third party branding and external modules.
+"""
+homepage = "https://calamares.io/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/calamares/calamares/releases/download/v3.3.14/calamares-3.3.14.tar.gz", sha256 = "5547f80db067dea923ae693ba6bb88eb2b2eeac1da3ebec42fce453e31c290c0" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-kpmcore = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+python = ">= 3.12"
+yaml-cpp = ">= 0.8"
+libpwquality = ">= 1.4"
+parted = ">= 3.6"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-kpmcore = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+python = ">= 3.12"
+yaml-cpp = ">= 0.8"
+libpwquality = ">= 1.4"
+parted = ">= 3.6"
+os-prober = ">= 1.0"
+squashfs-tools = ">= 4.0"
+rsync = ">= 3.0"
+
+[optional_depends]
+
+[environment]
+CMAKE_PREFIX_PATH = "/opt/qt6"
+LC_ALL = "C.UTF-8"
+LANG = "C.UTF-8"
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf calamares-*
+tar xf $ROOKPKG_SOURCES/calamares-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/calamares-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_LIBDIR=lib \
+      -DWITH_QT6=ON \
+      -DINSTALL_CONFIG=ON \
+      -DSKIP_MODULES="webview" \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/calamares-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Skip tests - requires running system
+"""
+
+install = """
+cd $ROOKPKG_BUILD/calamares-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Create RookeryOS branding directory
+mkdir -p $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos
+mkdir -p $ROOKPKG_DESTDIR/etc/calamares/modules
+
+# Create basic branding
+cat > $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/branding.desc << 'BRANDING'
+---
+componentName: rookeryos
+
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+
+strings:
+    productName:         "Rookery OS"
+    shortProductName:    "Rookery"
+    version:             "1.0"
+    shortVersion:        "1.0"
+    versionedName:       "Rookery OS 1.0"
+    shortVersionedName:  "Rookery 1.0"
+    bootloaderEntryName: "Rookery OS"
+    productUrl:          "https://rookeryos.dev"
+    supportUrl:          "https://rookeryos.dev/support"
+    knownIssuesUrl:      "https://rookeryos.dev/issues"
+    releaseNotesUrl:     "https://rookeryos.dev/releases"
+    donateUrl:           "https://rookeryos.dev/donate"
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "icon.png"
+    productWelcome:      "welcome.png"
+
+slideshowAPI: 2
+slideshow:
+    - "slide1.qml"
+
+style:
+    sidebarBackground:    "#2a2a2a"
+    sidebarText:          "#ffffff"
+    sidebarTextSelect:    "#4da6ff"
+    sidebarTextHighlight: "#ffffff"
+BRANDING
+
+# Create main settings
+cat > $ROOKPKG_DESTDIR/etc/calamares/settings.conf << 'SETTINGS'
+---
+modules-search: [ local, /usr/lib/calamares/modules ]
+
+instances:
+- id:       rootfs
+  module:   unpackfs
+  config:   unpackfs-rootfs.conf
+  weight:   50
+
+sequence:
+- show:
+  - welcome
+  - locale
+  - keyboard
+  - partition
+  - users
+  - summary
+- exec:
+  - partition
+  - mount
+  - rootfs
+  - fstab
+  - locale
+  - keyboard
+  - localecfg
+  - users
+  - displaymanager
+  - networkcfg
+  - hwclock
+  - initramfs
+  - grub-install
+  - grub-config
+  - umount
+- show:
+  - finished
+
+branding: rookeryos
+prompt-install: true
+dont-chroot: false
+SETTINGS
+
+# Create unpackfs config for live installation
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs-rootfs.conf << 'UNPACKFS'
+---
+unpack:
+    - source: "/run/rootfsbase"
+      sourcefs: "squashfs"
+      destination: ""
+UNPACKFS
+
+# Create welcome module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/welcome.conf << 'WELCOME'
+---
+showSupportUrl: true
+showKnownIssuesUrl: true
+showReleaseNotesUrl: true
+showDonateUrl: false
+
+requirements:
+    requiredStorage: 10.0
+    requiredRam: 2.0
+    internetCheckUrl: https://rookeryos.dev
+    check:
+        - storage
+        - ram
+        - root
+    required:
+        - storage
+        - ram
+        - root
+WELCOME
+
+# Create locale module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/locale.conf << 'LOCALE'
+---
+region: "America"
+zone: "New_York"
+localeGenPath: /etc/locale.gen
+geoip:
+    style: "none"
+LOCALE
+
+# Create keyboard module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/keyboard.conf << 'KEYBOARD'
+---
+xOrgConfFileName: "/etc/X11/xorg.conf.d/00-keyboard.conf"
+convertedKeymapPath: "/lib/kbd/keymaps/xkb"
+writeEtcDefaultKeyboard: true
+KEYBOARD
+
+# Create users module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/users.conf << 'USERS'
+---
+defaultGroups:
+    - users
+    - wheel
+    - audio
+    - video
+    - input
+    - storage
+    - optical
+    - network
+    - lp
+    - scanner
+autologinGroup: autologin
+sudoersGroup: wheel
+setRootPassword: true
+doAutologin: false
+USERS
+
+# Create displaymanager module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/displaymanager.conf << 'DM'
+---
+displaymanagers:
+    - sddm
+basicSetup: false
+DM
+
+# Create fstab module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/fstab.conf << 'FSTAB'
+---
+mountOptions:
+    default: defaults,noatime
+    btrfs: defaults,noatime,compress=zstd:1
+    ext4: defaults,noatime
+    xfs: defaults,noatime
+efiMountOptions: umask=0077
+FSTAB
+
+# Create grubcfg module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/grubcfg.conf << 'GRUBCFG'
+---
+grubInstall: "grub-install"
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+grubProbe: "grub-probe"
+efiBootMgr: "efibootmgr"
+installEFIFallback: true
+GRUBCFG
+
+# Create finished module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/finished.conf << 'FINISHED'
+---
+restartNowEnabled: true
+restartNowChecked: true
+restartNowCommand: "systemctl reboot"
+notifyOnFinished: true
+FINISHED
+
+# Create placeholder branding images
+touch $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/logo.png
+touch $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/icon.png
+touch $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/welcome.png
+
+# Create simple slideshow
+cat > $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/slide1.qml << 'SLIDE'
+import QtQuick 2.0
+
+Rectangle {
+    color: "#2a2a2a"
+
+    Text {
+        anchors.centerIn: parent
+        text: "Welcome to Rookery OS"
+        color: "white"
+        font.pixelSize: 32
+    }
+}
+SLIDE
+
+# Create desktop entry for launching Calamares
+mkdir -p $ROOKPKG_DESTDIR/usr/share/applications
+cat > $ROOKPKG_DESTDIR/usr/share/applications/calamares.desktop << 'DESKTOP'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Rookery OS
+GenericName=System Installer
+Comment=Install Rookery OS to your computer
+Exec=pkexec calamares
+Icon=calamares
+Terminal=false
+Categories=System;
+Keywords=installer;calamares;system;
+DESKTOP
+
+# Create polkit action for running Calamares as root
+mkdir -p $ROOKPKG_DESTDIR/usr/share/polkit-1/actions
+cat > $ROOKPKG_DESTDIR/usr/share/polkit-1/actions/com.github.calamares.calamares.policy << 'POLKIT'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <action id="com.github.calamares.calamares.run">
+    <description>Run the system installer</description>
+    <message>Authentication is required to run the system installer</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/calamares</annotate>
+  </action>
+</policyconfig>
+POLKIT
+"""
+
+[files]
+"usr/bin/calamares" = { mode = 755 }
+"usr/lib/calamares/" = {}
+"usr/share/calamares/" = {}
+"usr/share/applications/calamares.desktop" = {}
+"etc/calamares/" = {}
+
+[config_files]
+"etc/calamares/settings.conf" = {}
+"etc/calamares/branding/rookeryos/branding.desc" = {}
+"etc/calamares/branding/rookeryos/slide1.qml" = {}
+"etc/calamares/modules/unpackfs-rootfs.conf" = {}
+"etc/calamares/modules/welcome.conf" = {}
+"etc/calamares/modules/locale.conf" = {}
+"etc/calamares/modules/keyboard.conf" = {}
+"etc/calamares/modules/users.conf" = {}
+"etc/calamares/modules/displaymanager.conf" = {}
+"etc/calamares/modules/fstab.conf" = {}
+"etc/calamares/modules/grubcfg.conf" = {}
+"etc/calamares/modules/finished.conf" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.3.14"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS Calamares package",
+    "Built with Qt6 and KDE Frameworks 6",
+    "Includes RookeryOS branding and configuration"
+]
+
+[metadata]
+keywords = ["calamares", "installer", "system", "partitioning", "kde"]
+categories = ["system", "installer"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,142 @@
+[package]
+name = "syslinux"
+version = "6.03"
+release = 1
+summary = "Lightweight bootloader for MS-DOS FAT filesystems"
+description = """
+SYSLINUX is a boot loader for the Linux operating system which operates off
+an MS-DOS/Windows FAT filesystem. It is intended to simplify first-time
+installation of Linux, and for creation of rescue and other special purpose
+boot disks. It includes ISOLINUX for booting from CD/DVD ISO images.
+"""
+homepage = "https://www.syslinux.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.tar.xz", sha256 = "26d3986d2bea109d5dc0e4f8c4822a459276cf021125e8c9f23c3cca5d8c850e" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+nasm = ">= 2.15"
+perl = ">= 5.0"
+python = ">= 3.6"
+util-linux = ">= 2.39"
+
+[depends]
+glibc = ">= 2.39"
+util-linux = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf syslinux-*
+tar xf $ROOKPKG_SOURCES/syslinux-*.tar.xz
+"""
+
+configure = """
+# No configure step
+"""
+
+build = """
+# Syslinux 6.03 includes prebuilt binaries and has build issues with modern GCC
+# Just verify the prebuilt binaries exist
+cd $ROOKPKG_BUILD/syslinux-*
+ls -la bios/core/isolinux.bin bios/mbr/isohdpfx.bin
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/syslinux-*
+
+# Install prebuilt binaries manually (source includes them)
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/syslinux/bios
+
+# Install utilities from prebuilt
+install -m 755 bios/linux/syslinux $ROOKPKG_DESTDIR/usr/bin/
+install -m 755 bios/utils/isohybrid $ROOKPKG_DESTDIR/usr/bin/
+install -m 755 bios/utils/gethostip $ROOKPKG_DESTDIR/usr/bin/ 2>/dev/null || true
+install -m 755 bios/extlinux/extlinux $ROOKPKG_DESTDIR/usr/bin/ 2>/dev/null || true
+
+# Install ISOLINUX files (for bootable ISOs)
+cp -a bios/core/isolinux.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/core/isolinux-debug.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+cp -a bios/core/ldlinux.sys $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+cp -a bios/core/pxelinux.0 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+
+# Install MBR files
+cp -a bios/mbr/isohdpfx.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/mbr/mbr.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/mbr/gptmbr.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/mbr/isohdpfx_c.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+cp -a bios/mbr/isohdpfx_f.bin $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+
+# Install COM32 modules
+cp -a bios/com32/elflink/ldlinux/ldlinux.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/com32/lib/libcom32.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/com32/libutil/libutil.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/com32/menu/menu.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/com32/menu/vesamenu.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/
+cp -a bios/com32/chain/chain.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+cp -a bios/com32/modules/reboot.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+cp -a bios/com32/modules/poweroff.c32 $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+
+# Install memdisk
+cp -a bios/memdisk/memdisk $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/ 2>/dev/null || true
+
+# Create compatibility symlinks in /usr/share/syslinux
+mkdir -p $ROOKPKG_DESTDIR/usr/share/syslinux
+for f in $ROOKPKG_DESTDIR/usr/lib/syslinux/bios/*; do
+    ln -sf ../lib/syslinux/bios/$(basename $f) $ROOKPKG_DESTDIR/usr/share/syslinux/
+done
+"""
+
+[files]
+"usr/bin/syslinux" = { mode = 755 }
+"usr/bin/isohybrid" = { mode = 755 }
+"usr/bin/memdiskfind" = { mode = 755 }
+"usr/sbin/extlinux" = { mode = 755 }
+"usr/lib/syslinux/" = {}
+"usr/share/syslinux/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.03"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "BIOS boot support only (no EFI)",
+    "Required for creating bootable ISO images with ISOLINUX"
+]
+
+[metadata]
+keywords = ["syslinux", "isolinux", "bootloader", "boot", "iso"]
+categories = ["system", "boot"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,103 @@
+[package]
+name = "parted"
+version = "3.6"
+release = 1
+summary = "GNU partition editor"
+description = """
+GNU Parted is a program for creating and manipulating partition tables.
+It supports multiple partition table formats including msdos and gpt.
+It also provides the libparted library for partition management.
+"""
+homepage = "https://www.gnu.org/software/parted/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/parted/parted-3.6.tar.xz", sha256 = "3b43dbe33cca0f9a18601ebab56b7852b128ec1a3df3a9b30ccde5e73359e612" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+lvm2 = ">= 2.03"
+
+[depends]
+glibc = ">= 2.39"
+lvm2 = ">= 2.03"
+readline = ">= 8.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf parted-*
+tar xf $ROOKPKG_SOURCES/parted-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/parted-*
+
+# Fix for gcc-15 compatibility
+sed -i 's/do_version ()/do_version (PedDevice** dev, PedDisk** diskp)/' parted/parted.c
+
+./configure --prefix=/usr --disable-static
+"""
+
+build = """
+cd $ROOKPKG_BUILD/parted-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require root and special devices
+"""
+
+install = """
+cd $ROOKPKG_BUILD/parted-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/sbin/parted" = { mode = 755 }
+"usr/sbin/partprobe" = { mode = 755 }
+"usr/lib/libparted.so*" = { mode = 755 }
+"usr/lib/libparted-fs-resize.so*" = { mode = 755 }
+"usr/include/parted/" = {}
+"usr/lib/pkgconfig/libparted*.pc" = {}
+"usr/share/info/parted.info*" = {}
+"usr/share/locale/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.6"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for Calamares installer and kpmcore",
+    "Includes gcc-15 compatibility fix from BLFS"
+]
+
+[metadata]
+keywords = ["parted", "partition", "disk", "fdisk", "gpt"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

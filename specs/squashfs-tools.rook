@@ -1,0 +1,109 @@
+[package]
+name = "squashfs-tools"
+version = "4.7.4"
+release = 1
+summary = "Tools to create and extract Squashfs filesystems"
+description = """
+Squashfs-tools provides mksquashfs and unsquashfs utilities for creating
+and extracting Squashfs compressed read-only filesystems. Squashfs is
+commonly used for live CD/DVD filesystems, embedded systems, and container
+images.
+"""
+homepage = "https://github.com/plougher/squashfs-tools"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/plougher/squashfs-tools/archive/refs/tags/4.7.4.tar.gz", sha256 = "91c49f9a1ed972ad00688a38222119e2baf49ba74cf5fda05729a79d7d59d335" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+zlib = ">= 1.2"
+xz = ">= 5.0"
+lz4 = ">= 1.9"
+zstd = ">= 1.5"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+xz = ">= 5.0"
+lz4 = ">= 1.9"
+zstd = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf squashfs-tools-*
+tar xf $ROOKPKG_SOURCES/4.7.4.tar.gz
+"""
+
+configure = """
+# No configure step - uses Makefile
+"""
+
+build = """
+cd $ROOKPKG_BUILD/squashfs-tools-*/squashfs-tools
+make -j$ROOKPKG_JOBS \
+    GZIP_SUPPORT=1 \
+    XZ_SUPPORT=1 \
+    LZ4_SUPPORT=1 \
+    ZSTD_SUPPORT=1 \
+    LZO_SUPPORT=0
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/squashfs-tools-*/squashfs-tools
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+install -m 755 mksquashfs $ROOKPKG_DESTDIR/usr/bin/
+install -m 755 unsquashfs $ROOKPKG_DESTDIR/usr/bin/
+install -m 755 sqfstar $ROOKPKG_DESTDIR/usr/bin/ 2>/dev/null || true
+install -m 755 sqfscat $ROOKPKG_DESTDIR/usr/bin/ 2>/dev/null || true
+"""
+
+[files]
+"usr/bin/mksquashfs" = { mode = 755 }
+"usr/bin/unsquashfs" = { mode = 755 }
+"usr/bin/sqfstar" = { mode = 755 }
+"usr/bin/sqfscat" = { mode = 755 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "4.7.4"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Built with zlib, xz, lz4, and zstd support",
+    "Required for Calamares installer and live ISO"
+]
+
+[metadata]
+keywords = ["squashfs", "mksquashfs", "unsquashfs", "compression", "filesystem"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,113 @@
+[package]
+name = "os-prober"
+version = "1.84"
+release = 1
+summary = "Utility to detect other OSes on a set of drives"
+description = """
+os-prober is a utility used to detect other operating systems available
+on a system. It outputs the results in a generic machine-readable format.
+Used by GRUB and Calamares to detect existing operating systems during
+installation.
+"""
+homepage = "https://tracker.debian.org/pkg/os-prober"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://deb.debian.org/debian/pool/main/o/os-prober/os-prober_1.84.tar.xz", sha256 = "42e48245986d8ec9491a07a74522c7b78e685ddc9b4f801045c62cd03dd7b067" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+util-linux = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf os-prober-*
+tar xf $ROOKPKG_SOURCES/os-prober_*.tar.xz
+"""
+
+configure = """
+# No configure step needed
+"""
+
+build = """
+cd $ROOKPKG_BUILD/os-prober-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/os-prober-*
+
+# Install binaries
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+install -m 755 os-prober $ROOKPKG_DESTDIR/usr/bin/
+install -m 755 linux-boot-prober $ROOKPKG_DESTDIR/usr/bin/
+
+# Install library directory
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/os-prober
+cp -a common.sh $ROOKPKG_DESTDIR/usr/lib/os-prober/
+cp -a newns $ROOKPKG_DESTDIR/usr/lib/os-prober/
+
+# Install probes
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/os-probes
+cp -a os-probes/* $ROOKPKG_DESTDIR/usr/lib/os-probes/
+
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/linux-boot-probes
+cp -a linux-boot-probes/* $ROOKPKG_DESTDIR/usr/lib/linux-boot-probes/
+
+# Install data directory
+mkdir -p $ROOKPKG_DESTDIR/var/lib/os-prober
+"""
+
+[files]
+"usr/bin/os-prober" = { mode = 755 }
+"usr/bin/linux-boot-prober" = { mode = 755 }
+"usr/lib/os-prober/" = {}
+"usr/lib/os-probes/" = {}
+"usr/lib/linux-boot-probes/" = {}
+"var/lib/os-prober/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.84"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for Calamares installer and GRUB"
+]
+
+[metadata]
+keywords = ["os-prober", "bootloader", "grub", "installer"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

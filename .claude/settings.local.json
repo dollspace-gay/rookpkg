@@ -82,7 +82,19 @@
       "Bash(git checkout:*)",
       "Bash(git -C \"c:\\Users\\texas\\rookpkg\" checkout specs/bash.rook)",
       "Bash(python3:*)",
-      "Bash(timeout /t 3)"
+      "Bash(timeout /t 3)",
+      "Bash(bd list:*)",
+      "Bash(bd create:*)",
+      "Bash(bd dep add:*)",
+      "Bash(bd sync:*)",
+      "Bash(bd show:*)",
+      "Bash(curl:*)",
+      "Bash(powershell:*)",
+      "Bash(wsl --terminate:*)",
+      "Bash(timeout:*)",
+      "Bash(wsl --shutdown)",
+      "Bash(net stop:*)",
+      "Bash(net start LxssManager)"
     ]
   }
 }
