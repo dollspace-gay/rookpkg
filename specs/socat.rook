@@ -49,8 +49,7 @@ make -j$ROOKPKG_JOBS
 """
 
 check = """
-cd $ROOKPKG_BUILD/socat-*
-make test || true
+# Skip tests - socat test suite is very slow and can hang on SSL tests
 """
 
 install = """
