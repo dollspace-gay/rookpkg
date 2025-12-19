@@ -31,8 +31,8 @@ python = ">= 3.8"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf setuptools-*
-tar xf $ROOKPKG_SOURCES/setuptools-*.tar.gz
+rm -rf setuptools-8*
+tar xf $ROOKPKG_SOURCES/setuptools-8*.tar.gz
 """
 
 configure = """
@@ -40,7 +40,7 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/setuptools-*
+cd $ROOKPKG_BUILD/setuptools-8*
 pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps $PWD
 """
 
@@ -49,7 +49,7 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/setuptools-*
+cd $ROOKPKG_BUILD/setuptools-8*
 pip3 install --no-index --find-links dist --root=$ROOKPKG_DESTDIR setuptools
 """
 

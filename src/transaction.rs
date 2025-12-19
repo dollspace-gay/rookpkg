@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 
-use crate::archive::PackageArchiveReader;
+use crate::archive::{PackageArchiveReader, FileType};
 use crate::config::HooksConfig;
 use crate::database::Database;
 use crate::hooks::{HookContext, HookEvent, HookManager, HookOperation, HookResult};
@@ -322,6 +322,11 @@ impl Transaction {
             for file_entry in files {
                 let path = &file_entry.path;
 
+                // Skip directories - they're shared between packages
+                if file_entry.file_type == FileType::Directory {
+                    continue;
+                }
+
                 // Check for conflict with another package in this transaction
                 if let Some(other_package) = transaction_files.get(path) {
                     if other_package != package_name {
@@ -542,8 +547,11 @@ impl Transaction {
             }
         }
 
-        // Check for file conflicts with other packages
+        // Check for file conflicts with other packages (skip directories - they're shared)
         for file_entry in &files {
+            if file_entry.file_type == FileType::Directory {
+                continue;
+            }
             if let Some(owner) = self.db.file_owner(&file_entry.path)? {
                 if owner != info.name {
                     bail!(
@@ -622,8 +630,11 @@ impl Transaction {
             package: info.name.clone(),
         });
 
-        // Add files to database
+        // Add files to database (skip directories - they're shared between packages)
         for file_entry in &files {
+            if file_entry.file_type == FileType::Directory {
+                continue;
+            }
             let pkg_file = PackageFile {
                 path: file_entry.path.clone(),
                 mode: file_entry.mode,
@@ -841,8 +852,11 @@ impl Transaction {
         let files = reader.read_files()?;
         let scripts = reader.read_scripts()?;
 
-        // Check for file conflicts with other packages
+        // Check for file conflicts with other packages (skip directories - they're shared)
         for file_entry in &files {
+            if file_entry.file_type == FileType::Directory {
+                continue;
+            }
             if let Some(owner) = self.db.file_owner(&file_entry.path)? {
                 if owner != info.name {
                     bail!(
@@ -924,8 +938,11 @@ impl Transaction {
             package: info.name.clone(),
         });
 
-        // Add files to database
+        // Add files to database (skip directories - they're shared between packages)
         for file_entry in &files {
+            if file_entry.file_type == FileType::Directory {
+                continue;
+            }
             let pkg_file = PackageFile {
                 path: file_entry.path.clone(),
                 mode: file_entry.mode,

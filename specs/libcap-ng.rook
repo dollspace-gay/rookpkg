@@ -1,0 +1,103 @@
+[package]
+name = "libcap-ng"
+version = "0.8.5"
+release = 1
+summary = "Next-generation POSIX capabilities library"
+description = """
+libcap-ng is a library for Linux that makes using POSIX capabilities easier.
+It provides an easier interface to the libcap library and includes utilities
+to analyze system privileges.
+"""
+homepage = "https://people.redhat.com/sgrubb/libcap-ng/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://corvidae.social/RookerySource/libcap-ng-0.8.5.tar.gz", sha256 = "e4be07fdd234f10b866433f224d183626003c65634ed0552b02e654a380244c2" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+linux-api-headers = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf libcap-ng-*
+tar xf $ROOKPKG_SOURCES/libcap-ng-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libcap-ng-*
+./autogen.sh
+./configure --prefix=/usr \
+            --without-python3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libcap-ng-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libcap-ng-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libcap-ng-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+rm -f $ROOKPKG_DESTDIR/usr/lib/*.la
+"""
+
+[files]
+"usr/lib/libcap-ng.so*" = { mode = 755 }
+"usr/lib/libcap-ng.a" = {}
+"usr/lib/pkgconfig/libcap-ng.pc" = {}
+"usr/include/cap-ng.h" = {}
+"usr/bin/captest" = { mode = 755 }
+"usr/bin/filecap" = { mode = 755 }
+"usr/bin/netcap" = { mode = 755 }
+"usr/bin/pscap" = { mode = 755 }
+"usr/share/man/man3/*.3" = {}
+"usr/share/man/man7/capabilities.7" = {}
+"usr/share/man/man8/*.8" = {}
+"usr/share/aclocal/cap-ng.m4" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "0.8.5"
+date = "2025-12-18"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package"
+]
+
+[metadata]
+keywords = ["libcap-ng", "capabilities", "security", "posix"]
+categories = ["libraries", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

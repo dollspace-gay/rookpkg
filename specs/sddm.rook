@@ -37,6 +37,8 @@ xorg-xauth = ">= 1.0"
 [optional_depends]
 
 [environment]
+LC_ALL = "C.UTF-8"
+LANG = "C.UTF-8"
 
 [build]
 prep = """
@@ -50,6 +52,7 @@ cd $ROOKPKG_BUILD/sddm-*
 mkdir -p build
 cd build
 cmake ..                                            \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5            \
       -DCMAKE_INSTALL_PREFIX=/usr                   \
       -DCMAKE_PREFIX_PATH=/opt/qt6                  \
       -DCMAKE_BUILD_TYPE=Release                    \
