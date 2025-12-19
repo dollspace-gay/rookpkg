@@ -51,8 +51,8 @@ xdg-desktop-portal-impl = ">= 1.0"
 [build]
 prep = """
 cd $ROOKPKG_BUILD
-rm -rf xdg-desktop-portal-*
-tar xf $ROOKPKG_SOURCES/xdg-desktop-portal-*.tar.xz
+rm -rf xdg-desktop-portal-[0-9]*
+tar xf $ROOKPKG_SOURCES/xdg-desktop-portal-1*.tar.xz
 """
 
 configure = """
@@ -61,8 +61,11 @@ mkdir build && cd build
 meson setup ..               \
       --prefix=/usr          \
       --buildtype=release    \
-      -D docbook-docs=disabled \
-      -D man-pages=disabled
+      -D documentation=disabled \
+      -D man-pages=disabled   \
+      -D tests=disabled       \
+      -D flatpak-interfaces=disabled \
+      -D geoclue=disabled
 """
 
 build = """

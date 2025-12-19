@@ -88,11 +88,14 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/wpa_supplicant-*/wpa_supplicant
-install -v -m755 wpa_{cli,passphrase,supplicant} $ROOKPKG_DESTDIR/usr/sbin/
+mkdir -p $ROOKPKG_DESTDIR/usr/sbin
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/systemd/system
+mkdir -p $ROOKPKG_DESTDIR/usr/share/man/man5
+mkdir -p $ROOKPKG_DESTDIR/usr/share/man/man8
+install -v -m755 wpa_cli wpa_passphrase wpa_supplicant $ROOKPKG_DESTDIR/usr/sbin/
 install -v -m644 systemd/*.service $ROOKPKG_DESTDIR/usr/lib/systemd/system/
-mkdir -p $ROOKPKG_DESTDIR/usr/share/man/man{5,8}
 install -v -m644 doc/docbook/wpa_supplicant.conf.5 $ROOKPKG_DESTDIR/usr/share/man/man5/
-install -v -m644 doc/docbook/wpa_{cli,passphrase,supplicant}.8 $ROOKPKG_DESTDIR/usr/share/man/man8/
+install -v -m644 doc/docbook/wpa_cli.8 doc/docbook/wpa_passphrase.8 doc/docbook/wpa_supplicant.8 $ROOKPKG_DESTDIR/usr/share/man/man8/
 """
 
 [files]

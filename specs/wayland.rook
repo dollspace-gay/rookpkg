@@ -40,7 +40,7 @@ default-cursors = ">= 1.0"
 prep = """
 cd $ROOKPKG_BUILD
 rm -rf wayland-[0-9]*
-tar xf $ROOKPKG_SOURCES/wayland-*.tar.xz
+tar xf $ROOKPKG_SOURCES/wayland-1*.tar.xz
 """
 
 configure = """

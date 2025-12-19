@@ -15,6 +15,8 @@ arch = "x86_64"
 
 [sources]
 source0 = { url = "http://corvidae.social/RookerySource/vlc-3.0.21.tar.xz", sha256 = "24dbbe1d7dfaeea0994d5def0bbde200177347136dbfe573f5b6a4cee25afbb0" }
+patch1 = { url = "http://corvidae.social/RookerySource/vlc-3.0.21-taglib-1.patch", sha256 = "60f02b1b7176c78c53727902edc03d6dc8f861a05d8108222d715822241a7c57" }
+patch2 = { url = "http://corvidae.social/RookerySource/vlc-3.0.21-fedora_ffmpeg7-1.patch", sha256 = "05470c2277f4945c3c480c1b1f104b461b934ccda0d25cf4aa7b6195f5278242" }
 
 [patches]
 

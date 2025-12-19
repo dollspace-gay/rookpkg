@@ -41,7 +41,7 @@ configure = """
 """
 
 build = """
-cd $ROOKPKG_BUILD/trove-classifiers-*
+cd $ROOKPKG_BUILD/trove_classifiers-*
 pip3 wheel -w dist --no-build-isolation --no-deps .
 """
 
@@ -50,7 +50,7 @@ check = """
 """
 
 install = """
-cd $ROOKPKG_BUILD/trove-classifiers-*
+cd $ROOKPKG_BUILD/trove_classifiers-*
 pip3 install --no-index --find-links dist --no-cache-dir --prefix=/usr --root=$ROOKPKG_DESTDIR trove-classifiers
 """
 
