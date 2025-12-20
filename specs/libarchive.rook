@@ -1,0 +1,128 @@
+[package]
+name = "libarchive"
+version = "3.7.7"
+release = 1
+summary = "Multi-format archive and compression library"
+description = """
+Libarchive is a programming library that can create and read several different
+streaming archive formats, including tar, cpio, pax, and zip. It automatically
+handles formats like gzip, bzip2, lz4, xz, and zstd. Includes bsdtar and
+bsdcpio command-line utilities.
+"""
+homepage = "https://www.libarchive.org/"
+license = "BSD-2-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.libarchive.org/downloads/libarchive-3.7.7.tar.xz", sha256 = "879acd83c3399c7caaee73fe5f7418e06087ab2aaf40af3e99b9e29beb29faee" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+cmake = ">= 3.20"
+zlib = ">= 1.2"
+bzip2 = ">= 1.0"
+xz = ">= 5.0"
+zstd = ">= 1.4"
+openssl = ">= 3.0"
+acl = ">= 2.3"
+attr = ">= 2.5"
+
+[depends]
+glibc = ">= 2.39"
+zlib = ">= 1.2"
+bzip2 = ">= 1.0"
+xz = ">= 5.0"
+zstd = ">= 1.4"
+openssl = ">= 3.0"
+acl = ">= 2.3"
+attr = ">= 2.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf libarchive-*
+tar xf $ROOKPKG_SOURCES/libarchive-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libarchive-*
+mkdir -p build && cd build
+cmake .. \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DENABLE_ACL=ON \
+    -DENABLE_XATTR=ON \
+    -DENABLE_ZLIB=ON \
+    -DENABLE_BZip2=ON \
+    -DENABLE_LZMA=ON \
+    -DENABLE_ZSTD=ON \
+    -DENABLE_OPENSSL=ON
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libarchive-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/libarchive-*/build
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libarchive-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/bsdtar" = { mode = 755 }
+"usr/bin/bsdcpio" = { mode = 755 }
+"usr/bin/bsdcat" = { mode = 755 }
+"usr/lib/libarchive.so*" = { mode = 755 }
+"usr/lib/pkgconfig/libarchive.pc" = {}
+"usr/include/archive*.h" = {}
+"usr/share/man/man1/bsdtar.1*" = {}
+"usr/share/man/man1/bsdcpio.1*" = {}
+"usr/share/man/man1/bsdcat.1*" = {}
+"usr/share/man/man3/archive*.3*" = {}
+"usr/share/man/man3/libarchive*.3*" = {}
+"usr/share/man/man5/libarchive*.5*" = {}
+"usr/share/man/man5/mtree.5*" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "3.7.7"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Provides bsdcpio for initramfs creation"
+]
+
+[metadata]
+keywords = ["libarchive", "archive", "tar", "cpio", "bsdtar", "bsdcpio"]
+categories = ["system", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

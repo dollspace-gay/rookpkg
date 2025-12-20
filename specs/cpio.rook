@@ -1,0 +1,97 @@
+[package]
+name = "cpio"
+version = "2.15"
+release = 1
+summary = "GNU cpio archiving utility"
+description = """
+GNU cpio is a program to manage archives of files. cpio copies files into or
+extracts files from a cpio or tar archive. It supports several archive formats
+including newc (SVR4), which is used for Linux initramfs images.
+"""
+homepage = "https://www.gnu.org/software/cpio/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/cpio/cpio-2.15.tar.bz2", sha256 = "937610b97c329a1ec9268553fb780037bcfff0dcffe9725ebc4fd9c1aa9075db" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf cpio-*
+tar xf $ROOKPKG_SOURCES/cpio-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/cpio-*
+./configure --prefix=/usr \
+            --enable-mt \
+            --with-rmt=/usr/libexec/rmt
+"""
+
+build = """
+cd $ROOKPKG_BUILD/cpio-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/cpio-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/cpio-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Remove shared info/dir file to avoid conflicts
+rm -f $ROOKPKG_DESTDIR/usr/share/info/dir
+"""
+
+[files]
+"usr/bin/cpio" = { mode = 755 }
+"usr/share/man/man1/cpio.1*" = {}
+"usr/share/info/cpio.info*" = {}
+"usr/share/locale/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.15"
+date = "2025-12-19"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for creating initramfs archives"
+]
+
+[metadata]
+keywords = ["cpio", "archive", "initramfs"]
+categories = ["system", "utilities"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

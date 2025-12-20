@@ -90,30 +90,193 @@ create_live_iso() {
     # =========================================================================
     log_step "Creating squashfs root filesystem..."
 
-    # Strip debug symbols first to reduce size
-    log_info "Stripping debug symbols..."
-    find "$ROOKERY/usr/bin" "$ROOKERY/usr/sbin" "$ROOKERY/usr/libexec" -type f -executable 2>/dev/null | \
+    # SAFETY CHECK: Never operate on the root filesystem directly
+    if [ "$ROOKERY" = "/" ] || [ "$ROOKERY" = "" ]; then
+        log_error "SAFETY: ROOKERY cannot be '/' or empty!"
+        log_error "Set ROOKERY to an isolated directory containing the target system."
+        log_error "Example: ROOKERY=/tmp/rootfs ./build_live_iso.sh"
+        return 1
+    fi
+
+    # Create a temporary copy for stripping (never modify source)
+    # Use /var/tmp to avoid tmpfs space issues
+    local strip_root="/var/tmp/iso-rootfs-$$"
+    log_info "Creating temporary copy for stripping..."
+    rm -rf "$strip_root"
+
+    # Use rsync if available for efficiency, otherwise cp
+    if command -v rsync &>/dev/null; then
+        rsync -a --exclude='dev/*' --exclude='proc/*' --exclude='sys/*' \
+              --exclude='run/*' --exclude='tmp/*' --exclude='sources/*' \
+              --exclude='build/*' --exclude='tools/*' --exclude='.checkpoints' \
+              --exclude='*.log' "$ROOKERY/" "$strip_root/"
+    else
+        cp -a "$ROOKERY" "$strip_root"
+        rm -rf "$strip_root"/{dev,proc,sys,run,tmp,sources,build,tools}/* 2>/dev/null || true
+    fi
+
+    # Strip debug symbols on the COPY only (never the source)
+    log_info "Stripping debug symbols from temporary copy..."
+    find "$strip_root/usr/bin" "$strip_root/usr/sbin" "$strip_root/usr/libexec" -type f -executable 2>/dev/null | \
         xargs -r strip --strip-unneeded 2>/dev/null || true
-    find "$ROOKERY/usr/lib" "$ROOKERY/lib" -name "*.so*" -type f 2>/dev/null | \
+    find "$strip_root/usr/lib" "$strip_root/lib" -name "*.so*" -type f 2>/dev/null | \
         xargs -r strip --strip-unneeded 2>/dev/null || true
-    find "$ROOKERY/opt" -type f -executable 2>/dev/null | \
+    find "$strip_root/opt" -type f -executable 2>/dev/null | \
         xargs -r strip --strip-unneeded 2>/dev/null || true
 
-    mksquashfs "$ROOKERY" "$iso_root/LiveOS/rootfs.img" \
+    # =========================================================================
+    # Create essential live system configuration
+    # =========================================================================
+    log_info "Configuring live system..."
+
+    # Ensure /tmp exists with proper permissions (for when tmp.mount is masked)
+    mkdir -p "$strip_root/tmp"
+    chmod 1777 "$strip_root/tmp"
+
+    # Mask problematic mount units that fail on overlay/grsec
+    # These are not essential for a live system
+    mkdir -p "$strip_root/etc/systemd/system"
+    ln -sf /dev/null "$strip_root/etc/systemd/system/dev-hugepages.mount"
+    ln -sf /dev/null "$strip_root/etc/systemd/system/dev-mqueue.mount"
+    ln -sf /dev/null "$strip_root/etc/systemd/system/tmp.mount"
+
+    # Also mask the corresponding services that might fail
+    ln -sf /dev/null "$strip_root/etc/systemd/system/systemd-timesyncd.service"
+    ln -sf /dev/null "$strip_root/etc/systemd/system/systemd-resolved.service"
+
+    # Create required runtime directories for dbus and other services
+    mkdir -p "$strip_root/run/dbus"
+    mkdir -p "$strip_root/var/run"
+    ln -sf ../run "$strip_root/var/run" 2>/dev/null || true
+
+    # Create essential system users if passwd doesn't exist or is incomplete
+    if ! grep -q "messagebus" "$strip_root/etc/passwd" 2>/dev/null; then
+        log_info "Creating essential system users..."
+        cat > "$strip_root/etc/passwd" << 'PASSWD_EOF'
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/dev/null:/usr/sbin/nologin
+daemon:x:2:2:daemon:/dev/null:/usr/sbin/nologin
+nobody:x:65534:65534:Kernel Overflow User:/:/usr/sbin/nologin
+messagebus:x:18:18:D-Bus Message Daemon:/run/dbus:/usr/sbin/nologin
+systemd-journal:x:990:990:systemd Journal:/:/usr/sbin/nologin
+systemd-network:x:991:991:systemd Network Management:/:/usr/sbin/nologin
+systemd-resolve:x:992:992:systemd Resolver:/:/usr/sbin/nologin
+systemd-timesync:x:993:993:systemd Time Synchronization:/:/usr/sbin/nologin
+systemd-coredump:x:994:994:systemd Core Dumper:/:/usr/sbin/nologin
+polkitd:x:27:27:PolicyKit Daemon:/var/lib/polkit-1:/usr/sbin/nologin
+avahi:x:84:84:Avahi Daemon:/:/usr/sbin/nologin
+sddm:x:995:995:SDDM Display Manager:/var/lib/sddm:/usr/sbin/nologin
+live:x:1000:1000:Live User:/home/live:/bin/bash
+PASSWD_EOF
+
+        cat > "$strip_root/etc/group" << 'GROUP_EOF'
+root:x:0:
+bin:x:1:
+daemon:x:2:
+sys:x:3:
+adm:x:4:live
+tty:x:5:
+disk:x:6:
+lp:x:7:
+mem:x:8:
+kmem:x:9:
+wheel:x:10:live
+cdrom:x:11:live
+dialout:x:18:live
+floppy:x:19:
+video:x:22:live
+audio:x:25:live
+users:x:100:live
+nobody:x:65534:
+messagebus:x:18:
+systemd-journal:x:990:
+systemd-network:x:991:
+systemd-resolve:x:992:
+systemd-timesync:x:993:
+systemd-coredump:x:994:
+input:x:996:
+kvm:x:997:live
+render:x:998:live
+polkitd:x:27:
+avahi:x:84:
+sddm:x:995:
+plugdev:x:46:live
+netdev:x:47:live
+live:x:1000:
+GROUP_EOF
+
+        # Create shadow with empty password for live user
+        cat > "$strip_root/etc/shadow" << 'SHADOW_EOF'
+root:!:19722:0:99999:7:::
+messagebus:!:19722:0:99999:7:::
+polkitd:!:19722:0:99999:7:::
+avahi:!:19722:0:99999:7:::
+sddm:!:19722:0:99999:7:::
+live::19722:0:99999:7:::
+SHADOW_EOF
+        chmod 640 "$strip_root/etc/shadow"
+    fi
+
+    # Create home directory for live user
+    mkdir -p "$strip_root/home/live"
+    chown 1000:1000 "$strip_root/home/live"
+
+    # Configure SDDM for live boot with autologin and no virtual keyboard
+    mkdir -p "$strip_root/etc/sddm.conf.d"
+    cat > "$strip_root/etc/sddm.conf.d/live.conf" << 'SDDM_CONF_EOF'
+[General]
+# Disable virtual keyboard for live session
+InputMethod=
+
+[Autologin]
+# Auto-login to live user
+User=live
+# Use X11 session (more compatible with VMs)
+Session=plasmax11
+Relogin=false
+
+[Theme]
+# Use maldives theme (simpler, fewer dependencies)
+Current=maldives
+
+[Users]
+# Hide system users
+HideUsers=root,sddm,messagebus,polkitd,avahi
+HideShells=/usr/sbin/nologin,/sbin/nologin
+MinimumUid=1000
+MaximumUid=60000
+SDDM_CONF_EOF
+
+    # Also create main sddm.conf as fallback
+    cat > "$strip_root/etc/sddm.conf" << 'SDDM_MAIN_EOF'
+[General]
+InputMethod=
+
+[Autologin]
+User=live
+Session=plasmax11
+Relogin=false
+
+[Theme]
+Current=maldives
+SDDM_MAIN_EOF
+
+    log_info "Configured SDDM with autologin for live user"
+    log_info "Masked problematic systemd units for live boot"
+
+    mksquashfs "$strip_root" "$iso_root/LiveOS/rootfs.img" \
         -e "dev/*" \
         -e "proc/*" \
         -e "sys/*" \
         -e "run/*" \
         -e "tmp/*" \
-        -e "sources/*" \
-        -e "build/*" \
-        -e "tools/*" \
-        -e ".checkpoints" \
-        -e "*.log" \
         -comp zstd \
         -Xcompression-level 19 \
         -b 1M \
         -no-recovery
+
+    # Clean up the temporary copy
+    rm -rf "$strip_root"
 
     if [ ! -f "$iso_root/LiveOS/rootfs.img" ]; then
         log_error "Failed to create squashfs filesystem"
@@ -146,6 +309,8 @@ create_live_iso() {
         real_ld=$(readlink -f "$ROOKERY/lib64/ld-linux-x86-64.so.2")
     elif [ -e "$ROOKERY/lib/ld-linux-x86-64.so.2" ]; then
         real_ld=$(readlink -f "$ROOKERY/lib/ld-linux-x86-64.so.2")
+    elif [ -e "$ROOKERY/usr/lib/ld-linux-x86-64.so.2" ]; then
+        real_ld=$(readlink -f "$ROOKERY/usr/lib/ld-linux-x86-64.so.2")
     fi
     if [ -n "$real_ld" ] && [ -f "$real_ld" ]; then
         cp "$real_ld" "$initramfs_dir/lib64/ld-linux-x86-64.so.2"
@@ -190,13 +355,12 @@ create_live_iso() {
         done
     done
 
-    # Create /bin/sh symlink
-    if [ ! -e "$initramfs_dir/bin/sh" ]; then
-        if [ -f "$initramfs_dir/usr/bin/bash" ]; then
-            ln -sf ../usr/bin/bash "$initramfs_dir/bin/sh"
-        elif [ -f "$initramfs_dir/bin/bash" ]; then
-            ln -sf bash "$initramfs_dir/bin/sh"
-        fi
+    # Create /bin/sh symlink - always recreate to ensure relative path
+    rm -f "$initramfs_dir/bin/sh"
+    if [ -f "$initramfs_dir/usr/bin/bash" ]; then
+        ln -sf ../usr/bin/bash "$initramfs_dir/bin/sh"
+    elif [ -f "$initramfs_dir/bin/bash" ]; then
+        ln -sf bash "$initramfs_dir/bin/sh"
     fi
 
     # Core utilities
@@ -319,16 +483,19 @@ create_live_iso() {
 # Rookery OS Live Boot Init Script
 # Boots from ISO into KDE Plasma with Calamares installer
 
-# Mount essential filesystems
+# Mount essential filesystems ONLY - let systemd handle the rest
+# Critical: Do NOT mount /tmp here - systemd's tmp.mount unit handles it
 mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t devtmpfs none /dev
 mkdir -p /dev/pts /dev/shm
 mount -t devpts devpts /dev/pts
 mount -t tmpfs tmpfs /dev/shm
-mount -t tmpfs tmpfs /run
-mount -t tmpfs tmpfs /tmp
 
+# Mount run as tmpfs - this gets moved to newroot
+mount -t tmpfs -o mode=755 tmpfs /run
+
+# Enable kernel messages on console
 echo 1 > /proc/sys/kernel/printk
 
 echo ""
@@ -418,14 +585,32 @@ mount -t tmpfs -o size=4G tmpfs /run/overlay
 
 mkdir -p /run/overlay/upper /run/overlay/work
 
-if mount -t overlay overlay -o lowerdir=/run/rootfsbase,upperdir=/run/overlay/upper,workdir=/run/overlay/work /newroot 2>/dev/null; then
+mkdir -p /newroot
+
+if mount -t overlay overlay -o lowerdir=/run/rootfsbase,upperdir=/run/overlay/upper,workdir=/run/overlay/work /newroot; then
     echo "Overlay filesystem ready"
 else
-    echo "Overlay not available, using read-only root"
-    mount --bind /run/rootfsbase /newroot
+    echo "Overlay failed, trying bind mount..."
+    if ! mount --bind /run/rootfsbase /newroot; then
+        echo "ERROR: Could not mount root filesystem"
+        exec /bin/sh
+    fi
+    echo "Read-only root mounted"
 fi
 
-# Prepare for switch_root
+# Verify the mount worked
+if [ ! -d /newroot/usr ]; then
+    echo "ERROR: /newroot/usr not found after mount!"
+    echo "Contents of /newroot:"
+    ls -la /newroot/
+    echo "Contents of /run/rootfsbase:"
+    ls -la /run/rootfsbase/
+    exec /bin/sh
+fi
+echo "Root filesystem verified: /newroot/usr exists"
+
+# Prepare for switch_root - create mount points if missing
+mkdir -p /newroot/proc /newroot/sys /newroot/dev /newroot/run /newroot/tmp
 mkdir -p /newroot/run/rootfsbase /newroot/run/initramfs
 
 # Move mounts to new root
@@ -441,13 +626,23 @@ echo ""
 echo "Switching to live desktop..."
 echo ""
 
+# Debug: verify init exists
+echo "Checking for init..."
+ls -la /newroot/usr/lib/systemd/systemd 2>/dev/null || echo "systemd not found"
+ls -la /newroot/sbin/init 2>/dev/null || echo "/sbin/init not found"
+ls -la /newroot/bin/sh 2>/dev/null || echo "/bin/sh not found"
+
 # Switch to the real root
 if [ -x /newroot/usr/lib/systemd/systemd ]; then
+    echo "Using systemd as init"
     exec switch_root /newroot /usr/lib/systemd/systemd
 elif [ -x /newroot/sbin/init ]; then
+    echo "Using /sbin/init"
     exec switch_root /newroot /sbin/init
 else
-    echo "ERROR: No init found"
+    echo "ERROR: No init found, dropping to shell"
+    echo "Contents of /newroot/usr/lib/systemd/:"
+    ls -la /newroot/usr/lib/systemd/ 2>/dev/null || echo "dir not found"
     exec switch_root /newroot /bin/sh
 fi
 INITEOF
@@ -459,7 +654,15 @@ INITEOF
     # =========================================================================
     log_step "Creating initramfs archive..."
 
-    (cd "$initramfs_dir" && find . -print0 | cpio --null -o -H newc 2>/dev/null | gzip -9 > "$iso_boot/initrd.img")
+    # Use bsdcpio if available (from libarchive), otherwise try cpio
+    if command -v bsdcpio &>/dev/null; then
+        (cd "$initramfs_dir" && find . -print0 | bsdcpio --null -o -H newc 2>/dev/null | gzip -9 > "$iso_boot/initrd.img")
+    elif command -v cpio &>/dev/null; then
+        (cd "$initramfs_dir" && find . -print0 | cpio --null -o -H newc 2>/dev/null | gzip -9 > "$iso_boot/initrd.img")
+    else
+        log_error "Neither bsdcpio nor cpio found - cannot create initramfs"
+        return 1
+    fi
 
     if [ ! -f "$iso_boot/initrd.img" ]; then
         log_error "Failed to create initramfs"
@@ -474,26 +677,47 @@ INITEOF
     # =========================================================================
     log_step "Creating boot configuration..."
 
-    # GRUB config
+    # GRUB config - serial console enabled for debugging
     cat > "$iso_boot/grub/grub.cfg" << 'EOF'
+# GRUB configuration for Rookery OS 1.0 Live
+# Serial console compatible (QEMU -nographic)
+
+# Configure serial port (115200 baud, 8N1)
+serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1
+
+# Use both serial and console terminals for compatibility
+terminal_input serial console
+terminal_output serial console
+
 set default=0
-set timeout=10
+set timeout=5
+set timeout_style=menu
 
 insmod all_video
 insmod gfxterm
 
 menuentry "Rookery OS 1.0 - Live Desktop" {
-    linux /boot/vmlinuz quiet splash
-    initrd /boot/initrd.img
-}
-
-menuentry "Rookery OS 1.0 - Live Desktop (Safe Graphics)" {
-    linux /boot/vmlinuz nomodeset
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 systemd.log_level=debug
     initrd /boot/initrd.img
 }
 
 menuentry "Rookery OS 1.0 - Live Desktop (Verbose)" {
-    linux /boot/vmlinuz loglevel=7 systemd.log_level=debug
+    linux /boot/vmlinuz ro init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 systemd.log_level=debug systemd.log_target=console loglevel=7
+    initrd /boot/initrd.img
+}
+
+menuentry "Rookery OS 1.0 - Live Desktop (Safe Graphics)" {
+    linux /boot/vmlinuz ro init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 nomodeset
+    initrd /boot/initrd.img
+}
+
+menuentry "Rookery OS 1.0 - Recovery" {
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd systemd.unit=rescue.target net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8
+    initrd /boot/initrd.img
+}
+
+menuentry "Rookery OS 1.0 - Emergency Shell" {
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd systemd.unit=emergency.target net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8
     initrd /boot/initrd.img
 }
 EOF
@@ -501,23 +725,49 @@ EOF
     # ISOLINUX config
     mkdir -p "$iso_root/boot/syslinux"
 
-    if [ -f "/usr/lib/ISOLINUX/isolinux.bin" ]; then
-        cp /usr/lib/ISOLINUX/isolinux.bin "$iso_root/boot/syslinux/"
-    elif [ -f "$ROOKERY/usr/lib/ISOLINUX/isolinux.bin" ]; then
-        cp "$ROOKERY/usr/lib/ISOLINUX/isolinux.bin" "$iso_root/boot/syslinux/"
+    # Find isolinux.bin in various locations
+    local isolinux_bin=""
+    for path in "/usr/lib/syslinux/bios/isolinux.bin" \
+                "/usr/share/syslinux/isolinux.bin" \
+                "/usr/lib/ISOLINUX/isolinux.bin" \
+                "$ROOKERY/usr/lib/syslinux/bios/isolinux.bin" \
+                "$ROOKERY/usr/share/syslinux/isolinux.bin"; do
+        if [ -f "$path" ]; then
+            isolinux_bin="$path"
+            break
+        fi
+    done
+
+    if [ -n "$isolinux_bin" ]; then
+        cp "$isolinux_bin" "$iso_root/boot/syslinux/"
+        log_info "Using ISOLINUX from: $isolinux_bin"
     else
         log_warn "ISOLINUX not found - using GRUB only"
     fi
 
-    local syslinux_mods="/usr/lib/syslinux/modules/bios"
-    [ -d "$ROOKERY/usr/lib/syslinux/modules/bios" ] && syslinux_mods="$ROOKERY/usr/lib/syslinux/modules/bios"
-    for mod in ldlinux.c32 menu.c32 libutil.c32 libcom32.c32; do
-        if [ -f "$syslinux_mods/$mod" ]; then
-            cp "$syslinux_mods/$mod" "$iso_root/boot/syslinux/"
+    # Find syslinux modules
+    local syslinux_mods=""
+    for path in "/usr/lib/syslinux/bios" \
+                "/usr/share/syslinux" \
+                "/usr/lib/syslinux/modules/bios" \
+                "$ROOKERY/usr/lib/syslinux/bios" \
+                "$ROOKERY/usr/share/syslinux"; do
+        if [ -d "$path" ]; then
+            syslinux_mods="$path"
+            break
         fi
     done
 
+    if [ -n "$syslinux_mods" ]; then
+        for mod in ldlinux.c32 menu.c32 libutil.c32 libcom32.c32; do
+            if [ -f "$syslinux_mods/$mod" ]; then
+                cp "$syslinux_mods/$mod" "$iso_root/boot/syslinux/"
+            fi
+        done
+    fi
+
     cat > "$iso_root/boot/syslinux/syslinux.cfg" << 'SYSLINUX_CFG'
+SERIAL 0 115200
 DEFAULT linux
 TIMEOUT 50
 PROMPT 1
@@ -527,17 +777,27 @@ MENU TITLE Rookery OS 1.0 Live
 LABEL linux
     MENU LABEL Rookery OS - Live Desktop
     KERNEL /boot/vmlinuz
-    APPEND initrd=/boot/initrd.img quiet splash
-
-LABEL safe
-    MENU LABEL Rookery OS - Safe Graphics
-    KERNEL /boot/vmlinuz
-    APPEND initrd=/boot/initrd.img nomodeset
+    APPEND initrd=/boot/initrd.img rw init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 systemd.log_level=debug
 
 LABEL verbose
     MENU LABEL Rookery OS - Verbose Boot
     KERNEL /boot/vmlinuz
-    APPEND initrd=/boot/initrd.img loglevel=7
+    APPEND initrd=/boot/initrd.img ro init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 systemd.log_level=debug systemd.log_target=console loglevel=7
+
+LABEL safe
+    MENU LABEL Rookery OS - Safe Graphics
+    KERNEL /boot/vmlinuz
+    APPEND initrd=/boot/initrd.img ro init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8 nomodeset
+
+LABEL recovery
+    MENU LABEL Rookery OS - Recovery
+    KERNEL /boot/vmlinuz
+    APPEND initrd=/boot/initrd.img rw init=/usr/lib/systemd/systemd systemd.unit=rescue.target net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8
+
+LABEL emergency
+    MENU LABEL Rookery OS - Emergency Shell
+    KERNEL /boot/vmlinuz
+    APPEND initrd=/boot/initrd.img rw init=/usr/lib/systemd/systemd systemd.unit=emergency.target net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8
 SYSLINUX_CFG
 
     # =========================================================================
@@ -545,29 +805,38 @@ SYSLINUX_CFG
     # =========================================================================
     log_step "Building ISO image..."
 
-    xorriso -as mkisofs \
-        -o "$iso_file" \
-        -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin 2>/dev/null || true \
-        -c boot/syslinux/boot.cat \
-        -b boot/syslinux/isolinux.bin \
-        -no-emul-boot \
-        -boot-load-size 4 \
-        -boot-info-table \
-        -eltorito-alt-boot \
-        -e boot/grub/efi.img \
-        -no-emul-boot \
-        -isohybrid-gpt-basdat \
-        -V "ROOKERY_LIVE" \
-        "$iso_root" 2>/dev/null || \
-    xorriso -as mkisofs \
-        -o "$iso_file" \
-        -c boot/syslinux/boot.cat \
-        -b boot/syslinux/isolinux.bin \
-        -no-emul-boot \
-        -boot-load-size 4 \
-        -boot-info-table \
-        -V "ROOKERY_LIVE" \
-        "$iso_root"
+    # Find isohdpfx.bin for hybrid ISO
+    local isohdpfx=""
+    for path in "/usr/lib/syslinux/bios/isohdpfx.bin" \
+                "/usr/share/syslinux/isohdpfx.bin" \
+                "/usr/lib/ISOLINUX/isohdpfx.bin" \
+                "$ROOKERY/usr/lib/syslinux/bios/isohdpfx.bin" \
+                "$ROOKERY/usr/share/syslinux/isohdpfx.bin"; do
+        if [ -f "$path" ]; then
+            isohdpfx="$path"
+            break
+        fi
+    done
+
+    if [ -n "$isohdpfx" ] && [ -f "$iso_root/boot/syslinux/isolinux.bin" ]; then
+        log_info "Creating hybrid ISO with BIOS boot support..."
+        xorriso -as mkisofs \
+            -o "$iso_file" \
+            -isohybrid-mbr "$isohdpfx" \
+            -c boot/syslinux/boot.cat \
+            -b boot/syslinux/isolinux.bin \
+            -no-emul-boot \
+            -boot-load-size 4 \
+            -boot-info-table \
+            -V "ROOKERY_LIVE" \
+            "$iso_root"
+    else
+        log_info "Creating basic ISO..."
+        xorriso -as mkisofs \
+            -o "$iso_file" \
+            -V "ROOKERY_LIVE" \
+            "$iso_root"
+    fi
 
     # Cleanup
     rm -rf "$initramfs_dir"
