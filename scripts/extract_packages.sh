@@ -24,5 +24,14 @@ done
 
 echo ""
 echo "Extracted $count packages"
+
+# Create /lib64 with symlinks to the dynamic linker
+# Required for binaries that expect ld-linux at /lib64/
+echo "Creating /lib64 symlinks..."
+mkdir -p "$ROOTFS/lib64"
+ln -sf ../usr/lib/ld-linux-x86-64.so.2 "$ROOTFS/lib64/ld-linux-x86-64.so.2"
+ln -sf ../usr/lib/ld-linux-x86-64.so.2 "$ROOTFS/lib64/ld-lsb-x86-64.so.3"
+
 echo "Rootfs size: $(du -sh $ROOTFS | cut -f1)"
 ls -la $ROOTFS/boot/vmlinuz* 2>/dev/null || echo "No kernel found!"
+ls -la $ROOTFS/lib64/ 2>/dev/null || echo "No /lib64 directory!"

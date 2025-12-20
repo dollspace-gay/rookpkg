@@ -98,7 +98,9 @@
       "Bash(MSYS_NO_PATHCONV=1 wsl:*)",
       "Bash(where:*)",
       "Bash(wsl -d Fedora42 -u root bash -c:*)",
-      "Bash(MSYS_NO_PATHCONV=1 wsl -d RookeryOS -u root bash -c:*)"
+      "Bash(MSYS_NO_PATHCONV=1 wsl -d RookeryOS -u root bash -c:*)",
+      "Bash(MSYS_NO_PATHCONV=1 wsl -d RookeryOS -u root bash:*)",
+      "Bash(wsl --list:*)"
     ]
   }
 }

@@ -261,6 +261,33 @@ Relogin=false
 Current=maldives
 SDDM_MAIN_EOF
 
+    # Create autologin group and add live user to it
+    if ! grep -q "^autologin:" "$strip_root/etc/group" 2>/dev/null; then
+        echo "autologin:x:1001:live" >> "$strip_root/etc/group"
+    fi
+
+    # Create a one-shot service to restart SDDM after boot
+    # This is a known workaround for timing issues with autologin on live CDs
+    cat > "$strip_root/etc/systemd/system/sddm-autologin-fix.service" << 'SDDM_FIX_EOF'
+[Unit]
+Description=SDDM Autologin Fix for Live Boot
+After=sddm.service graphical.target
+Requires=sddm.service
+
+[Service]
+Type=oneshot
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/bin/systemctl restart sddm.service
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target
+SDDM_FIX_EOF
+
+    # Enable the fix service
+    mkdir -p "$strip_root/etc/systemd/system/graphical.target.wants"
+    ln -sf ../sddm-autologin-fix.service "$strip_root/etc/systemd/system/graphical.target.wants/sddm-autologin-fix.service"
+
     log_info "Configured SDDM with autologin for live user"
     log_info "Masked problematic systemd units for live boot"
 
@@ -420,14 +447,9 @@ SDDM_MAIN_EOF
         done
     done
 
-    # Copy all .so files
-    log_info "Copying shared library files..."
-    for search_dir in "$ROOKERY/lib64" "$ROOKERY/lib" "$ROOKERY/usr/lib"; do
-        if [ -d "$search_dir" ]; then
-            find "$search_dir" -maxdepth 1 -name "*.so*" -type f -exec cp -n {} "$initramfs_dir/lib64/" \; 2>/dev/null || true
-            find "$search_dir" -maxdepth 1 -name "*.so*" -type l -exec sh -c 'real=$(readlink -f "$1"); [ -f "$real" ] && cp -n "$real" "$2/lib64/"' _ {} "$initramfs_dir" \; 2>/dev/null || true
-        fi
-    done
+    # DO NOT copy all .so files - that makes the initrd huge (500MB+)
+    # Only copy the specific libraries needed for the binaries we've already added
+    # The copy_binary_with_libs function handles library dependencies automatically
 
     # =========================================================================
     # Step 4: Copy kernel modules
