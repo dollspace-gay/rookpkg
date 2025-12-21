@@ -100,7 +100,9 @@
       "Bash(wsl -d Fedora42 -u root bash -c:*)",
       "Bash(MSYS_NO_PATHCONV=1 wsl -d RookeryOS -u root bash -c:*)",
       "Bash(MSYS_NO_PATHCONV=1 wsl -d RookeryOS -u root bash:*)",
-      "Bash(wsl --list:*)"
+      "Bash(wsl --list:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)"
     ]
   }
 }

@@ -153,7 +153,7 @@ create_live_iso() {
     if ! grep -q "messagebus" "$strip_root/etc/passwd" 2>/dev/null; then
         log_info "Creating essential system users..."
         cat > "$strip_root/etc/passwd" << 'PASSWD_EOF'
-root:x:0:0:root:/root:/bin/bash
+root:x:0:0:root:/root:/usr/bin/bash
 bin:x:1:1:bin:/dev/null:/usr/sbin/nologin
 daemon:x:2:2:daemon:/dev/null:/usr/sbin/nologin
 nobody:x:65534:65534:Kernel Overflow User:/:/usr/sbin/nologin
@@ -166,7 +166,7 @@ systemd-coredump:x:994:994:systemd Core Dumper:/:/usr/sbin/nologin
 polkitd:x:27:27:PolicyKit Daemon:/var/lib/polkit-1:/usr/sbin/nologin
 avahi:x:84:84:Avahi Daemon:/:/usr/sbin/nologin
 sddm:x:995:995:SDDM Display Manager:/var/lib/sddm:/usr/sbin/nologin
-live:x:1000:1000:Live User:/home/live:/bin/bash
+live:x:1000:1000:Live User:/home/live:/usr/bin/bash
 PASSWD_EOF
 
         cat > "$strip_root/etc/group" << 'GROUP_EOF'
@@ -205,14 +205,15 @@ netdev:x:47:live
 live:x:1000:
 GROUP_EOF
 
-        # Create shadow with empty password for live user
+        # Create shadow with password "live" for live user
+        # Password hash generated with: openssl passwd -6 live
         cat > "$strip_root/etc/shadow" << 'SHADOW_EOF'
 root:!:19722:0:99999:7:::
 messagebus:!:19722:0:99999:7:::
 polkitd:!:19722:0:99999:7:::
 avahi:!:19722:0:99999:7:::
 sddm:!:19722:0:99999:7:::
-live::19722:0:99999:7:::
+live:$6$xyz$FZdeWWOx8j1RIJpolCHQ5yiYyTzlgffE4D5dB0ip66lHh4ynb9QOnrAzvzL4Dog6iuURvKRcHWi4zvAdJ8B2f1:19722:0:99999:7:::
 SHADOW_EOF
         chmod 640 "$strip_root/etc/shadow"
     fi
@@ -220,6 +221,16 @@ SHADOW_EOF
     # Create home directory for live user
     mkdir -p "$strip_root/home/live"
     chown 1000:1000 "$strip_root/home/live"
+
+    # Create /etc/shells - required for PAM to validate user shells
+    cat > "$strip_root/etc/shells" << 'SHELLS_EOF'
+/bin/sh
+/bin/bash
+/usr/bin/sh
+/usr/bin/bash
+/usr/bin/zsh
+/usr/sbin/nologin
+SHELLS_EOF
 
     # Configure SDDM for live boot with autologin and no virtual keyboard
     mkdir -p "$strip_root/etc/sddm.conf.d"
@@ -266,28 +277,27 @@ SDDM_MAIN_EOF
         echo "autologin:x:1001:live" >> "$strip_root/etc/group"
     fi
 
-    # Create a one-shot service to restart SDDM after boot
-    # This is a known workaround for timing issues with autologin on live CDs
-    cat > "$strip_root/etc/systemd/system/sddm-autologin-fix.service" << 'SDDM_FIX_EOF'
-[Unit]
-Description=SDDM Autologin Fix for Live Boot
-After=sddm.service graphical.target
-Requires=sddm.service
+    # Fix the sddm-autologin PAM file - it references system-local-login which doesn't exist
+    # Replace it with a working version that uses system-account and system-session
+    cat > "$strip_root/etc/pam.d/sddm-autologin" << 'SDDM_PAM_EOF'
+# Begin /etc/pam.d/sddm-autologin
 
-[Service]
-Type=oneshot
-ExecStartPre=/bin/sleep 2
-ExecStart=/usr/bin/systemctl restart sddm.service
-RemainAfterExit=yes
+auth     requisite      pam_nologin.so
+auth     required       pam_env.so
 
-[Install]
-WantedBy=graphical.target
-SDDM_FIX_EOF
+auth     required       pam_succeed_if.so uid >= 1000 quiet
+auth     required       pam_permit.so
 
-    # Enable the fix service
-    mkdir -p "$strip_root/etc/systemd/system/graphical.target.wants"
-    ln -sf ../sddm-autologin-fix.service "$strip_root/etc/systemd/system/graphical.target.wants/sddm-autologin-fix.service"
+account  include        system-account
 
+password required       pam_deny.so
+
+session  required       pam_limits.so
+session  include        system-session
+
+# End /etc/pam.d/sddm-autologin
+SDDM_PAM_EOF
+    log_info "Fixed sddm-autologin PAM configuration"
     log_info "Configured SDDM with autologin for live user"
     log_info "Masked problematic systemd units for live boot"
 
