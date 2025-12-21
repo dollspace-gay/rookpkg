@@ -53,7 +53,7 @@ cd $ROOKPKG_BUILD/extra-cmake-modules-*
 mkdir -p build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr \
-      -DCMAKE_PREFIX_PATH=/opt/qt6 \
+      -DCMAKE_PREFIX_PATH=/usr \
       -DBUILD_WITH_QT6=ON ..
 """
 

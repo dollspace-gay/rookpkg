@@ -127,6 +127,47 @@ install_packages() {
     rm -rf "$tmp_extract"
 
     log_info "Installed $pkg_count packages"
+
+    # Fix legacy /opt/qt6 installations - move to /usr
+    if [ -d "$rootfs/opt/qt6" ]; then
+        log_info "Moving /opt/qt6 contents to /usr..."
+        # Move libraries
+        if [ -d "$rootfs/opt/qt6/lib" ]; then
+            cp -a "$rootfs/opt/qt6/lib"/* "$rootfs/usr/lib/" 2>/dev/null || true
+        fi
+        # Move plugins
+        if [ -d "$rootfs/opt/qt6/plugins" ]; then
+            mkdir -p "$rootfs/usr/lib/qt6/plugins"
+            cp -a "$rootfs/opt/qt6/plugins"/* "$rootfs/usr/lib/qt6/plugins/" 2>/dev/null || true
+        fi
+        # Move qml modules
+        if [ -d "$rootfs/opt/qt6/qml" ]; then
+            mkdir -p "$rootfs/usr/lib/qt6/qml"
+            cp -a "$rootfs/opt/qt6/qml"/* "$rootfs/usr/lib/qt6/qml/" 2>/dev/null || true
+        fi
+        # Move translations
+        if [ -d "$rootfs/opt/qt6/translations" ]; then
+            mkdir -p "$rootfs/usr/share/qt6/translations"
+            cp -a "$rootfs/opt/qt6/translations"/* "$rootfs/usr/share/qt6/translations/" 2>/dev/null || true
+        fi
+        # Move resources
+        if [ -d "$rootfs/opt/qt6/resources" ]; then
+            mkdir -p "$rootfs/usr/lib/qt6/resources"
+            cp -a "$rootfs/opt/qt6/resources"/* "$rootfs/usr/lib/qt6/resources/" 2>/dev/null || true
+        fi
+        # Move libexec
+        if [ -d "$rootfs/opt/qt6/libexec" ]; then
+            mkdir -p "$rootfs/usr/lib/qt6/libexec"
+            cp -a "$rootfs/opt/qt6/libexec"/* "$rootfs/usr/lib/qt6/libexec/" 2>/dev/null || true
+        fi
+        # Move binaries
+        if [ -d "$rootfs/opt/qt6/bin" ]; then
+            cp -a "$rootfs/opt/qt6/bin"/* "$rootfs/usr/bin/" 2>/dev/null || true
+        fi
+        # Remove /opt/qt6 entirely
+        rm -rf "$rootfs/opt/qt6"
+        log_info "Moved /opt/qt6 to /usr and removed /opt/qt6"
+    fi
 }
 
 # =============================================================================
@@ -626,6 +667,12 @@ PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 # Rookery OS Live settings
 LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
+
+# Qt/KDE plugin paths - CRITICAL for Plasma Wayland
+# Qt plugins are installed at /usr/plugins (not /usr/lib/qt6/plugins)
+QT_PLUGIN_PATH=/usr/plugins:/usr/lib/plugins
+QML_IMPORT_PATH=/usr/lib/qml
+QML2_IMPORT_PATH=/usr/lib/qml
 
 # Software rendering fallback - helps in VMs without proper GPU acceleration
 KWIN_COMPOSE=O2
@@ -1160,6 +1207,115 @@ polkit.addRule(function(action, subject) {
 EOF
     chmod 644 "$rootfs/etc/polkit-1/rules.d/50-sddm.rules"
 
+    # ==========================================================================
+    # Create systemd drop-in for SDDM to set QML import paths
+    # ==========================================================================
+    # The breeze theme requires org.kde.kirigami and org.kde.breeze.components
+    # which are installed in /usr/lib/qml but SDDM doesn't find them by default
+    mkdir -p "$rootfs/etc/systemd/system/sddm.service.d"
+    cat > "$rootfs/etc/systemd/system/sddm.service.d/qml-paths.conf" << 'EOF'
+[Service]
+Environment="QML_IMPORT_PATH=/usr/lib/qml"
+Environment="QML2_IMPORT_PATH=/usr/lib/qml"
+Environment="QT_PLUGIN_PATH=/usr/plugins:/usr/lib/plugins"
+# Software rendering fallback for VMs without GPU passthrough
+Environment="LIBGL_ALWAYS_SOFTWARE=1"
+Environment="QT_QUICK_BACKEND=software"
+Environment="KWIN_COMPOSE=Q"
+# Enable debug logging for SDDM
+Environment="QT_LOGGING_RULES=sddm.*=true;kwin.*=true"
+EOF
+    log_info "Created SDDM QML import path configuration"
+
+    # ==========================================================================
+    # Create SDDM configuration file with autologin and debugging
+    # ==========================================================================
+    mkdir -p "$rootfs/etc/sddm.conf.d"
+    cat > "$rootfs/etc/sddm.conf.d/00-live.conf" << 'EOF'
+[General]
+# Enable debug logging to journald
+EnableHiDPI=true
+HaltCommand=/usr/bin/systemctl poweroff
+RebootCommand=/usr/bin/systemctl reboot
+
+[Users]
+DefaultPath=/usr/local/bin:/usr/bin:/bin
+MaximumUid=60513
+MinimumUid=1000
+
+[Wayland]
+# Session directory for Wayland
+SessionDir=/usr/share/wayland-sessions
+
+[X11]
+# Session directory for X11 (fallback)
+SessionDir=/usr/share/xsessions
+
+[Autologin]
+# Autologin the live user
+User=live
+Session=plasma
+Relogin=false
+
+[Theme]
+# Use breeze theme
+Current=breeze
+EOF
+    chmod 644 "$rootfs/etc/sddm.conf.d/00-live.conf"
+    log_info "Created SDDM configuration with autologin"
+
+    # ==========================================================================
+    # Create global Qt/KDE environment for all sessions
+    # ==========================================================================
+    # The Qt plugins are installed in /usr/plugins, not /usr/lib/qt6/plugins
+    # This is critical for Plasma Wayland to find the wayland platform plugin
+    cat > "$rootfs/etc/profile.d/qt-kde.sh" << 'EOF'
+# Qt/KDE environment configuration for Rookery OS
+# Qt plugins are at /usr/plugins (not /usr/lib/qt6/plugins)
+export QT_PLUGIN_PATH=/usr/plugins:/usr/lib/plugins
+export QML_IMPORT_PATH=/usr/lib/qml
+export QML2_IMPORT_PATH=/usr/lib/qml
+
+# KDE plugin path
+export QT_QPA_PLATFORMTHEME=kde
+
+# Ensure Qt can find the wayland platform
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    export QT_QPA_PLATFORM=wayland
+fi
+
+# Software rendering fallback for VMs
+# Detect if we're in a VM (no render node available)
+if [ ! -e /dev/dri/renderD128 ]; then
+    export LIBGL_ALWAYS_SOFTWARE=1
+    export QT_QUICK_BACKEND=software
+    export KWIN_COMPOSE=Q
+fi
+EOF
+    chmod 644 "$rootfs/etc/profile.d/qt-kde.sh"
+    log_info "Created Qt/KDE environment configuration"
+
+    # ==========================================================================
+    # Create user service drop-in for powerdevil to handle VM environments
+    # ==========================================================================
+    # In VMs, powerdevil may crash due to missing power hardware. Make it more tolerant.
+    mkdir -p "$rootfs/etc/systemd/user/plasma-powerdevil.service.d"
+    cat > "$rootfs/etc/systemd/user/plasma-powerdevil.service.d/vm-tolerant.conf" << 'EOF'
+[Unit]
+# Wait a bit longer for DBus services like UPower to be ready
+After=dbus.socket
+
+[Service]
+# Give it time to start up - VMs can be slow
+TimeoutStartSec=30s
+# Delay restart to avoid rapid crash loops
+RestartSec=3s
+# Limit restart attempts to avoid endless loops
+StartLimitIntervalSec=60s
+StartLimitBurst=3
+EOF
+    log_info "Created powerdevil VM-tolerant configuration"
+
     # Create polkit localauthority for live session (simpler format, more compatible)
     mkdir -p "$rootfs/etc/polkit-1/localauthority/50-local.d"
     cat > "$rootfs/etc/polkit-1/localauthority/50-local.d/50-allow-live.pkla" << 'EOF'
@@ -1191,14 +1347,17 @@ export QT_QPA_PLATFORM=wayland
 export GDK_BACKEND=wayland
 export MOZ_ENABLE_WAYLAND=1
 
-# Force OpenGL 2 compositing - more compatible with VMs
-export KWIN_COMPOSE=O2
+# Force software rendering for VMs
+# kwin needs this BEFORE it starts to avoid trying DRM backend
+export LIBGL_ALWAYS_SOFTWARE=1
+export QT_QUICK_BACKEND=software
+export KWIN_COMPOSE=Q
+export MESA_GL_VERSION_OVERRIDE=3.3
+export KWIN_DRM_NO_AMS=1
 
-# If no render node exists, use software rendering
-if [ ! -e /dev/dri/renderD128 ]; then
-    export LIBGL_ALWAYS_SOFTWARE=1
-    export QT_QUICK_BACKEND=software
-fi
+# Force kwin to use virtual backend instead of DRM
+# This is critical - without this kwin tries to access /dev/dri/card0
+export KWIN_DRM_DEVICES=""
 
 # Ensure XDG_RUNTIME_DIR exists (should be set by pam_systemd)
 if [ -z "$XDG_RUNTIME_DIR" ]; then
@@ -1207,10 +1366,73 @@ if [ -z "$XDG_RUNTIME_DIR" ]; then
     chmod 700 "$XDG_RUNTIME_DIR"
 fi
 
+# Log environment for debugging
+echo "plasma-wayland-wrapper: Starting Plasma with software rendering" >&2
+echo "  KWIN_COMPOSE=$KWIN_COMPOSE" >&2
+echo "  QT_QUICK_BACKEND=$QT_QUICK_BACKEND" >&2
+echo "  XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >&2
+
 # Start the actual Plasma Wayland session
 exec /usr/bin/startplasma-wayland "$@"
 EOF
     chmod 755 "$rootfs/usr/local/bin/plasma-wayland-wrapper"
+
+    # Patch the plasma.desktop session file to use our wrapper
+    # The actual Exec line may include plasma-dbus-run-session-if-needed wrapper
+    if [ -f "$rootfs/usr/share/wayland-sessions/plasma.desktop" ]; then
+        # Try both patterns - direct startplasma-wayland or via dbus wrapper
+        sed -i 's|Exec=.*startplasma-wayland.*|Exec=/usr/local/bin/plasma-wayland-wrapper|' \
+            "$rootfs/usr/share/wayland-sessions/plasma.desktop"
+        log_info "Patched plasma.desktop to use wrapper script"
+    fi
+
+    # ==========================================================================
+    # Create systemd user environment.d file for Plasma/kwin
+    # ==========================================================================
+    # IMPORTANT: Named zz-rookery-vm.conf to override package defaults (99-environment.conf)
+    # Files are processed in alphabetical order, so zz comes after 99
+    mkdir -p "$rootfs/etc/environment.d"
+    cat > "$rootfs/etc/environment.d/zz-rookery-vm.conf" << 'EOF'
+# Rookery OS VM compatibility settings
+# Force virtual/software backend for kwin when no GPU available
+# This file is named zz-* to override 99-environment.conf from packages
+KWIN_COMPOSE=Q
+QT_QUICK_BACKEND=software
+LIBGL_ALWAYS_SOFTWARE=1
+EOF
+    chmod 644 "$rootfs/etc/environment.d/zz-rookery-vm.conf"
+    log_info "Created systemd environment.d for VM compatibility (zz-rookery-vm.conf)"
+
+    # Also create in the user location that systemd reads
+    mkdir -p "$rootfs/usr/lib/environment.d"
+    cat > "$rootfs/usr/lib/environment.d/zz-rookery-vm.conf" << 'EOF'
+# Rookery OS VM compatibility settings
+# Force virtual/software backend for kwin when no GPU available
+# This file is named zz-* to override 99-environment.conf from packages
+KWIN_COMPOSE=Q
+QT_QUICK_BACKEND=software
+LIBGL_ALWAYS_SOFTWARE=1
+EOF
+    chmod 644 "$rootfs/usr/lib/environment.d/zz-rookery-vm.conf"
+
+    # Create a systemd user service drop-in for plasma-kwin_wayland to force virtual backend
+    # This is critical - we override ExecStart to use --virtual instead of --drm
+    mkdir -p "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d"
+    cat > "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d/vm-backend.conf" << 'EOF'
+[Service]
+# Override the default ExecStart to use virtual backend instead of drm
+# The original is: ExecStart=/usr/bin/kwin_wayland_wrapper --xwayland
+# We add --virtual to force headless/software rendering
+ExecStart=
+ExecStart=/usr/bin/kwin_wayland_wrapper --xwayland --virtual
+# Force software/virtual rendering environment
+Environment="KWIN_COMPOSE=Q"
+Environment="QT_QUICK_BACKEND=software"
+Environment="LIBGL_ALWAYS_SOFTWARE=1"
+Environment="MESA_GL_VERSION_OVERRIDE=3.3"
+EOF
+    chmod 644 "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d/vm-backend.conf"
+    log_info "Created kwin_wayland service drop-in with --virtual backend"
 
     # Create SDDM debug script for troubleshooting
     cat > "$rootfs/usr/local/bin/debug-sddm" << 'EOF'
@@ -1273,6 +1495,285 @@ EOF
 }
 
 # =============================================================================
+# Step 3b: Set PaX Flags for grsecurity Compatibility
+# =============================================================================
+set_pax_flags() {
+    log_step "Setting PaX flags for grsecurity compatibility..."
+
+    local rootfs="$BUILD/rootfs"
+
+    # The grsec kernel has BOTH CONFIG_PAX_PT_PAX_FLAGS=y AND CONFIG_PAX_XATTR_PAX_FLAGS=y
+    # When both are enabled, PaX requires the SAME flags in BOTH locations!
+    # We must use BOTH paxctl (for PT_PAX ELF header) AND setfattr (for xattr).
+    #
+    # PaX flag characters:
+    #   P/p = PAGEEXEC (uppercase = disabled)
+    #   E/e = EMUTRAMP (uppercase = disabled)
+    #   M/m = MPROTECT (uppercase = disabled)
+    #   R/r = RANDMMAP (uppercase = disabled)
+    #   S/s = SEGMEXEC (uppercase = disabled, x86-32 only)
+    #
+    # For JIT, we need to disable P, E, M (uppercase = disabled)
+
+    local have_paxctl=false
+    local have_setfattr=false
+
+    if [ -x "$rootfs/usr/sbin/paxctl" ]; then
+        have_paxctl=true
+    fi
+    if command -v setfattr &>/dev/null; then
+        have_setfattr=true
+    fi
+
+    if [ "$have_paxctl" = false ] && [ "$have_setfattr" = false ]; then
+        log_warn "Neither paxctl nor setfattr available - PaX flags cannot be set"
+        log_warn "Qt/KDE binaries may fail with grsecurity kernel"
+        return 0
+    fi
+
+    log_info "Setting PaX flags (kernel has both PT_PAX_FLAGS and XATTR_PAX_FLAGS enabled)"
+    log_info "  paxctl available: $have_paxctl"
+    log_info "  setfattr available: $have_setfattr"
+
+    # The flags string for xattr: uppercase = disable protection
+    # PEMrs = disable PAGEEXEC, EMUTRAMP, MPROTECT; keep RANDMMAP and SEGMEXEC enabled
+    local pax_flags="PEMrs"
+
+    # ==========================================================================
+    # Binaries that need RWX memory for JIT compilation
+    # ==========================================================================
+    local binaries=(
+        # ======================================================================
+        # KDE/Plasma core - Qt Quick/QML JIT
+        # ======================================================================
+        "/usr/bin/kwin_wayland"
+        "/usr/bin/kwin_x11"
+        "/usr/bin/kwin_wayland_wrapper"
+        "/usr/bin/plasmashell"
+        "/usr/bin/plasma-desktop"
+        "/usr/bin/startplasma-wayland"
+        "/usr/bin/startplasma-x11"
+        "/usr/bin/plasma-dbus-run-session-if-needed"
+
+        # SDDM uses QML for its greeter
+        "/usr/bin/sddm"
+        "/usr/bin/sddm-greeter"
+        "/usr/libexec/sddm-helper"
+        "/usr/libexec/sddm-helper-start-wayland"
+        "/usr/libexec/sddm-helper-start-x11user"
+
+        # KDE system components using QML
+        "/usr/bin/krunner"
+        "/usr/bin/ksmserver"
+        "/usr/bin/ksplashqml"
+        "/usr/bin/systemsettings"
+        "/usr/bin/plasma-systemmonitor"
+        "/usr/bin/kscreen-doctor"
+        "/usr/bin/spectacle"
+        "/usr/bin/dolphin"
+        "/usr/bin/konsole"
+        "/usr/bin/kate"
+        "/usr/bin/gwenview"
+        "/usr/bin/okular"
+        "/usr/bin/ark"
+
+        # Plasma libexec components
+        "/usr/libexec/org_kde_powerdevil"
+        "/usr/libexec/polkit-kde-authentication-agent-1"
+        "/usr/libexec/xdg-desktop-portal-kde"
+        "/usr/libexec/kf6/drkonqi-polkit-helper"
+        "/usr/libexec/plasma-dbus-run-session-if-needed"
+        "/usr/lib/libexec/kf6/kscreen_backend_launcher"
+
+        # Baloo file indexer
+        "/usr/libexec/kf6/baloo_file"
+        "/usr/libexec/kf6/baloo_file_extractor"
+        "/usr/bin/balooctl6"
+        "/usr/bin/baloosearch6"
+        "/usr/bin/balooshow6"
+
+        # KDE Connect
+        "/usr/bin/kdeconnect-app"
+        "/usr/bin/kdeconnect-indicator"
+        "/usr/bin/kdeconnect-cli"
+        "/usr/libexec/kdeconnectd"
+
+        # Additional Plasma utilities
+        "/usr/bin/plasma-apply-colorscheme"
+        "/usr/bin/plasma-apply-cursortheme"
+        "/usr/bin/plasma-apply-desktoptheme"
+        "/usr/bin/plasma-apply-lookandfeel"
+        "/usr/bin/plasma-apply-wallpaperimage"
+        "/usr/bin/lookandfeeltool"
+        "/usr/bin/kdialog"
+        "/usr/bin/kinfocenter"
+        "/usr/bin/filelight"
+        "/usr/bin/kcalc"
+        "/usr/bin/partitionmanager"
+
+        # Discover (app store)
+        "/usr/bin/plasma-discover"
+        "/usr/bin/discover"
+
+        # Qt tools that use QML
+        "/usr/bin/qmlscene"
+        "/usr/bin/qml"
+        "/usr/bin/qml6"
+        "/usr/bin/assistant"
+        "/usr/bin/designer"
+        "/usr/bin/linguist"
+
+        # ======================================================================
+        # Node.js - V8 JavaScript JIT (critical!)
+        # ======================================================================
+        "/usr/bin/node"
+        "/usr/bin/nodejs"
+        "/usr/bin/npm"
+        "/usr/bin/npx"
+
+        # ======================================================================
+        # Calamares installer (if present)
+        # ======================================================================
+        "/usr/bin/calamares"
+        "/usr/bin/calamares-qt6"
+        "/usr/libexec/calamares/calamares"
+
+        # ======================================================================
+        # Mesa/LLVM - shader JIT compilation
+        # ======================================================================
+        # LLVM tools that use JIT
+        "/usr/bin/lli"
+        "/usr/bin/llc"
+        "/usr/bin/opt"
+
+        # ======================================================================
+        # Other potential JIT users
+        # ======================================================================
+        # Python (numba, PyPy if installed)
+        "/usr/bin/python3"
+        "/usr/bin/python3.13"
+
+        # Wine (if present)
+        "/usr/bin/wine"
+        "/usr/bin/wine64"
+
+        # QEMU (TCG JIT)
+        "/usr/bin/qemu-system-x86_64"
+        "/usr/bin/qemu-x86_64"
+    )
+
+    local marked=0
+    local failed=0
+
+    # Helper function to set PaX flags on a file (BOTH xattr AND ELF header)
+    # Returns 0 if at least one method succeeded, 1 if both failed
+    set_pax_flags_on_file() {
+        local file="$1"
+        local binary_path="$2"  # Path relative to rootfs for paxctl chroot
+        local xattr_ok=false
+        local pt_pax_ok=false
+
+        # Method 1: Set xattr (user.pax.flags)
+        if [ "$have_setfattr" = true ]; then
+            if setfattr -n user.pax.flags -v "$pax_flags" "$file" 2>/dev/null; then
+                xattr_ok=true
+            fi
+        fi
+
+        # Method 2: Set PT_PAX ELF header via paxctl (run in chroot)
+        # paxctl flags: -c create PT_PAX, -p PAGEEXEC off, -m MPROTECT off, -e EMUTRAMP off
+        if [ "$have_paxctl" = true ] && [ -n "$binary_path" ]; then
+            if chroot "$rootfs" /usr/sbin/paxctl -cpme "$binary_path" 2>/dev/null; then
+                pt_pax_ok=true
+            fi
+        fi
+
+        # Success if at least one method worked
+        if [ "$xattr_ok" = true ] || [ "$pt_pax_ok" = true ]; then
+            return 0
+        else
+            return 1
+        fi
+    }
+
+    # Process binaries
+    for binary in "${binaries[@]}"; do
+        local full_path="$rootfs$binary"
+        if [ -f "$full_path" ] && file "$full_path" 2>/dev/null | grep -q "ELF"; then
+            if set_pax_flags_on_file "$full_path" "$binary"; then
+                log_info "  PaX flags set: $binary"
+                marked=$((marked + 1))
+            else
+                log_warn "  Failed: $binary"
+                failed=$((failed + 1))
+            fi
+        fi
+    done
+
+    # Process Qt QML libraries - these need executable stack for JIT
+    log_info "Setting PaX flags on Qt QML libraries..."
+    for lib in "$rootfs/usr/lib/"libQt6Qml*.so* "$rootfs/usr/lib/"libQt6Quick*.so*; do
+        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
+            local rel_lib="${lib#$rootfs}"
+            if set_pax_flags_on_file "$lib" "$rel_lib"; then
+                log_info "  PaX flags set: $rel_lib"
+                marked=$((marked + 1))
+            else
+                log_warn "  Failed: $rel_lib"
+                failed=$((failed + 1))
+            fi
+        fi
+    done
+
+    # Process LLVM libraries - shader JIT for Mesa/graphics
+    log_info "Setting PaX flags on LLVM libraries (shader JIT)..."
+    for lib in "$rootfs/usr/lib/"libLLVM*.so*; do
+        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
+            local rel_lib="${lib#$rootfs}"
+            if set_pax_flags_on_file "$lib" "$rel_lib"; then
+                log_info "  PaX flags set: $rel_lib"
+                marked=$((marked + 1))
+            else
+                log_warn "  Failed: $rel_lib"
+                failed=$((failed + 1))
+            fi
+        fi
+    done
+
+    # Process Mesa DRI drivers - they use LLVM for shader JIT
+    log_info "Setting PaX flags on Mesa DRI drivers..."
+    for lib in "$rootfs/usr/lib/dri/"*.so; do
+        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
+            local rel_lib="${lib#$rootfs}"
+            if set_pax_flags_on_file "$lib" "$rel_lib"; then
+                log_info "  PaX flags set: $rel_lib"
+                marked=$((marked + 1))
+            else
+                log_warn "  Failed: $rel_lib"
+                failed=$((failed + 1))
+            fi
+        fi
+    done
+
+    # Process V8/Node.js libraries if present
+    log_info "Setting PaX flags on V8/Node.js libraries..."
+    for lib in "$rootfs/usr/lib/"libv8*.so* "$rootfs/usr/lib/"libnode*.so*; do
+        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
+            local rel_lib="${lib#$rootfs}"
+            if set_pax_flags_on_file "$lib" "$rel_lib"; then
+                log_info "  PaX flags set: $rel_lib"
+                marked=$((marked + 1))
+            else
+                log_warn "  Failed: $rel_lib"
+                failed=$((failed + 1))
+            fi
+        fi
+    done
+
+    log_info "PaX flags (xattr: $pax_flags, PT_PAX: -cpme) set on $marked binaries/libraries ($failed failed)"
+}
+
+# =============================================================================
 # Step 4: Create SquashFS Image
 # =============================================================================
 create_squashfs() {
@@ -1286,6 +1787,7 @@ create_squashfs() {
         -Xcompression-level 19 \
         -b 1M \
         -no-recovery \
+        -xattrs \
         -e 'dev/*' \
         -e 'proc/*' \
         -e 'sys/*' \
@@ -1841,6 +2343,7 @@ main() {
     install_packages
     fix_lib_symlinks
     configure_live_system
+    set_pax_flags
     create_squashfs
     build_initramfs
     setup_boot

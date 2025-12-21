@@ -55,7 +55,7 @@ cd $ROOKPKG_BUILD/kirigami-addons-*
 mkdir -p build
 cd build
 cmake -D CMAKE_INSTALL_PREFIX=/usr     \
-      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \
+      -D CMAKE_PREFIX_PATH="/usr;/usr" \
       -D CMAKE_BUILD_TYPE=Release      \
       -D BUILD_TESTING=OFF             \
       -W no-dev ..

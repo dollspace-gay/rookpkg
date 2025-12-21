@@ -45,7 +45,7 @@ mkdir -p build
 cd build
 cmake -D CMAKE_INSTALL_PREFIX=/usr \\
       -D CMAKE_INSTALL_LIBEXECDIR=libexec \\
-      -D CMAKE_PREFIX_PATH="/usr;/opt/qt6" \\
+      -D CMAKE_PREFIX_PATH="/usr;/usr" \\
       -D CMAKE_SKIP_INSTALL_RPATH=ON \\
       -D CMAKE_BUILD_TYPE=Release \\
       -D BUILD_TESTING=OFF \\

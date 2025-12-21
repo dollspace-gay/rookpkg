@@ -1,0 +1,100 @@
+[package]
+name = "paxctl"
+version = "0.9"
+release = 1
+summary = "Tool for controlling PaX flags on ELF binaries"
+description = """
+paxctl is a tool for controlling PaX flags on a per binary basis. PaX
+is an intrusion prevention system that provides protection mechanisms
+against memory corruption bugs. Some applications are not compatible
+with certain features (due to design or bad engineering) and therefore
+they have to be exempted from certain enforcements using paxctl.
+
+This tool modifies the PT_PAX_FLAGS program header in ELF binaries to
+control PaX protections like MPROTECT (M), EMUTRAMP (E), PAGEEXEC (P),
+SEGMEXEC (S), and RANDMMAP (R).
+"""
+homepage = "https://pax.grsecurity.net/"
+license = "GPL-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://mirror.clarkson.edu/gentoo/distfiles/37/paxctl-0.9.tar.gz", sha256 = "a330ddd812688169802a3ba29e5e3b19956376b8f6f73b8d7e9586eb04423c2e" }
+
+[patches]
+# No patches needed
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf paxctl-*
+tar xf $ROOKPKG_SOURCES/paxctl-*.tar.gz
+"""
+
+configure = """
+# No configure script needed
+"""
+
+build = """
+cd $ROOKPKG_BUILD/paxctl-*
+make CC=gcc CFLAGS="-Os -Wall"
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/paxctl-*
+
+# Install binary to /usr/sbin
+install -D -m 755 paxctl $ROOKPKG_DESTDIR/usr/sbin/paxctl
+
+# Install man page
+install -D -m 644 paxctl.1 $ROOKPKG_DESTDIR/usr/share/man/man1/paxctl.1
+"""
+
+[files]
+"usr/sbin/paxctl" = { mode = 755 }
+"usr/share/man/man1/paxctl.1" = { mode = 644 }
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.9"
+date = "2025-12-21"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for setting PaX flags on Qt/KDE binaries for grsecurity compatibility"
+]
+
+[metadata]
+keywords = ["pax", "grsecurity", "security", "elf", "hardening"]
+categories = ["system", "security"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

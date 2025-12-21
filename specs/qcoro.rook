@@ -43,8 +43,8 @@ cd $ROOKPKG_BUILD/qcoro-*
 mkdir -p build
 cd build
 cmake ..                                    \
-      -DCMAKE_INSTALL_PREFIX=/opt/qt6       \
-      -DCMAKE_PREFIX_PATH=/opt/qt6          \
+      -DCMAKE_INSTALL_PREFIX=/usr       \
+      -DCMAKE_PREFIX_PATH=/usr          \
       -DCMAKE_BUILD_TYPE=Release            \
       -DBUILD_TESTING=OFF                   \
       -DQCORO_BUILD_EXAMPLES=OFF            \

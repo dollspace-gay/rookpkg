@@ -87,7 +87,7 @@ xcb-util-image = ">= 1.0"
 zxing-cpp = ">= 2.2"
 
 [environment]
-CMAKE_PREFIX_PATH = "/opt/qt6"
+CMAKE_PREFIX_PATH = "/usr"
 LC_ALL = "C.UTF-8"
 LANG = "C.UTF-8"
 

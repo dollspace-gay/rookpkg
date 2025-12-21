@@ -34,6 +34,12 @@ prep = """
 cd $ROOKPKG_BUILD
 rm -rf cpio-*
 tar xf $ROOKPKG_SOURCES/cpio-*.tar.bz2
+cd cpio-*
+# Fix for GCC 14/15 - update function pointer declarations (from BLFS)
+sed -e '/^extern int (\\*xstat)/s/()/(const char * restrict,  struct stat * restrict)/' \
+    -i src/extern.h
+sed -e '/^int (\\*xstat)/s/()/(const char * restrict,  struct stat * restrict)/' \
+    -i src/global.c
 """
 
 configure = """

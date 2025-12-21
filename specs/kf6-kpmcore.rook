@@ -43,7 +43,7 @@ util-linux = ">= 2.39"
 [optional_depends]
 
 [environment]
-CMAKE_PREFIX_PATH = "/opt/qt6"
+CMAKE_PREFIX_PATH = "/usr"
 LC_ALL = "C.UTF-8"
 LANG = "C.UTF-8"
 

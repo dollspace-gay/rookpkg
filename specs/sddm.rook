@@ -54,7 +54,7 @@ cd build
 cmake ..                                            \
       -DCMAKE_POLICY_VERSION_MINIMUM=3.5            \
       -DCMAKE_INSTALL_PREFIX=/usr                   \
-      -DCMAKE_PREFIX_PATH=/opt/qt6                  \
+      -DCMAKE_PREFIX_PATH=/usr                      \
       -DCMAKE_BUILD_TYPE=Release                    \
       -DDATA_INSTALL_DIR=/usr/share/sddm            \
       -DDBUS_CONFIG_FILENAME=sddm_org.freedesktop.DisplayManager.conf \

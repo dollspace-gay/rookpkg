@@ -46,7 +46,7 @@ cd $ROOKPKG_BUILD/oxygen-icons-*
 mkdir -p build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr     \
-      -DCMAKE_PREFIX_PATH="/usr;/opt/qt6" \
+      -DCMAKE_PREFIX_PATH="/usr;/usr" \
       -W no-dev ..
 """
 
