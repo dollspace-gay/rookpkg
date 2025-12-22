@@ -13,6 +13,7 @@ use crate::archive::PackageArchiveReader;
 use crate::config::Config;
 use crate::database::Database;
 use crate::hooks::HookResult;
+use crate::package::InstallReason;
 use crate::repository::{PackageEntry, RepoManager, SignatureStatus, VerifiedPackage};
 use crate::resolver::{parse_constraint, Package, RookeryDependencyProvider};
 use crate::signing::TrustLevel;
@@ -356,16 +357,22 @@ pub fn run(packages: &[String], local: bool, dry_run: bool, download_only: bool,
 
     // Re-open database for transaction
     let db = Database::open(db_path)?;
-    let mut tx = Transaction::new(root, db)?;
+    let mut tx = Transaction::with_options(root, db, config.options.clone())?;
 
     for verified in &packages_to_install {
         let version = format!("{}-{}", verified.package.version, verified.package.release);
-        tx.install(&verified.package.name, &version, &verified.path);
+        // Determine if this package was explicitly requested or is a dependency
+        let reason = if requested_set.contains(&verified.package.name) {
+            InstallReason::Explicit
+        } else {
+            InstallReason::Dependency
+        };
+        tx.install(&verified.package.name, &version, &verified.path, reason);
     }
 
     // Check for file conflicts before executing
     println!("{}", "Checking for file conflicts...".cyan());
-    let conflicts = tx.check_conflicts(false)?;  // Don't check unowned files by default
+    let conflicts = tx.check_conflicts(false)?;
 
     if !conflicts.is_empty() {
         println!();
@@ -667,11 +674,12 @@ fn run_local(packages: &[String], dry_run: bool, config: &Config) -> Result<()> 
 
     // Re-open database for transaction
     let db = Database::open(db_path)?;
-    let mut tx = Transaction::new(root, db)?;
+    let mut tx = Transaction::with_options(root, db, config.options.clone())?;
 
     for (path, info) in &packages_to_install {
         let version = format!("{}-{}", info.version, info.release);
-        tx.install(&info.name, &version, path);
+        // Local installs are always explicit
+        tx.install(&info.name, &version, path, InstallReason::Explicit);
     }
 
     // Check for file conflicts before executing

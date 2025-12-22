@@ -163,7 +163,8 @@ sequence:
 - exec:
   - partition
   - mount
-  - rootfs
+  - unpackfs@rootfs
+  - machineid
   - fstab
   - locale
   - keyboard
@@ -172,9 +173,9 @@ sequence:
   - displaymanager
   - networkcfg
   - hwclock
-  - initramfs
-  - grub-install
-  - grub-config
+  - services-systemd
+  - bootloader
+  - grubcfg
   - umount
 - show:
   - finished
@@ -185,10 +186,11 @@ dont-chroot: false
 SETTINGS
 
 # Create unpackfs config for live installation
+# The ISO is mounted at /run/rootfsbase, and the squashfs is at LiveOS/rootfs.img
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs-rootfs.conf << 'UNPACKFS'
 ---
 unpack:
-    - source: "/run/rootfsbase"
+    - source: "/run/rootfsbase/LiveOS/rootfs.img"
       sourcefs: "squashfs"
       destination: ""
 UNPACKFS
@@ -272,6 +274,22 @@ mountOptions:
 efiMountOptions: umask=0077
 FSTAB
 
+# Create bootloader module config (handles GRUB installation)
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/bootloader.conf << 'BOOTLOADER'
+---
+efiBootLoader: "grub"
+kernel: "/boot/vmlinuz"
+img: "/boot/initramfs.img"
+fallback: "/boot/initramfs.img"
+timeout: 5
+grubInstall: "grub-install"
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+grubProbe: "grub-probe"
+efiBootMgr: "efibootmgr"
+installEFIFallback: true
+BOOTLOADER
+
 # Create grubcfg module config
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/grubcfg.conf << 'GRUBCFG'
 ---
@@ -282,6 +300,88 @@ grubProbe: "grub-probe"
 efiBootMgr: "efibootmgr"
 installEFIFallback: true
 GRUBCFG
+
+# Create machineid module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/machineid.conf << 'MACHINEID'
+---
+systemd: true
+systemd-style: blank
+dbus: false
+dbus-symlink: false
+entropy-copy: false
+entropy-files:
+    - /var/lib/systemd/random-seed
+MACHINEID
+
+# Create services-systemd module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/services-systemd.conf << 'SERVICES'
+---
+services:
+  - name: "NetworkManager"
+    mandatory: false
+  - name: "sddm"
+    mandatory: false
+  - name: "systemd-timesyncd"
+    mandatory: false
+
+targets:
+  - name: "graphical"
+    mandatory: true
+SERVICES
+
+# Create mount module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/mount.conf << 'MOUNT'
+---
+extraMounts:
+    - device: proc
+      fs: proc
+      mountPoint: /proc
+    - device: sys
+      fs: sysfs
+      mountPoint: /sys
+    - device: /dev
+      mountPoint: /dev
+      options: bind
+    - device: tmpfs
+      fs: tmpfs
+      mountPoint: /run
+    - device: /run/udev
+      mountPoint: /run/udev
+      options: bind
+btrfsSubvolumes:
+    - mountPoint: /
+      subvolume: /@
+    - mountPoint: /home
+      subvolume: /@home
+    - mountPoint: /var/log
+      subvolume: /@log
+    - mountPoint: /var/cache
+      subvolume: /@cache
+btrfsSwapSubvol: /@swap
+MOUNT
+
+# Create partition module config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/partition.conf << 'PARTITION'
+---
+efiSystemPartition: "/boot/efi"
+efiSystemPartitionSize: 512M
+efiSystemPartitionName: "EFI"
+userSwapChoices:
+    - none
+    - small
+    - suspend
+    - file
+drawNestedPartitions: false
+alwaysShowPartitionLabels: true
+allowManualPartitioning: true
+initialPartitioningChoice: erase
+initialSwapChoice: small
+defaultFileSystemType: "ext4"
+availableFileSystemTypes:
+    - ext4
+    - btrfs
+    - xfs
+PARTITION
 
 # Create finished module config
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/finished.conf << 'FINISHED'
@@ -369,7 +469,12 @@ POLKIT
 "etc/calamares/modules/users.conf" = {}
 "etc/calamares/modules/displaymanager.conf" = {}
 "etc/calamares/modules/fstab.conf" = {}
+"etc/calamares/modules/bootloader.conf" = {}
 "etc/calamares/modules/grubcfg.conf" = {}
+"etc/calamares/modules/machineid.conf" = {}
+"etc/calamares/modules/services-systemd.conf" = {}
+"etc/calamares/modules/mount.conf" = {}
+"etc/calamares/modules/partition.conf" = {}
 "etc/calamares/modules/finished.conf" = {}
 
 [scripts]

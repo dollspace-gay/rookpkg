@@ -64,14 +64,38 @@ echo "depends bli part_gpt" > grub-core/extra_deps.lst
 
 configure = """
 cd $ROOKPKG_BUILD/grub-*
-./configure --prefix=/usr         \
-            --sysconfdir=/etc     \
-            --disable-efiemu      \
-            --disable-werror
+
+# Build for i386-pc (BIOS) first
+mkdir -p build-bios
+cd build-bios
+../configure --prefix=/usr         \
+             --sysconfdir=/etc     \
+             --disable-efiemu      \
+             --disable-werror      \
+             --with-platform=pc
+cd ..
+
+# Build for x86_64-efi (UEFI)
+mkdir -p build-efi
+cd build-efi
+../configure --prefix=/usr         \
+             --sysconfdir=/etc     \
+             --disable-efiemu      \
+             --disable-werror      \
+             --with-platform=efi   \
+             --target=x86_64
 """
 
 build = """
 cd $ROOKPKG_BUILD/grub-*
+
+# Build BIOS version
+cd build-bios
+make -j$ROOKPKG_JOBS
+cd ..
+
+# Build EFI version
+cd build-efi
 make -j$ROOKPKG_JOBS
 """
 
@@ -81,7 +105,17 @@ check = """
 
 install = """
 cd $ROOKPKG_BUILD/grub-*
+
+# Install BIOS version first (includes common files)
+cd build-bios
 make DESTDIR=$ROOKPKG_DESTDIR install
+cd ..
+
+# Install EFI version (adds x86_64-efi modules)
+cd build-efi
+make DESTDIR=$ROOKPKG_DESTDIR install
+cd ..
+
 mv -v $ROOKPKG_DESTDIR/etc/grub.d/README $ROOKPKG_DESTDIR/usr/share/doc/grub-2.12/ || true
 """
 
@@ -113,6 +147,8 @@ mv -v $ROOKPKG_DESTDIR/etc/grub.d/README $ROOKPKG_DESTDIR/usr/share/doc/grub-2.1
 "usr/sbin/grub-set-default" = { mode = 755 }
 "usr/sbin/grub-sparc64-setup" = { mode = 755 }
 "usr/lib/grub/" = {}
+"usr/lib/grub/i386-pc/" = {}
+"usr/lib/grub/x86_64-efi/" = {}
 "usr/share/grub/" = {}
 
 [config_files]

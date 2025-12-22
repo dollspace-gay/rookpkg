@@ -197,7 +197,7 @@ pub fn parse_constraint(constraint: &str) -> Result<Range<SemanticVersion>, Stri
 }
 
 /// Parse a version string to SemanticVersion
-fn parse_semver(s: &str) -> Result<SemanticVersion, String> {
+pub fn parse_semver(s: &str) -> Result<SemanticVersion, String> {
     let parts: Vec<&str> = s.split('.').collect();
 
     let major: u32 = parts
@@ -210,6 +210,41 @@ fn parse_semver(s: &str) -> Result<SemanticVersion, String> {
     let patch: u32 = parts.get(2).and_then(|s| s.parse().ok()).unwrap_or(0);
 
     Ok(SemanticVersion::new(major, minor, patch))
+}
+
+/// Compare two version strings using semantic versioning rules.
+/// Returns:
+/// - `Ordering::Greater` if version_a > version_b
+/// - `Ordering::Less` if version_a < version_b
+/// - `Ordering::Equal` if version_a == version_b
+///
+/// Falls back to string comparison if parsing fails.
+pub fn compare_versions(version_a: &str, version_b: &str) -> std::cmp::Ordering {
+    match (parse_semver(version_a), parse_semver(version_b)) {
+        (Ok(a), Ok(b)) => a.cmp(&b),
+        // Fall back to string comparison if parsing fails
+        _ => version_a.cmp(version_b),
+    }
+}
+
+/// Check if a package needs upgrading based on version and release numbers.
+///
+/// Returns true if the available version is newer than the installed version.
+/// Uses proper semantic versioning for version comparison, and numeric
+/// comparison for release numbers when versions are equal.
+pub fn needs_upgrade(
+    installed_version: &str,
+    installed_release: u32,
+    available_version: &str,
+    available_release: u32,
+) -> bool {
+    use std::cmp::Ordering;
+
+    match compare_versions(available_version, installed_version) {
+        Ordering::Greater => true,
+        Ordering::Less => false,
+        Ordering::Equal => available_release > installed_release,
+    }
 }
 
 #[cfg(test)]
@@ -242,5 +277,52 @@ mod tests {
         // Check that we can find versions
         assert!(provider.get_versions("a").is_some());
         assert!(provider.get_versions("b").is_some());
+    }
+
+    #[test]
+    fn test_compare_versions() {
+        use std::cmp::Ordering;
+
+        // Basic comparisons
+        assert_eq!(compare_versions("1.0.0", "1.0.0"), Ordering::Equal);
+        assert_eq!(compare_versions("2.0.0", "1.0.0"), Ordering::Greater);
+        assert_eq!(compare_versions("1.0.0", "2.0.0"), Ordering::Less);
+
+        // Minor version comparisons
+        assert_eq!(compare_versions("1.1.0", "1.0.0"), Ordering::Greater);
+        assert_eq!(compare_versions("1.0.0", "1.1.0"), Ordering::Less);
+
+        // Patch version comparisons
+        assert_eq!(compare_versions("1.0.1", "1.0.0"), Ordering::Greater);
+        assert_eq!(compare_versions("1.0.0", "1.0.1"), Ordering::Less);
+
+        // Mixed comparisons
+        assert_eq!(compare_versions("2.0.0", "1.9.9"), Ordering::Greater);
+        assert_eq!(compare_versions("1.10.0", "1.9.0"), Ordering::Greater);
+
+        // Partial versions (missing minor/patch)
+        assert_eq!(compare_versions("1", "1.0.0"), Ordering::Equal);
+        assert_eq!(compare_versions("1.0", "1.0.0"), Ordering::Equal);
+        assert_eq!(compare_versions("2", "1.9.9"), Ordering::Greater);
+    }
+
+    #[test]
+    fn test_needs_upgrade() {
+        // Version upgrade
+        assert!(needs_upgrade("1.0.0", 1, "2.0.0", 1));
+        assert!(needs_upgrade("1.0.0", 1, "1.1.0", 1));
+        assert!(needs_upgrade("1.0.0", 1, "1.0.1", 1));
+
+        // Release upgrade (same version)
+        assert!(needs_upgrade("1.0.0", 1, "1.0.0", 2));
+        assert!(needs_upgrade("1.0.0", 5, "1.0.0", 10));
+
+        // No upgrade needed
+        assert!(!needs_upgrade("1.0.0", 1, "1.0.0", 1));
+        assert!(!needs_upgrade("2.0.0", 1, "1.0.0", 1));
+        assert!(!needs_upgrade("1.0.0", 2, "1.0.0", 1));
+
+        // Downgrade cases (should return false)
+        assert!(!needs_upgrade("2.0.0", 1, "1.0.0", 5));
     }
 }

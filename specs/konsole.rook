@@ -1,0 +1,131 @@
+[package]
+name = "konsole"
+version = "25.08.0"
+release = 1
+summary = "KDE terminal emulator"
+description = """
+Konsole is the KDE terminal emulator. It provides a command-line interface
+for directly controlling your computer. Features include tabbed terminals,
+split views, profiles, notifications, and search.
+"""
+homepage = "https://konsole.kde.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/release-service/25.08.0/src/konsole-25.08.0.tar.xz", sha256 = "c880bd2c829437a142abaf4f97ebc384c9f2c19f31cc23918c49100727927450" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-kbookmarks = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kconfigwidgets = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kglobalaccel = ">= 6.0"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-knotifyconfig = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-kpty = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-ktextwidgets = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+CMAKE_PREFIX_PATH = "/usr"
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf konsole-*
+tar xf $ROOKPKG_SOURCES/konsole-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/konsole-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -Wno-dev \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/konsole-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require a running display
+"""
+
+install = """
+cd $ROOKPKG_BUILD/konsole-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/konsole" = { mode = 755 }
+"usr/bin/konsoleprofile" = { mode = 755 }
+"usr/lib/libkonsoleprivate.so*" = {}
+"usr/lib/plugins/konsoleplugins/" = {}
+"usr/share/applications/org.kde.konsole.desktop" = {}
+"usr/share/konsole/" = {}
+"usr/share/knsrcfiles/konsole.knsrc" = {}
+"usr/share/knotifications6/konsole.notifyrc" = {}
+"usr/share/icons/hicolor/*/apps/utilities-terminal.*" = {}
+"usr/share/doc/HTML/*/konsole/" = {}
+"usr/share/locale/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "25.08.0"
+date = "2025-12-21"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "KDE terminal emulator for Plasma 6"
+]
+
+[metadata]
+keywords = ["konsole", "terminal", "kde", "emulator", "shell"]
+categories = ["system", "utilities", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

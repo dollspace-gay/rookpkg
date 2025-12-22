@@ -167,6 +167,17 @@ install_packages() {
         # Remove /opt/qt6 entirely
         rm -rf "$rootfs/opt/qt6"
         log_info "Moved /opt/qt6 to /usr and removed /opt/qt6"
+
+        # Fix any files that still reference /opt/qt6 (e.g., systemd service files)
+        log_info "Fixing /opt/qt6 references in config files..."
+        local fixed_count=0
+        for file in $(grep -rl "/opt/qt6" "$rootfs/usr/lib/systemd" "$rootfs/etc" 2>/dev/null); do
+            sed -i 's|/opt/qt6/bin|/usr/bin|g; s|/opt/qt6/lib|/usr/lib|g; s|/opt/qt6|/usr|g' "$file"
+            fixed_count=$((fixed_count + 1))
+        done
+        if [ $fixed_count -gt 0 ]; then
+            log_info "Fixed /opt/qt6 references in $fixed_count files"
+        fi
     fi
 }
 
@@ -286,8 +297,29 @@ sddm:x:995:995:SDDM Display Manager:/var/lib/sddm:/usr/sbin/nologin
 live:x:1000:1000:Live User:/home/live:/usr/bin/bash
 EOF
 
-    # Create /bin/bash symlink for compatibility
-    ln -sf /usr/bin/bash "$rootfs/bin/bash" 2>/dev/null || true
+    # Create /bin and /sbin symlinks to /usr/bin and /usr/sbin for compatibility
+    # Many tools (including Calamares chroot operations) expect commands in /bin
+    if [ -d "$rootfs/bin" ] && [ ! -L "$rootfs/bin" ]; then
+        # /bin exists as directory, move contents and replace with symlink
+        cp -a "$rootfs/bin/"* "$rootfs/usr/bin/" 2>/dev/null || true
+        rm -rf "$rootfs/bin"
+        ln -sf usr/bin "$rootfs/bin"
+        log_info "Created /bin -> usr/bin symlink"
+    elif [ ! -e "$rootfs/bin" ]; then
+        ln -sf usr/bin "$rootfs/bin"
+        log_info "Created /bin -> usr/bin symlink"
+    fi
+
+    if [ -d "$rootfs/sbin" ] && [ ! -L "$rootfs/sbin" ]; then
+        # /sbin exists as directory, move contents and replace with symlink
+        cp -a "$rootfs/sbin/"* "$rootfs/usr/sbin/" 2>/dev/null || true
+        rm -rf "$rootfs/sbin"
+        ln -sf usr/sbin "$rootfs/sbin"
+        log_info "Created /sbin -> usr/sbin symlink"
+    elif [ ! -e "$rootfs/sbin" ]; then
+        ln -sf usr/sbin "$rootfs/sbin"
+        log_info "Created /sbin -> usr/sbin symlink"
+    fi
 
     # Create group - include shadow and utmp groups for login to work
     cat > "$rootfs/etc/group" << 'EOF'
@@ -406,21 +438,23 @@ EOF
     # to ensure they're not overwritten by other configuration steps
 
     # Create profile.d script for Wayland/Qt environment in VMs
-    cat > "$rootfs/etc/profile.d/wayland-vm.sh" << 'EOF'
-# Wayland/Qt environment for live session
+    cat > "$rootfs/etc/profile.d/desktop-vm.sh" << 'EOF'
+# Desktop environment for live session
 # Helps with software rendering fallback in VMs without proper GPU
 
-# If no render node exists, use software rendering for Qt
+# If no render node exists, use software rendering for Qt/Mesa
 if [ ! -e /dev/dri/renderD128 ]; then
     export LIBGL_ALWAYS_SOFTWARE=1
     export QT_QUICK_BACKEND=software
-    export KWIN_COMPOSE=O2
+    export MESA_GL_VERSION_OVERRIDE=3.3
 fi
 
-# Ensure XDG environment
-export XDG_SESSION_TYPE="${XDG_SESSION_TYPE:-wayland}"
+# Set proper DISPLAY for X11 sessions if not already set
+if [ -z "$DISPLAY" ] && [ -n "$XDG_SESSION_TYPE" ] && [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    export DISPLAY=:0
+fi
 EOF
-    chmod 644 "$rootfs/etc/profile.d/wayland-vm.sh"
+    chmod 644 "$rootfs/etc/profile.d/desktop-vm.sh"
 
     log_info "UTF-8 locale configured"
 
@@ -430,33 +464,39 @@ EOF
     # Configure SDDM autologin
     mkdir -p "$rootfs/etc/sddm.conf.d"
 
-    # Detect the correct Plasma Wayland session name
+    # Use X11 session for VM compatibility (Wayland DRM backend doesn't work in QEMU without GPU passthrough)
+    # Check for X11 sessions first
     local plasma_session=""
-    for session_name in plasma-wayland plasmawayland plasma; do
-        if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
+    local session_type=""
+    for session_name in plasmax11 plasma; do
+        if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
             plasma_session="$session_name"
-            log_info "Found Plasma Wayland session: $session_name"
+            session_type="x11"
+            log_info "Using Plasma X11 session: $session_name (best VM compatibility)"
             break
         fi
     done
 
-    # Fallback to X11 session if no Wayland session found
+    # Fallback to Wayland session if no X11 session found
     if [ -z "$plasma_session" ]; then
-        for session_name in plasma plasmax11; do
-            if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
+        for session_name in plasma-wayland plasmawayland plasma; do
+            if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
                 plasma_session="$session_name"
-                log_info "Found Plasma X11 session: $session_name"
+                session_type="wayland"
+                log_info "Found Plasma Wayland session: $session_name"
                 break
             fi
         done
     fi
 
-    # Default to plasma if nothing found
+    # Default to plasmax11 if nothing found
     if [ -z "$plasma_session" ]; then
-        plasma_session="plasma"
-        log_warn "No Plasma session file found, using default: plasma"
+        plasma_session="plasmax11"
+        session_type="x11"
+        log_warn "No Plasma session file found, using default: plasmax11"
     fi
 
+    # Configure SDDM to use X11 display server (not Wayland compositor mode)
     cat > "$rootfs/etc/sddm.conf.d/autologin.conf" << EOF
 [Autologin]
 User=live
@@ -465,6 +505,7 @@ Relogin=false
 
 [General]
 InputMethod=
+DisplayServer=x11
 EOF
 
     # Create proper PAM configuration files per LFS/BLFS
@@ -499,7 +540,7 @@ password  required    pam_unix.so sha512 shadow try_first_pass
 # End /etc/pam.d/system-password
 EOF
 
-    # Fix sddm-autologin PAM
+    # Fix sddm-autologin PAM - pam_systemd is REQUIRED for XDG_RUNTIME_DIR
     cat > "$rootfs/etc/pam.d/sddm-autologin" << 'EOF'
 auth     required       pam_env.so
 auth     required       pam_succeed_if.so uid >= 1000 quiet
@@ -507,7 +548,33 @@ auth     required       pam_permit.so
 account  include        system-account
 password required       pam_deny.so
 session  required       pam_limits.so
-session  include        system-session
+session  required       pam_unix.so
+session  optional       pam_loginuid.so
+session  optional       pam_keyinit.so force revoke
+session  required       pam_systemd.so
+EOF
+
+    # SDDM main PAM config (for password login)
+    cat > "$rootfs/etc/pam.d/sddm" << 'EOF'
+auth     required       pam_env.so
+auth     required       pam_unix.so
+account  include        system-account
+password include        system-password
+session  required       pam_limits.so
+session  required       pam_unix.so
+session  optional       pam_loginuid.so
+session  optional       pam_keyinit.so force revoke
+session  required       pam_systemd.so
+EOF
+
+    # SDDM greeter PAM config
+    cat > "$rootfs/etc/pam.d/sddm-greeter" << 'EOF'
+auth     required       pam_env.so
+auth     required       pam_permit.so
+account  required       pam_permit.so
+password required       pam_deny.so
+session  required       pam_unix.so
+-session optional       pam_systemd.so
 EOF
 
     # Mask problematic systemd units
@@ -832,48 +899,50 @@ EOF
 
     mkdir -p "$rootfs/etc/sddm.conf.d"
 
-    # Detect the correct Plasma session name
+    # Use X11 session for VM compatibility (Wayland DRM backend doesn't work in QEMU without GPU passthrough)
+    # Check for X11 sessions FIRST
     local plasma_session=""
-    for session_name in plasma-wayland plasmawayland plasma; do
-        if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
+    for session_name in plasmax11 plasma; do
+        if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
             plasma_session="$session_name"
-            log_info "Found Plasma Wayland session: $session_name"
+            log_info "Using Plasma X11 session: $session_name (best VM compatibility)"
             break
         fi
     done
-    # Fallback to X11 session if no Wayland session found
+    # Fallback to Wayland session if no X11 session found
     if [ -z "$plasma_session" ]; then
-        for session_name in plasma plasmax11; do
-            if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
+        for session_name in plasma-wayland plasmawayland plasma; do
+            if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
                 plasma_session="$session_name"
-                log_info "Found Plasma X11 session: $session_name"
+                log_info "Found Plasma Wayland session: $session_name"
                 break
             fi
         done
     fi
-    # Default to plasmawayland if nothing found (most common name)
+    # Default to plasmax11 if nothing found
     if [ -z "$plasma_session" ]; then
-        plasma_session="plasmawayland"
-        log_warn "No Plasma session file found, defaulting to: plasmawayland"
+        plasma_session="plasmax11"
+        log_warn "No Plasma session file found, defaulting to: plasmax11"
         # List available session files for debugging
-        log_info "Available Wayland sessions:"
-        ls -la "$rootfs/usr/share/wayland-sessions/"*.desktop 2>/dev/null || log_warn "  (none found)"
         log_info "Available X11 sessions:"
         ls -la "$rootfs/usr/share/xsessions/"*.desktop 2>/dev/null || log_warn "  (none found)"
+        log_info "Available Wayland sessions:"
+        ls -la "$rootfs/usr/share/wayland-sessions/"*.desktop 2>/dev/null || log_warn "  (none found)"
     fi
 
-    # Verify startplasma-wayland exists
-    if [ -f "$rootfs/usr/bin/startplasma-wayland" ]; then
-        log_info "Found startplasma-wayland: /usr/bin/startplasma-wayland"
+    # Verify startplasma-x11 exists
+    if [ -f "$rootfs/usr/bin/startplasma-x11" ]; then
+        log_info "Found startplasma-x11: /usr/bin/startplasma-x11"
     else
-        log_warn "startplasma-wayland not found - Plasma Wayland session may fail!"
+        log_warn "startplasma-x11 not found - Plasma X11 session may fail!"
     fi
 
-    # Main SDDM configuration with autologin
+    # Main SDDM configuration with autologin - use X11 display server
     cat > "$rootfs/etc/sddm.conf.d/autologin.conf" << EOF
 [General]
 InputMethod=
 Numlock=none
+DisplayServer=x11
 
 [Autologin]
 User=live
@@ -893,6 +962,7 @@ EOF
 [General]
 InputMethod=
 Numlock=none
+DisplayServer=x11
 
 [Autologin]
 User=live
@@ -1025,6 +1095,7 @@ password  required    pam_unix.so sha512
 EOF
 
     # Configure SDDM PAM for autologin with pam_systemd
+    # pam_systemd MUST be required for XDG_RUNTIME_DIR to be set up properly
     cat > "$rootfs/etc/pam.d/sddm-autologin" << 'EOF'
 # SDDM autologin PAM configuration
 auth     optional       pam_env.so
@@ -1038,7 +1109,8 @@ session  optional       pam_env.so
 session  optional       pam_limits.so
 session  required       pam_unix.so
 session  optional       pam_loginuid.so
-session  optional       pam_systemd.so
+session  optional       pam_keyinit.so force revoke
+session  required       pam_systemd.so
 EOF
 
     # Configure SDDM main PAM (for password login)
@@ -1055,7 +1127,8 @@ session  optional       pam_env.so
 session  optional       pam_limits.so
 session  required       pam_unix.so
 session  optional       pam_loginuid.so
-session  optional       pam_systemd.so
+session  optional       pam_keyinit.so force revoke
+session  required       pam_systemd.so
 EOF
 
     # Configure SDDM greeter PAM (BLFS-style)
@@ -1229,6 +1302,8 @@ EOF
 
     # ==========================================================================
     # Create SDDM configuration file with autologin and debugging
+    # Note: This is intentionally named 00-live.conf so it's processed first,
+    # and autologin.conf (processed later) takes precedence for session settings
     # ==========================================================================
     mkdir -p "$rootfs/etc/sddm.conf.d"
     cat > "$rootfs/etc/sddm.conf.d/00-live.conf" << 'EOF'
@@ -1237,24 +1312,26 @@ EOF
 EnableHiDPI=true
 HaltCommand=/usr/bin/systemctl poweroff
 RebootCommand=/usr/bin/systemctl reboot
+# Force X11 display server for VM compatibility
+DisplayServer=x11
 
 [Users]
 DefaultPath=/usr/local/bin:/usr/bin:/bin
 MaximumUid=60513
 MinimumUid=1000
 
-[Wayland]
-# Session directory for Wayland
-SessionDir=/usr/share/wayland-sessions
-
 [X11]
-# Session directory for X11 (fallback)
+# Session directory for X11 - check this FIRST
 SessionDir=/usr/share/xsessions
 
+[Wayland]
+# Session directory for Wayland (fallback)
+SessionDir=/usr/share/wayland-sessions
+
 [Autologin]
-# Autologin the live user
+# Autologin the live user with X11 Plasma session
 User=live
-Session=plasma
+Session=plasmax11
 Relogin=false
 
 [Theme]
@@ -1353,11 +1430,11 @@ export LIBGL_ALWAYS_SOFTWARE=1
 export QT_QUICK_BACKEND=software
 export KWIN_COMPOSE=Q
 export MESA_GL_VERSION_OVERRIDE=3.3
-export KWIN_DRM_NO_AMS=1
 
-# Force kwin to use virtual backend instead of DRM
-# This is critical - without this kwin tries to access /dev/dri/card0
-export KWIN_DRM_DEVICES=""
+# CRITICAL: Tell kwin to use X11 backend instead of DRM
+# DRM backend requires direct GPU access which fails in VMs without proper passthrough
+# The X11 backend runs kwin as a nested compositor under the X server that SDDM started
+export KWIN_FORCE_SW_CURSOR=1
 
 # Ensure XDG_RUNTIME_DIR exists (should be set by pam_systemd)
 if [ -z "$XDG_RUNTIME_DIR" ]; then
@@ -1372,8 +1449,9 @@ echo "  KWIN_COMPOSE=$KWIN_COMPOSE" >&2
 echo "  QT_QUICK_BACKEND=$QT_QUICK_BACKEND" >&2
 echo "  XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR" >&2
 
-# Start the actual Plasma Wayland session
-exec /usr/bin/startplasma-wayland "$@"
+# Start Plasma X11 session instead of Wayland - more compatible with VMs
+# Wayland+DRM doesn't work well in QEMU without GPU passthrough
+exec /usr/bin/startplasma-x11 "$@"
 EOF
     chmod 755 "$rootfs/usr/local/bin/plasma-wayland-wrapper"
 
@@ -1415,24 +1493,20 @@ LIBGL_ALWAYS_SOFTWARE=1
 EOF
     chmod 644 "$rootfs/usr/lib/environment.d/zz-rookery-vm.conf"
 
-    # Create a systemd user service drop-in for plasma-kwin_wayland to force virtual backend
-    # This is critical - we override ExecStart to use --virtual instead of --drm
+    # Create a systemd user service drop-in for plasma-kwin_wayland for software rendering
+    # Note: We do NOT use --virtual as it breaks input in QEMU. Let kwin detect the display.
     mkdir -p "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d"
     cat > "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d/vm-backend.conf" << 'EOF'
 [Service]
-# Override the default ExecStart to use virtual backend instead of drm
-# The original is: ExecStart=/usr/bin/kwin_wayland_wrapper --xwayland
-# We add --virtual to force headless/software rendering
-ExecStart=
-ExecStart=/usr/bin/kwin_wayland_wrapper --xwayland --virtual
-# Force software/virtual rendering environment
+# Force software rendering environment for VM compatibility
+# Do NOT use --virtual flag as it breaks mouse/keyboard input
 Environment="KWIN_COMPOSE=Q"
 Environment="QT_QUICK_BACKEND=software"
 Environment="LIBGL_ALWAYS_SOFTWARE=1"
 Environment="MESA_GL_VERSION_OVERRIDE=3.3"
 EOF
     chmod 644 "$rootfs/etc/systemd/user/plasma-kwin_wayland.service.d/vm-backend.conf"
-    log_info "Created kwin_wayland service drop-in with --virtual backend"
+    log_info "Created kwin_wayland service drop-in for software rendering"
 
     # Create SDDM debug script for troubleshooting
     cat > "$rootfs/usr/local/bin/debug-sddm" << 'EOF'
@@ -1491,6 +1565,381 @@ groups sddm 2>&1
 EOF
     chmod 755 "$rootfs/usr/local/bin/debug-sddm"
 
+    # ==========================================================================
+    # Fix XDG menu system for KDE application launcher
+    # ==========================================================================
+    # KDE Plasma uses plasma-applications.menu but kbuildsycoca6 looks for
+    # applications.menu. Create a symlink to make the app menu work.
+    if [ -f "$rootfs/etc/xdg/menus/plasma-applications.menu" ]; then
+        ln -sf plasma-applications.menu "$rootfs/etc/xdg/menus/applications.menu"
+        log_info "Created XDG menu symlink: applications.menu -> plasma-applications.menu"
+    elif [ -d "$rootfs/etc/xdg/menus" ]; then
+        log_warn "plasma-applications.menu not found - app menu may not work"
+    fi
+
+    # ==========================================================================
+    # Configure Calamares installer for live installation
+    # ==========================================================================
+    log_info "Configuring Calamares installer..."
+
+    # Create Calamares directories if they don't exist
+    mkdir -p "$rootfs/etc/calamares/modules"
+    mkdir -p "$rootfs/etc/calamares/branding/rookeryos"
+
+    # Fix unpackfs config to point to correct squashfs location
+    # The ISO is mounted at /run/rootfsbase, squashfs is at LiveOS/rootfs.img
+    # Using unpackfs (Python version) with nested config format
+    cat > "$rootfs/etc/calamares/modules/unpackfs-rootfs.conf" << 'EOF'
+---
+unpack:
+    - source: "/run/rootfsbase/LiveOS/rootfs.img"
+      sourcefs: "squashfs"
+      destination: ""
+EOF
+
+    # Create proper settings.conf with correct module names
+    cat > "$rootfs/etc/calamares/settings.conf" << 'EOF'
+---
+modules-search: [ local, /usr/lib/calamares/modules ]
+
+instances:
+- id:       rootfs
+  module:   unpackfs
+  config:   unpackfs-rootfs.conf
+  weight:   50
+
+sequence:
+- show:
+  - welcome
+  - locale
+  - keyboard
+  - partition
+  - users
+  - summary
+- exec:
+  - partition
+  - mount
+  - unpackfs@rootfs
+  - machineid
+  - fstab
+  - locale
+  - keyboard
+  - localecfg
+  - users
+  - displaymanager
+  - networkcfg
+  - hwclock
+  - services-systemd
+  - bootloader
+  - grubcfg
+  - umount
+- show:
+  - finished
+
+branding: rookeryos
+prompt-install: true
+dont-chroot: false
+EOF
+
+    # Create bootloader module config
+    cat > "$rootfs/etc/calamares/modules/bootloader.conf" << 'EOF'
+---
+efiBootLoader: "grub"
+kernel: "/boot/vmlinuz"
+img: "/boot/initramfs.img"
+fallback: "/boot/initramfs.img"
+timeout: 5
+grubInstall: "grub-install"
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+grubProbe: "grub-probe"
+efiBootMgr: "efibootmgr"
+installEFIFallback: true
+EOF
+
+    # Create machineid module config
+    # Based on Calamares upstream defaults and Manjaro configuration
+    # Using systemd-style: blank so systemd generates UUID on first boot
+    # dbus: false because modern systemd handles this automatically
+    # This avoids chroot issues with finding dbus-uuidgen
+    cat > "$rootfs/etc/calamares/modules/machineid.conf" << 'EOF'
+---
+# Write /etc/machine-id as empty file, systemd will populate on first boot
+systemd: true
+systemd-style: blank
+
+# Don't create separate dbus machine-id (systemd handles it)
+dbus: false
+dbus-symlink: false
+
+# Create entropy files for random seed
+entropy-copy: false
+entropy-files:
+    - /var/lib/systemd/random-seed
+EOF
+
+    # Create services-systemd module config
+    cat > "$rootfs/etc/calamares/modules/services-systemd.conf" << 'EOF'
+---
+services:
+  - name: "NetworkManager"
+    mandatory: false
+  - name: "sddm"
+    mandatory: false
+  - name: "systemd-timesyncd"
+    mandatory: false
+
+targets:
+  - name: "graphical"
+    mandatory: true
+EOF
+
+    # Create mount module config
+    cat > "$rootfs/etc/calamares/modules/mount.conf" << 'EOF'
+---
+extraMounts:
+    - device: proc
+      fs: proc
+      mountPoint: /proc
+    - device: sys
+      fs: sysfs
+      mountPoint: /sys
+    - device: /dev
+      mountPoint: /dev
+      options: bind
+    - device: tmpfs
+      fs: tmpfs
+      mountPoint: /run
+    - device: /run/udev
+      mountPoint: /run/udev
+      options: bind
+btrfsSubvolumes:
+    - mountPoint: /
+      subvolume: /@
+    - mountPoint: /home
+      subvolume: /@home
+    - mountPoint: /var/log
+      subvolume: /@log
+    - mountPoint: /var/cache
+      subvolume: /@cache
+btrfsSwapSubvol: /@swap
+EOF
+
+    # Create partition module config
+    cat > "$rootfs/etc/calamares/modules/partition.conf" << 'EOF'
+---
+efiSystemPartition: "/boot/efi"
+efiSystemPartitionSize: 512M
+efiSystemPartitionName: "EFI"
+userSwapChoices:
+    - none
+    - small
+    - suspend
+    - file
+drawNestedPartitions: false
+alwaysShowPartitionLabels: true
+allowManualPartitioning: true
+initialPartitioningChoice: erase
+initialSwapChoice: small
+defaultFileSystemType: "ext4"
+availableFileSystemTypes:
+    - ext4
+    - btrfs
+    - xfs
+EOF
+
+    # Create displaymanager module config
+    cat > "$rootfs/etc/calamares/modules/displaymanager.conf" << 'EOF'
+---
+displaymanagers:
+    - sddm
+basicSetup: false
+EOF
+
+    # Create users module config
+    cat > "$rootfs/etc/calamares/modules/users.conf" << 'EOF'
+---
+defaultGroups:
+    - users
+    - wheel
+    - audio
+    - video
+    - input
+    - storage
+    - optical
+    - network
+    - lp
+    - scanner
+autologinGroup: autologin
+sudoersGroup: wheel
+setRootPassword: true
+doAutologin: false
+EOF
+
+    # Create welcome module config
+    cat > "$rootfs/etc/calamares/modules/welcome.conf" << 'EOF'
+---
+showSupportUrl: true
+showKnownIssuesUrl: true
+showReleaseNotesUrl: true
+showDonateUrl: false
+
+requirements:
+    requiredStorage: 10.0
+    requiredRam: 2.0
+    internetCheckUrl: https://rookeryos.dev
+    check:
+        - storage
+        - ram
+        - root
+    required:
+        - storage
+        - ram
+        - root
+EOF
+
+    # Create finished module config
+    cat > "$rootfs/etc/calamares/modules/finished.conf" << 'EOF'
+---
+restartNowEnabled: true
+restartNowChecked: true
+restartNowCommand: "systemctl reboot"
+notifyOnFinished: true
+EOF
+
+    # Create locale module config
+    cat > "$rootfs/etc/calamares/modules/locale.conf" << 'EOF'
+---
+region: "America"
+zone: "New_York"
+localeGenPath: /etc/locale.gen
+geoip:
+    style: "none"
+EOF
+
+    # Create keyboard module config
+    cat > "$rootfs/etc/calamares/modules/keyboard.conf" << 'EOF'
+---
+xOrgConfFileName: "/etc/X11/xorg.conf.d/00-keyboard.conf"
+convertedKeymapPath: "/lib/kbd/keymaps/xkb"
+writeEtcDefaultKeyboard: true
+EOF
+
+    # Create fstab module config
+    cat > "$rootfs/etc/calamares/modules/fstab.conf" << 'EOF'
+---
+mountOptions:
+    default: defaults,noatime
+    btrfs: defaults,noatime,compress=zstd:1
+    ext4: defaults,noatime
+    xfs: defaults,noatime
+efiMountOptions: umask=0077
+EOF
+
+    # Create grubcfg module config
+    cat > "$rootfs/etc/calamares/modules/grubcfg.conf" << 'EOF'
+---
+grubInstall: "grub-install"
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+grubProbe: "grub-probe"
+efiBootMgr: "efibootmgr"
+installEFIFallback: true
+EOF
+
+    # Create branding if it doesn't exist
+    if [ ! -f "$rootfs/etc/calamares/branding/rookeryos/branding.desc" ]; then
+        cat > "$rootfs/etc/calamares/branding/rookeryos/branding.desc" << 'EOF'
+---
+componentName: rookeryos
+
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+
+strings:
+    productName:         "Rookery OS"
+    shortProductName:    "Rookery"
+    version:             "1.0"
+    shortVersion:        "1.0"
+    versionedName:       "Rookery OS 1.0"
+    shortVersionedName:  "Rookery 1.0"
+    bootloaderEntryName: "Rookery OS"
+    productUrl:          "https://rookeryos.dev"
+    supportUrl:          "https://rookeryos.dev/support"
+    knownIssuesUrl:      "https://rookeryos.dev/issues"
+    releaseNotesUrl:     "https://rookeryos.dev/releases"
+    donateUrl:           "https://rookeryos.dev/donate"
+
+images:
+    productLogo:         "logo.png"
+    productIcon:         "icon.png"
+    productWelcome:      "welcome.png"
+
+slideshowAPI: 2
+slideshow:
+    - "slide1.qml"
+
+style:
+    sidebarBackground:    "#2a2a2a"
+    sidebarText:          "#ffffff"
+    sidebarTextSelect:    "#4da6ff"
+    sidebarTextHighlight: "#ffffff"
+EOF
+
+        # Create simple slideshow
+        cat > "$rootfs/etc/calamares/branding/rookeryos/slide1.qml" << 'EOF'
+import QtQuick 2.0
+
+Rectangle {
+    color: "#2a2a2a"
+
+    Text {
+        anchors.centerIn: parent
+        text: "Welcome to Rookery OS"
+        color: "white"
+        font.pixelSize: 32
+    }
+}
+EOF
+
+        # Create placeholder images
+        touch "$rootfs/etc/calamares/branding/rookeryos/logo.png"
+        touch "$rootfs/etc/calamares/branding/rookeryos/icon.png"
+        touch "$rootfs/etc/calamares/branding/rookeryos/welcome.png"
+    fi
+
+    # Allow live user full passwordless sudo (for live ISO only)
+    mkdir -p "$rootfs/etc/sudoers.d"
+    cat > "$rootfs/etc/sudoers.d/live-user" << 'EOF'
+# Allow live user passwordless sudo for live ISO
+live ALL=(ALL) NOPASSWD: ALL
+EOF
+    chmod 440 "$rootfs/etc/sudoers.d/live-user"
+
+    # Override the desktop entry to use sudo instead of pkexec
+    mkdir -p "$rootfs/usr/share/applications"
+    cat > "$rootfs/usr/share/applications/calamares.desktop" << 'EOF'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Rookery OS
+GenericName=System Installer
+Comment=Install Rookery OS to your computer
+Exec=sudo /usr/bin/calamares
+Icon=calamares
+Terminal=false
+Categories=System;
+Keywords=installer;calamares;system;
+EOF
+
+    log_info "Calamares installer configured"
+
+    # Create python symlink (some tools expect 'python' not 'python3')
+    if [ -f "$rootfs/usr/bin/python3" ] && [ ! -e "$rootfs/usr/bin/python" ]; then
+        ln -s python3 "$rootfs/usr/bin/python"
+        log_info "Created python -> python3 symlink"
+    fi
+
     log_info "Live system configured"
 }
 
@@ -1498,22 +1947,19 @@ EOF
 # Step 3b: Set PaX Flags for grsecurity Compatibility
 # =============================================================================
 set_pax_flags() {
-    log_step "Setting PaX flags for grsecurity compatibility..."
+    log_step "Setting PaX flags on ALL ELF binaries and libraries..."
 
     local rootfs="$BUILD/rootfs"
 
     # The grsec kernel has BOTH CONFIG_PAX_PT_PAX_FLAGS=y AND CONFIG_PAX_XATTR_PAX_FLAGS=y
     # When both are enabled, PaX requires the SAME flags in BOTH locations!
-    # We must use BOTH paxctl (for PT_PAX ELF header) AND setfattr (for xattr).
+    # We use BOTH paxctl (for PT_PAX ELF header) AND setfattr (for xattr).
     #
-    # PaX flag characters:
-    #   P/p = PAGEEXEC (uppercase = disabled)
-    #   E/e = EMUTRAMP (uppercase = disabled)
-    #   M/m = MPROTECT (uppercase = disabled)
-    #   R/r = RANDMMAP (uppercase = disabled)
-    #   S/s = SEGMEXEC (uppercase = disabled, x86-32 only)
-    #
-    # For JIT, we need to disable P, E, M (uppercase = disabled)
+    # SECURITY MODEL:
+    # - All binaries in the rootfs are built by us and trusted
+    # - Any malware introduced later would NOT have PaX flags
+    # - grsec will kill any binary without proper PaX flags
+    # - This gives us defense-in-depth: trusted binaries run, untrusted die
 
     local have_paxctl=false
     local have_setfattr=false
@@ -1527,146 +1973,25 @@ set_pax_flags() {
 
     if [ "$have_paxctl" = false ] && [ "$have_setfattr" = false ]; then
         log_warn "Neither paxctl nor setfattr available - PaX flags cannot be set"
-        log_warn "Qt/KDE binaries may fail with grsecurity kernel"
+        log_warn "Binaries may fail with grsecurity kernel"
         return 0
     fi
 
-    log_info "Setting PaX flags (kernel has both PT_PAX_FLAGS and XATTR_PAX_FLAGS enabled)"
+    log_info "Setting PaX flags on all ELF files in rootfs"
     log_info "  paxctl available: $have_paxctl"
     log_info "  setfattr available: $have_setfattr"
 
-    # The flags string for xattr: uppercase = disable protection
-    # PEMrs = disable PAGEEXEC, EMUTRAMP, MPROTECT; keep RANDMMAP and SEGMEXEC enabled
-    local pax_flags="PEMrs"
-
-    # ==========================================================================
-    # Binaries that need RWX memory for JIT compilation
-    # ==========================================================================
-    local binaries=(
-        # ======================================================================
-        # KDE/Plasma core - Qt Quick/QML JIT
-        # ======================================================================
-        "/usr/bin/kwin_wayland"
-        "/usr/bin/kwin_x11"
-        "/usr/bin/kwin_wayland_wrapper"
-        "/usr/bin/plasmashell"
-        "/usr/bin/plasma-desktop"
-        "/usr/bin/startplasma-wayland"
-        "/usr/bin/startplasma-x11"
-        "/usr/bin/plasma-dbus-run-session-if-needed"
-
-        # SDDM uses QML for its greeter
-        "/usr/bin/sddm"
-        "/usr/bin/sddm-greeter"
-        "/usr/libexec/sddm-helper"
-        "/usr/libexec/sddm-helper-start-wayland"
-        "/usr/libexec/sddm-helper-start-x11user"
-
-        # KDE system components using QML
-        "/usr/bin/krunner"
-        "/usr/bin/ksmserver"
-        "/usr/bin/ksplashqml"
-        "/usr/bin/systemsettings"
-        "/usr/bin/plasma-systemmonitor"
-        "/usr/bin/kscreen-doctor"
-        "/usr/bin/spectacle"
-        "/usr/bin/dolphin"
-        "/usr/bin/konsole"
-        "/usr/bin/kate"
-        "/usr/bin/gwenview"
-        "/usr/bin/okular"
-        "/usr/bin/ark"
-
-        # Plasma libexec components
-        "/usr/libexec/org_kde_powerdevil"
-        "/usr/libexec/polkit-kde-authentication-agent-1"
-        "/usr/libexec/xdg-desktop-portal-kde"
-        "/usr/libexec/kf6/drkonqi-polkit-helper"
-        "/usr/libexec/plasma-dbus-run-session-if-needed"
-        "/usr/lib/libexec/kf6/kscreen_backend_launcher"
-
-        # Baloo file indexer
-        "/usr/libexec/kf6/baloo_file"
-        "/usr/libexec/kf6/baloo_file_extractor"
-        "/usr/bin/balooctl6"
-        "/usr/bin/baloosearch6"
-        "/usr/bin/balooshow6"
-
-        # KDE Connect
-        "/usr/bin/kdeconnect-app"
-        "/usr/bin/kdeconnect-indicator"
-        "/usr/bin/kdeconnect-cli"
-        "/usr/libexec/kdeconnectd"
-
-        # Additional Plasma utilities
-        "/usr/bin/plasma-apply-colorscheme"
-        "/usr/bin/plasma-apply-cursortheme"
-        "/usr/bin/plasma-apply-desktoptheme"
-        "/usr/bin/plasma-apply-lookandfeel"
-        "/usr/bin/plasma-apply-wallpaperimage"
-        "/usr/bin/lookandfeeltool"
-        "/usr/bin/kdialog"
-        "/usr/bin/kinfocenter"
-        "/usr/bin/filelight"
-        "/usr/bin/kcalc"
-        "/usr/bin/partitionmanager"
-
-        # Discover (app store)
-        "/usr/bin/plasma-discover"
-        "/usr/bin/discover"
-
-        # Qt tools that use QML
-        "/usr/bin/qmlscene"
-        "/usr/bin/qml"
-        "/usr/bin/qml6"
-        "/usr/bin/assistant"
-        "/usr/bin/designer"
-        "/usr/bin/linguist"
-
-        # ======================================================================
-        # Node.js - V8 JavaScript JIT (critical!)
-        # ======================================================================
-        "/usr/bin/node"
-        "/usr/bin/nodejs"
-        "/usr/bin/npm"
-        "/usr/bin/npx"
-
-        # ======================================================================
-        # Calamares installer (if present)
-        # ======================================================================
-        "/usr/bin/calamares"
-        "/usr/bin/calamares-qt6"
-        "/usr/libexec/calamares/calamares"
-
-        # ======================================================================
-        # Mesa/LLVM - shader JIT compilation
-        # ======================================================================
-        # LLVM tools that use JIT
-        "/usr/bin/lli"
-        "/usr/bin/llc"
-        "/usr/bin/opt"
-
-        # ======================================================================
-        # Other potential JIT users
-        # ======================================================================
-        # Python (numba, PyPy if installed)
-        "/usr/bin/python3"
-        "/usr/bin/python3.13"
-
-        # Wine (if present)
-        "/usr/bin/wine"
-        "/usr/bin/wine64"
-
-        # QEMU (TCG JIT)
-        "/usr/bin/qemu-system-x86_64"
-        "/usr/bin/qemu-x86_64"
-    )
+    # The flags string for xattr:
+    #   UPPERCASE = enable protection
+    #   lowercase = disable protection
+    # pemRS = disable PAGEEXEC, EMUTRAMP, MPROTECT; enable RANDMMAP and SEGMEXEC
+    # This MUST match the PT_PAX flags (-cpme) which also disables P, E, M
+    local pax_flags="pemRS"
 
     local marked=0
     local failed=0
 
     # Helper function to set PaX flags on a file (BOTH xattr AND ELF header)
-    # Returns 0 if at least one method succeeded, 1 if both failed
     set_pax_flags_on_file() {
         local file="$1"
         local binary_path="$2"  # Path relative to rootfs for paxctl chroot
@@ -1696,81 +2021,246 @@ set_pax_flags() {
         fi
     }
 
-    # Process binaries
-    for binary in "${binaries[@]}"; do
-        local full_path="$rootfs$binary"
-        if [ -f "$full_path" ] && file "$full_path" 2>/dev/null | grep -q "ELF"; then
-            if set_pax_flags_on_file "$full_path" "$binary"; then
-                log_info "  PaX flags set: $binary"
-                marked=$((marked + 1))
-            else
-                log_warn "  Failed: $binary"
-                failed=$((failed + 1))
+    # Process ALL ELF executables in common binary directories
+    # Using for loop with glob to avoid subshell issues
+    log_info "Processing ALL executables and libraries with PaX flags..."
+
+    # Create a temporary file list to avoid subshell issues
+    local tmplist=$(mktemp)
+
+    # Find all executables in standard bin directories
+    find "$rootfs/usr/bin" "$rootfs/usr/sbin" "$rootfs/usr/libexec" \
+         "$rootfs/bin" "$rootfs/sbin" \
+         -type f -executable 2>/dev/null >> "$tmplist" || true
+
+    # Find all shared libraries in /usr/lib
+    find "$rootfs/usr/lib" -name "*.so*" -type f 2>/dev/null >> "$tmplist" || true
+
+    # Find ALL executables anywhere in /usr/lib (polkit, dbus helpers, etc)
+    find "$rootfs/usr/lib" -type f -executable 2>/dev/null >> "$tmplist" || true
+
+    # Process each file
+    local total=0
+    local success=0
+
+    while IFS= read -r file; do
+        # Skip if not an ELF file
+        if ! file "$file" 2>/dev/null | grep -q "ELF"; then
+            continue
+        fi
+
+        total=$((total + 1))
+        local rel_path="${file#$rootfs}"
+
+        # Set xattr flags
+        local xattr_ok=false
+        if [ "$have_setfattr" = true ]; then
+            if setfattr -n user.pax.flags -v "$pax_flags" "$file" 2>/dev/null; then
+                xattr_ok=true
             fi
+        fi
+
+        # Set PT_PAX flags via paxctl in chroot
+        local pt_pax_ok=false
+        if [ "$have_paxctl" = true ]; then
+            if chroot "$rootfs" /usr/sbin/paxctl -cpme "$rel_path" 2>/dev/null; then
+                pt_pax_ok=true
+            fi
+        fi
+
+        if [ "$xattr_ok" = true ] || [ "$pt_pax_ok" = true ]; then
+            success=$((success + 1))
+        fi
+
+        # Progress indicator every 500 files
+        if [ $((total % 500)) -eq 0 ]; then
+            log_info "  Processed $total files..."
+        fi
+    done < "$tmplist"
+
+    rm -f "$tmplist"
+
+    log_info "PaX flags (xattr: $pax_flags, PT_PAX: -cpme) set on $success of $total ELF files"
+}
+
+# =============================================================================
+# Rebuild Library Cache (ldconfig)
+# =============================================================================
+rebuild_library_cache() {
+    log_step "Rebuilding dynamic linker cache (ldconfig)..."
+
+    local rootfs="$BUILD/rootfs"
+
+    # Create ld.so.conf if it doesn't exist
+    if [ ! -f "$rootfs/etc/ld.so.conf" ]; then
+        log_info "Creating /etc/ld.so.conf..."
+        cat > "$rootfs/etc/ld.so.conf" << 'EOF'
+# Include standard library paths
+include /etc/ld.so.conf.d/*.conf
+/usr/lib
+/lib
+/usr/local/lib
+EOF
+    fi
+
+    # Create ld.so.conf.d directory if it doesn't exist
+    mkdir -p "$rootfs/etc/ld.so.conf.d"
+
+    # Ensure /usr/lib is in the search path
+    if [ ! -f "$rootfs/etc/ld.so.conf.d/usr-lib.conf" ]; then
+        echo "/usr/lib" > "$rootfs/etc/ld.so.conf.d/usr-lib.conf"
+    fi
+
+    # Run ldconfig in the chroot to rebuild the library cache
+    # This creates /etc/ld.so.cache with all shared libraries indexed
+    if [ -x "$rootfs/sbin/ldconfig" ]; then
+        log_info "Running ldconfig via chroot (using /sbin/ldconfig)..."
+        chroot "$rootfs" /sbin/ldconfig -v 2>&1 | tail -20
+    elif [ -x "$rootfs/usr/sbin/ldconfig" ]; then
+        log_info "Running ldconfig via chroot (using /usr/sbin/ldconfig)..."
+        chroot "$rootfs" /usr/sbin/ldconfig -v 2>&1 | tail -20
+    else
+        # Fall back to running host ldconfig with rootfs as root
+        log_warn "No ldconfig in rootfs, using host ldconfig..."
+        ldconfig -r "$rootfs" -v 2>&1 | tail -20
+    fi
+
+    # Verify the cache was created
+    if [ -f "$rootfs/etc/ld.so.cache" ]; then
+        local cache_size=$(du -h "$rootfs/etc/ld.so.cache" | cut -f1)
+        local lib_count=$(ldconfig -r "$rootfs" -p 2>/dev/null | wc -l)
+        log_info "Library cache created: $cache_size ($lib_count libraries)"
+    else
+        log_warn "Library cache may not have been created properly"
+    fi
+}
+
+# =============================================================================
+# Step 3d: Create initramfs for installed system
+# =============================================================================
+create_installed_initramfs() {
+    log_step "Creating initramfs for installed system..."
+
+    local rootfs="$BUILD/rootfs"
+    local kver=$(ls "$rootfs/lib/modules" 2>/dev/null | head -1)
+
+    if [ -z "$kver" ]; then
+        log_warn "No kernel modules found, skipping initramfs creation"
+        return
+    fi
+
+    log_info "Creating initramfs for kernel $kver"
+
+    # Create minimal initramfs using util-linux and coreutils from the rootfs
+    local initrd_dir=$(mktemp -d)
+    mkdir -p "$initrd_dir"/{bin,sbin,etc,proc,sys,dev,lib,lib64,usr/lib,usr/bin,run,newroot}
+
+    # Copy dynamic linker first
+    cp "$rootfs/usr/lib/ld-linux-x86-64.so.2" "$initrd_dir/lib64/"
+    ln -sf ../lib64/ld-linux-x86-64.so.2 "$initrd_dir/lib/ld-linux-x86-64.so.2"
+
+    # Copy essential glibc libraries
+    for lib in libc.so.6 libm.so.6 libpthread.so.0 libdl.so.2 librt.so.1 libresolv.so.2; do
+        cp "$rootfs/usr/lib/$lib" "$initrd_dir/lib/" 2>/dev/null || true
+    done
+
+    # Copy util-linux binaries (mount, switch_root, etc.)
+    for bin in mount umount switch_root blkid; do
+        if [ -f "$rootfs/usr/bin/$bin" ]; then
+            cp "$rootfs/usr/bin/$bin" "$initrd_dir/bin/"
         fi
     done
 
-    # Process Qt QML libraries - these need executable stack for JIT
-    log_info "Setting PaX flags on Qt QML libraries..."
-    for lib in "$rootfs/usr/lib/"libQt6Qml*.so* "$rootfs/usr/lib/"libQt6Quick*.so*; do
-        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
-            local rel_lib="${lib#$rootfs}"
-            if set_pax_flags_on_file "$lib" "$rel_lib"; then
-                log_info "  PaX flags set: $rel_lib"
-                marked=$((marked + 1))
-            else
-                log_warn "  Failed: $rel_lib"
-                failed=$((failed + 1))
-            fi
+    # Copy coreutils binaries
+    for bin in sh cat ls mkdir mknod sleep; do
+        if [ -f "$rootfs/usr/bin/$bin" ]; then
+            cp "$rootfs/usr/bin/$bin" "$initrd_dir/bin/"
         fi
     done
 
-    # Process LLVM libraries - shader JIT for Mesa/graphics
-    log_info "Setting PaX flags on LLVM libraries (shader JIT)..."
-    for lib in "$rootfs/usr/lib/"libLLVM*.so*; do
-        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
-            local rel_lib="${lib#$rootfs}"
-            if set_pax_flags_on_file "$lib" "$rel_lib"; then
-                log_info "  PaX flags set: $rel_lib"
-                marked=$((marked + 1))
-            else
-                log_warn "  Failed: $rel_lib"
-                failed=$((failed + 1))
-            fi
-        fi
+    # Copy additional libraries needed by util-linux
+    for lib in libblkid.so.1 libuuid.so.1 libmount.so.1; do
+        cp "$rootfs/usr/lib/$lib" "$initrd_dir/lib/" 2>/dev/null || true
     done
 
-    # Process Mesa DRI drivers - they use LLVM for shader JIT
-    log_info "Setting PaX flags on Mesa DRI drivers..."
-    for lib in "$rootfs/usr/lib/dri/"*.so; do
-        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
-            local rel_lib="${lib#$rootfs}"
-            if set_pax_flags_on_file "$lib" "$rel_lib"; then
-                log_info "  PaX flags set: $rel_lib"
-                marked=$((marked + 1))
-            else
-                log_warn "  Failed: $rel_lib"
-                failed=$((failed + 1))
-            fi
-        fi
-    done
+    # Copy kernel modules (essential ones for disk access)
+    if [ -d "$rootfs/lib/modules/$kver" ]; then
+        mkdir -p "$initrd_dir/lib/modules/$kver/kernel/drivers"
+        # Copy disk drivers
+        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/ata" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/scsi" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/virtio" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/block" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        # Copy filesystem modules
+        mkdir -p "$initrd_dir/lib/modules/$kver/kernel/fs"
+        cp -a "$rootfs/lib/modules/$kver/kernel/fs/ext4" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
+        cp -a "$rootfs/lib/modules/$kver/kernel/fs/btrfs" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
+        cp -a "$rootfs/lib/modules/$kver/kernel/fs/xfs" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
+        # Copy modules.* files
+        cp "$rootfs/lib/modules/$kver/modules."* "$initrd_dir/lib/modules/$kver/" 2>/dev/null || true
+    fi
 
-    # Process V8/Node.js libraries if present
-    log_info "Setting PaX flags on V8/Node.js libraries..."
-    for lib in "$rootfs/usr/lib/"libv8*.so* "$rootfs/usr/lib/"libnode*.so*; do
-        if [ -f "$lib" ] && [ ! -L "$lib" ] && file "$lib" 2>/dev/null | grep -q "ELF"; then
-            local rel_lib="${lib#$rootfs}"
-            if set_pax_flags_on_file "$lib" "$rel_lib"; then
-                log_info "  PaX flags set: $rel_lib"
-                marked=$((marked + 1))
-            else
-                log_warn "  Failed: $rel_lib"
-                failed=$((failed + 1))
-            fi
-        fi
-    done
+    # Create init script
+    cat > "$initrd_dir/init" << 'INIT'
+#!/bin/sh
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
-    log_info "PaX flags (xattr: $pax_flags, PT_PAX: -cpme) set on $marked binaries/libraries ($failed failed)"
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+
+# Load essential modules
+for mod in virtio_pci virtio_blk virtio_scsi sd_mod ahci; do
+    modprobe $mod 2>/dev/null || true
+done
+
+# Wait for devices
+sleep 1
+
+# Find and mount root filesystem
+root=""
+rootfstype=""
+for arg in $(cat /proc/cmdline); do
+    case "$arg" in
+        root=*) root="${arg#root=}" ;;
+        rootfstype=*) rootfstype="${arg#rootfstype=}" ;;
+    esac
+done
+
+# Handle root=UUID=xxx
+if [ "${root#UUID=}" != "$root" ]; then
+    uuid="${root#UUID=}"
+    root=$(blkid -U "$uuid" 2>/dev/null)
+fi
+
+if [ -n "$root" ]; then
+    if [ -n "$rootfstype" ]; then
+        mount -t "$rootfstype" "$root" /newroot
+    else
+        mount "$root" /newroot
+    fi
+
+    if [ -d /newroot/sbin ]; then
+        umount /proc /sys /dev 2>/dev/null
+        exec switch_root /newroot /sbin/init
+    fi
+fi
+
+echo "Failed to mount root filesystem: $root"
+echo "Dropping to shell..."
+exec /bin/sh
+INIT
+    chmod +x "$initrd_dir/init"
+
+    # Create initramfs using cpio
+    (cd "$initrd_dir" && find . | cpio -o -H newc 2>/dev/null | gzip -9 > "$rootfs/boot/initramfs.img")
+    rm -rf "$initrd_dir"
+
+    if [ -f "$rootfs/boot/initramfs.img" ]; then
+        log_info "Created initramfs: $(du -h "$rootfs/boot/initramfs.img" | cut -f1)"
+    else
+        log_warn "Failed to create initramfs"
+    fi
 }
 
 # =============================================================================
@@ -2293,23 +2783,112 @@ EOF
 }
 
 # =============================================================================
-# Step 7: Create ISO
+# Step 7: Create EFI Boot Image
+# =============================================================================
+create_efi_boot_image() {
+    log_step "Creating EFI boot image..."
+
+    local efi_dir="$BUILD/iso/EFI/BOOT"
+    local efi_img="$BUILD/iso/boot/efi.img"
+
+    mkdir -p "$efi_dir"
+    mkdir -p "$BUILD/iso/boot/grub"
+
+    # Check if GRUB EFI modules are available
+    if [ ! -d "/usr/lib/grub/x86_64-efi" ]; then
+        log_warn "GRUB x86_64-efi modules not found, skipping EFI boot support"
+        return 1
+    fi
+
+    # Create grub.cfg for EFI boot
+    cat > "$BUILD/iso/boot/grub/grub.cfg" << 'GRUBCFG'
+set default=0
+set timeout=5
+
+insmod all_video
+insmod gfxterm
+set gfxmode=auto
+terminal_output gfxterm
+
+menuentry "Rookery OS Live" {
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0
+    initrd /boot/initrd.img
+}
+
+menuentry "Rookery OS Live (Verbose)" {
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd systemd.log_level=debug systemd.log_target=console net.ifnames=0 biosdevname=0 console=tty0 console=ttyS0,115200n8
+    initrd /boot/initrd.img
+}
+
+menuentry "Rookery OS - Recovery" {
+    linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd systemd.unit=rescue.target net.ifnames=0 biosdevname=0 console=tty0
+    initrd /boot/initrd.img
+}
+GRUBCFG
+
+    # Create GRUB EFI binary (following Arch Linux archiso approach)
+    log_info "Building GRUB EFI bootloader..."
+    grub-mkstandalone \
+        -O x86_64-efi \
+        -o "$efi_dir/BOOTX64.EFI" \
+        --locales="en@quot" \
+        --themes="" \
+        --modules="part_gpt part_msdos fat iso9660 linux normal search search_fs_uuid search_label" \
+        "boot/grub/grub.cfg=$BUILD/iso/boot/grub/grub.cfg"
+
+    # Create FAT EFI image using mtools
+    log_info "Creating EFI FAT image..."
+    local efi_file_size=$(stat -c %s "$efi_dir/BOOTX64.EFI")
+    local efi_img_size=$(( (efi_file_size / 1024) + 512 ))  # File size + overhead in KB
+    dd if=/dev/zero of="$efi_img" bs=1024 count=$efi_img_size 2>/dev/null
+    mformat -i "$efi_img" ::
+    mmd -i "$efi_img" ::EFI
+    mmd -i "$efi_img" ::EFI/BOOT
+    mcopy -i "$efi_img" "$efi_dir/BOOTX64.EFI" ::EFI/BOOT/
+
+    log_info "EFI boot image created successfully"
+    return 0
+}
+
+# =============================================================================
+# Step 8: Create ISO
 # =============================================================================
 create_iso() {
     log_step "Creating ISO image..."
 
     local iso_path="$OUTPUT_DIR/$ISO_NAME"
+    local efi_img="$BUILD/iso/boot/efi.img"
 
-    xorriso -as mkisofs \
-        -o "$iso_path" \
-        -isohybrid-mbr "$SYSLINUX_DIR/isohdpfx.bin" \
-        -c boot/syslinux/boot.cat \
-        -b boot/syslinux/isolinux.bin \
-        -no-emul-boot \
-        -boot-load-size 4 \
-        -boot-info-table \
-        -V "$VOLUME_ID" \
-        "$BUILD/iso/"
+    # Check if EFI boot image exists
+    if [ -f "$efi_img" ]; then
+        log_info "Creating hybrid BIOS/EFI bootable ISO..."
+        xorriso -as mkisofs \
+            -o "$iso_path" \
+            -isohybrid-mbr "$SYSLINUX_DIR/isohdpfx.bin" \
+            -c boot/syslinux/boot.cat \
+            -b boot/syslinux/isolinux.bin \
+            -no-emul-boot \
+            -boot-load-size 4 \
+            -boot-info-table \
+            -eltorito-alt-boot \
+            -e boot/efi.img \
+            -no-emul-boot \
+            -isohybrid-gpt-basdat \
+            -V "$VOLUME_ID" \
+            "$BUILD/iso/"
+    else
+        log_info "Creating BIOS-only bootable ISO..."
+        xorriso -as mkisofs \
+            -o "$iso_path" \
+            -isohybrid-mbr "$SYSLINUX_DIR/isohdpfx.bin" \
+            -c boot/syslinux/boot.cat \
+            -b boot/syslinux/isolinux.bin \
+            -no-emul-boot \
+            -boot-load-size 4 \
+            -boot-info-table \
+            -V "$VOLUME_ID" \
+            "$BUILD/iso/"
+    fi
 
     if [ -f "$iso_path" ]; then
         local size=$(du -h "$iso_path" | cut -f1)
@@ -2320,9 +2899,14 @@ create_iso() {
         log_info "File: $iso_path"
         log_info "Size: $size"
         echo ""
-        log_info "To test with QEMU:"
+        log_info "To test with QEMU (BIOS):"
         log_info "  qemu-system-x86_64 -m 4G -cdrom $iso_path -boot d"
         echo ""
+        if [ -f "$efi_img" ]; then
+            log_info "To test with QEMU (EFI):"
+            log_info "  qemu-system-x86_64 -m 4G -cdrom $iso_path -boot d -bios /usr/share/edk2/ovmf/OVMF_CODE.fd"
+            echo ""
+        fi
     else
         log_error "ISO creation failed"
         exit 1
@@ -2344,9 +2928,12 @@ main() {
     fix_lib_symlinks
     configure_live_system
     set_pax_flags
+    rebuild_library_cache
+    create_installed_initramfs
     create_squashfs
     build_initramfs
     setup_boot
+    create_efi_boot_image || log_warn "EFI boot support not available"
     create_iso
 
     # Don't cleanup on success - let user inspect if needed

@@ -9,6 +9,7 @@ use crate::config::Config;
 use crate::database::Database;
 use crate::hooks::HookResult;
 use crate::repository::{RepoManager, SignatureStatus};
+use crate::resolver::needs_upgrade;
 use crate::signing::TrustLevel;
 use crate::transaction::TransactionBuilder;
 
@@ -84,12 +85,7 @@ pub fn run(dry_run: bool, config: &Config) -> Result<()> {
             if let Some(result) = manager.find_package(&pkg.name) {
                 let available = &result.package;
                 // Only report if there's actually an upgrade available
-                let needs_upgrade = if available.version != pkg.version {
-                    available.version > pkg.version
-                } else {
-                    available.release > pkg.release
-                };
-                if needs_upgrade {
+                if needs_upgrade(&pkg.version, pkg.release, &available.version, available.release) {
                     let available_full = format!("{}-{}", available.version, available.release);
                     held_packages.push((pkg.name.clone(), available_full));
                 }
@@ -100,15 +96,8 @@ pub fn run(dry_run: bool, config: &Config) -> Result<()> {
         if let Some(result) = manager.find_package(&pkg.name) {
             let available = &result.package;
 
-            // Compare versions (simple string comparison for now)
-            // TODO: Use proper semver comparison
-            let needs_upgrade = if available.version != pkg.version {
-                available.version > pkg.version
-            } else {
-                available.release > pkg.release
-            };
-
-            if needs_upgrade {
+            // Compare versions using proper semantic versioning
+            if needs_upgrade(&pkg.version, pkg.release, &available.version, available.release) {
                 upgrades.push(UpgradeCandidate {
                     name: pkg.name.clone(),
                     installed_version: pkg.version.clone(),

@@ -103,7 +103,8 @@
       "Bash(wsl --list:*)",
       "Bash(cat:*)",
       "Bash(ls:*)",
-      "Bash(wsl -d RookeryOS -u root bash -c 'grep -l \"\"/opt/qt6\\\\|/opt/qt\"\" /home/rookery/specs/*.rook 2>/dev/null')"
+      "Bash(wsl -d RookeryOS -u root bash -c 'grep -l \"\"/opt/qt6\\\\|/opt/qt\"\" /home/rookery/specs/*.rook 2>/dev/null')",
+      "Bash(wsl -d RookeryOS -u root bash -c 'grep -rn \"\"TODO\\\\|FIXME\\\\|HACK\\\\|XXX\\\\|todo!\\\\|unimplemented!\\\\|stub\"\" /mnt/c/Users/texas/rookpkg/src/ 2>/dev/null')"
     ]
   }
 }

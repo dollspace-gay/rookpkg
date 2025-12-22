@@ -11,7 +11,7 @@ use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 
 use crate::archive::{PackageArchiveReader, FileType};
-use crate::config::HooksConfig;
+use crate::config::{HooksConfig, OptionsConfig};
 use crate::database::Database;
 use crate::hooks::{HookContext, HookEvent, HookManager, HookOperation, HookResult};
 use crate::package::{InstalledPackage, InstallReason, PackageFile};
@@ -91,6 +91,8 @@ pub enum Operation {
         package: String,
         version: String,
         archive_path: PathBuf,
+        /// Whether this package was explicitly requested or installed as a dependency
+        install_reason: InstallReason,
     },
     /// Remove an existing package
     Remove {
@@ -169,11 +171,18 @@ pub struct Transaction {
     tx_dir: PathBuf,
     /// Database connection
     db: Database,
+    /// Package options (no_extract, no_upgrade, shared_files)
+    options: OptionsConfig,
 }
 
 impl Transaction {
-    /// Create a new transaction
+    /// Create a new transaction with default options
     pub fn new(root: &Path, db: Database) -> Result<Self> {
+        Self::with_options(root, db, OptionsConfig::default())
+    }
+
+    /// Create a new transaction with custom options
+    pub fn with_options(root: &Path, db: Database, options: OptionsConfig) -> Result<Self> {
         let id = format!("{}", chrono::Utc::now().format("%Y%m%d%H%M%S%f"));
         let tx_dir = root.join("var/lib/rookpkg/transactions").join(&id);
         fs::create_dir_all(&tx_dir)?;
@@ -186,6 +195,7 @@ impl Transaction {
             root: root.to_path_buf(),
             tx_dir,
             db,
+            options,
         };
 
         tx.save_state()?;
@@ -230,15 +240,17 @@ impl Transaction {
             root: root.to_path_buf(),
             tx_dir,
             db,
+            options: OptionsConfig::default(),
         })
     }
 
     /// Add an install operation
-    pub fn install(&mut self, package: &str, version: &str, archive_path: &Path) -> &mut Self {
+    pub fn install(&mut self, package: &str, version: &str, archive_path: &Path, reason: InstallReason) -> &mut Self {
         self.operations.push(Operation::Install {
             package: package.to_string(),
             version: version.to_string(),
             archive_path: archive_path.to_path_buf(),
+            install_reason: reason,
         });
         self
     }
@@ -274,6 +286,9 @@ impl Transaction {
     /// - Files owned by other installed packages
     /// - Files that would be installed by multiple packages in this transaction
     /// - Optionally, files that exist on the filesystem but aren't owned by any package
+    ///
+    /// Uses the transaction's configured options to determine which files are
+    /// shared (can be owned by multiple packages without conflict).
     ///
     /// Returns a list of conflicts found, or an empty Vec if no conflicts.
     pub fn check_conflicts(&self, check_unowned: bool) -> Result<Vec<FileConflict>> {
@@ -324,6 +339,12 @@ impl Transaction {
 
                 // Skip directories - they're shared between packages
                 if file_entry.file_type == FileType::Directory {
+                    continue;
+                }
+
+                // Skip shared files - these can be owned by multiple packages
+                if self.options.is_shared_file(path) {
+                    tracing::debug!("Skipping conflict check for shared file: {}", path);
                     continue;
                 }
 
@@ -511,9 +532,10 @@ impl Transaction {
                 package,
                 version,
                 archive_path,
+                install_reason,
             } => {
                 tracing::info!("Installing {} {}", package, version);
-                self.do_install(archive_path)?;
+                self.do_install(archive_path, *install_reason)?;
             }
             Operation::Remove { package } => {
                 tracing::info!("Removing {}", package);
@@ -533,7 +555,7 @@ impl Transaction {
     }
 
     /// Perform package installation
-    fn do_install(&mut self, archive_path: &Path) -> Result<()> {
+    fn do_install(&mut self, archive_path: &Path, install_reason: InstallReason) -> Result<()> {
         let reader = PackageArchiveReader::open(archive_path)?;
         let info = reader.read_info()?;
         let files = reader.read_files()?;
@@ -547,9 +569,13 @@ impl Transaction {
             }
         }
 
-        // Check for file conflicts with other packages (skip directories - they're shared)
+        // Check for file conflicts with other packages (skip directories and shared files)
         for file_entry in &files {
             if file_entry.file_type == FileType::Directory {
+                continue;
+            }
+            // Skip shared files from conflict check
+            if self.options.is_shared_file(&file_entry.path) {
                 continue;
             }
             if let Some(owner) = self.db.file_owner(&file_entry.path)? {
@@ -573,6 +599,12 @@ impl Transaction {
 
         // Install files to root
         for file_entry in &files {
+            // Skip files matching no_extract patterns
+            if self.options.should_skip_extract(&file_entry.path) {
+                tracing::debug!("Skipping extraction of {}: matches no_extract pattern", file_entry.path);
+                continue;
+            }
+
             let src = extract_dir.join(file_entry.path.trim_start_matches('/'));
             let dest = self.root.join(file_entry.path.trim_start_matches('/'));
 
@@ -614,7 +646,6 @@ impl Transaction {
         }
 
         // Add to database
-        // TODO: Track whether this is being installed as a dependency
         let pkg = InstalledPackage {
             name: info.name.clone(),
             version: info.version.clone(),
@@ -623,16 +654,20 @@ impl Transaction {
             size_bytes: info.installed_size,
             checksum: String::new(), // TODO: compute package checksum
             spec: String::new(), // TODO: store original spec
-            install_reason: InstallReason::Explicit,
+            install_reason,
         };
         let pkg_id = self.db.add_package(&pkg)?;
         self.journal.push(JournalEntry::DbPackageAdded {
             package: info.name.clone(),
         });
 
-        // Add files to database (skip directories - they're shared between packages)
+        // Add files to database (skip directories and no_extract files)
         for file_entry in &files {
             if file_entry.file_type == FileType::Directory {
+                continue;
+            }
+            // Don't track files that were skipped due to no_extract
+            if self.options.should_skip_extract(&file_entry.path) {
                 continue;
             }
             let pkg_file = PackageFile {
@@ -852,9 +887,13 @@ impl Transaction {
         let files = reader.read_files()?;
         let scripts = reader.read_scripts()?;
 
-        // Check for file conflicts with other packages (skip directories - they're shared)
+        // Check for file conflicts with other packages (skip directories and shared files)
         for file_entry in &files {
             if file_entry.file_type == FileType::Directory {
+                continue;
+            }
+            // Skip shared files from conflict check
+            if self.options.is_shared_file(&file_entry.path) {
                 continue;
             }
             if let Some(owner) = self.db.file_owner(&file_entry.path)? {
@@ -878,8 +917,20 @@ impl Transaction {
 
         // Install files to root
         for file_entry in &files {
-            let src = extract_dir.join(file_entry.path.trim_start_matches('/'));
+            // Skip files matching no_extract patterns
+            if self.options.should_skip_extract(&file_entry.path) {
+                tracing::debug!("Skipping extraction of {}: matches no_extract pattern", file_entry.path);
+                continue;
+            }
+
+            // Check if file should be preserved (no_upgrade)
             let dest = self.root.join(file_entry.path.trim_start_matches('/'));
+            if self.options.should_preserve(&file_entry.path) && dest.exists() {
+                tracing::debug!("Preserving {}: matches no_upgrade pattern", file_entry.path);
+                continue;
+            }
+
+            let src = extract_dir.join(file_entry.path.trim_start_matches('/'));
 
             // Backup existing file if it exists (only for regular files, not directories)
             if dest.exists() && dest.is_file() {
@@ -938,9 +989,13 @@ impl Transaction {
             package: info.name.clone(),
         });
 
-        // Add files to database (skip directories - they're shared between packages)
+        // Add files to database (skip directories and no_extract files)
         for file_entry in &files {
             if file_entry.file_type == FileType::Directory {
+                continue;
+            }
+            // Don't track files that were skipped due to no_extract
+            if self.options.should_skip_extract(&file_entry.path) {
                 continue;
             }
             let pkg_file = PackageFile {
@@ -1278,11 +1333,12 @@ impl TransactionBuilder {
     }
 
     /// Add an install operation
-    pub fn install(mut self, package: &str, version: &str, archive: &Path) -> Self {
+    pub fn install(mut self, package: &str, version: &str, archive: &Path, reason: InstallReason) -> Self {
         self.operations.push(Operation::Install {
             package: package.to_string(),
             version: version.to_string(),
             archive_path: archive.to_path_buf(),
+            install_reason: reason,
         });
         self
     }
@@ -1315,8 +1371,9 @@ impl TransactionBuilder {
                     package,
                     version,
                     archive_path,
+                    install_reason,
                 } => {
-                    tx.install(&package, &version, &archive_path);
+                    tx.install(&package, &version, &archive_path, install_reason);
                 }
                 Operation::Remove { package } => {
                     tx.remove(&package);
@@ -1349,8 +1406,9 @@ impl TransactionBuilder {
                     package,
                     version,
                     archive_path,
+                    install_reason,
                 } => {
-                    tx.install(&package, &version, &archive_path);
+                    tx.install(&package, &version, &archive_path, install_reason);
                 }
                 Operation::Remove { package } => {
                     tx.remove(&package);
@@ -1379,6 +1437,7 @@ mod tests {
             package: "foo".to_string(),
             version: "1.0".to_string(),
             archive_path: PathBuf::from("/tmp/foo.rookpkg"),
+            install_reason: InstallReason::Explicit,
         };
         assert_eq!(install.package_name(), "foo");
 
@@ -1410,8 +1469,8 @@ mod tests {
         // Add some operations using the builder pattern
         let archive = root.join("test.rookpkg");
         let builder = builder
-            .install("foo", "1.0.0", &archive)
-            .install("bar", "2.0.0", &archive)
+            .install("foo", "1.0.0", &archive, InstallReason::Explicit)
+            .install("bar", "2.0.0", &archive, InstallReason::Dependency)
             .remove("baz")
             .upgrade("qux", "1.0.0", "2.0.0", &archive);
 

@@ -13,6 +13,7 @@ use crate::config::Config;
 use crate::database::Database;
 use crate::delta::DeltaBuilder;
 use crate::download::compute_sha256;
+use crate::package::InstallReason;
 use crate::repository::{PackageEntry, PackageIndex};
 use crate::signing::{self, sign_file};
 use crate::spec::PackageSpec;
@@ -368,7 +369,8 @@ pub fn run(
         let mut tx = Transaction::new(root, db)?;
 
         let version = format!("{}-{}", spec.package.version, spec.package.release);
-        tx.install(&spec.package.name, &version, &package_path);
+        // Build and install is always explicit
+        tx.install(&spec.package.name, &version, &package_path, InstallReason::Explicit);
 
         match tx.execute() {
             Ok(()) => {
