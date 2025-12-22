@@ -2801,14 +2801,17 @@ create_efi_boot_image() {
     fi
 
     # Create grub.cfg for EFI boot
+    # Using console terminal instead of gfxterm to avoid font issues
     cat > "$BUILD/iso/boot/grub/grub.cfg" << 'GRUBCFG'
+# Search for the ISO filesystem by label
+search --no-floppy --set=root --label ROOKERY_LIVE
+
 set default=0
 set timeout=5
 
-insmod all_video
-insmod gfxterm
-set gfxmode=auto
-terminal_output gfxterm
+# Use text console - no fonts required
+terminal_output console
+terminal_input console
 
 menuentry "Rookery OS Live" {
     linux /boot/vmlinuz rw init=/usr/lib/systemd/systemd net.ifnames=0 biosdevname=0 console=tty0
@@ -2827,13 +2830,14 @@ menuentry "Rookery OS - Recovery" {
 GRUBCFG
 
     # Create GRUB EFI binary (following Arch Linux archiso approach)
+    # Full module list from archiso for maximum compatibility
     log_info "Building GRUB EFI bootloader..."
     grub-mkstandalone \
         -O x86_64-efi \
         -o "$efi_dir/BOOTX64.EFI" \
         --locales="en@quot" \
         --themes="" \
-        --modules="part_gpt part_msdos fat iso9660 linux normal search search_fs_uuid search_label" \
+        --modules="all_video at_keyboard boot btrfs cat chain configfile echo efifwsetup efinet ext2 fat font gfxmenu gfxterm gzio halt hfsplus iso9660 jpeg keylayouts linux loadenv loopback lsefi lsefimmap minicmd normal ntfs part_apple part_gpt part_msdos png read reboot regexp search search_fs_file search_fs_uuid search_label serial sleep usb usbserial_common video xfs zstd" \
         "boot/grub/grub.cfg=$BUILD/iso/boot/grub/grub.cfg"
 
     # Create FAT EFI image using mtools
