@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 use crate::archive::{PackageArchiveReader, FileType};
 use crate::config::{HooksConfig, OptionsConfig};
 use crate::database::Database;
+use crate::download::compute_sha256;
 use crate::hooks::{HookContext, HookEvent, HookManager, HookOperation, HookResult};
 use crate::package::{InstalledPackage, InstallReason, PackageFile};
 
@@ -645,15 +646,24 @@ impl Transaction {
             }
         }
 
+        // Compute package checksum
+        let checksum = compute_sha256(archive_path)
+            .unwrap_or_else(|e| {
+                tracing::warn!("Failed to compute checksum for {}: {}", archive_path.display(), e);
+                String::new()
+            });
+
         // Add to database
+        // Note: spec is left empty as the package archive doesn't include the original .rook spec file.
+        // This could be added to the package format in the future if needed for rebuilding.
         let pkg = InstalledPackage {
             name: info.name.clone(),
             version: info.version.clone(),
             release: info.release,
             install_date: chrono::Utc::now().timestamp(),
             size_bytes: info.installed_size,
-            checksum: String::new(), // TODO: compute package checksum
-            spec: String::new(), // TODO: store original spec
+            checksum,
+            spec: String::new(),
             install_reason,
         };
         let pkg_id = self.db.add_package(&pkg)?;
@@ -969,6 +979,13 @@ impl Transaction {
             }
         }
 
+        // Compute package checksum
+        let checksum = compute_sha256(archive_path)
+            .unwrap_or_else(|e| {
+                tracing::warn!("Failed to compute checksum for {}: {}", archive_path.display(), e);
+                String::new()
+            });
+
         // Add to database (upgrades keep the original install reason)
         // Get the old install reason if upgrading
         let old_reason = self.db.get_package(&info.name)?
@@ -980,7 +997,7 @@ impl Transaction {
             release: info.release,
             install_date: chrono::Utc::now().timestamp(),
             size_bytes: info.installed_size,
-            checksum: String::new(),
+            checksum,
             spec: String::new(),
             install_reason: old_reason,
         };
