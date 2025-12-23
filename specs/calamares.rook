@@ -57,6 +57,7 @@ parted = ">= 3.6"
 os-prober = ">= 1.0"
 squashfs-tools = ">= 4.0"
 rsync = ">= 3.0"
+gptfdisk = ">= 1.0"
 
 [optional_depends]
 
@@ -141,16 +142,10 @@ style:
     sidebarTextHighlight: "#ffffff"
 BRANDING
 
-# Create main settings
+# Create main settings (matching Manjaro's working configuration)
 cat > $ROOKPKG_DESTDIR/etc/calamares/settings.conf << 'SETTINGS'
 ---
-modules-search: [ local, /usr/lib/calamares/modules ]
-
-instances:
-- id:       rootfs
-  module:   unpackfs
-  config:   unpackfs-rootfs.conf
-  weight:   50
+modules-search: [ local ]
 
 sequence:
 - show:
@@ -163,19 +158,19 @@ sequence:
 - exec:
   - partition
   - mount
-  - unpackfs@rootfs
+  - unpackfs
+  - networkcfg
   - machineid
-  - fstab
   - locale
   - keyboard
   - localecfg
+  - fstab
   - users
   - displaymanager
-  - networkcfg
   - hwclock
   - services-systemd
-  - bootloader
   - grubcfg
+  - bootloader
   - umount
 - show:
   - finished
@@ -183,11 +178,14 @@ sequence:
 branding: rookeryos
 prompt-install: true
 dont-chroot: false
+disable-cancel: false
+disable-cancel-during-exec: true
+quit-at-end: false
 SETTINGS
 
-# Create unpackfs config for live installation
+# Create unpackfs config for live installation (default module, not instance)
 # The ISO is mounted at /run/rootfsbase, and the squashfs is at LiveOS/rootfs.img
-cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs-rootfs.conf << 'UNPACKFS'
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs.conf << 'UNPACKFS'
 ---
 unpack:
     - source: "/run/rootfsbase/LiveOS/rootfs.img"
@@ -274,14 +272,16 @@ mountOptions:
 efiMountOptions: umask=0077
 FSTAB
 
-# Create bootloader module config (handles GRUB installation)
+# Create bootloader module config (matching Manjaro's working configuration)
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/bootloader.conf << 'BOOTLOADER'
 ---
 efiBootLoader: "grub"
-kernel: "/boot/vmlinuz"
-img: "/boot/initramfs.img"
-fallback: "/boot/initramfs.img"
-timeout: 5
+kernel: "/boot/vmlinuz-linux-grsec"
+img: "/boot/initramfs-linux-grsec.img"
+fallback: "/boot/initramfs-linux-grsec-fallback.img"
+timeout: "10"
+kernelLine: ", with linux-grsec"
+fallbackKernelLine: ", with linux-grsec (fallback initramfs)"
 grubInstall: "grub-install"
 grubMkconfig: "grub-mkconfig"
 grubCfg: "/boot/grub/grub.cfg"
@@ -293,24 +293,20 @@ BOOTLOADER
 # Create grubcfg module config
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/grubcfg.conf << 'GRUBCFG'
 ---
-grubInstall: "grub-install"
-grubMkconfig: "grub-mkconfig"
-grubCfg: "/boot/grub/grub.cfg"
-grubProbe: "grub-probe"
-efiBootMgr: "efibootmgr"
-installEFIFallback: true
+# Disable initramfs regeneration - Rookery OS uses pre-built initramfs
+# The grubcfg module looks for dracut/mkinitcpio/plymouth but we don't use those
+dontChroot: false
+# These settings control what gets written to /etc/default/grub
+keepDistributor: false
+distributor: "Rookery_OS"
 GRUBCFG
 
-# Create machineid module config
+# Create machineid module config (matching Manjaro's working configuration)
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/machineid.conf << 'MACHINEID'
 ---
 systemd: true
-systemd-style: blank
-dbus: false
-dbus-symlink: false
-entropy-copy: false
-entropy-files:
-    - /var/lib/systemd/random-seed
+dbus: true
+symlink: true
 MACHINEID
 
 # Create services-systemd module config
@@ -329,9 +325,11 @@ targets:
     mandatory: true
 SERVICES
 
-# Create mount module config
+# Create mount module config (matching Manjaro's working configuration)
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/mount.conf << 'MOUNT'
 ---
+# Extra filesystems to mount in the target chroot
+# This matches Manjaro's working configuration exactly
 extraMounts:
     - device: proc
       fs: proc
@@ -341,13 +339,20 @@ extraMounts:
       mountPoint: /sys
     - device: /dev
       mountPoint: /dev
-      options: bind
+      options: [ bind ]
+    - device: devpts
+      fs: devpts
+      mountPoint: /dev/pts
     - device: tmpfs
       fs: tmpfs
       mountPoint: /run
     - device: /run/udev
       mountPoint: /run/udev
-      options: bind
+      options: [ bind ]
+    - device: efivarfs
+      fs: efivarfs
+      mountPoint: /sys/firmware/efi/efivars
+      efi: true
 btrfsSubvolumes:
     - mountPoint: /
       subvolume: /@
@@ -360,27 +365,20 @@ btrfsSubvolumes:
 btrfsSwapSubvol: /@swap
 MOUNT
 
-# Create partition module config
+# Create partition module config (matching Manjaro's working configuration)
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/partition.conf << 'PARTITION'
 ---
 efiSystemPartition: "/boot/efi"
-efiSystemPartitionSize: 512M
-efiSystemPartitionName: "EFI"
 userSwapChoices:
     - none
     - small
     - suspend
     - file
-drawNestedPartitions: false
 alwaysShowPartitionLabels: true
-allowManualPartitioning: true
 initialPartitioningChoice: erase
-initialSwapChoice: small
+initialSwapChoice: none
 defaultFileSystemType: "ext4"
-availableFileSystemTypes:
-    - ext4
-    - btrfs
-    - xfs
+availableFileSystemTypes: ["ext4", "btrfs", "xfs"]
 PARTITION
 
 # Create finished module config
@@ -413,7 +411,38 @@ Rectangle {
 }
 SLIDE
 
-# Create desktop entry for launching Calamares
+# Create calamares_polkit wrapper script (matching Manjaro's approach)
+# This wrapper uses pkexec and passes critical environment variables
+# that are needed for D-Bus session communication and Qt/KDE theming
+cat > $ROOKPKG_DESTDIR/usr/bin/calamares_polkit << 'WRAPPER'
+#!/bin/bash
+# Calamares polkit wrapper for Rookery OS
+# This script ensures proper environment variable passing when running as root
+
+if [ "$(which pkexec)" ]; then
+    pkexec --disable-internal-agent env \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        DISPLAY="$DISPLAY" \
+        HOME="$HOME" \
+        KDE_FULL_SESSION="$KDE_FULL_SESSION" \
+        KDE_SESSION_VERSION="$KDE_SESSION_VERSION" \
+        QT_STYLE_OVERRIDE="$QT_STYLE_OVERRIDE" \
+        QT_QPA_PLATFORMTHEME="$QT_QPA_PLATFORMTHEME" \
+        QT_PLUGIN_PATH="$QT_PLUGIN_PATH" \
+        QML_IMPORT_PATH="$QML_IMPORT_PATH" \
+        QML2_IMPORT_PATH="$QML2_IMPORT_PATH" \
+        XAUTHORITY="$XAUTHORITY" \
+        XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
+        XDG_SESSION_TYPE="$XDG_SESSION_TYPE" \
+        WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+        "/usr/bin/calamares" "-D6" "$@"
+else
+    /usr/bin/calamares "-D6" "$@"
+fi
+WRAPPER
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/calamares_polkit
+
+# Create desktop entry for launching Calamares (using the wrapper)
 mkdir -p $ROOKPKG_DESTDIR/usr/share/applications
 cat > $ROOKPKG_DESTDIR/usr/share/applications/calamares.desktop << 'DESKTOP'
 [Desktop Entry]
@@ -422,7 +451,7 @@ Version=1.0
 Name=Install Rookery OS
 GenericName=System Installer
 Comment=Install Rookery OS to your computer
-Exec=pkexec calamares
+Exec=/usr/bin/calamares_polkit %f
 Icon=calamares
 Terminal=false
 Categories=System;
@@ -453,6 +482,7 @@ POLKIT
 
 [files]
 "usr/bin/calamares" = { mode = 755 }
+"usr/bin/calamares_polkit" = { mode = 755 }
 "usr/lib/calamares/" = {}
 "usr/share/calamares/" = {}
 "usr/share/applications/calamares.desktop" = {}
@@ -462,7 +492,7 @@ POLKIT
 "etc/calamares/settings.conf" = {}
 "etc/calamares/branding/rookeryos/branding.desc" = {}
 "etc/calamares/branding/rookeryos/slide1.qml" = {}
-"etc/calamares/modules/unpackfs-rootfs.conf" = {}
+"etc/calamares/modules/unpackfs.conf" = {}
 "etc/calamares/modules/welcome.conf" = {}
 "etc/calamares/modules/locale.conf" = {}
 "etc/calamares/modules/keyboard.conf" = {}

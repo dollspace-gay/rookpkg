@@ -1,0 +1,99 @@
+[package]
+name = "dosfstools"
+version = "4.2"
+release = 1
+summary = "DOS filesystem utilities"
+description = """
+Utilities for creating and checking MS-DOS FAT filesystems.
+Includes mkfs.fat (mkfs.vfat), fsck.fat, and fatlabel.
+Required for creating EFI system partitions.
+"""
+homepage = "https://github.com/dosfstools/dosfstools"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/dosfstools/dosfstools/releases/download/v4.2/dosfstools-4.2.tar.gz", sha256 = "64926eebf90092dca21b14259a5301b7b98e7b1943e8a201c7d726084809b527" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf dosfstools-*
+tar xf $ROOKPKG_SOURCES/dosfstools-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/dosfstools-*
+./configure --prefix=/usr \
+            --sbindir=/usr/sbin \
+            --mandir=/usr/share/man \
+            --docdir=/usr/share/doc/dosfstools \
+            --enable-compat-symlinks
+"""
+
+build = """
+cd $ROOKPKG_BUILD/dosfstools-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/dosfstools-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/dosfstools-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/sbin/mkfs.fat" = { mode = 755 }
+"usr/sbin/mkfs.vfat" = { mode = 755 }
+"usr/sbin/fsck.fat" = { mode = 755 }
+"usr/sbin/fsck.vfat" = { mode = 755 }
+"usr/sbin/fatlabel" = { mode = 755 }
+"usr/share/man/" = {}
+"usr/share/doc/dosfstools/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "4.2"
+date = "2025-12-23"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for EFI partition creation in Calamares"
+]
+
+[metadata]
+keywords = ["dosfstools", "fat", "vfat", "fat32", "efi", "filesystem"]
+categories = ["system", "filesystem"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

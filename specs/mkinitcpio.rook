@@ -1,0 +1,158 @@
+[package]
+name = "mkinitcpio"
+version = "39.2"
+release = 1
+summary = "Modular initramfs image creation utility"
+description = """
+mkinitcpio is a modular initramfs image creation utility for Linux.
+It creates an initial ramdisk environment for booting the Linux kernel.
+Required for Calamares installer to generate initramfs on installed systems.
+"""
+homepage = "https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio"
+license = "GPL-2.0-only"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.archlinux.org/archlinux/mkinitcpio/mkinitcpio/-/archive/v39.2/mkinitcpio-v39.2.tar.gz", sha256 = "64b0bbab4755642e523e6c6678f1c5666a2704e4580fafc1171af3a2f643fa3e" }
+
+[patches]
+
+[build_depends]
+make = ">= 4.0"
+
+[depends]
+bash = ">= 5.0"
+coreutils = ">= 8.0"
+kmod = ">= 30"
+util-linux = ">= 2.39"
+zstd = ">= 1.5"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf mkinitcpio-*
+tar xf $ROOKPKG_SOURCES/mkinitcpio-*.tar.gz
+"""
+
+configure = """
+# mkinitcpio uses a simple Makefile, no configure
+"""
+
+build = """
+# mkinitcpio is mostly shell scripts, nothing to compile
+"""
+
+check = """
+# Skip tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/mkinitcpio-*
+
+# Install manually since make install needs a2x for man pages
+install -dm755 $ROOKPKG_DESTDIR/usr/bin
+install -dm755 $ROOKPKG_DESTDIR/usr/lib/initcpio/{hooks,install,udev}
+install -dm755 $ROOKPKG_DESTDIR/usr/share/mkinitcpio
+
+install -m755 mkinitcpio $ROOKPKG_DESTDIR/usr/bin/mkinitcpio
+install -m755 lsinitcpio $ROOKPKG_DESTDIR/usr/bin/lsinitcpio
+
+# Install hooks
+cp -a hooks/* $ROOKPKG_DESTDIR/usr/lib/initcpio/hooks/ 2>/dev/null || true
+cp -a install/* $ROOKPKG_DESTDIR/usr/lib/initcpio/install/ 2>/dev/null || true
+cp -a udev/* $ROOKPKG_DESTDIR/usr/lib/initcpio/udev/ 2>/dev/null || true
+
+# Install library functions
+install -m644 init_functions $ROOKPKG_DESTDIR/usr/lib/initcpio/
+install -m644 functions $ROOKPKG_DESTDIR/usr/lib/initcpio/
+
+# Install init script
+install -m755 init $ROOKPKG_DESTDIR/usr/lib/initcpio/
+
+# Install shutdown script if present
+[ -f shutdown ] && install -m755 shutdown $ROOKPKG_DESTDIR/usr/lib/initcpio/ || true
+
+# Create a basic mkinitcpio.conf for Rookery OS
+mkdir -p $ROOKPKG_DESTDIR/etc
+cat > $ROOKPKG_DESTDIR/etc/mkinitcpio.conf << 'EOF'
+# mkinitcpio configuration for Rookery OS
+# See mkinitcpio(8) for details
+
+# MODULES - Modules to load before hooks
+MODULES=()
+
+# BINARIES - Binaries to include in the initramfs
+BINARIES=()
+
+# FILES - Files to include in the initramfs
+FILES=()
+
+# HOOKS - Hooks to run during initramfs creation
+# Order matters: base and udev should come first
+HOOKS=(base udev autodetect modconf kms keyboard keymap block filesystems fsck)
+
+# COMPRESSION - Compression algorithm for initramfs
+COMPRESSION="zstd"
+COMPRESSION_OPTIONS=(-3)
+EOF
+
+# Create mkinitcpio preset for linux-grsec
+mkdir -p $ROOKPKG_DESTDIR/etc/mkinitcpio.d
+cat > $ROOKPKG_DESTDIR/etc/mkinitcpio.d/linux-grsec.preset << 'EOF'
+# mkinitcpio preset file for the 'linux-grsec' package
+
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-6.6.102-grsec"
+
+PRESETS=('default' 'fallback')
+
+default_image="/boot/initramfs-linux-grsec.img"
+
+fallback_image="/boot/initramfs-linux-grsec-fallback.img"
+fallback_options="-S autodetect"
+EOF
+"""
+
+[files]
+"usr/bin/mkinitcpio" = { mode = 755 }
+"usr/bin/lsinitcpio" = { mode = 755 }
+"usr/lib/initcpio/" = {}
+"usr/share/mkinitcpio/" = {}
+"etc/mkinitcpio.conf" = {}
+"etc/mkinitcpio.d/" = {}
+
+[config_files]
+"etc/mkinitcpio.conf" = {}
+"etc/mkinitcpio.d/linux-grsec.preset" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "39.2"
+date = "2025-12-23"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for Calamares initramfs generation"
+]
+
+[metadata]
+keywords = ["mkinitcpio", "initramfs", "boot", "kernel"]
+categories = ["system", "boot"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

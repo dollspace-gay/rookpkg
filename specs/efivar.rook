@@ -1,0 +1,97 @@
+[package]
+name = "efivar"
+version = "38"
+release = 1
+summary = "Tools and libraries to manipulate EFI variables"
+description = """
+efivar provides a simple command line interface to the UEFI variable facility,
+as well as a library (libefivar) which can be used by other programs to access
+UEFI variables. Required by efibootmgr.
+"""
+homepage = "https://github.com/rhboot/efivar"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/rhboot/efivar/releases/download/38/efivar-38.tar.bz2", sha256 = "f018ed6e49c5f1c16d336d9fd7687ce87023276591921db1e49a314ad6515349" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+pkgconf = ">= 1.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf efivar-*
+tar xf $ROOKPKG_SOURCES/efivar-*.tar.bz2
+"""
+
+configure = """
+# efivar uses a simple Makefile, no configure script
+"""
+
+build = """
+cd $ROOKPKG_BUILD/efivar-*
+# Build without docs (needs mandoc)
+make -j$ROOKPKG_JOBS CFLAGS="-O2" libdir=/usr/lib bindir=/usr/bin SUBDIRS="src"
+"""
+
+check = """
+cd $ROOKPKG_BUILD/efivar-*
+make test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/efivar-*
+# Install without docs
+make DESTDIR=$ROOKPKG_DESTDIR libdir=/usr/lib bindir=/usr/bin SUBDIRS="src" install
+"""
+
+[files]
+"usr/bin/efivar" = { mode = 755 }
+"usr/lib/libefivar.so*" = { mode = 755 }
+"usr/lib/libefiboot.so*" = { mode = 755 }
+"usr/lib/libefivar.a" = {}
+"usr/lib/libefiboot.a" = {}
+"usr/lib/pkgconfig/" = {}
+"usr/include/efivar/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "38"
+date = "2025-12-23"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for efibootmgr and UEFI boot management"
+]
+
+[metadata]
+keywords = ["efivar", "uefi", "efi", "boot", "firmware"]
+categories = ["system", "firmware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

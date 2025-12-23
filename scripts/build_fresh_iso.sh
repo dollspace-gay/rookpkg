@@ -1301,6 +1301,30 @@ EOF
         log_info "Enabled cups.socket"
     fi
 
+    # Enable UDisks2 - CRITICAL for Calamares/KPMcore disk management
+    # Without this, Solid/KDE can't enumerate block devices properly
+    if [ -f "$rootfs/usr/lib/systemd/system/udisks2.service" ]; then
+        ln -sf /usr/lib/systemd/system/udisks2.service "$rootfs/etc/systemd/system/graphical.target.wants/"
+        log_info "Enabled udisks2.service (required for disk management)"
+    fi
+
+    # Enable D-Bus system daemon - CRITICAL for kpmcore partition helper
+    # kpmcore_externalcommand uses D-Bus system bus to run privileged commands
+    if [ -f "$rootfs/usr/lib/systemd/system/dbus.service" ]; then
+        mkdir -p "$rootfs/etc/systemd/system/multi-user.target.wants"
+        ln -sf /usr/lib/systemd/system/dbus.service "$rootfs/etc/systemd/system/multi-user.target.wants/"
+        log_info "Enabled dbus.service (required for kpmcore partition operations)"
+    fi
+    if [ -f "$rootfs/usr/lib/systemd/system/dbus.socket" ]; then
+        mkdir -p "$rootfs/etc/systemd/system/sockets.target.wants"
+        ln -sf /usr/lib/systemd/system/dbus.socket "$rootfs/etc/systemd/system/sockets.target.wants/"
+        log_info "Enabled dbus.socket"
+    fi
+
+    # Create hwclock directory for Calamares hwclock module
+    mkdir -p "$rootfs/var/lib/hwclock"
+    log_info "Created /var/lib/hwclock directory"
+
     # Create polkit rule to allow sddm to manage sessions
     mkdir -p "$rootfs/etc/polkit-1/rules.d"
     cat > "$rootfs/etc/polkit-1/rules.d/50-sddm.rules" << 'EOF'
@@ -1625,8 +1649,8 @@ EOF
 
     # Fix unpackfs config to point to correct squashfs location
     # The ISO is mounted at /run/rootfsbase, squashfs is at LiveOS/rootfs.img
-    # Using unpackfs (Python version) with nested config format
-    cat > "$rootfs/etc/calamares/modules/unpackfs-rootfs.conf" << 'EOF'
+    # Using default unpackfs.conf (NOT an instance) - matches Manjaro exactly
+    cat > "$rootfs/etc/calamares/modules/unpackfs.conf" << 'EOF'
 ---
 unpack:
     - source: "/run/rootfsbase/LiveOS/rootfs.img"
@@ -1634,16 +1658,11 @@ unpack:
       destination: ""
 EOF
 
-    # Create proper settings.conf with correct module names
+    # Create settings.conf matching Manjaro's EXACTLY - no instances, no shellprocess
+    # Manjaro uses modules directly without custom instances
     cat > "$rootfs/etc/calamares/settings.conf" << 'EOF'
 ---
-modules-search: [ local, /usr/lib/calamares/modules ]
-
-instances:
-- id:       rootfs
-  module:   unpackfs
-  config:   unpackfs-rootfs.conf
-  weight:   50
+modules-search: [ local ]
 
 sequence:
 - show:
@@ -1656,19 +1675,19 @@ sequence:
 - exec:
   - partition
   - mount
-  - unpackfs@rootfs
+  - unpackfs
+  - networkcfg
   - machineid
-  - fstab
   - locale
   - keyboard
   - localecfg
+  - fstab
   - users
   - displaymanager
-  - networkcfg
   - hwclock
   - services-systemd
-  - bootloader
   - grubcfg
+  - bootloader
   - umount
 - show:
   - finished
@@ -1676,6 +1695,9 @@ sequence:
 branding: rookeryos
 prompt-install: true
 dont-chroot: false
+disable-cancel: false
+disable-cancel-during-exec: true
+quit-at-end: false
 EOF
 
     # Create bootloader module config
@@ -1694,25 +1716,12 @@ efiBootMgr: "efibootmgr"
 installEFIFallback: true
 EOF
 
-    # Create machineid module config
-    # Based on Calamares upstream defaults and Manjaro configuration
-    # Using systemd-style: blank so systemd generates UUID on first boot
-    # dbus: false because modern systemd handles this automatically
-    # This avoids chroot issues with finding dbus-uuidgen
+    # Create machineid module config - matches Manjaro exactly
     cat > "$rootfs/etc/calamares/modules/machineid.conf" << 'EOF'
 ---
-# Write /etc/machine-id as empty file, systemd will populate on first boot
 systemd: true
-systemd-style: blank
-
-# Don't create separate dbus machine-id (systemd handles it)
-dbus: false
-dbus-symlink: false
-
-# Create entropy files for random seed
-entropy-copy: false
-entropy-files:
-    - /var/lib/systemd/random-seed
+dbus: true
+symlink: true
 EOF
 
     # Create services-systemd module config
@@ -1731,7 +1740,8 @@ targets:
     mandatory: true
 EOF
 
-    # Create mount module config
+    # Create mount module config - matches Manjaro's working configuration
+    # Must include /dev/pts for grub-install to work in chroot
     cat > "$rootfs/etc/calamares/modules/mount.conf" << 'EOF'
 ---
 extraMounts:
@@ -1743,13 +1753,20 @@ extraMounts:
       mountPoint: /sys
     - device: /dev
       mountPoint: /dev
-      options: bind
+      options: [ bind ]
+    - device: devpts
+      fs: devpts
+      mountPoint: /dev/pts
     - device: tmpfs
       fs: tmpfs
       mountPoint: /run
     - device: /run/udev
       mountPoint: /run/udev
-      options: bind
+      options: [ bind ]
+    - device: efivarfs
+      fs: efivarfs
+      mountPoint: /sys/firmware/efi/efivars
+      efi: true
 btrfsSubvolumes:
     - mountPoint: /
       subvolume: /@
@@ -1762,27 +1779,20 @@ btrfsSubvolumes:
 btrfsSwapSubvol: /@swap
 EOF
 
-    # Create partition module config
+    # Create partition module config - matches Manjaro EXACTLY
     cat > "$rootfs/etc/calamares/modules/partition.conf" << 'EOF'
 ---
 efiSystemPartition: "/boot/efi"
-efiSystemPartitionSize: 512M
-efiSystemPartitionName: "EFI"
 userSwapChoices:
     - none
     - small
     - suspend
     - file
-drawNestedPartitions: false
 alwaysShowPartitionLabels: true
-allowManualPartitioning: true
 initialPartitioningChoice: erase
-initialSwapChoice: small
+initialSwapChoice: none
 defaultFileSystemType: "ext4"
-availableFileSystemTypes:
-    - ext4
-    - btrfs
-    - xfs
+availableFileSystemTypes: ["ext4", "btrfs", "xfs"]
 EOF
 
     # Create displaymanager module config
@@ -1884,6 +1894,15 @@ efiBootMgr: "efibootmgr"
 installEFIFallback: true
 EOF
 
+    # Add udev rule to set SYSTEMD_READY=1 for block devices
+    # This helps prevent race conditions with grsecurity kernel
+    mkdir -p "$rootfs/etc/udev/rules.d"
+    cat > "$rootfs/etc/udev/rules.d/99-block-ready.rules" << 'EOF'
+# Mark block devices as ready for systemd immediately
+# Helps prevent race conditions during partitioning with grsecurity kernel
+SUBSYSTEM=="block", ENV{SYSTEMD_READY}="1"
+EOF
+
     # Create branding if it doesn't exist
     if [ ! -f "$rootfs/etc/calamares/branding/rookeryos/branding.desc" ]; then
         cat > "$rootfs/etc/calamares/branding/rookeryos/branding.desc" << 'EOF'
@@ -1953,7 +1972,83 @@ live ALL=(ALL) NOPASSWD: ALL
 EOF
     chmod 440 "$rootfs/etc/sudoers.d/live-user"
 
-    # Override the desktop entry to use sudo instead of pkexec
+    # CRITICAL: Add polkit rules for live session
+    # KPMcore (used by Calamares) uses polkit for disk operations, NOT sudo
+    # Without these rules, disk operations fail silently even when run as root
+    mkdir -p "$rootfs/etc/polkit-1/rules.d"
+
+    # Allow live user to do anything without password (like Manjaro does)
+    cat > "$rootfs/etc/polkit-1/rules.d/49-nopasswd-live.rules" << 'EOF'
+/* Allow live user to perform any action without authentication
+ * This is required for Calamares/KPMcore disk operations
+ */
+polkit.addRule(function(action, subject) {
+    if (subject.user == "live") {
+        return polkit.Result.YES;
+    }
+});
+EOF
+
+    # Allow Calamares specifically
+    cat > "$rootfs/etc/polkit-1/rules.d/49-nopasswd-calamares.rules" << 'EOF'
+/* Allow Calamares to run without password authentication */
+polkit.addRule(function(action, subject) {
+    if (action.id == "com.github.calamares.calamares.pkexec.run") {
+        return polkit.Result.YES;
+    }
+});
+
+/* Allow KPMcore disk operations without authentication */
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.kde.kpmcore.externalcommand.init") {
+        return polkit.Result.YES;
+    }
+});
+
+/* Allow UDisks2 disk management operations */
+polkit.addRule(function(action, subject) {
+    if (action.id.indexOf("org.freedesktop.udisks2.") == 0) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+    log_info "Added polkit rules for live user and Calamares"
+
+    # Ensure calamares_polkit wrapper exists and desktop file uses it
+    # This wrapper properly passes D-Bus session environment for KPMcore polkit auth
+    if [ ! -f "$rootfs/usr/bin/calamares_polkit" ]; then
+        cat > "$rootfs/usr/bin/calamares_polkit" << 'WRAPPER'
+#!/bin/bash
+# Calamares polkit wrapper for Rookery OS
+# This script ensures proper environment variable passing when running as root
+# Critical for KPMcore D-Bus communication with polkitd
+
+if [ "$(which pkexec)" ]; then
+    pkexec --disable-internal-agent env \
+        DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+        DISPLAY="$DISPLAY" \
+        HOME="$HOME" \
+        KDE_FULL_SESSION="$KDE_FULL_SESSION" \
+        KDE_SESSION_VERSION="$KDE_SESSION_VERSION" \
+        QT_STYLE_OVERRIDE="$QT_STYLE_OVERRIDE" \
+        QT_QPA_PLATFORMTHEME="$QT_QPA_PLATFORMTHEME" \
+        QT_PLUGIN_PATH="$QT_PLUGIN_PATH" \
+        QML_IMPORT_PATH="$QML_IMPORT_PATH" \
+        QML2_IMPORT_PATH="$QML2_IMPORT_PATH" \
+        XAUTHORITY="$XAUTHORITY" \
+        XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
+        XDG_SESSION_TYPE="$XDG_SESSION_TYPE" \
+        WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+        "/usr/bin/calamares" "-D6" "$@"
+else
+    /usr/bin/calamares "-D6" "$@"
+fi
+WRAPPER
+        chmod 755 "$rootfs/usr/bin/calamares_polkit"
+        log_info "Created calamares_polkit wrapper script"
+    fi
+
+    # Update desktop entry to use the polkit wrapper (preserves D-Bus session)
     mkdir -p "$rootfs/usr/share/applications"
     cat > "$rootfs/usr/share/applications/calamares.desktop" << 'EOF'
 [Desktop Entry]
@@ -1962,7 +2057,7 @@ Version=1.0
 Name=Install Rookery OS
 GenericName=System Installer
 Comment=Install Rookery OS to your computer
-Exec=sudo /usr/bin/calamares
+Exec=/usr/bin/calamares_polkit %f
 Icon=calamares
 Terminal=false
 Categories=System;

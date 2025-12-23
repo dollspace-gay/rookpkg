@@ -1,0 +1,93 @@
+[package]
+name = "efibootmgr"
+version = "18"
+release = 1
+summary = "Tool to modify UEFI boot manager"
+description = """
+efibootmgr is a Linux user-space application to modify the Intel Extensible
+Firmware Interface (EFI) Boot Manager. This application can create and destroy
+boot entries, change the boot order, change the next running boot option, and more.
+Required for UEFI installations by Calamares.
+"""
+homepage = "https://github.com/rhboot/efibootmgr"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/rhboot/efibootmgr/releases/download/18/efibootmgr-18.tar.bz2", sha256 = "2b195f912aa353f0d11f21f207684c91460fbc37f9a4f2673e63e5e32d108b10" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+pkgconf = ">= 1.0"
+efivar = ">= 38"
+
+[depends]
+glibc = ">= 2.39"
+efivar = ">= 38"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf efibootmgr-*
+tar xf $ROOKPKG_SOURCES/efibootmgr-*.tar.bz2
+"""
+
+configure = """
+# efibootmgr uses a simple Makefile, no configure script
+"""
+
+build = """
+cd $ROOKPKG_BUILD/efibootmgr-*
+make -j$ROOKPKG_JOBS CFLAGS="-O2 -flto" EFIDIR=rookery EFI_LOADER=grubx64.efi
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/efibootmgr-*
+make DESTDIR=$ROOKPKG_DESTDIR EFIDIR=rookery install
+"""
+
+[files]
+"usr/sbin/efibootmgr" = { mode = 755 }
+"usr/sbin/efibootdump" = { mode = 755 }
+"usr/share/man/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "18"
+date = "2025-12-23"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required for UEFI boot entry management in Calamares"
+]
+
+[metadata]
+keywords = ["efibootmgr", "uefi", "efi", "boot", "firmware", "nvram"]
+categories = ["system", "firmware"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -57,13 +57,69 @@ make mrproper
 make defconfig
 
 # =========================================================================
-# Grsecurity configuration (desktop profile, VM guest)
+# Grsecurity CUSTOM Configuration for Desktop
+# Using manual config instead of auto to avoid desktop-breaking defaults
 # =========================================================================
 scripts/config --enable CONFIG_GRKERNSEC || true
-scripts/config --enable CONFIG_GRKERNSEC_CONFIG_AUTO || true
-scripts/config --enable CONFIG_GRKERNSEC_CONFIG_DESKTOP || true
-scripts/config --enable CONFIG_GRKERNSEC_CONFIG_VIRT_GUEST || true
-scripts/config --enable CONFIG_GRKERNSEC_CONFIG_VIRT_KVM || true
+scripts/config --disable CONFIG_GRKERNSEC_CONFIG_AUTO || true
+scripts/config --enable CONFIG_GRKERNSEC_CONFIG_CUSTOM || true
+
+# Enable sysctl support - CRITICAL for runtime debugging
+scripts/config --enable CONFIG_GRKERNSEC_SYSCTL || true
+scripts/config --enable CONFIG_GRKERNSEC_SYSCTL_ON || true
+
+# =========================================================================
+# Disable "The Breakers" - Features that break desktop functionality
+# =========================================================================
+
+# /proc restrictions - DISABLE (breaks polkit, system monitors, ps aux)
+scripts/config --disable CONFIG_GRKERNSEC_PROC || true
+scripts/config --disable CONFIG_GRKERNSEC_PROC_USER || true
+scripts/config --disable CONFIG_GRKERNSEC_PROC_USERGROUP || true
+scripts/config --disable CONFIG_GRKERNSEC_PROC_ADD || true
+scripts/config --disable CONFIG_GRKERNSEC_PROC_MEMMAP || true
+scripts/config --disable CONFIG_GRKERNSEC_PROC_IPADDR || true
+
+# Sysfs/Debugfs restriction - DISABLE (breaks hardware sensors, GPU drivers)
+scripts/config --disable CONFIG_GRKERNSEC_SYSFS_RESTRICT || true
+
+# Trusted Path Execution - DISABLE (breaks Steam, downloaded scripts, ~/.local)
+scripts/config --disable CONFIG_GRKERNSEC_TPE || true
+scripts/config --disable CONFIG_GRKERNSEC_TPE_ALL || true
+scripts/config --disable CONFIG_GRKERNSEC_TPE_INVERT || true
+
+# Dmesg restriction - DISABLE (helpful for debugging crashes)
+scripts/config --disable CONFIG_GRKERNSEC_DMESG || true
+
+# I/O port restrictions - DISABLE (Xorg needs raw I/O for video cards)
+scripts/config --disable CONFIG_GRKERNSEC_IO || true
+
+# UDEREF - DISABLE (incompatible with Nvidia proprietary drivers)
+scripts/config --disable CONFIG_PAX_UDEREF || true
+
+# =========================================================================
+# PaX Configuration - Disable entirely for desktop compatibility
+# PaX breaks JIT compilers (browsers), and requires at least one feature enabled
+# =========================================================================
+scripts/config --disable CONFIG_PAX || true
+
+# =========================================================================
+# Keep useful hardening that doesn't break desktops
+# =========================================================================
+scripts/config --enable CONFIG_GRKERNSEC_LINK || true
+scripts/config --enable CONFIG_GRKERNSEC_FIFO || true
+scripts/config --enable CONFIG_GRKERNSEC_BRUTE || true
+scripts/config --enable CONFIG_GRKERNSEC_MODHARDEN || true
+scripts/config --enable CONFIG_GRKERNSEC_HIDESYM || true
+scripts/config --enable CONFIG_GRKERNSEC_RANDSTRUCT || true
+scripts/config --enable CONFIG_GRKERNSEC_RANDSTRUCT_PERFORMANCE || true
+
+# Chroot hardening (doesn't affect normal desktop use)
+scripts/config --enable CONFIG_GRKERNSEC_CHROOT || true
+scripts/config --enable CONFIG_GRKERNSEC_CHROOT_MOUNT || true
+scripts/config --enable CONFIG_GRKERNSEC_CHROOT_DOUBLE || true
+scripts/config --enable CONFIG_GRKERNSEC_CHROOT_PIVOT || true
+scripts/config --enable CONFIG_GRKERNSEC_CHROOT_CHDIR || true
 
 # Disable SELinux (grsecurity provides its own RBAC)
 scripts/config --disable CONFIG_SECURITY_SELINUX

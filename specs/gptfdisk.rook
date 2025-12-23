@@ -1,0 +1,121 @@
+[package]
+name = "gptfdisk"
+version = "1.0.10"
+release = 1
+summary = "GPT fdisk - disk partitioning tool for GPT disks"
+description = """
+GPT fdisk is a disk partitioning tool loosely modeled on Linux fdisk,
+but used for modifying GUID Partition Table (GPT) disks. The related
+FixParts utility fixes some common problems on Master Boot Record (MBR)
+disks. The package provides gdisk (interactive), sgdisk (scriptable),
+cgdisk (curses-based), and fixparts utilities.
+
+sgdisk is particularly useful for scripted partitioning and is used by
+KPMcore as a backend for partition management in installers like Calamares.
+"""
+homepage = "https://www.rodsbooks.com/gdisk/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceforge.net/projects/gptfdisk/files/gptfdisk/1.0.10/gptfdisk-1.0.10.tar.gz/download", sha256 = "2abed61bc6d2b9ec498973c0440b8b804b7a72d7144069b5a9209b2ad693a282", filename = "gptfdisk-1.0.10.tar.gz" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+popt = ">= 1.19"
+ncurses = ">= 6.0"
+util-linux = ">= 2.39"
+
+[depends]
+glibc = ">= 2.39"
+popt = ">= 1.19"
+ncurses = ">= 6.0"
+util-linux = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf gptfdisk-*
+tar xf $ROOKPKG_SOURCES/gptfdisk-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gptfdisk-*
+
+# Fix ncurses header location (Rookery OS doesn't use ncursesw subdirectory)
+sed -i 's|ncursesw/||' gptcurses.cc
+
+# Update installation paths to use /usr/sbin instead of /sbin
+sed -i 's|sbin|usr/sbin|' Makefile
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gptfdisk-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gptfdisk-*
+# Skip tests - requires root and real disk devices
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gptfdisk-*
+
+# Install binaries
+install -Dm755 gdisk $ROOKPKG_DESTDIR/usr/sbin/gdisk
+install -Dm755 sgdisk $ROOKPKG_DESTDIR/usr/sbin/sgdisk
+install -Dm755 cgdisk $ROOKPKG_DESTDIR/usr/sbin/cgdisk
+install -Dm755 fixparts $ROOKPKG_DESTDIR/usr/sbin/fixparts
+
+# Install man pages
+install -Dm644 gdisk.8 $ROOKPKG_DESTDIR/usr/share/man/man8/gdisk.8
+install -Dm644 sgdisk.8 $ROOKPKG_DESTDIR/usr/share/man/man8/sgdisk.8
+install -Dm644 cgdisk.8 $ROOKPKG_DESTDIR/usr/share/man/man8/cgdisk.8
+install -Dm644 fixparts.8 $ROOKPKG_DESTDIR/usr/share/man/man8/fixparts.8
+"""
+
+[files]
+"usr/sbin/gdisk" = { mode = 755 }
+"usr/sbin/sgdisk" = { mode = 755 }
+"usr/sbin/cgdisk" = { mode = 755 }
+"usr/sbin/fixparts" = { mode = 755 }
+"usr/share/man/man8/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.0.10"
+date = "2025-12-22"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Provides sgdisk for KPMcore partition backend",
+    "Includes gdisk, sgdisk, cgdisk, and fixparts utilities"
+]
+
+[metadata]
+keywords = ["gptfdisk", "gdisk", "sgdisk", "partition", "gpt", "disk"]
+categories = ["system", "disk", "partitioning"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

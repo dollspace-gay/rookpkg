@@ -106,7 +106,8 @@
       "Bash(wsl -d RookeryOS -u root bash -c 'grep -l \"\"/opt/qt6\\\\|/opt/qt\"\" /home/rookery/specs/*.rook 2>/dev/null')",
       "Bash(wsl -d RookeryOS -u root bash -c 'grep -rn \"\"TODO\\\\|FIXME\\\\|HACK\\\\|XXX\\\\|todo!\\\\|unimplemented!\\\\|stub\"\" /mnt/c/Users/texas/rookpkg/src/ 2>/dev/null')",
       "Bash(wsl --export:*)",
-      "Bash(dir F:RookeryOS-backup.tar)"
+      "Bash(dir F:RookeryOS-backup.tar)",
+      "Bash(wsl -d RookeryOS -u root bash -c 'tar -xOf /home/rookery/specs/kf6-kpmcore-*.rookpkg data.tar.zst | zstd -d | tar -tf - | grep -E \"\"libexec|helper\"\"')"
     ]
   }
 }
