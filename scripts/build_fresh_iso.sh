@@ -37,6 +37,43 @@ cleanup() {
 trap cleanup EXIT
 
 # =============================================================================
+# Step 0: Cleanup Old Builds
+# =============================================================================
+cleanup_old_builds() {
+    log_step "Cleaning up old build directories and ISOs..."
+
+    # Remove old build directories from /tmp (keep only the most recent one if any)
+    local old_builds=$(find /tmp -maxdepth 1 -type d -name "rookery-iso-*" 2>/dev/null)
+    if [ -n "$old_builds" ]; then
+        local count=$(echo "$old_builds" | wc -l)
+        log_info "Removing $count old build directories from /tmp..."
+        rm -rf /tmp/rookery-iso-*
+        log_info "Freed $(du -sh /tmp 2>/dev/null | cut -f1) in /tmp"
+    fi
+
+    # Remove old pkg-extract directories
+    if ls /tmp/pkg-extract-* 1>/dev/null 2>&1; then
+        log_info "Removing old pkg-extract directories..."
+        rm -rf /tmp/pkg-extract-*
+    fi
+
+    # Remove old ISOs from home directory (not from dist/)
+    if ls /home/*.iso 1>/dev/null 2>&1; then
+        log_info "Removing old ISOs from /home/..."
+        rm -f /home/*.iso
+    fi
+
+    # Check available disk space
+    local avail_gb=$(df -BG /tmp | tail -1 | awk '{print $4}' | tr -d 'G')
+    if [ "$avail_gb" -lt 20 ]; then
+        log_warn "Low disk space: ${avail_gb}GB available. Build may fail."
+        log_warn "Consider running: rm -rf /tmp/rookery-iso-* /home/*.iso"
+    else
+        log_info "Disk space OK: ${avail_gb}GB available"
+    fi
+}
+
+# =============================================================================
 # Step 1: Setup Build Environment
 # =============================================================================
 setup_build_env() {
@@ -2927,6 +2964,7 @@ main() {
     log_info "=========================================="
     echo ""
 
+    cleanup_old_builds
     setup_build_env
     install_packages
     fix_lib_symlinks
