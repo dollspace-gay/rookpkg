@@ -1,6 +1,6 @@
 [package]
 name = "firefox"
-version = "140.0.2esr"
+version = "140.0esr"
 release = 1
 summary = "Mozilla Firefox web browser (ESR)"
 description = """
@@ -15,7 +15,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "https://archive.mozilla.org/pub/firefox/releases/140.0.2esr/source/firefox-140.0.2esr.source.tar.xz", sha256 = "FIXME" }
+source0 = { url = "https://ftp.mozilla.org/pub/firefox/releases/140.0esr/source/firefox-140.0esr.source.tar.xz", sha256 = "FIXME" }
 
 [patches]
 
@@ -40,7 +40,6 @@ libnotify = ">= 0.8"
 startup-notification = ">= 0.12"
 alsa-lib = ">= 1.2"
 pulseaudio = ">= 17.0"
-libpng = ">= 1.6"
 libjpeg-turbo = ">= 3.0"
 zlib = ">= 1.3"
 icu = ">= 74.0"
@@ -94,8 +93,8 @@ ac_add_options --with-system-nspr
 ac_add_options --with-system-nss
 ac_add_options --with-system-webp
 ac_add_options --with-system-jpeg
-ac_add_options --with-system-png
 ac_add_options --with-system-zlib
+# Note: system png lacks APNG support, use bundled
 ac_add_options --enable-system-ffi
 ac_add_options --enable-system-pixman
 
@@ -197,7 +196,7 @@ pre_upgrade = ""
 post_upgrade = ""
 
 [[changelog]]
-version = "140.0.2esr"
+version = "140.0esr"
 date = "2025-12-24"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [

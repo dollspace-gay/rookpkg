@@ -4,3 +4,5 @@ qemu_serial.log
 compact_vhdx.ps1
 fix_specs.ps1
 test_pax_flags.py
+/mozbuild/
+.gitignore

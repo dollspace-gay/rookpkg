@@ -1,0 +1,106 @@
+[package]
+name = "unzip"
+version = "6.0"
+release = 29
+summary = "Extraction utility for ZIP archives"
+description = """
+UnZip is an extraction utility for archives compressed in .zip format.
+It is compatible with archives created by PKZIP and WinZip. UnZip can
+also extract files from ZIP archives created by the zip program.
+This version includes Debian's security patches.
+"""
+homepage = "https://infozip.sourceforge.net/UnZip.html"
+license = "Info-ZIP"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "http://deb.debian.org/debian/pool/main/u/unzip/unzip_6.0.orig.tar.gz", sha256 = "036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37" }
+source1 = { url = "http://deb.debian.org/debian/pool/main/u/unzip/unzip_6.0-29.debian.tar.xz", sha256 = "14043e5ea351c02b3bc8676e1e6d20d79b9a690b6d7520e8138ac629cc048417" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf unzip60
+tar xf $ROOKPKG_SOURCES/unzip_6.0.orig.tar.gz
+cd unzip60
+tar xf $ROOKPKG_SOURCES/unzip_6.0-29.debian.tar.xz
+# Apply all Debian patches
+for patch in debian/patches/*.patch; do
+    if [ -f "$patch" ]; then
+        patch -p1 < "$patch"
+    fi
+done
+"""
+
+configure = """
+# No configure script - uses Makefile directly
+"""
+
+build = """
+cd $ROOKPKG_BUILD/unzip60
+make -f unix/Makefile \
+    CC="gcc" \
+    CF="-O2 -Wall -I. -DACORN_FTYPE_NFS -DWILD_STOP_AT_DIR -DLARGE_FILE_SUPPORT -DUNICODE_SUPPORT -DUNICODE_WCHAR -DUTF8_MAYBE_NATIVE -DNO_LCHMOD -DDATE_FORMAT=DF_YMD -DIZ_HAVE_UXUIDGID -DNOMEMCPY -DNO_WORKING_ISPRINT" \
+    unzips
+"""
+
+check = """
+# No test suite
+"""
+
+install = """
+cd $ROOKPKG_BUILD/unzip60
+make -f unix/Makefile prefix=$ROOKPKG_DESTDIR/usr MANDIR=$ROOKPKG_DESTDIR/usr/share/man/man1 install
+"""
+
+[files]
+"usr/bin/funzip" = { mode = 755 }
+"usr/bin/unzip" = { mode = 755 }
+"usr/bin/unzipsfx" = { mode = 755 }
+"usr/bin/zipgrep" = { mode = 755 }
+"usr/bin/zipinfo" = { mode = 755 }
+"usr/share/man/man1/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.0-29"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Uses Debian patches for security and compatibility fixes",
+    "ZIP archive extraction utility"
+]
+
+[metadata]
+keywords = ["unzip", "zip", "archive", "extraction", "compression"]
+categories = ["utilities", "compression"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
