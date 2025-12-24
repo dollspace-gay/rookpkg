@@ -80,7 +80,7 @@ setup_build_env() {
     log_step "Setting up build environment..."
 
     rm -rf "$BUILD"
-    mkdir -p "$BUILD"/{rootfs,iso/boot/syslinux,iso/LiveOS,initramfs}
+    mkdir -p "$BUILD"/{rootfs,livefs,iso/boot/syslinux,iso/LiveOS,initramfs}
     mkdir -p "$OUTPUT_DIR"
 
     # Verify required tools
@@ -313,7 +313,8 @@ configure_live_system() {
     local rootfs="$BUILD/rootfs"
 
     # Create essential directories
-    mkdir -p "$rootfs"/{etc/systemd/system,home/live,run/dbus,var/run,var/lib/sddm}
+    # Note: /home/live is NOT created here - it's created by rookery-live.service at boot
+    mkdir -p "$rootfs"/{etc/systemd/system,run/dbus,var/run,var/lib/sddm}
     chmod 1777 "$rootfs/tmp"
 
     # Set proper ownership for sddm directory (UID 995, GID 995)
@@ -321,6 +322,7 @@ configure_live_system() {
     chmod 750 "$rootfs/var/lib/sddm"
 
     # Create passwd - use /usr/bin/bash since /bin may not have bash
+    # Note: NO live user here - live user is created at boot by rookery-live.service
     cat > "$rootfs/etc/passwd" << 'EOF'
 root:x:0:0:root:/root:/usr/bin/bash
 bin:x:1:1:bin:/dev/null:/usr/sbin/nologin
@@ -331,7 +333,6 @@ systemd-journal:x:990:990:systemd Journal:/:/usr/sbin/nologin
 systemd-network:x:991:991:systemd Network Management:/:/usr/sbin/nologin
 polkitd:x:27:27:PolicyKit Daemon:/var/lib/polkit-1:/usr/sbin/nologin
 sddm:x:995:995:SDDM Display Manager:/var/lib/sddm:/usr/sbin/nologin
-live:x:1000:1000:Live User:/home/live:/usr/bin/bash
 EOF
 
     # Create /bin and /sbin symlinks to /usr/bin and /usr/sbin for compatibility
@@ -359,46 +360,42 @@ EOF
     fi
 
     # Create group - include shadow and utmp groups for login to work
+    # Note: NO live user in groups - added at boot by rookery-live.service
     cat > "$rootfs/etc/group" << 'EOF'
 root:x:0:
 bin:x:1:
 daemon:x:2:
 sys:x:3:
-adm:x:4:live
+adm:x:4:
 tty:x:5:sddm
 disk:x:6:
-wheel:x:10:live
-cdrom:x:11:live
+wheel:x:10:
+cdrom:x:11:
 shadow:x:15:
 utmp:x:13:
-video:x:22:live,sddm
-audio:x:25:live
-users:x:100:live
+video:x:22:sddm
+audio:x:25:
+users:x:100:
 nobody:x:65534:
 messagebus:x:18:
 systemd-journal:x:990:
 input:x:996:sddm
-kvm:x:997:live
-render:x:998:live,sddm
+kvm:x:997:
+render:x:998:sddm
 polkitd:x:27:
 sddm:x:995:
-autologin:x:1001:live,sddm
-live:x:1000:
+autologin:x:1001:sddm
 EOF
 
-    # Create shadow (password "live" for live user)
+    # Create shadow - NO live user (added at boot by rookery-live.service)
     cat > "$rootfs/etc/shadow" << 'EOF'
 root:!:19722:0:99999:7:::
 messagebus:!:19722:0:99999:7:::
 polkitd:!:19722:0:99999:7:::
 sddm:!:19722:0:99999:7:::
-live:$6$xyz$FZdeWWOx8j1RIJpolCHQ5yiYyTzlgffE4D5dB0ip66lHh4ynb9QOnrAzvzL4Dog6iuURvKRcHWi4zvAdJ8B2f1:19722:0:99999:7:::
 EOF
     chmod 640 "$rootfs/etc/shadow"
     chown root:15 "$rootfs/etc/shadow"  # 15 = shadow group
-
-    # Set home directory ownership
-    chown 1000:1000 "$rootfs/home/live"
 
     # Create /etc/shells - /usr/bin/bash first since that's what we use in passwd
     cat > "$rootfs/etc/shells" << 'EOF'
@@ -498,51 +495,21 @@ EOF
     # Create machine-id (empty for live boot, systemd will generate)
     touch "$rootfs/etc/machine-id"
 
-    # Configure SDDM autologin
+    # Configure base SDDM (no autologin - that's added by rookery-live.service at boot)
     mkdir -p "$rootfs/etc/sddm.conf.d"
 
-    # Use X11 session for VM compatibility (Wayland DRM backend doesn't work in QEMU without GPU passthrough)
-    # Check for X11 sessions first
-    local plasma_session=""
-    local session_type=""
-    for session_name in plasmax11 plasma; do
-        if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
-            plasma_session="$session_name"
-            session_type="x11"
-            log_info "Using Plasma X11 session: $session_name (best VM compatibility)"
-            break
-        fi
-    done
-
-    # Fallback to Wayland session if no X11 session found
-    if [ -z "$plasma_session" ]; then
-        for session_name in plasma-wayland plasmawayland plasma; do
-            if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
-                plasma_session="$session_name"
-                session_type="wayland"
-                log_info "Found Plasma Wayland session: $session_name"
-                break
-            fi
-        done
-    fi
-
-    # Default to plasmax11 if nothing found
-    if [ -z "$plasma_session" ]; then
-        plasma_session="plasmax11"
-        session_type="x11"
-        log_warn "No Plasma session file found, using default: plasmax11"
-    fi
-
-    # Configure SDDM to use X11 display server (not Wayland compositor mode)
-    cat > "$rootfs/etc/sddm.conf.d/autologin.conf" << EOF
-[Autologin]
-User=live
-Session=$plasma_session
-Relogin=false
-
+    # Create base SDDM config - NO autologin, just basic settings
+    cat > "$rootfs/etc/sddm.conf.d/00-base.conf" << 'EOF'
 [General]
 InputMethod=
 DisplayServer=x11
+
+[Theme]
+Current=breeze
+
+[Users]
+MinimumUid=1000
+MaximumUid=60000
 EOF
 
     # Create proper PAM configuration files per LFS/BLFS
@@ -708,18 +675,27 @@ EOF
 [ -f ~/.bashrc ] && . ~/.bashrc
 EOF
 
-    # Create live user's bash configuration
-    cat > "$rootfs/home/live/.bashrc" << 'EOF'
+    # Note: Live user's bash configuration is NOT created here
+    # It's created at boot by rookery-live.service
+
+    # Create /etc/skel for new user creation (used by Calamares/useradd)
+    mkdir -p "$rootfs/etc/skel"
+    cat > "$rootfs/etc/skel/.bashrc" << 'EOF'
 # ~/.bashrc: executed by bash(1) for non-login shells
 [[ $- != *i* ]] && return
 . /etc/bashrc 2>/dev/null || true
+
+# User specific aliases and functions
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias grep='grep --color=auto'
 EOF
-    cat > "$rootfs/home/live/.bash_profile" << 'EOF'
+    cat > "$rootfs/etc/skel/.bash_profile" << 'EOF'
 # ~/.bash_profile: executed by bash(1) for login shells
 [ -f /etc/profile ] && . /etc/profile
 [ -f ~/.bashrc ] && . ~/.bashrc
 EOF
-    chown 1000:1000 "$rootfs/home/live/.bashrc" "$rootfs/home/live/.bash_profile"
+    chmod 644 "$rootfs/etc/skel/.bashrc" "$rootfs/etc/skel/.bash_profile"
 
     # Create /etc/issue for login prompt
     cat > "$rootfs/etc/issue" << 'EOF'
@@ -851,121 +827,45 @@ xvc0
 EOF
 
     # Create /etc/gshadow (required for group authentication)
+    # Note: NO live user - added at boot by rookery-live.service
     cat > "$rootfs/etc/gshadow" << 'EOF'
 root:::
 bin:::
 daemon:::
 sys:::
-adm:::live
+adm:::
 tty:::sddm
 disk:::
-wheel:::live
-cdrom:::live
+wheel:::
+cdrom:::
 shadow:::
 utmp:::
-video:::live,sddm
-audio:::live
-users:::live
+video:::sddm
+audio:::
+users:::
 nobody:::
 messagebus:::
 systemd-journal:::
 input:::sddm
-kvm:::live
-render:::live,sddm
+kvm:::
+render:::sddm
 polkitd:::
 sddm:::
-autologin:::live,sddm
-live:::
+autologin:::sddm
 EOF
     chmod 640 "$rootfs/etc/gshadow"
     chown root:15 "$rootfs/etc/gshadow"  # 15 = shadow group
 
-    # ==========================================================================
-    # Create live user account
-    # ==========================================================================
-    log_info "Creating live user account..."
-
-    # Add live user to /etc/passwd (uid 1000, gid 1000)
-    # live:x:1000:1000:Live User:/home/live:/bin/bash
-    if ! grep -q "^live:" "$rootfs/etc/passwd" 2>/dev/null; then
-        echo "live:x:1000:1000:Live User:/home/live:/bin/bash" >> "$rootfs/etc/passwd"
-    fi
-
-    # Add live group to /etc/group (gid 1000)
-    if ! grep -q "^live:" "$rootfs/etc/group" 2>/dev/null; then
-        echo "live:x:1000:" >> "$rootfs/etc/group"
-    fi
-
-    # Add live user to /etc/shadow with password "live"
-    # Password hash for "live": $6$xyz$FZdeWWOx8j1RIJpolCHQ5yiYyTzlgffE4D5dB0ip66lHh4ynb9QOnrAzvzL4Dog6iuURvKRcHWi4zvAdJ8B2f1
-    if ! grep -q "^live:" "$rootfs/etc/shadow" 2>/dev/null; then
-        echo 'live:$6$xyz$FZdeWWOx8j1RIJpolCHQ5yiYyTzlgffE4D5dB0ip66lHh4ynb9QOnrAzvzL4Dog6iuURvKRcHWi4zvAdJ8B2f1:19000:0:99999:7:::' >> "$rootfs/etc/shadow"
-    fi
-
-    # Create live user home directory
-    mkdir -p "$rootfs/home/live"
-    chown 1000:1000 "$rootfs/home/live"
-    chmod 755 "$rootfs/home/live"
-
-    # Add live user to necessary groups (wheel, video, audio, input, etc.)
-    # Group format: name:x:GID:member1,member2,...
-    for group in wheel audio video input render kvm cdrom adm autologin; do
-        if grep -q "^${group}:" "$rootfs/etc/group" 2>/dev/null; then
-            # Check if live user is already a member
-            if ! grep "^${group}:" "$rootfs/etc/group" | grep -qE ":live(,|$)|,live(,|$)"; then
-                # Get the current line
-                current_line=$(grep "^${group}:" "$rootfs/etc/group")
-                # Check if line ends with a colon (no members) or has members
-                if [[ "$current_line" =~ :$ ]]; then
-                    # No members yet, just append live
-                    sed -i "s/^${group}:.*\$/&live/" "$rootfs/etc/group"
-                else
-                    # Has members, append ,live
-                    sed -i "s/^${group}:.*\$/&,live/" "$rootfs/etc/group"
-                fi
-            fi
-        fi
-    done
-
-    log_info "Live user account created"
+    # Note: Live user account is NOT created here
+    # It's created at boot by rookery-live.service in livefs
 
     # ==========================================================================
-    # Configure SDDM for autologin
+    # Configure SDDM (base config only, NO autologin in rootfs)
+    # Autologin is configured at boot by rookery-live.service in livefs
     # ==========================================================================
-    log_info "Configuring SDDM autologin..."
+    log_info "Configuring base SDDM (no autologin)..."
 
     mkdir -p "$rootfs/etc/sddm.conf.d"
-
-    # Use X11 session for VM compatibility (Wayland DRM backend doesn't work in QEMU without GPU passthrough)
-    # Check for X11 sessions FIRST
-    local plasma_session=""
-    for session_name in plasmax11 plasma; do
-        if [ -f "$rootfs/usr/share/xsessions/${session_name}.desktop" ]; then
-            plasma_session="$session_name"
-            log_info "Using Plasma X11 session: $session_name (best VM compatibility)"
-            break
-        fi
-    done
-    # Fallback to Wayland session if no X11 session found
-    if [ -z "$plasma_session" ]; then
-        for session_name in plasma-wayland plasmawayland plasma; do
-            if [ -f "$rootfs/usr/share/wayland-sessions/${session_name}.desktop" ]; then
-                plasma_session="$session_name"
-                log_info "Found Plasma Wayland session: $session_name"
-                break
-            fi
-        done
-    fi
-    # Default to plasmax11 if nothing found
-    if [ -z "$plasma_session" ]; then
-        plasma_session="plasmax11"
-        log_warn "No Plasma session file found, defaulting to: plasmax11"
-        # List available session files for debugging
-        log_info "Available X11 sessions:"
-        ls -la "$rootfs/usr/share/xsessions/"*.desktop 2>/dev/null || log_warn "  (none found)"
-        log_info "Available Wayland sessions:"
-        ls -la "$rootfs/usr/share/wayland-sessions/"*.desktop 2>/dev/null || log_warn "  (none found)"
-    fi
 
     # Verify startplasma-x11 exists
     if [ -f "$rootfs/usr/bin/startplasma-x11" ]; then
@@ -974,17 +874,13 @@ EOF
         log_warn "startplasma-x11 not found - Plasma X11 session may fail!"
     fi
 
-    # Main SDDM configuration with autologin - use X11 display server
-    cat > "$rootfs/etc/sddm.conf.d/autologin.conf" << EOF
+    # Create base /etc/sddm.conf WITHOUT autologin
+    # Autologin is added by rookery-live.service at boot for live session
+    cat > "$rootfs/etc/sddm.conf" << 'EOF'
 [General]
 InputMethod=
 Numlock=none
 DisplayServer=x11
-
-[Autologin]
-User=live
-Session=$plasma_session
-Relogin=false
 
 [Theme]
 Current=breeze
@@ -994,27 +890,7 @@ MinimumUid=1000
 MaximumUid=60000
 EOF
 
-    # Also create /etc/sddm.conf as backup
-    cat > "$rootfs/etc/sddm.conf" << EOF
-[General]
-InputMethod=
-Numlock=none
-DisplayServer=x11
-
-[Autologin]
-User=live
-Session=$plasma_session
-Relogin=false
-
-[Theme]
-Current=breeze
-
-[Users]
-MinimumUid=1000
-MaximumUid=60000
-EOF
-
-    log_info "SDDM autologin configured for user 'live' with session '$plasma_session'"
+    log_info "Base SDDM configured (no autologin - added at boot for live session)"
 
     # ==========================================================================
     # Create sulogin symlink for emergency/recovery shell
@@ -1362,45 +1238,10 @@ EOF
     log_info "Created SDDM QML import path configuration"
 
     # ==========================================================================
-    # Create SDDM configuration file with autologin and debugging
-    # Note: This is intentionally named 00-live.conf so it's processed first,
-    # and autologin.conf (processed later) takes precedence for session settings
+    # Note: Live-specific SDDM config (00-live.conf with autologin) is NOT
+    # created here. It's created at boot by rookery-live.service in livefs.
+    # This ensures the installed system has clean SDDM config without live user.
     # ==========================================================================
-    mkdir -p "$rootfs/etc/sddm.conf.d"
-    cat > "$rootfs/etc/sddm.conf.d/00-live.conf" << 'EOF'
-[General]
-# Enable debug logging to journald
-EnableHiDPI=true
-HaltCommand=/usr/bin/systemctl poweroff
-RebootCommand=/usr/bin/systemctl reboot
-# Force X11 display server for VM compatibility
-DisplayServer=x11
-
-[Users]
-DefaultPath=/usr/local/bin:/usr/bin:/bin
-MaximumUid=60513
-MinimumUid=1000
-
-[X11]
-# Session directory for X11 - check this FIRST
-SessionDir=/usr/share/xsessions
-
-[Wayland]
-# Session directory for Wayland (fallback)
-SessionDir=/usr/share/wayland-sessions
-
-[Autologin]
-# Autologin the live user with X11 Plasma session
-User=live
-Session=plasmax11
-Relogin=false
-
-[Theme]
-# Use breeze theme
-Current=breeze
-EOF
-    chmod 644 "$rootfs/etc/sddm.conf.d/00-live.conf"
-    log_info "Created SDDM configuration with autologin"
 
     # ==========================================================================
     # Create global Qt/KDE environment for all sessions
@@ -1454,14 +1295,9 @@ StartLimitBurst=3
 EOF
     log_info "Created powerdevil VM-tolerant configuration"
 
-    # Create polkit localauthority for live session (simpler format, more compatible)
-    mkdir -p "$rootfs/etc/polkit-1/localauthority/50-local.d"
-    cat > "$rootfs/etc/polkit-1/localauthority/50-local.d/50-allow-live.pkla" << 'EOF'
-[Allow Live User All Actions]
-Identity=unix-user:live
-Action=*
-ResultActive=yes
-EOF
+    # Note: Polkit rules for live user are NOT created here.
+    # They are created at boot by rookery-live.service in livefs.
+    # This ensures the installed system has clean polkit rules.
 
     # Set graphical target as default
     ln -sf /usr/lib/systemd/system/graphical.target "$rootfs/etc/systemd/system/default.target" 2>/dev/null || true
@@ -1647,16 +1483,9 @@ EOF
     mkdir -p "$rootfs/etc/calamares/modules"
     mkdir -p "$rootfs/etc/calamares/branding/rookeryos"
 
-    # Fix unpackfs config to point to correct squashfs location
-    # The ISO is mounted at /run/rootfsbase, squashfs is at LiveOS/rootfs.img
-    # Using default unpackfs.conf (NOT an instance) - matches Manjaro exactly
-    cat > "$rootfs/etc/calamares/modules/unpackfs.conf" << 'EOF'
----
-unpack:
-    - source: "/run/rootfsbase/LiveOS/rootfs.img"
-      sourcefs: "squashfs"
-      destination: ""
-EOF
+    # NOTE: We do NOT overwrite unpackfs.conf here - the calamares package
+    # already has the correct config pointing to rootfs.sfs (the clean base system).
+    # The package config is correct; we must not overwrite it with rootfs.img.
 
     # Create settings.conf matching Manjaro's EXACTLY - no instances, no shellprocess
     # Manjaro uses modules directly without custom instances
@@ -1883,9 +1712,46 @@ mountOptions:
 efiMountOptions: umask=0077
 EOF
 
+    # Create /etc/default/grub (required by grubcfg module)
+    mkdir -p "$rootfs/etc/default"
+    cat > "$rootfs/etc/default/grub" << 'EOF'
+# GRUB boot loader configuration for Rookery OS
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="Rookery_OS"
+GRUB_CMDLINE_LINUX_DEFAULT="console=tty0 console=ttyS0,115200"
+GRUB_CMDLINE_LINUX=""
+
+# Preload both GPT and MBR modules so that they are not missed
+GRUB_PRELOAD_MODULES="part_gpt part_msdos"
+
+# Use basic console
+GRUB_TERMINAL_INPUT=console
+
+# Graphics mode
+GRUB_GFXMODE=auto
+GRUB_GFXPAYLOAD_LINUX=keep
+
+# Disable recovery mode
+GRUB_DISABLE_RECOVERY=true
+EOF
+
     # Create grubcfg module config
     cat > "$rootfs/etc/calamares/modules/grubcfg.conf" << 'EOF'
 ---
+# Don't overwrite /etc/default/grub, just edit it
+overwrite: false
+
+# Keep existing GRUB_DISTRIBUTOR
+keep_distributor: true
+
+# Kernel parameters - include console for debugging
+# This replaces the default ["quiet"]
+kernel_params:
+    - "console=tty0"
+    - "console=ttyS0,115200"
+
+# GRUB commands
 grubInstall: "grub-install"
 grubMkconfig: "grub-mkconfig"
 grubCfg: "/boot/grub/grub.cfg"
@@ -1964,30 +1830,12 @@ EOF
         touch "$rootfs/etc/calamares/branding/rookeryos/welcome.png"
     fi
 
-    # Allow live user full passwordless sudo (for live ISO only)
-    mkdir -p "$rootfs/etc/sudoers.d"
-    cat > "$rootfs/etc/sudoers.d/live-user" << 'EOF'
-# Allow live user passwordless sudo for live ISO
-live ALL=(ALL) NOPASSWD: ALL
-EOF
-    chmod 440 "$rootfs/etc/sudoers.d/live-user"
+    # Note: Live user sudoers and polkit rules are NOT created here
+    # They are created at boot by rookery-live.service in livefs
 
-    # CRITICAL: Add polkit rules for live session
-    # KPMcore (used by Calamares) uses polkit for disk operations, NOT sudo
-    # Without these rules, disk operations fail silently even when run as root
+    # CRITICAL: Add polkit rules for Calamares (these stay in rootfs for installer)
+    # KPMcore (used by Calamares) uses polkit for disk operations
     mkdir -p "$rootfs/etc/polkit-1/rules.d"
-
-    # Allow live user to do anything without password (like Manjaro does)
-    cat > "$rootfs/etc/polkit-1/rules.d/49-nopasswd-live.rules" << 'EOF'
-/* Allow live user to perform any action without authentication
- * This is required for Calamares/KPMcore disk operations
- */
-polkit.addRule(function(action, subject) {
-    if (subject.user == "live") {
-        return polkit.Result.YES;
-    }
-});
-EOF
 
     # Allow Calamares specifically
     cat > "$rootfs/etc/polkit-1/rules.d/49-nopasswd-calamares.rules" << 'EOF'
@@ -2073,6 +1921,201 @@ EOF
     fi
 
     log_info "Live system configured"
+}
+
+# =============================================================================
+# Step 3a: Configure Live Overlay (livefs.sfs)
+# =============================================================================
+# This creates a separate overlay filesystem containing ONLY live-specific
+# configurations that should NOT be installed to the target system.
+# Following Manjaro's architecture: rootfs.sfs + livefs.sfs
+# Only rootfs.sfs gets installed, livefs.sfs is for live boot only.
+configure_live_overlay() {
+    log_step "Configuring live overlay filesystem..."
+
+    local livefs="$BUILD/livefs"
+    local rootfs="$BUILD/rootfs"
+
+    # Create directory structure for overlay
+    mkdir -p "$livefs"/{etc/sddm.conf.d,etc/sudoers.d,etc/polkit-1/rules.d}
+    mkdir -p "$livefs"/{etc/systemd/system/multi-user.target.wants,etc/profile.d}
+    mkdir -p "$livefs"/{home/live,usr/bin,usr/lib/systemd/system}
+
+    # =========================================================================
+    # Create rookery-live script (runs at boot to configure live session)
+    # =========================================================================
+    cat > "$livefs/usr/bin/rookery-live" << 'LIVESCRIPT'
+#!/bin/bash
+# Rookery OS Live Session Configuration
+# This script runs at boot to configure the live environment
+# Similar to Manjaro's manjaro-live script
+
+set -e
+
+LIVE_USER="live"
+LIVE_PASSWORD="live"
+LIVE_GROUPS="wheel,audio,video,input,render,kvm,cdrom,adm,autologin,users"
+
+log() {
+    echo "[rookery-live] $1" | tee -a /var/log/rookery-live.log
+}
+
+# Create live user if it doesn't exist
+configure_user() {
+    log "Configuring live user..."
+
+    if ! id "$LIVE_USER" &>/dev/null; then
+        # Create user with password
+        useradd -m -G "$LIVE_GROUPS" -s /bin/bash "$LIVE_USER"
+        echo "$LIVE_USER:$LIVE_PASSWORD" | chpasswd
+        log "Created user $LIVE_USER"
+    else
+        log "User $LIVE_USER already exists"
+    fi
+
+    # Ensure home directory exists and has correct permissions
+    mkdir -p /home/$LIVE_USER
+    chown -R $(id -u $LIVE_USER):$(id -g $LIVE_USER) /home/$LIVE_USER
+
+    # Create basic shell configs
+    if [ ! -f /home/$LIVE_USER/.bashrc ]; then
+        cat > /home/$LIVE_USER/.bashrc << 'EOF'
+[[ $- != *i* ]] && return
+. /etc/bashrc 2>/dev/null || true
+alias ls='ls --color=auto'
+alias ll='ls -la'
+EOF
+        chown $(id -u $LIVE_USER):$(id -g $LIVE_USER) /home/$LIVE_USER/.bashrc
+    fi
+
+    if [ ! -f /home/$LIVE_USER/.bash_profile ]; then
+        cat > /home/$LIVE_USER/.bash_profile << 'EOF'
+[ -f /etc/profile ] && . /etc/profile
+[ -f ~/.bashrc ] && . ~/.bashrc
+EOF
+        chown $(id -u $LIVE_USER):$(id -g $LIVE_USER) /home/$LIVE_USER/.bash_profile
+    fi
+}
+
+# Configure SDDM autologin for live user
+configure_displaymanager() {
+    log "Configuring SDDM autologin..."
+
+    mkdir -p /etc/sddm.conf.d
+
+    # Detect available session
+    local session="plasmax11"
+    if [ -f /usr/share/xsessions/plasmax11.desktop ]; then
+        session="plasmax11"
+    elif [ -f /usr/share/xsessions/plasma.desktop ]; then
+        session="plasma"
+    fi
+
+    # Create autologin configuration
+    cat > /etc/sddm.conf.d/00-live-autologin.conf << EOF
+[General]
+DisplayServer=x11
+
+[Autologin]
+User=$LIVE_USER
+Session=$session
+Relogin=false
+
+[Theme]
+Current=breeze
+
+[Users]
+MinimumUid=1000
+MaximumUid=60000
+EOF
+
+    log "SDDM configured for autologin as $LIVE_USER with session $session"
+}
+
+# Configure sudoers for live user
+configure_sudoers() {
+    log "Configuring sudoers..."
+
+    mkdir -p /etc/sudoers.d
+    cat > /etc/sudoers.d/live-user << EOF
+# Allow live user passwordless sudo for live ISO
+$LIVE_USER ALL=(ALL) NOPASSWD: ALL
+EOF
+    chmod 440 /etc/sudoers.d/live-user
+}
+
+# Configure polkit for live session
+configure_polkit() {
+    log "Configuring polkit..."
+
+    mkdir -p /etc/polkit-1/rules.d
+    cat > /etc/polkit-1/rules.d/49-live-user.rules << 'EOF'
+/* Allow live user full access for live session */
+polkit.addRule(function(action, subject) {
+    if (subject.user == "live") {
+        return polkit.Result.YES;
+    }
+});
+EOF
+}
+
+# Main
+log "Starting Rookery OS live session configuration..."
+configure_user
+configure_displaymanager
+configure_sudoers
+configure_polkit
+log "Live session configuration complete"
+LIVESCRIPT
+    chmod 755 "$livefs/usr/bin/rookery-live"
+
+    # =========================================================================
+    # Create rookery-live.service (systemd service)
+    # =========================================================================
+    cat > "$livefs/usr/lib/systemd/system/rookery-live.service" << 'LIVESERVICE'
+[Unit]
+Description=Rookery OS Live Session Configuration
+DefaultDependencies=no
+After=systemd-remount-fs.service
+Before=systemd-user-sessions.service sddm.service display-manager.service
+ConditionPathExists=!/var/lib/rookery-live-configured
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/rookery-live
+ExecStartPost=/bin/touch /var/lib/rookery-live-configured
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+LIVESERVICE
+
+    # Enable the service in livefs
+    mkdir -p "$livefs/etc/systemd/system/multi-user.target.wants"
+    ln -sf /usr/lib/systemd/system/rookery-live.service "$livefs/etc/systemd/system/multi-user.target.wants/"
+
+    # =========================================================================
+    # Copy Calamares to livefs (installer is live-only)
+    # =========================================================================
+    # Calamares is already installed in rootfs, we move its configs to livefs
+    # so the installer files don't get installed to the target system
+    if [ -d "$rootfs/etc/calamares" ]; then
+        log_info "Moving Calamares configuration to live overlay..."
+        mkdir -p "$livefs/etc"
+        cp -a "$rootfs/etc/calamares" "$livefs/etc/"
+    fi
+
+    # Move calamares desktop entry and polkit wrapper to livefs
+    if [ -f "$rootfs/usr/share/applications/calamares.desktop" ]; then
+        mkdir -p "$livefs/usr/share/applications"
+        cp "$rootfs/usr/share/applications/calamares.desktop" "$livefs/usr/share/applications/"
+    fi
+
+    if [ -f "$rootfs/usr/bin/calamares_polkit" ]; then
+        cp "$rootfs/usr/bin/calamares_polkit" "$livefs/usr/bin/"
+    fi
+
+    log_info "Live overlay configured"
 }
 
 # =============================================================================
@@ -2270,6 +2313,9 @@ EOF
 # =============================================================================
 # Step 3d: Create initramfs for installed system
 # =============================================================================
+# This creates an Arch-style initramfs with proper udev support.
+# Based on mkinitcpio's init script architecture.
+# =============================================================================
 create_installed_initramfs() {
     log_step "Creating initramfs for installed system..."
 
@@ -2283,128 +2329,462 @@ create_installed_initramfs() {
 
     log_info "Creating initramfs for kernel $kver"
 
-    # Create minimal initramfs using util-linux and coreutils from the rootfs
     local initrd_dir=$(mktemp -d)
-    mkdir -p "$initrd_dir"/{bin,sbin,etc,proc,sys,dev,lib,lib64,usr/lib,usr/bin,run,newroot}
+    # Create directory structure - DO NOT create bin, sbin, lib, lib64 as directories
+    # They will be symlinks to usr/*
+    mkdir -p "$initrd_dir"/{etc,proc,sys,dev,usr/{lib,bin,sbin},run,tmp,new_root}
+    mkdir -p "$initrd_dir"/run/initramfs
+    mkdir -p "$initrd_dir"/etc/udev/rules.d
+    mkdir -p "$initrd_dir"/usr/lib/udev/rules.d
 
-    # Copy dynamic linker first
-    cp "$rootfs/usr/lib/ld-linux-x86-64.so.2" "$initrd_dir/lib64/"
-    ln -sf ../lib64/ld-linux-x86-64.so.2 "$initrd_dir/lib/ld-linux-x86-64.so.2"
+    # =========================================================================
+    # Copy dynamic linker
+    # =========================================================================
+    cp "$rootfs/usr/lib/ld-linux-x86-64.so.2" "$initrd_dir/usr/lib/"
 
-    # Copy essential glibc libraries
-    for lib in libc.so.6 libm.so.6 libpthread.so.0 libdl.so.2 librt.so.1 libresolv.so.2; do
-        cp "$rootfs/usr/lib/$lib" "$initrd_dir/lib/" 2>/dev/null || true
+    # Create symlinks for /lib, /lib64, /bin, /sbin -> usr/*
+    # These MUST be symlinks, not directories!
+    ln -s usr/lib "$initrd_dir/lib"
+    ln -s usr/lib "$initrd_dir/lib64"
+    ln -s usr/bin "$initrd_dir/bin"
+    ln -s usr/sbin "$initrd_dir/sbin"
+
+    # =========================================================================
+    # Copy essential glibc and shell libraries
+    # =========================================================================
+    for lib in libc.so.6 libm.so.6 libpthread.so.0 libdl.so.2 librt.so.1 libresolv.so.2 \
+               libcap.so.2 libacl.so.1 libattr.so.1 libselinux.so.1 libpcre2-8.so.0 \
+               libncursesw.so.6 libreadline.so.8 libtinfo.so.6; do
+        cp "$rootfs/usr/lib/$lib" "$initrd_dir/usr/lib/" 2>/dev/null || true
     done
 
-    # Copy util-linux binaries (mount, switch_root, etc.)
-    for bin in mount umount switch_root blkid; do
+    # =========================================================================
+    # Copy util-linux binaries
+    # =========================================================================
+    for bin in mount umount; do
         if [ -f "$rootfs/usr/bin/$bin" ]; then
-            cp "$rootfs/usr/bin/$bin" "$initrd_dir/bin/"
+            cp "$rootfs/usr/bin/$bin" "$initrd_dir/usr/bin/"
+        fi
+    done
+    for bin in switch_root blkid findfs; do
+        for dir in "$rootfs/usr/sbin" "$rootfs/usr/bin" "$rootfs/sbin" "$rootfs/bin"; do
+            if [ -f "$dir/$bin" ]; then
+                cp "$dir/$bin" "$initrd_dir/usr/bin/"
+                break
+            fi
+        done
+    done
+
+    # =========================================================================
+    # Copy kmod and create symlinks
+    # =========================================================================
+    if [ -f "$rootfs/usr/bin/kmod" ]; then
+        cp "$rootfs/usr/bin/kmod" "$initrd_dir/usr/bin/"
+        for tool in modprobe insmod rmmod lsmod depmod; do
+            ln -sf kmod "$initrd_dir/usr/bin/$tool"
+        done
+    fi
+
+    # Copy libkmod and dependencies
+    for lib in libkmod.so.2 libzstd.so.1 liblzma.so.5 libz.so.1 libcrypto.so.3; do
+        cp "$rootfs/usr/lib/$lib" "$initrd_dir/usr/lib/" 2>/dev/null || true
+    done
+
+    # =========================================================================
+    # Copy coreutils
+    # =========================================================================
+    for bin in sh bash cat ls mkdir mknod sleep ln rm cp mv chmod chown stat readlink \
+               echo printf true false test expr head tail cut tr grep sed awk env \
+               basename dirname id uname date dd sync kill; do
+        for dir in "$rootfs/usr/bin" "$rootfs/bin"; do
+            if [ -f "$dir/$bin" ]; then
+                cp "$dir/$bin" "$initrd_dir/usr/bin/"
+                break
+            fi
+        done
+    done
+
+    # =========================================================================
+    # Copy udev daemon and tools (CRITICAL for device detection)
+    # =========================================================================
+    # Find udevd - could be in different locations
+    local udevd_path=""
+    for path in "$rootfs/usr/lib/systemd/systemd-udevd" "$rootfs/lib/systemd/systemd-udevd" \
+                "$rootfs/usr/sbin/udevd" "$rootfs/sbin/udevd"; do
+        if [ -f "$path" ]; then
+            udevd_path="$path"
+            break
         fi
     done
 
-    # Copy coreutils binaries
-    for bin in sh cat ls mkdir mknod sleep; do
-        if [ -f "$rootfs/usr/bin/$bin" ]; then
-            cp "$rootfs/usr/bin/$bin" "$initrd_dir/bin/"
+    if [ -n "$udevd_path" ]; then
+        log_info "Found udevd at $udevd_path"
+        cp "$udevd_path" "$initrd_dir/usr/bin/udevd"
+    else
+        log_warn "udevd not found!"
+    fi
+
+    # Copy udevadm
+    for path in "$rootfs/usr/bin/udevadm" "$rootfs/bin/udevadm" "$rootfs/sbin/udevadm"; do
+        if [ -f "$path" ]; then
+            cp "$path" "$initrd_dir/usr/bin/"
+            break
         fi
     done
 
-    # Copy additional libraries needed by util-linux
-    for lib in libblkid.so.1 libuuid.so.1 libmount.so.1; do
-        cp "$rootfs/usr/lib/$lib" "$initrd_dir/lib/" 2>/dev/null || true
+    # Copy udev helper binaries
+    for helper in ata_id scsi_id; do
+        for path in "$rootfs/usr/lib/udev/$helper" "$rootfs/lib/udev/$helper"; do
+            if [ -f "$path" ]; then
+                mkdir -p "$initrd_dir/usr/lib/udev"
+                cp "$path" "$initrd_dir/usr/lib/udev/"
+                break
+            fi
+        done
     done
 
-    # Copy kernel modules (essential ones for disk access)
+    # =========================================================================
+    # Copy udev rules (CRITICAL for /dev/disk/by-uuid/ symlinks)
+    # =========================================================================
+    for rule in 50-udev-default.rules 60-persistent-storage.rules 64-btrfs.rules 80-drivers.rules; do
+        for path in "$rootfs/usr/lib/udev/rules.d/$rule" "$rootfs/lib/udev/rules.d/$rule" \
+                    "$rootfs/etc/udev/rules.d/$rule"; do
+            if [ -f "$path" ]; then
+                cp "$path" "$initrd_dir/usr/lib/udev/rules.d/"
+                break
+            fi
+        done
+    done
+
+    # =========================================================================
+    # Copy additional libraries needed by udev and util-linux
+    # =========================================================================
+    for lib in libblkid.so.1 libuuid.so.1 libmount.so.1 libsmartcols.so.1 libfdisk.so.1 \
+               libsystemd.so.0 libsystemd-shared-*.so libudev.so.1 libdevmapper.so.* \
+               libgcc_s.so.1 libstdc++.so.6; do
+        for file in "$rootfs/usr/lib/"$lib; do
+            [ -f "$file" ] && cp "$file" "$initrd_dir/usr/lib/" 2>/dev/null || true
+        done
+    done
+
+    # =========================================================================
+    # Copy kernel modules
+    # =========================================================================
     if [ -d "$rootfs/lib/modules/$kver" ]; then
         mkdir -p "$initrd_dir/lib/modules/$kver/kernel/drivers"
         # Copy disk drivers
-        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/ata" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
-        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/scsi" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
-        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/virtio" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
-        cp -a "$rootfs/lib/modules/$kver/kernel/drivers/block" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        for driver in ata scsi virtio block nvme; do
+            [ -d "$rootfs/lib/modules/$kver/kernel/drivers/$driver" ] && \
+                cp -a "$rootfs/lib/modules/$kver/kernel/drivers/$driver" "$initrd_dir/lib/modules/$kver/kernel/drivers/" 2>/dev/null || true
+        done
         # Copy filesystem modules
         mkdir -p "$initrd_dir/lib/modules/$kver/kernel/fs"
-        cp -a "$rootfs/lib/modules/$kver/kernel/fs/ext4" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
-        cp -a "$rootfs/lib/modules/$kver/kernel/fs/btrfs" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
-        cp -a "$rootfs/lib/modules/$kver/kernel/fs/xfs" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
+        for fs in ext4 btrfs xfs vfat fat; do
+            [ -d "$rootfs/lib/modules/$kver/kernel/fs/$fs" ] && \
+                cp -a "$rootfs/lib/modules/$kver/kernel/fs/$fs" "$initrd_dir/lib/modules/$kver/kernel/fs/" 2>/dev/null || true
+        done
         # Copy modules.* files
         cp "$rootfs/lib/modules/$kver/modules."* "$initrd_dir/lib/modules/$kver/" 2>/dev/null || true
     fi
 
-    # Create init script
+    # =========================================================================
+    # Create init_functions (Arch-style helper functions)
+    # =========================================================================
+    cat > "$initrd_dir/init_functions" << 'INITFUNC'
+#!/bin/sh
+# Arch-style init functions for Rookery OS
+
+msg() {
+    [ "$quiet" != "y" ] && echo "$@"
+}
+
+err() {
+    echo "ERROR: $*"
+}
+
+poll_device() {
+    local device="$1" seconds="${2:-10}"
+    local deciseconds=$((seconds * 10))
+    local sleepinterval=1
+
+    [ -b "$device" ] && return 0
+
+    msg "Waiting $seconds seconds for device $device ..."
+    while [ ! -b "$device" ] && [ "$deciseconds" -gt 0 ]; do
+        if [ "$sleepinterval" -ge 10 ]; then
+            sleep 1
+            deciseconds=$((deciseconds - 10))
+        else
+            sleep 0.1
+            deciseconds=$((deciseconds - sleepinterval))
+            sleepinterval=$((sleepinterval * 2))
+        fi
+    done
+
+    [ -b "$device" ]
+}
+
+resolve_device() {
+    local device="$1" dev=""
+
+    case "$device" in
+        UUID=*|LABEL=*|PARTUUID=*|PARTLABEL=*)
+            # Try blkid first
+            dev=$(blkid -lt "$device" -o device 2>/dev/null)
+            # Fall back to /dev/disk/by-* symlinks
+            if [ -z "$dev" ]; then
+                local tag="${device%%=*}"
+                local value="${device#*=}"
+                case "$tag" in
+                    UUID) dev="/dev/disk/by-uuid/$value" ;;
+                    LABEL) dev="/dev/disk/by-label/$value" ;;
+                    PARTUUID) dev="/dev/disk/by-partuuid/$value" ;;
+                    PARTLABEL) dev="/dev/disk/by-partlabel/$value" ;;
+                esac
+            fi
+            ;;
+        *)
+            dev="$device"
+            ;;
+    esac
+
+    [ -n "$dev" ] && device="$dev"
+
+    # Wait for device
+    local rootdelay="${rootdelay:-10}"
+    if poll_device "$device" "$rootdelay"; then
+        # Resolve symlink to real device
+        if [ -L "$device" ]; then
+            readlink -f "$device"
+        else
+            echo "$device"
+        fi
+        return 0
+    fi
+
+    return 1
+}
+
+default_mount_handler() {
+    local mountpoint="$1"
+    msg ":: mounting '$root' on $mountpoint"
+    if ! mount -t "${rootfstype:-auto}" -o "${rwopt:-ro}${rootflags:+,$rootflags}" "$root" "$mountpoint"; then
+        err "Failed to mount '$root' on $mountpoint"
+        echo "You are now being dropped into an emergency shell."
+        exec /bin/sh
+    fi
+}
+
+mount_setup() {
+    mount -t proc proc /proc -o nosuid,noexec,nodev
+    mount -t sysfs sys /sys -o nosuid,noexec,nodev
+    mount -t devtmpfs dev /dev -o mode=0755,nosuid
+    mount -t tmpfs run /run -o nosuid,nodev,mode=0755
+    mkdir -p /run/initramfs
+
+    # Setup /dev symlinks
+    [ -e /proc/kcore ] && ln -sfT /proc/kcore /dev/core
+    ln -sfT /proc/self/fd /dev/fd
+    ln -sfT /proc/self/fd/0 /dev/stdin
+    ln -sfT /proc/self/fd/1 /dev/stdout
+    ln -sfT /proc/self/fd/2 /dev/stderr
+}
+
+parse_cmdline() {
+    local cmdline
+    read -r cmdline < /proc/cmdline
+
+    for param in $cmdline; do
+        case "$param" in
+            rw|ro) rwopt="$param" ;;
+            root=*) root="${param#root=}" ;;
+            rootfstype=*) rootfstype="${param#rootfstype=}" ;;
+            rootflags=*) rootflags="${param#rootflags=}" ;;
+            rootdelay=*) rootdelay="${param#rootdelay=}" ;;
+            quiet) quiet=y ;;
+            debug) debug=y ;;
+            break=*|break) break_point="${param#break=}"; [ "$break_point" = "break" ] && break_point=premount ;;
+            init=*) init="${param#init=}" ;;
+        esac
+    done
+}
+INITFUNC
+    chmod +x "$initrd_dir/init_functions"
+
+    # =========================================================================
+    # Create main init script (Arch-style)
+    # =========================================================================
     cat > "$initrd_dir/init" << 'INIT'
 #!/bin/sh
-export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+# Rookery OS initramfs init (based on Arch Linux mkinitcpio)
+export PATH='/usr/bin:/bin:/usr/sbin:/sbin'
 
-mount -t proc none /proc
-mount -t sysfs none /sys
-mount -t devtmpfs none /dev
+udevd_running=0
+init=/sbin/init
+quiet=n
 
-# Load essential modules
-for mod in virtio_pci virtio_blk virtio_scsi sd_mod ahci; do
-    modprobe $mod 2>/dev/null || true
+. /init_functions
+
+echo "Rookery OS initramfs starting..."
+
+# Mount API filesystems
+mount_setup
+echo ":: mounted proc, sys, dev, run"
+
+# Parse kernel command line
+parse_cmdline
+echo ":: root=$root rootfstype=${rootfstype:-auto} init=$init"
+
+# Enable debug if requested
+[ "$debug" = "y" ] && set -x
+
+# =========================================================================
+# Load kernel modules early
+# =========================================================================
+echo ":: loading kernel modules..."
+for mod in virtio_pci virtio_blk virtio_scsi sd_mod ahci nvme ext4 btrfs xfs vfat; do
+    modprobe "$mod" 2>/dev/null || true
 done
 
-# Wait for devices
-sleep 1
+# =========================================================================
+# Start udev daemon and trigger device discovery
+# =========================================================================
+if [ -x /usr/bin/udevd ]; then
+    echo ":: starting udev..."
+    /usr/bin/udevd --daemon --resolve-names=never 2>/dev/null
+    udevd_running=1
 
-# Find and mount root filesystem
-root=""
-rootfstype=""
-for arg in $(cat /proc/cmdline); do
-    case "$arg" in
-        root=*) root="${arg#root=}" ;;
-        rootfstype=*) rootfstype="${arg#rootfstype=}" ;;
+    echo ":: triggering uevents..."
+    udevadm trigger --action=add --type=subsystems 2>/dev/null || true
+    udevadm trigger --action=add --type=devices 2>/dev/null || true
+
+    echo ":: waiting for udev to settle..."
+    udevadm settle --timeout=30 2>/dev/null || sleep 3
+else
+    echo ":: udevd not found, waiting for devices..."
+    sleep 3
+fi
+
+# Show available devices
+echo ":: available block devices:"
+ls -la /dev/sd* /dev/vd* /dev/nvme* 2>/dev/null || echo "   (none found yet)"
+echo ":: /dev/disk/by-uuid/:"
+ls -la /dev/disk/by-uuid/ 2>/dev/null || echo "   (empty)"
+
+# Break point for debugging
+if [ "$break_point" = "premount" ] || [ "$break_point" = "y" ]; then
+    echo ":: Pre-mount break requested, type 'exit' to resume"
+    exec /bin/sh
+fi
+
+# =========================================================================
+# Resolve root device
+# =========================================================================
+if [ -z "$root" ]; then
+    err "No root device specified on kernel command line!"
+    echo ":: Dropping to emergency shell..."
+    exec /bin/sh
+fi
+
+echo ":: resolving root device: $root"
+if rootdev=$(resolve_device "$root"); then
+    echo ":: resolved to: $rootdev"
+    # Use resolved device for mount if it's not a tag
+    case "$root" in
+        UUID=*|LABEL=*|PARTUUID=*|PARTLABEL=*) : ;;
+        *) root="$rootdev" ;;
     esac
-done
-
-# Handle root=UUID=xxx
-if [ "${root#UUID=}" != "$root" ]; then
-    uuid="${root#UUID=}"
-    root=$(blkid -U "$uuid" 2>/dev/null)
+else
+    err "Failed to resolve root device: $root"
+    echo ":: Available devices:"
+    cat /proc/partitions
+    echo ""
+    echo ":: /dev/disk/by-uuid/:"
+    ls -la /dev/disk/by-uuid/ 2>/dev/null || echo "   (empty)"
+    echo ""
+    echo ":: Dropping to emergency shell..."
+    exec /bin/sh
 fi
 
-if [ -n "$root" ]; then
-    if [ -n "$rootfstype" ]; then
-        mount -t "$rootfstype" "$root" /newroot
-    else
-        mount "$root" /newroot
-    fi
+# =========================================================================
+# Mount root filesystem
+# =========================================================================
+default_mount_handler /new_root
 
-    if [ -d /newroot/sbin ]; then
-        umount /proc /sys /dev 2>/dev/null
-        exec switch_root /newroot /sbin/init
-    fi
+# Verify mount was successful
+if [ "$(stat -c %D /)" = "$(stat -c %D /new_root)" ]; then
+    err "Failed to mount the real root device."
+    echo ":: Bailing out, you are on your own. Good luck."
+    exec /bin/sh
 fi
 
-echo "Failed to mount root filesystem: $root"
-echo "Dropping to shell..."
+if [ ! -x "/new_root${init}" ]; then
+    err "Root device mounted successfully, but ${init} does not exist."
+    echo ":: Contents of /new_root:"
+    ls -la /new_root
+    echo ":: Bailing out, you are on your own. Good luck."
+    exec /bin/sh
+fi
+
+# Break point after mount
+if [ "$break_point" = "postmount" ]; then
+    echo ":: Post-mount break requested, type 'exit' to resume"
+    /bin/sh
+fi
+
+# =========================================================================
+# Cleanup and switch to real root
+# =========================================================================
+if [ "$udevd_running" -eq 1 ]; then
+    udevadm control --exit 2>/dev/null || true
+    udevadm info --cleanup-db 2>/dev/null || true
+fi
+
+echo ":: switching to real root..."
+exec env -i "TERM=$TERM" /usr/bin/switch_root /new_root "$init" "$@"
+
+# If we get here, switch_root failed
+err "switch_root failed!"
 exec /bin/sh
 INIT
     chmod +x "$initrd_dir/init"
 
-    # Create initramfs using cpio
-    (cd "$initrd_dir" && find . | cpio -o -H newc 2>/dev/null | gzip -9 > "$rootfs/boot/initramfs.img")
+    # =========================================================================
+    # Create initramfs archive
+    # =========================================================================
+    log_info "Creating initramfs archive..."
+    (cd "$initrd_dir" && find . | cpio -o -H newc 2>/dev/null | gzip -9 > "$rootfs/boot/initramfs-$kver.img")
     rm -rf "$initrd_dir"
 
-    if [ -f "$rootfs/boot/initramfs.img" ]; then
-        log_info "Created initramfs: $(du -h "$rootfs/boot/initramfs.img" | cut -f1)"
+    # Create symlink for compatibility
+    ln -sf "initramfs-$kver.img" "$rootfs/boot/initramfs.img"
+
+    if [ -f "$rootfs/boot/initramfs-$kver.img" ]; then
+        log_info "Created initramfs: $(du -h "$rootfs/boot/initramfs-$kver.img" | cut -f1)"
     else
         log_warn "Failed to create initramfs"
     fi
 }
 
 # =============================================================================
-# Step 4: Create SquashFS Image
+# Step 4: Create SquashFS Images (rootfs.sfs + livefs.sfs)
 # =============================================================================
+# Following Manjaro's multi-squashfs architecture:
+# - rootfs.sfs: Base system (gets installed to target)
+# - livefs.sfs: Live-only overlay (NOT installed, only for live boot)
 create_squashfs() {
-    log_step "Creating SquashFS image..."
+    log_step "Creating SquashFS images..."
 
     local rootfs="$BUILD/rootfs"
-    local squashfs="$BUILD/iso/LiveOS/rootfs.img"
+    local livefs="$BUILD/livefs"
 
-    mksquashfs "$rootfs" "$squashfs" \
+    # =========================================================================
+    # Create rootfs.sfs (base system - this gets installed)
+    # =========================================================================
+    log_info "Creating rootfs.sfs (base system)..."
+    local rootfs_squashfs="$BUILD/iso/LiveOS/rootfs.sfs"
+
+    mksquashfs "$rootfs" "$rootfs_squashfs" \
         -comp zstd \
         -Xcompression-level 19 \
         -b 1M \
@@ -2416,8 +2796,63 @@ create_squashfs() {
         -e 'run/*' \
         -e 'tmp/*'
 
-    local size=$(du -h "$squashfs" | cut -f1)
-    log_info "Created SquashFS: $size"
+    local rootfs_size=$(du -h "$rootfs_squashfs" | cut -f1)
+    log_info "Created rootfs.sfs: $rootfs_size"
+
+    # =========================================================================
+    # Create livefs.sfs (live overlay - NOT installed)
+    # =========================================================================
+    log_info "Creating livefs.sfs (live overlay)..."
+    local livefs_squashfs="$BUILD/iso/LiveOS/livefs.sfs"
+
+    mksquashfs "$livefs" "$livefs_squashfs" \
+        -comp zstd \
+        -Xcompression-level 19 \
+        -b 1M \
+        -no-recovery \
+        -xattrs
+
+    local livefs_size=$(du -h "$livefs_squashfs" | cut -f1)
+    log_info "Created livefs.sfs: $livefs_size"
+
+    # =========================================================================
+    # Create combined rootfs.img for initramfs compatibility
+    # The initramfs mounts this as the root filesystem
+    # We'll use overlayfs to layer livefs on top of rootfs at boot
+    # =========================================================================
+    # For now, keep the old rootfs.img for initramfs compatibility
+    # The initramfs will be updated to handle the overlay mount
+    log_info "Creating combined rootfs.img for live boot..."
+    local combined_squashfs="$BUILD/iso/LiveOS/rootfs.img"
+
+    # Create a combined view by merging rootfs and livefs
+    # The overlay is: lower=rootfs, upper=livefs
+    local combined_root="$BUILD/combined"
+    mkdir -p "$combined_root"
+
+    # Copy rootfs first
+    cp -a "$rootfs"/* "$combined_root/" 2>/dev/null || true
+
+    # Overlay livefs on top (this overwrites/adds live-specific files)
+    cp -a "$livefs"/* "$combined_root/" 2>/dev/null || true
+
+    mksquashfs "$combined_root" "$combined_squashfs" \
+        -comp zstd \
+        -Xcompression-level 19 \
+        -b 1M \
+        -no-recovery \
+        -xattrs \
+        -e 'dev/*' \
+        -e 'proc/*' \
+        -e 'sys/*' \
+        -e 'run/*' \
+        -e 'tmp/*'
+
+    local combined_size=$(du -h "$combined_squashfs" | cut -f1)
+    log_info "Created rootfs.img (combined): $combined_size"
+
+    # Cleanup combined directory
+    rm -rf "$combined_root"
 }
 
 # Helper function to copy a binary and its library dependencies
@@ -3064,6 +3499,7 @@ main() {
     install_packages
     fix_lib_symlinks
     configure_live_system
+    configure_live_overlay  # Create live-specific overlay (not installed to target)
     set_pax_flags
     rebuild_library_cache
     create_installed_initramfs

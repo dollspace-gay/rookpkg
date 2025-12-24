@@ -145,6 +145,7 @@ cmake .. \
       -DCMAKE_INSTALL_PREFIX=/usr \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_TESTING=OFF \
+      -DKWIN_BUILD_X11=ON \
       -G Ninja
 """
 
@@ -162,7 +163,7 @@ DESTDIR=$ROOKPKG_DESTDIR ninja install
 
 [files]
 "usr/bin/kwin_wayland" = { mode = 755 }
-"usr/bin/kwin_x11" = { mode = 755 }
+"usr/bin/kwin_wayland_wrapper" = { mode = 755 }
 "usr/lib/libkwin.so" = { mode = 755 }
 "usr/lib/libkwineffects.so" = { mode = 755 }
 "usr/lib/libkwinglutils.so" = { mode = 755 }

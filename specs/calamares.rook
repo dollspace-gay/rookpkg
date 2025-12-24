@@ -165,8 +165,12 @@ sequence:
   - keyboard
   - localecfg
   - fstab
+  - initcpiocfg
+  - initcpio
   - users
+  - shellprocess@remove-live-config
   - displaymanager
+  - shellprocess@setup-x11
   - hwclock
   - services-systemd
   - grubcfg
@@ -184,11 +188,19 @@ quit-at-end: false
 SETTINGS
 
 # Create unpackfs config for live installation (default module, not instance)
-# The ISO is mounted at /run/rootfsbase, and the squashfs is at LiveOS/rootfs.img
+# Following Manjaro's multi-squashfs architecture:
+# - rootfs.sfs: Base system (THIS is what gets installed)
+# - livefs.sfs: Live-only overlay (NOT installed)
+# - rootfs.img: Combined squashfs for live boot (for initramfs compatibility)
+#
+# We install ONLY rootfs.sfs to the target - this ensures:
+# - No live user is copied
+# - No SDDM autologin config is copied
+# - No live-specific polkit rules are copied
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs.conf << 'UNPACKFS'
 ---
 unpack:
-    - source: "/run/rootfsbase/LiveOS/rootfs.img"
+    - source: "/run/rootfsbase/LiveOS/rootfs.sfs"
       sourcefs: "squashfs"
       destination: ""
 UNPACKFS
@@ -258,7 +270,14 @@ cat > $ROOKPKG_DESTDIR/etc/calamares/modules/displaymanager.conf << 'DM'
 ---
 displaymanagers:
     - sddm
-basicSetup: false
+
+# Let Calamares set up the display manager properly
+basicSetup: true
+
+# SDDM specific configuration
+sddm:
+    # Enable autologin if user selected it
+    enableAutologin: true
 DM
 
 # Create fstab module config
@@ -273,10 +292,12 @@ efiMountOptions: umask=0077
 FSTAB
 
 # Create bootloader module config (matching Manjaro's working configuration)
+# Note: kernel installs to /boot/vmlinuz-6.6.102-grsec with symlink at /boot/vmlinuz
+# mkinitcpio generates /boot/initramfs-linux-grsec.img
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/bootloader.conf << 'BOOTLOADER'
 ---
 efiBootLoader: "grub"
-kernel: "/boot/vmlinuz-linux-grsec"
+kernel: "/boot/vmlinuz-6.6.102-grsec"
 img: "/boot/initramfs-linux-grsec.img"
 fallback: "/boot/initramfs-linux-grsec-fallback.img"
 timeout: "10"
@@ -290,11 +311,36 @@ efiBootMgr: "efibootmgr"
 installEFIFallback: true
 BOOTLOADER
 
+# Create initcpiocfg module config (configures mkinitcpio.conf in target)
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/initcpiocfg.conf << 'INITCPIOCFG'
+---
+# Use standard base hooks (not systemd)
+useSystemdHook: false
+
+# Hook modifications - add microcode support
+hooks:
+    prepend: []
+    append: []
+    remove: []
+
+# Source configuration file
+source: "/etc/mkinitcpio.conf"
+INITCPIOCFG
+
+# Create initcpio module config (runs mkinitcpio in target)
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/initcpio.conf << 'INITCPIO'
+---
+# Which kernel preset to use for mkinitcpio
+# This runs: mkinitcpio -p linux-grsec
+kernel: linux-grsec
+
+# Don't skip security permission fixes on initramfs
+be_unsafe: false
+INITCPIO
+
 # Create grubcfg module config
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/grubcfg.conf << 'GRUBCFG'
 ---
-# Disable initramfs regeneration - Rookery OS uses pre-built initramfs
-# The grubcfg module looks for dracut/mkinitcpio/plymouth but we don't use those
 dontChroot: false
 # These settings control what gets written to /etc/default/grub
 keepDistributor: false
@@ -389,6 +435,48 @@ restartNowChecked: true
 restartNowCommand: "systemctl reboot"
 notifyOnFinished: true
 FINISHED
+
+# Create shellprocess config to remove live-specific configurations
+# This runs before displaymanager to ensure clean SDDM setup
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/shellprocess@remove-live-config.conf << 'SHELLPROC'
+---
+dontChroot: false
+timeout: 120
+script:
+    - command: "rm -f /etc/sddm.conf.d/00-live.conf /etc/sddm.conf.d/autologin.conf"
+      timeout: 30
+    - command: "userdel -r live 2>/dev/null || true"
+      timeout: 30
+    - command: "rm -rf /home/live"
+      timeout: 30
+SHELLPROC
+
+# Create shellprocess config to set up X11 as default session
+# This runs after displaymanager to ensure proper SDDM config
+cat > $ROOKPKG_DESTDIR/etc/calamares/modules/shellprocess@setup-x11.conf << 'SHELLPROC2'
+---
+dontChroot: false
+timeout: 60
+script:
+    - command: "mkdir -p /etc/sddm.conf.d"
+      timeout: 10
+    - command: "echo '[General]' > /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo 'DisplayServer=x11' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo '' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo '[X11]' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo 'SessionDir=/usr/share/xsessions' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo '' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo '[Autologin]' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+    - command: "echo 'Session=plasmax11' >> /etc/sddm.conf.d/10-x11-default.conf"
+      timeout: 10
+SHELLPROC2
 
 # Create placeholder branding images
 touch $ROOKPKG_DESTDIR/etc/calamares/branding/rookeryos/logo.png
@@ -500,10 +588,14 @@ POLKIT
 "etc/calamares/modules/displaymanager.conf" = {}
 "etc/calamares/modules/fstab.conf" = {}
 "etc/calamares/modules/bootloader.conf" = {}
+"etc/calamares/modules/initcpiocfg.conf" = {}
+"etc/calamares/modules/initcpio.conf" = {}
 "etc/calamares/modules/grubcfg.conf" = {}
 "etc/calamares/modules/machineid.conf" = {}
 "etc/calamares/modules/services-systemd.conf" = {}
 "etc/calamares/modules/mount.conf" = {}
+"etc/calamares/modules/shellprocess@remove-live-config.conf" = {}
+"etc/calamares/modules/shellprocess@setup-x11.conf" = {}
 "etc/calamares/modules/partition.conf" = {}
 "etc/calamares/modules/finished.conf" = {}
 

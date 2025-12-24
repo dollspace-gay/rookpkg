@@ -1,0 +1,150 @@
+[package]
+name = "kwin-x11"
+version = "6.4.4"
+release = 1
+summary = "KDE Plasma X11 window manager"
+description = """
+KWin X11 is the standalone X11 window manager for KDE Plasma.
+Required for running Plasma X11 sessions. This package provides
+the kwin_x11 binary for native X11 desktop sessions.
+"""
+homepage = "https://invent.kde.org/plasma/kwin-x11"
+license = "LGPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/plasma/6.4.4/kwin-x11-6.4.4.tar.xz", sha256 = "987e207c2f2ab60e51421b5846ca03e69ef875ac20698022f5e8bdd1e1055ed9" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+kf6-kdoctools = ">= 6.0"
+plasma-wayland-protocols = ">= 1.10"
+wayland-protocols = ">= 1.25"
+python = ">= 3.12"
+
+[depends]
+glibc = ">= 2.39"
+aurorae = ">= 6.2"
+breeze = ">= 6.2"
+plasma-activities = ">= 6.2"
+kf6-kauth = ">= 6.0"
+kf6-kcmutils = ">= 6.0"
+kf6-kcolorscheme = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdeclarative = ">= 6.0"
+kdecoration = ">= 6.2"
+kf6-kglobalaccel = ">= 6.0"
+kglobalacceld = ">= 6.2"
+kf6-kguiaddons = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kirigami = ">= 6.0"
+kf6-kitemmodels = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+knighttime = ">= 1.0"
+kf6-knotifications = ">= 6.0"
+kf6-kpackage = ">= 6.0"
+kf6-kquickcharts = ">= 6.0"
+kscreenlocker = ">= 6.2"
+kf6-kservice = ">= 6.0"
+kf6-ksvg = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+lcms2 = ">= 2.16"
+libcanberra = ">= 0.30"
+libdisplay-info = ">= 0.1"
+libdrm = ">= 2.4"
+libepoxy = ">= 1.5"
+libqaccessibilityclient-qt6 = ">= 0.5"
+libx11 = ">= 1.8"
+libxcb = ">= 1.15"
+libxi = ">= 1.8"
+libxkbcommon = ">= 1.6"
+libxkbcommon-x11 = ">= 1.6"
+mesa = ">= 24.0"
+libplasma = ">= 6.2"
+qt6 = ">= 6.7"
+systemd = ">= 255"
+wayland = ">= 1.20"
+xcb-util-cursor = ">= 0.1"
+xcb-util-keysyms = ">= 0.4"
+xcb-util-wm = ">= 0.4"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf kwin-x11-*
+tar xf $ROOKPKG_SOURCES/kwin-x11-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/kwin-x11-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBEXECDIR=lib \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/kwin-x11-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/kwin-x11-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/kwin_x11" = { mode = 755 }
+"usr/lib/libkwin.so*" = { mode = 755 }
+"usr/lib/systemd/user/plasma-kwin_x11.service" = {}
+"usr/share/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "6.4.4"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Split from kwin package for Plasma 6.4+",
+    "Required for X11 desktop sessions"
+]
+
+[metadata]
+keywords = ["kwin", "window-manager", "x11", "kde", "plasma"]
+categories = ["system", "desktop", "kde"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
