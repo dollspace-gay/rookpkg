@@ -1,0 +1,99 @@
+[package]
+name = "ttf-inter"
+version = "4.1"
+release = 1
+summary = "Inter typeface family"
+description = """
+Inter is a typeface carefully crafted for computer screens. It features
+a tall x-height to aid in readability of mixed-case and lower-case text.
+Inter is a variable font with several OpenType features including
+contextual alternates, slashed zero, and tabular numbers.
+"""
+homepage = "https://rsms.me/inter/"
+license = "OFL-1.1"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+p7zip = ">= 17.0"
+
+[depends]
+fontconfig = ">= 2.14"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf inter-*
+mkdir -p inter-4.1
+cd inter-4.1
+7z x $ROOKPKG_SOURCES/Inter-*.zip
+"""
+
+configure = """
+# No configuration needed for fonts
+"""
+
+build = """
+# No build needed for fonts
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/inter-*
+
+# Install variable fonts (recommended for modern systems)
+install -d $ROOKPKG_DESTDIR/usr/share/fonts/inter
+install -m644 InterVariable.ttf $ROOKPKG_DESTDIR/usr/share/fonts/inter/ 2>/dev/null || true
+install -m644 InterVariable-Italic.ttf $ROOKPKG_DESTDIR/usr/share/fonts/inter/ 2>/dev/null || true
+
+# Install static fonts as fallback
+if [ -d "extras/ttf" ]; then
+    install -m644 extras/ttf/*.ttf $ROOKPKG_DESTDIR/usr/share/fonts/inter/
+fi
+
+# Install Display variants if present
+install -m644 InterDisplay*.ttf $ROOKPKG_DESTDIR/usr/share/fonts/inter/ 2>/dev/null || true
+"""
+
+[files]
+"usr/share/fonts/inter/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "fc-cache -f /usr/share/fonts/inter"
+pre_remove = ""
+post_remove = "fc-cache -f"
+pre_upgrade = ""
+post_upgrade = "fc-cache -f /usr/share/fonts/inter"
+
+[[changelog]]
+version = "4.1"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Includes variable and static font variants",
+    "Display variants included"
+]
+
+[metadata]
+keywords = ["inter", "font", "typeface", "ui", "sans-serif"]
+categories = ["fonts"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

@@ -1,0 +1,101 @@
+[package]
+name = "kvantum"
+version = "1.1.5"
+release = 1
+summary = "SVG-based theme engine for Qt"
+description = """
+Kvantum is a Linux SVG-based theme engine for Qt and KDE. It provides
+advanced theming capabilities including blur effects, transparency,
+and glassy window decorations. Essential for creating polished,
+modern desktop appearances.
+"""
+homepage = "https://github.com/tsujan/Kvantum"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/tsujan/Kvantum/archive/refs/tags/V1.1.5.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+qt6 = ">= 6.6"
+kf6-kwindowsystem = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.6"
+kf6-kwindowsystem = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf Kvantum-*
+tar xf $ROOKPKG_SOURCES/Kvantum-*.tar.gz 2>/dev/null || tar xf $ROOKPKG_SOURCES/V1.1.5.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/Kvantum-*/Kvantum
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DENABLE_QT5=OFF
+"""
+
+build = """
+cd $ROOKPKG_BUILD/Kvantum-*/Kvantum/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/Kvantum-*/Kvantum/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/kvantummanager" = { mode = 755 }
+"usr/lib/qt6/plugins/styles/libkvantum.so" = { mode = 755 }
+"usr/share/Kvantum/" = {}
+"usr/share/applications/kvantummanager.desktop" = {}
+"usr/share/icons/hicolor/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.1.5"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Qt6 build for KDE Plasma 6",
+    "Includes bundled themes"
+]
+
+[metadata]
+keywords = ["kvantum", "theme", "qt", "kde", "plasma", "styling"]
+categories = ["desktop", "theming"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

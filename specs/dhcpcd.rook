@@ -2,33 +2,33 @@
 name = "dhcpcd"
 version = "10.2.4"
 release = 1
-summary = "DHCP client daemon"
+summary = "RFC2131 compliant DHCP client"
 description = """
-dhcpcd is an RFC2131 compliant DHCP client. It is fully featured yet compact
-and lightweight. dhcpcd runs well on embedded devices and is also suitable
-for traditional desktops.
+dhcpcd is an implementation of the DHCP client specified in RFC2131.
+A DHCP client is useful for connecting your computer to a network
+which uses DHCP to assign network addresses. dhcpcd strives to be
+a fully featured, yet very lightweight DHCP client.
 """
-homepage = "https://roy.marples.name/projects/dhcpcd"
+homepage = "https://github.com/NetworkConfiguration/dhcpcd"
 license = "BSD-2-Clause"
 maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "x86_64"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/dhcpcd-10.2.4.tar.xz", sha256 = "6721e606609226dbf4d864a78802a9e96beec0ee034a1bd84138b3e037bba7d9" }
+source0 = { url = "https://github.com/NetworkConfiguration/dhcpcd/releases/download/v10.2.4/dhcpcd-10.2.4.tar.xz", sha256 = "7f8b798d17e27a954cd32c1e2ca2a97c5781198a714e76ebf6f64b91e3b9be90" }
 
 [patches]
 
 [build_depends]
 gcc = ">= 10.0"
-make = ">= 4.0"
 
 [depends]
 glibc = ">= 2.39"
-openssl = ">= 3.0"
+systemd = ">= 255"
 
 [optional_depends]
-systemd = ">= 250"
-openresolv = ">= 1.0"
+ntp = ">= 4.2"
+chrony = ">= 4.0"
 
 [environment]
 
@@ -41,12 +41,12 @@ tar xf $ROOKPKG_SOURCES/dhcpcd-*.tar.xz
 
 configure = """
 cd $ROOKPKG_BUILD/dhcpcd-*
-./configure --prefix=/usr                  \
-            --sysconfdir=/etc              \
-            --libexecdir=/usr/lib/dhcpcd   \
-            --dbdir=/var/lib/dhcpcd        \
-            --runstatedir=/run             \
-            --privsepuser=dhcpcd
+./configure --prefix=/usr \
+            --sysconfdir=/etc \
+            --libexecdir=/usr/lib/dhcpcd \
+            --dbdir=/var/lib/dhcpcd \
+            --runstatedir=/run \
+            --disable-privsep
 """
 
 build = """
@@ -62,29 +62,99 @@ make test || true
 install = """
 cd $ROOKPKG_BUILD/dhcpcd-*
 make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Create the database directory
+install -v -m755 -d $ROOKPKG_DESTDIR/var/lib/dhcpcd
+
+# Create systemd service unit for dhcpcd per-interface
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/systemd/system
+cat > $ROOKPKG_DESTDIR/usr/lib/systemd/system/dhcpcd@.service << 'EOF'
+[Unit]
+Description=DHCP Client Daemon on %I
+Documentation=man:dhcpcd(8)
+Wants=network.target
+Before=network.target
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=forking
+PIDFile=/run/dhcpcd-%I.pid
+ExecStart=/usr/sbin/dhcpcd -q -w %I
+ExecStop=/usr/sbin/dhcpcd -x %I
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Create a default dhcpcd.conf if not present
+if [ ! -f $ROOKPKG_DESTDIR/etc/dhcpcd.conf ]; then
+    cat > $ROOKPKG_DESTDIR/etc/dhcpcd.conf << 'EOF'
+# dhcpcd configuration for Rookery OS
+# See dhcpcd.conf(5) for details
+
+# Allow users of this group to interact with dhcpcd via the control socket.
+#controlgroup wheel
+
+# Inform the DHCP server of our hostname for DDNS.
+hostname
+
+# Use the hardware address of the interface for the Client ID.
+#clientid
+
+# or use the same DUID + IAID as set in DHCPv6 for DHCPv4 ClientID
+duid
+
+# Persist interface configuration when dhcpcd exits.
+persistent
+
+# Rapid commit support.
+option rapid_commit
+
+# A list of options to request from the DHCP server.
+option domain_name_servers, domain_name, domain_search, host_name
+option classless_static_routes
+option interface_mtu
+
+# Respect the network MTU.
+option interface_mtu
+
+# Request a hostname from the network
+option host_name
+
+# Most distributions have NTP support.
+#option ntp_servers
+
+# A ServerID is required by RFC2131.
+require dhcp_server_identifier
+
+# Generate SLAAC address using the Hardware Address of the interface
+slaac hwaddr
+
+# OR generate Stable Private IPv6 Addresses based from the DUID
+#slaac private
+EOF
+fi
 """
 
 [files]
 "usr/sbin/dhcpcd" = { mode = 755 }
 "usr/lib/dhcpcd/" = {}
-"usr/share/dhcpcd/hooks/" = {}
-"usr/share/man/man5/dhcpcd.conf.5" = {}
-"usr/share/man/man8/dhcpcd.8" = {}
+"usr/share/dhcpcd/" = {}
+"var/lib/dhcpcd/" = {}
+"etc/dhcpcd.conf" = {}
+"usr/lib/systemd/system/dhcpcd@.service" = {}
+"usr/share/man/" = {}
 
 [config_files]
 "etc/dhcpcd.conf" = {}
 
 [scripts]
-pre_install = """
-# Create dhcpcd user and group
-if ! grep -q "^dhcpcd:" /etc/group 2>/dev/null; then
-    groupadd -g 52 dhcpcd
-fi
-if ! grep -q "^dhcpcd:" /etc/passwd 2>/dev/null; then
-    useradd -c "dhcpcd Privilege Separation" -g dhcpcd -s /bin/false -u 52 dhcpcd
-fi
+pre_install = ""
+post_install = """
+# Ensure the database directory exists with proper permissions
+install -v -m755 -d /var/lib/dhcpcd
 """
-post_install = ""
 pre_remove = ""
 post_remove = ""
 pre_upgrade = ""
@@ -92,20 +162,20 @@ post_upgrade = ""
 
 [[changelog]]
 version = "10.2.4"
-date = "2025-12-15"
+date = "2025-12-24"
 author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 changes = [
     "Initial Rookery OS package",
     "Based on BLFS 12.4 build instructions",
-    "Privilege separation enabled"
+    "Includes systemd service unit for per-interface DHCP"
 ]
 
 [metadata]
-keywords = ["dhcpcd", "dhcp", "network", "client"]
-categories = ["network", "services"]
+keywords = ["dhcpcd", "dhcp", "network", "client", "networking"]
+categories = ["network", "system"]
+
+[security]
 
 [signing]
 master_keys_dir = "/etc/rookpkg/keys/master"
 packager_keys_dir = "/etc/rookpkg/keys/packager"
-
-[security]

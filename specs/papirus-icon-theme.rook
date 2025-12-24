@@ -1,0 +1,106 @@
+[package]
+name = "papirus-icon-theme"
+version = "20250501"
+release = 1
+summary = "Papirus icon theme for Linux"
+description = """
+Papirus is a free and open source SVG icon theme for Linux, based on
+Paper Icon Set with a lot of new icons and extras. Features include
+Hardcode-Tray support, KDE colorscheme support, and Folder Color support.
+Includes Papirus, Papirus-Dark, and Papirus-Light variants.
+"""
+homepage = "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+source0 = { url = "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme/archive/refs/tags/20250501.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+
+[depends]
+hicolor-icon-theme = ">= 0.17"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf papirus-icon-theme-*
+tar xf $ROOKPKG_SOURCES/papirus-icon-theme-*.tar.gz 2>/dev/null || \
+tar xf $ROOKPKG_SOURCES/20250501.tar.gz
+"""
+
+configure = """
+# No configuration needed
+"""
+
+build = """
+# No build needed for icon theme
+"""
+
+check = ""
+
+install = """
+cd $ROOKPKG_BUILD/papirus-icon-theme-*
+
+# Install all icon theme variants
+install -d $ROOKPKG_DESTDIR/usr/share/icons
+
+# Copy Papirus (standard)
+cp -r Papirus $ROOKPKG_DESTDIR/usr/share/icons/
+
+# Copy Papirus-Dark
+cp -r Papirus-Dark $ROOKPKG_DESTDIR/usr/share/icons/
+
+# Copy Papirus-Light
+cp -r Papirus-Light $ROOKPKG_DESTDIR/usr/share/icons/
+"""
+
+[files]
+"usr/share/icons/Papirus/" = {}
+"usr/share/icons/Papirus-Dark/" = {}
+"usr/share/icons/Papirus-Light/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+gtk-update-icon-cache -f /usr/share/icons/Papirus 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/Papirus-Dark 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/Papirus-Light 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = """
+gtk-update-icon-cache -f /usr/share/icons/Papirus 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/Papirus-Dark 2>/dev/null || true
+gtk-update-icon-cache -f /usr/share/icons/Papirus-Light 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "20250501"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Includes Papirus, Papirus-Dark, and Papirus-Light variants",
+    "Plasma 6 symbolic icons included"
+]
+
+[metadata]
+keywords = ["papirus", "icons", "theme", "kde", "plasma", "gtk"]
+categories = ["desktop", "theming", "icons"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

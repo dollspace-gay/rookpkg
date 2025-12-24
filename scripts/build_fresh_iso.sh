@@ -1299,6 +1299,788 @@ EOF
     # They are created at boot by rookery-live.service in livefs.
     # This ensures the installed system has clean polkit rules.
 
+    # ==========================================================================
+    # Configure NetworkManager for DHCP networking
+    # ==========================================================================
+    # Enable NetworkManager systemd service
+    mkdir -p "$rootfs/etc/systemd/system/multi-user.target.wants"
+    ln -sf /usr/lib/systemd/system/NetworkManager.service \
+        "$rootfs/etc/systemd/system/multi-user.target.wants/NetworkManager.service"
+
+    # Enable NetworkManager dispatcher and wait-online services
+    ln -sf /usr/lib/systemd/system/NetworkManager-dispatcher.service \
+        "$rootfs/etc/systemd/system/dbus-org.freedesktop.nm-dispatcher.service" 2>/dev/null || true
+    mkdir -p "$rootfs/etc/systemd/system/network-online.target.wants"
+    ln -sf /usr/lib/systemd/system/NetworkManager-wait-online.service \
+        "$rootfs/etc/systemd/system/network-online.target.wants/NetworkManager-wait-online.service" 2>/dev/null || true
+
+    # Disable systemd-networkd to avoid conflicts with NetworkManager
+    ln -sf /dev/null "$rootfs/etc/systemd/system/systemd-networkd.service"
+    ln -sf /dev/null "$rootfs/etc/systemd/system/systemd-networkd.socket"
+    ln -sf /dev/null "$rootfs/etc/systemd/system/systemd-networkd-wait-online.service"
+
+    # Create NetworkManager configuration for automatic DHCP
+    mkdir -p "$rootfs/etc/NetworkManager/conf.d"
+    cat > "$rootfs/etc/NetworkManager/conf.d/00-dhcp.conf" << 'EOF'
+[main]
+# Use internal DHCP client (or dhcpcd if installed)
+dhcp=internal
+
+# Enable automatic connection for wired networks
+[connection]
+# Auto-connect to wired networks
+connection.autoconnect=true
+
+[device]
+# Manage all ethernet devices
+wifi.scan-rand-mac-address=yes
+EOF
+
+    # Create a default connection profile for wired networks (DHCP)
+    mkdir -p "$rootfs/etc/NetworkManager/system-connections"
+    cat > "$rootfs/etc/NetworkManager/system-connections/Wired-DHCP.nmconnection" << 'EOF'
+[connection]
+id=Wired DHCP
+uuid=7a0bbfb6-e5e5-4f1e-9c3e-e9c8a1a8c8e1
+type=ethernet
+autoconnect=true
+autoconnect-priority=100
+
+[ethernet]
+
+[ipv4]
+method=auto
+
+[ipv6]
+method=auto
+addr-gen-mode=stable-privacy
+
+[proxy]
+EOF
+    chmod 600 "$rootfs/etc/NetworkManager/system-connections/Wired-DHCP.nmconnection"
+
+    log_info "Configured NetworkManager with DHCP for automatic networking"
+
+    # ==========================================================================
+    # Configure Rookery Desktop Defaults ("The Rookery Shell")
+    # Two-panel layout with macOS-inspired design and Corvid Dark theme
+    # ==========================================================================
+    log_info "Configuring Rookery Desktop defaults..."
+
+    # Create /etc/skel directories for new user defaults
+    mkdir -p "$rootfs/etc/skel/.config"
+    mkdir -p "$rootfs/etc/skel/.config/Kvantum"
+    mkdir -p "$rootfs/etc/skel/.local/share/konsole"
+
+    # ==========================================================================
+    # Install Rookery OS Wallpaper (Corvid Seal)
+    # ==========================================================================
+    log_info "Installing Rookery OS wallpaper..."
+
+    # Create wallpaper directory structure
+    mkdir -p "$rootfs/usr/share/wallpapers/Rookery/contents/images"
+
+    # Copy wallpaper from branding folder
+    # Try multiple potential locations for the branding folder
+    local wallpaper_src=""
+    if [ -f "/mnt/c/Users/texas/rookpkg/branding/wallpaper.jpg" ]; then
+        wallpaper_src="/mnt/c/Users/texas/rookpkg/branding/wallpaper.jpg"
+    elif [ -f "/home/rookery/branding/wallpaper.jpg" ]; then
+        wallpaper_src="/home/rookery/branding/wallpaper.jpg"
+    fi
+
+    if [ -n "$wallpaper_src" ]; then
+        cp "$wallpaper_src" "$rootfs/usr/share/wallpapers/Rookery/contents/images/"
+
+        # Create wallpaper metadata
+        cat > "$rootfs/usr/share/wallpapers/Rookery/metadata.json" << 'EOF'
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "corvids@rookeryos.dev",
+                "Name": "Friendly Society of Corvids"
+            }
+        ],
+        "Id": "Rookery",
+        "License": "CC-BY-SA-4.0",
+        "Name": "Rookery"
+    }
+}
+EOF
+        log_info "Rookery wallpaper installed from $wallpaper_src"
+    else
+        log_warn "Wallpaper not found - checked /mnt/c/Users/texas/rookpkg/branding/ and /home/rookery/branding/"
+    fi
+
+    # Configure SDDM to use Rookery wallpaper as background
+    mkdir -p "$rootfs/etc/sddm.conf.d"
+    cat > "$rootfs/etc/sddm.conf.d/10-background.conf" << 'EOF'
+[Theme]
+Current=breeze
+CursorTheme=breeze_cursors
+
+[General]
+Background=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+EOF
+
+    # ==========================================================================
+    # Create Rookery Look and Feel Package (The Rookery Shell)
+    # This is the ONLY way to get custom panel layouts in Plasma 6
+    # ==========================================================================
+    log_info "Creating Rookery Look and Feel package..."
+
+    local laf_dir="$rootfs/usr/share/plasma/look-and-feel/org.rookeryos.desktop"
+    mkdir -p "$laf_dir/contents/layouts"
+    mkdir -p "$laf_dir/contents/previews"
+
+    # Create Look and Feel metadata
+    cat > "$laf_dir/metadata.json" << 'LAFMETA'
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "corvids@rookeryos.dev",
+                "Name": "Friendly Society of Corvids"
+            }
+        ],
+        "Description": "The Rookery Shell - A polished dark desktop with macOS-inspired two-panel layout",
+        "Id": "org.rookeryos.desktop",
+        "License": "GPL-3.0",
+        "Name": "Rookery"
+    },
+    "X-Plasma-APIVersion": "2"
+}
+LAFMETA
+
+    # Create defaults file (theme settings)
+    cat > "$laf_dir/contents/defaults" << 'LAFDEFAULTS'
+[kdeglobals][KDE]
+widgetStyle=kvantum
+
+[kdeglobals][General]
+ColorScheme=BreezeDark
+
+[kdeglobals][Icons]
+Theme=Papirus-Dark
+
+[plasmarc][Theme]
+name=default
+
+[Wallpaper]
+Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+
+[kcminputrc][Mouse]
+cursorTheme=breeze_cursors
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.breeze
+theme=Breeze
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+
+[kwinrc][Plugins]
+blurEnabled=true
+contrastEnabled=true
+magiclampEnabled=true
+slideEnabled=true
+
+[kwinrc][Effect-blur]
+BlurStrength=10
+NoiseStrength=0
+
+[KSplash]
+Theme=org.kde.breeze
+LAFDEFAULTS
+
+    # Create the panel layout JavaScript - THIS IS THE KEY!
+    # This creates the two-panel "Rookery Shell" layout
+    cat > "$laf_dir/contents/layouts/org.kde.plasma.desktop-layout.js" << 'LAFLAYOUT'
+// Rookery Shell Layout - Two Panel macOS-style Layout
+// Top: Global Menu | Spacer | Clock | Spacer | System Tray
+// Bottom: Floating Icons-only Task Manager (dock)
+
+var desktopsArray = desktopsForActivity(currentActivity());
+for (var j = 0; j < desktopsArray.length; j++) {
+    desktopsArray[j].wallpaperPlugin = 'org.kde.image';
+    desktopsArray[j].currentConfigGroup = ["Wallpaper", "org.kde.image", "General"];
+    desktopsArray[j].writeConfig("Image", "/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg");
+}
+
+// ========================================
+// TOP PANEL - "The Perch"
+// ========================================
+var topPanel = new Panel("org.kde.panel");
+topPanel.location = "top";
+topPanel.height = 28;
+topPanel.hiding = "none";
+topPanel.alignment = "center";
+topPanel.lengthMode = "fill";
+
+// Global Menu (left)
+var appmenu = topPanel.addWidget("org.kde.plasma.appmenu");
+appmenu.currentConfigGroup = ["General"];
+appmenu.writeConfig("compactView", true);
+
+// Left spacer
+topPanel.addWidget("org.kde.plasma.panelspacer");
+
+// Digital Clock (center)
+var clock = topPanel.addWidget("org.kde.plasma.digitalclock");
+clock.currentConfigGroup = ["Appearance"];
+clock.writeConfig("dateFormat", "shortDate");
+clock.writeConfig("showSeconds", false);
+clock.writeConfig("use24hFormat", 2);
+
+// Right spacer
+topPanel.addWidget("org.kde.plasma.panelspacer");
+
+// System Tray (right)
+var systray = topPanel.addWidget("org.kde.plasma.systemtray");
+
+// ========================================
+// BOTTOM PANEL - "The Nest" (Dock)
+// ========================================
+var bottomPanel = new Panel("org.kde.panel");
+bottomPanel.location = "bottom";
+bottomPanel.height = 52;
+bottomPanel.hiding = "dodgewindows";
+bottomPanel.alignment = "center";
+bottomPanel.lengthMode = "fit";
+bottomPanel.floating = true;
+
+// Icons-only Task Manager
+var taskman = bottomPanel.addWidget("org.kde.plasma.icontasks");
+taskman.currentConfigGroup = ["General"];
+taskman.writeConfig("launchers", [
+    "applications:org.kde.dolphin.desktop",
+    "applications:org.kde.konsole.desktop",
+    "applications:firefox.desktop",
+    "applications:org.kde.systemsettings.desktop",
+    "applications:calamares.desktop"
+]);
+taskman.writeConfig("showOnlyCurrentDesktop", false);
+taskman.writeConfig("showOnlyCurrentActivity", true);
+LAFLAYOUT
+
+    log_info "Rookery Look and Feel package created"
+
+    # Set Rookery as the default Look and Feel for new users
+    mkdir -p "$rootfs/etc/xdg"
+    cat > "$rootfs/etc/xdg/plasmarc" << 'PLASMARC'
+[Theme]
+name=default
+
+[General]
+LookAndFeelPackage=org.rookeryos.desktop
+PLASMARC
+
+    # Also set it in kdeglobals
+    cat > "$rootfs/etc/xdg/kdeglobals" << 'KDEGLOBALS'
+[General]
+ColorScheme=BreezeDark
+Name=Breeze Dark
+widgetStyle=kvantum
+
+[Icons]
+Theme=Papirus-Dark
+
+[KDE]
+LookAndFeelPackage=org.rookeryos.desktop
+SingleClick=false
+widgetStyle=kvantum
+
+[Fonts]
+fixed=Monospace,10,-1,5,50,0,0,0,0,0
+font=Inter,10,-1,5,50,0,0,0,0,0
+menuFont=Inter,10,-1,5,50,0,0,0,0,0
+smallestReadableFont=Inter,8,-1,5,50,0,0,0,0,0
+toolBarFont=Inter,9,-1,5,50,0,0,0,0,0
+
+[WM]
+activeFont=Inter,10,-1,5,50,0,0,0,0,0
+KDEGLOBALS
+
+    # Set kwinrc defaults system-wide
+    cat > "$rootfs/etc/xdg/kwinrc" << 'KWINRC'
+[Compositing]
+Backend=OpenGL
+GLCore=true
+
+[Plugins]
+blurEnabled=true
+contrastEnabled=true
+magiclampEnabled=true
+slideEnabled=true
+kwin4_effect_fadeEnabled=true
+
+[Effect-blur]
+BlurStrength=10
+NoiseStrength=0
+
+[org.kde.kdecoration2]
+BorderSize=Normal
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+library=org.kde.breeze
+theme=Breeze
+
+[Windows]
+Placement=Smart
+KWINRC
+
+    # Configure Kvantum system-wide
+    mkdir -p "$rootfs/etc/xdg/Kvantum"
+    cat > "$rootfs/etc/xdg/Kvantum/kvantum.kvconfig" << 'KVCONFIG'
+[General]
+theme=KvDark
+KVCONFIG
+
+    # Configure KRunner shortcut (Meta+Space)
+    cat > "$rootfs/etc/xdg/kglobalshortcutsrc" << 'KGLOBAL'
+[krunner.desktop]
+RunClipboard=Meta+Shift+V,Meta+Shift+V,Run command on clipboard contents
+_k_friendly_name=KRunner
+_launch=Meta+Space\tAlt+F2\tSearch,Alt+Space\tAlt+F2\tSearch,KRunner
+KGLOBAL
+
+    # Configure KWin effects (blur, magic lamp minimize)
+    cat > "$rootfs/etc/skel/.config/kwinrc" << 'EOF'
+[Compositing]
+Backend=OpenGL
+GLCore=true
+LatencyPolicy=Low
+OpenGLIsUnsafe=false
+
+[Effect-blur]
+BlurStrength=10
+NoiseStrength=0
+
+[Effect-magiclamp]
+AnimationDuration=300
+
+[Plugins]
+blurEnabled=true
+contrastEnabled=true
+magiclampEnabled=true
+slideEnabled=true
+kwin4_effect_fadeEnabled=true
+kwin4_effect_translucencyEnabled=true
+
+[Windows]
+BorderlessMaximizedWindows=false
+Placement=Smart
+
+[org.kde.kdecoration2]
+BorderSize=Normal
+BorderSizeAuto=false
+ButtonsOnLeft=XIA
+ButtonsOnRight=
+EOF
+
+    # Configure KDE Global settings (theme, fonts, icons)
+    cat > "$rootfs/etc/skel/.config/kdeglobals" << 'EOF'
+[General]
+ColorScheme=BreezeDark
+Name=Breeze Dark
+widgetStyle=kvantum
+
+[Icons]
+Theme=Papirus-Dark
+
+[KDE]
+LookAndFeelPackage=org.kde.breezedark.desktop
+SingleClick=false
+widgetStyle=kvantum
+
+[Fonts]
+fixed=Monospace,10,-1,5,50,0,0,0,0,0
+font=Inter,10,-1,5,50,0,0,0,0,0
+menuFont=Inter,10,-1,5,50,0,0,0,0,0
+smallestReadableFont=Inter,8,-1,5,50,0,0,0,0,0
+toolBarFont=Inter,9,-1,5,50,0,0,0,0,0
+
+[WM]
+activeBackground=42,46,50
+activeBlend=255,255,255
+activeFont=Inter,10,-1,5,50,0,0,0,0,0
+activeForeground=252,252,252
+inactiveBackground=42,46,50
+inactiveBlend=75,71,67
+inactiveForeground=161,169,177
+EOF
+
+    # Configure KRunner to use Meta+Space (Spotlight-like)
+    cat > "$rootfs/etc/skel/.config/krunnerrc" << 'EOF'
+[General]
+FreeFloating=true
+
+[Plugins]
+baborunappsEnabled=true
+bookmarksEnabled=true
+calculatorEnabled=true
+desktopsessionsEnabled=true
+helprunnerEnabled=false
+killrunnerEnabled=true
+locationsEnabled=true
+placesEnabled=true
+shellEnabled=true
+webshortcutsEnabled=true
+windowsEnabled=true
+EOF
+
+    # Configure Kvantum to use a dark theme with blur
+    cat > "$rootfs/etc/skel/.config/Kvantum/kvantum.kvconfig" << 'EOF'
+[General]
+theme=KvDark
+EOF
+
+    # Mark Plasma as already configured (skip first-run wizard)
+    cat > "$rootfs/etc/skel/.config/plasma-welcomerc" << 'EOF'
+[General]
+LastSeenVersion=6.4.4
+EOF
+
+    # Configure plasmarc to indicate session is set up
+    cat > "$rootfs/etc/skel/.config/plasmarc" << 'EOF'
+[Theme]
+name=default
+EOF
+
+    # Configure KDE lock screen wallpaper
+    cat > "$rootfs/etc/skel/.config/kscreenlockerrc" << 'EOF'
+[Greeter][Wallpaper][org.kde.image][General]
+Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+PreviewImage=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+EOF
+
+    # Configure global shortcuts (Meta+Space for KRunner)
+    cat > "$rootfs/etc/skel/.config/kglobalshortcutsrc" << 'EOF'
+[krunner.desktop]
+RunClipboard=Meta+Shift+V,Meta+Shift+V,Run command on clipboard contents
+_k_friendly_name=KRunner
+_launch=Meta+Space\tAlt+F2\tSearch,Alt+Space\tAlt+F2\tSearch,KRunner
+EOF
+
+    # Create Plasma panel layout config (two-panel macOS style)
+    # This creates the "Rookery Shell" layout:
+    # - Top bar: Global menu (left), Clock (center), System tray (right)
+    # - Bottom dock: Floating icons-only task manager
+    cat > "$rootfs/etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc" << 'EOF'
+[ActionPlugins][0]
+RightButton;NoModifier=org.kde.contextmenu
+wheel:Vertical;NoModifier=org.kde.switchdesktop
+
+[ActionPlugins][1]
+RightButton;NoModifier=org.kde.contextmenu
+
+[Containments][1]
+activityId=
+formfactor=0
+immutability=1
+lastScreen=0
+location=0
+plugin=org.kde.plasma.folder
+wallpaperplugin=org.kde.image
+
+[Containments][1][Wallpaper][org.kde.image][General]
+Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+PreviewImage=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
+
+[Containments][2]
+activityId=
+formfactor=2
+immutability=1
+lastScreen=0
+location=3
+plugin=org.kde.panel
+
+[Containments][2][Applets][3]
+immutability=1
+plugin=org.kde.plasma.appmenu
+
+[Containments][2][Applets][3][Configuration][General]
+compactView=true
+
+[Containments][2][Applets][4]
+immutability=1
+plugin=org.kde.plasma.panelspacer
+
+[Containments][2][Applets][5]
+immutability=1
+plugin=org.kde.plasma.digitalclock
+
+[Containments][2][Applets][5][Configuration][Appearance]
+dateFormat=shortDate
+showSeconds=false
+use24hFormat=2
+
+[Containments][2][Applets][6]
+immutability=1
+plugin=org.kde.plasma.panelspacer
+
+[Containments][2][Applets][7]
+immutability=1
+plugin=org.kde.plasma.systemtray
+
+[Containments][2][Applets][7][Configuration][General]
+extraItems=org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.battery,org.kde.plasma.notifications
+
+[Containments][2][General]
+AppletOrder=3;4;5;6;7
+
+[Containments][8]
+activityId=
+formfactor=2
+immutability=1
+lastScreen=0
+location=4
+plugin=org.kde.panel
+
+[Containments][8][Applets][9]
+immutability=1
+plugin=org.kde.plasma.icontasks
+
+[Containments][8][Applets][9][Configuration][General]
+launchers=applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop,applications:firefox.desktop,applications:calamares.desktop
+
+[Containments][8][General]
+AppletOrder=9
+
+[ScreenMapping]
+itemsOnDisabledScreens=
+screenMapping=
+EOF
+
+    # Configure top panel (The Perch) - thin bar at top
+    cat > "$rootfs/etc/skel/.config/plasmashellrc" << 'EOF'
+[PlasmaViews][Panel 2]
+floating=0
+panelLengthMode=2
+thickness=28
+
+[PlasmaViews][Panel 2][Defaults]
+thickness=28
+
+[PlasmaViews][Panel 8]
+floating=1
+panelLengthMode=1
+thickness=52
+
+[PlasmaViews][Panel 8][Defaults]
+floating=1
+panelLengthMode=1
+thickness=52
+EOF
+
+    # Also copy configs to the live user's home directory (rookery)
+    # /etc/skel only works for NEW users, but live user already exists
+    mkdir -p "$rootfs/home/rookery/.config"
+    mkdir -p "$rootfs/home/rookery/.config/Kvantum"
+    cp "$rootfs/etc/skel/.config/kwinrc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/kdeglobals" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/krunnerrc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/kglobalshortcutsrc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/plasmashellrc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/Kvantum/kvantum.kvconfig" "$rootfs/home/rookery/.config/Kvantum/"
+    cp "$rootfs/etc/skel/.config/plasma-welcomerc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/plasmarc" "$rootfs/home/rookery/.config/"
+    cp "$rootfs/etc/skel/.config/kscreenlockerrc" "$rootfs/home/rookery/.config/"
+    chown -R 1000:1000 "$rootfs/home/rookery/.config"
+
+    # Create system-wide KDE defaults in /etc/xdg (fallback for all users)
+    mkdir -p "$rootfs/etc/xdg"
+    mkdir -p "$rootfs/etc/xdg/Kvantum"
+    cp "$rootfs/etc/skel/.config/kwinrc" "$rootfs/etc/xdg/"
+    cp "$rootfs/etc/skel/.config/kdeglobals" "$rootfs/etc/xdg/"
+    cp "$rootfs/etc/skel/.config/krunnerrc" "$rootfs/etc/xdg/"
+    cp "$rootfs/etc/skel/.config/Kvantum/kvantum.kvconfig" "$rootfs/etc/xdg/Kvantum/"
+
+    log_info "Rookery Desktop defaults configured (Corvid Dark theme)"
+
+    # Create first-login script to apply Plasma settings using kwriteconfig6
+    # This is more reliable than pre-placing config files
+    cat > "$rootfs/etc/profile.d/rookery-desktop-init.sh" << 'ROOKERY_INIT'
+#!/bin/bash
+# Rookery Desktop First-Login Configuration
+# This script applies the "Corvid Dark" theme on first Plasma login
+
+MARKER_FILE="$HOME/.config/rookery-desktop-configured"
+
+if [ ! -f "$MARKER_FILE" ] && [ -n "$KDE_SESSION_VERSION" ]; then
+    # Wait a moment for Plasma to initialize
+    sleep 2
+
+    # ========================================
+    # KWin Effects (Blur, Magic Lamp)
+    # ========================================
+    kwriteconfig6 --file kwinrc --group Compositing --key Backend "OpenGL"
+    kwriteconfig6 --file kwinrc --group Compositing --key GLCore "true"
+    kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled "true"
+    kwriteconfig6 --file kwinrc --group Plugins --key contrastEnabled "true"
+    kwriteconfig6 --file kwinrc --group Plugins --key magiclampEnabled "true"
+    kwriteconfig6 --file kwinrc --group Plugins --key slideEnabled "true"
+    kwriteconfig6 --file kwinrc --group "Effect-blur" --key BlurStrength "10"
+    kwriteconfig6 --file kwinrc --group "Effect-blur" --key NoiseStrength "0"
+
+    # Window buttons on left (macOS style)
+    kwriteconfig6 --file kwinrc --group "org.kde.kdecoration2" --key ButtonsOnLeft "XIA"
+    kwriteconfig6 --file kwinrc --group "org.kde.kdecoration2" --key ButtonsOnRight ""
+
+    # ========================================
+    # KDE Global Settings (Theme, Icons, Fonts)
+    # ========================================
+    # Widget style: Kvantum
+    kwriteconfig6 --file kdeglobals --group General --key widgetStyle "kvantum"
+    kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle "kvantum"
+
+    # Color scheme: Breeze Dark (base)
+    kwriteconfig6 --file kdeglobals --group General --key ColorScheme "BreezeDark"
+
+    # Icons: Papirus-Dark
+    kwriteconfig6 --file kdeglobals --group Icons --key Theme "Papirus-Dark"
+
+    # Fonts: Inter
+    kwriteconfig6 --file kdeglobals --group General --key font "Inter,10,-1,5,50,0,0,0,0,0"
+    kwriteconfig6 --file kdeglobals --group General --key fixed "Monospace,10,-1,5,50,0,0,0,0,0"
+    kwriteconfig6 --file kdeglobals --group General --key menuFont "Inter,10,-1,5,50,0,0,0,0,0"
+    kwriteconfig6 --file kdeglobals --group General --key smallestReadableFont "Inter,8,-1,5,50,0,0,0,0,0"
+    kwriteconfig6 --file kdeglobals --group General --key toolBarFont "Inter,9,-1,5,50,0,0,0,0,0"
+    kwriteconfig6 --file kdeglobals --group WM --key activeFont "Inter,10,-1,5,50,0,0,0,0,0"
+
+    # Single-click to open (optional, macOS-like)
+    kwriteconfig6 --file kdeglobals --group KDE --key SingleClick "false"
+
+    # ========================================
+    # Kvantum Theme
+    # ========================================
+    mkdir -p "$HOME/.config/Kvantum"
+    echo -e "[General]\ntheme=KvDark" > "$HOME/.config/Kvantum/kvantum.kvconfig"
+
+    # ========================================
+    # KRunner (Meta+Space like Spotlight)
+    # ========================================
+    kwriteconfig6 --file kglobalshortcutsrc --group "krunner.desktop" --key "_launch" "Meta+Space,Alt+Space\tAlt+F2\tSearch,KRunner"
+
+    # ========================================
+    # Mark as configured
+    # ========================================
+    mkdir -p "$(dirname "$MARKER_FILE")"
+    touch "$MARKER_FILE"
+
+    # Reload KWin to apply effects
+    qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
+fi
+ROOKERY_INIT
+    chmod 644 "$rootfs/etc/profile.d/rookery-desktop-init.sh"
+
+    # Also create an autostart desktop file for more reliable execution
+    mkdir -p "$rootfs/etc/xdg/autostart"
+    cat > "$rootfs/etc/xdg/autostart/rookery-desktop-init.desktop" << 'AUTOSTART'
+[Desktop Entry]
+Type=Application
+Name=Rookery Desktop Setup
+Comment=Apply Corvid Dark theme on first login
+Exec=/usr/local/bin/rookery-apply-theme
+Terminal=false
+NoDisplay=true
+X-KDE-autostart-phase=2
+AUTOSTART
+
+    # Create the theme application script
+    mkdir -p "$rootfs/usr/local/bin"
+    cat > "$rootfs/usr/local/bin/rookery-apply-theme" << 'APPLY_THEME'
+#!/bin/bash
+# Rookery Desktop Theme Application Script
+# Runs once on first login to apply the Corvid Dark theme
+
+MARKER_FILE="$HOME/.config/rookery-desktop-configured"
+
+if [ -f "$MARKER_FILE" ]; then
+    exit 0
+fi
+
+# Wait for Plasma to be ready
+sleep 3
+
+# ========================================
+# Apply KWin Effects
+# ========================================
+kwriteconfig6 --file kwinrc --group Compositing --key Backend "OpenGL"
+kwriteconfig6 --file kwinrc --group Compositing --key GLCore "true"
+kwriteconfig6 --file kwinrc --group Plugins --key blurEnabled "true"
+kwriteconfig6 --file kwinrc --group Plugins --key contrastEnabled "true"
+kwriteconfig6 --file kwinrc --group Plugins --key magiclampEnabled "true"
+kwriteconfig6 --file kwinrc --group Plugins --key slideEnabled "true"
+kwriteconfig6 --file kwinrc --group "Effect-blur" --key BlurStrength "10"
+kwriteconfig6 --file kwinrc --group "Effect-blur" --key NoiseStrength "0"
+
+# Window buttons on left (macOS style: close, minimize, maximize)
+kwriteconfig6 --file kwinrc --group "org.kde.kdecoration2" --key ButtonsOnLeft "XIA"
+kwriteconfig6 --file kwinrc --group "org.kde.kdecoration2" --key ButtonsOnRight ""
+
+# ========================================
+# Apply Global Theme Settings
+# ========================================
+# Widget style: Kvantum for glassy effects
+kwriteconfig6 --file kdeglobals --group General --key widgetStyle "kvantum"
+kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle "kvantum"
+
+# Color scheme
+kwriteconfig6 --file kdeglobals --group General --key ColorScheme "BreezeDark"
+kwriteconfig6 --file kdeglobals --group General --key Name "Breeze Dark"
+
+# Icons: Papirus-Dark
+kwriteconfig6 --file kdeglobals --group Icons --key Theme "Papirus-Dark"
+/usr/libexec/plasma-changeicons Papirus-Dark 2>/dev/null || true
+
+# Fonts: Inter (professional, clean)
+kwriteconfig6 --file kdeglobals --group General --key font "Inter,10,-1,5,50,0,0,0,0,0"
+kwriteconfig6 --file kdeglobals --group General --key fixed "Monospace,10,-1,5,50,0,0,0,0,0"
+kwriteconfig6 --file kdeglobals --group General --key menuFont "Inter,10,-1,5,50,0,0,0,0,0"
+kwriteconfig6 --file kdeglobals --group General --key smallestReadableFont "Inter,8,-1,5,50,0,0,0,0,0"
+kwriteconfig6 --file kdeglobals --group General --key toolBarFont "Inter,9,-1,5,50,0,0,0,0,0"
+kwriteconfig6 --file kdeglobals --group WM --key activeFont "Inter,10,-1,5,50,0,0,0,0,0"
+
+# ========================================
+# Configure Kvantum
+# ========================================
+mkdir -p "$HOME/.config/Kvantum"
+cat > "$HOME/.config/Kvantum/kvantum.kvconfig" << 'KVCONFIG'
+[General]
+theme=KvDark
+KVCONFIG
+
+# ========================================
+# KRunner Shortcut (Meta+Space)
+# ========================================
+kwriteconfig6 --file kglobalshortcutsrc --group "krunner.desktop" --key "_launch" "Meta+Space,Alt+Space\tAlt+F2\tSearch,KRunner"
+
+# ========================================
+# Wallpaper
+# ========================================
+if [ -f "/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg" ]; then
+    # Use plasma-apply-wallpaperimage if available
+    if command -v plasma-apply-wallpaperimage &>/dev/null; then
+        plasma-apply-wallpaperimage /usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg 2>/dev/null || true
+    fi
+fi
+
+# ========================================
+# Reload KWin and Plasma
+# ========================================
+qdbus org.kde.KWin /KWin reconfigure 2>/dev/null || true
+
+# Mark as configured
+mkdir -p "$HOME/.config"
+touch "$MARKER_FILE"
+
+# Show notification
+kdialog --passivepopup "Rookery Desktop theme applied. Enjoy!" 5 2>/dev/null || true
+APPLY_THEME
+    chmod 755 "$rootfs/usr/local/bin/rookery-apply-theme"
+
     # Set graphical target as default
     ln -sf /usr/lib/systemd/system/graphical.target "$rootfs/etc/systemd/system/default.target" 2>/dev/null || true
 
@@ -1869,6 +2651,7 @@ configure_user() {
 
     if ! id "$LIVE_USER" &>/dev/null; then
         # Create user with password
+        # -m flag creates home dir and copies from /etc/skel
         useradd -m -G "$LIVE_GROUPS" -s /bin/bash "$LIVE_USER"
         echo "$LIVE_USER:$LIVE_PASSWORD" | chpasswd
         log "Created user $LIVE_USER"
@@ -1879,6 +2662,14 @@ configure_user() {
     # Ensure home directory exists and has correct permissions
     mkdir -p /home/$LIVE_USER
     chown -R $(id -u $LIVE_USER):$(id -g $LIVE_USER) /home/$LIVE_USER
+
+    # Copy skeleton config files for Plasma desktop (Rookery Shell theme)
+    # useradd -m should do this, but we ensure it explicitly
+    if [ -d /etc/skel/.config ] && [ ! -d /home/$LIVE_USER/.config ]; then
+        log "Copying Plasma config from /etc/skel..."
+        cp -r /etc/skel/.config /home/$LIVE_USER/
+        chown -R $(id -u $LIVE_USER):$(id -g $LIVE_USER) /home/$LIVE_USER/.config
+    fi
 
     # Create basic shell configs
     if [ ! -f /home/$LIVE_USER/.bashrc ]; then

@@ -1,0 +1,138 @@
+[package]
+name = "dolphin"
+version = "25.08.0"
+release = 1
+summary = "KDE file manager"
+description = """
+Dolphin is the default file manager of KDE Plasma. It focuses on usability
+and provides a clean, intuitive interface for file management. Features
+include split view, tabs, search integration, version control integration,
+and a powerful sidebar with Places panel.
+"""
+homepage = "https://apps.kde.org/dolphin/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.kde.org/stable/release-service/25.08.0/src/dolphin-25.08.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.8"
+extra-cmake-modules = ">= 6.0"
+qt6 = ">= 6.7"
+
+[depends]
+glibc = ">= 2.39"
+qt6 = ">= 6.7"
+kf6-baloo = ">= 6.0"
+kf6-kbookmarks = ">= 6.0"
+kf6-kcmutils = ">= 6.0"
+kf6-kcodecs = ">= 6.0"
+kf6-kcompletion = ">= 6.0"
+kf6-kconfig = ">= 6.0"
+kf6-kconfigwidgets = ">= 6.0"
+kf6-kcoreaddons = ">= 6.0"
+kf6-kcrash = ">= 6.0"
+kf6-kdbusaddons = ">= 6.0"
+kf6-kfilemetadata = ">= 6.0"
+kf6-ki18n = ">= 6.0"
+kf6-kiconthemes = ">= 6.0"
+kf6-kio = ">= 6.0"
+kf6-knewstuff = ">= 6.0"
+kf6-knotifications = ">= 6.0"
+kf6-kparts = ">= 6.0"
+kf6-kservice = ">= 6.0"
+kf6-ktextwidgets = ">= 6.0"
+kf6-kwidgetsaddons = ">= 6.0"
+kf6-kwindowsystem = ">= 6.0"
+kf6-kxmlgui = ">= 6.0"
+kf6-solid = ">= 6.0"
+
+[optional_depends]
+
+[environment]
+CMAKE_PREFIX_PATH = "/usr"
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf dolphin-*
+tar xf $ROOKPKG_SOURCES/dolphin-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/dolphin-*
+mkdir -p build
+cd build
+cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_TESTING=OFF \
+      -Wno-dev \
+      -G Ninja
+"""
+
+build = """
+cd $ROOKPKG_BUILD/dolphin-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require a running display
+"""
+
+install = """
+cd $ROOKPKG_BUILD/dolphin-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/dolphin" = { mode = 755 }
+"usr/bin/servicemenuinstaller" = { mode = 755 }
+"usr/lib/libdolphinprivate.so*" = {}
+"usr/lib/libdolphinvcs.so*" = {}
+"usr/lib/qt6/plugins/dolphin/" = {}
+"usr/lib/qt6/plugins/kf6/parts/dolphinpart.so" = { mode = 755 }
+"usr/share/applications/org.kde.dolphin.desktop" = {}
+"usr/share/config.kcfg/dolphin_*" = {}
+"usr/share/dbus-1/services/org.kde.dolphin.FileManager1.service" = {}
+"usr/share/icons/hicolor/*/apps/system-file-manager.*" = {}
+"usr/share/kglobalaccel/org.kde.dolphin.desktop" = {}
+"usr/share/kio/servicemenus/" = {}
+"usr/share/knsrcfiles/dolphin_*.knsrc" = {}
+"usr/share/doc/HTML/*/dolphin/" = {}
+"usr/share/locale/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "25.08.0"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "KDE file manager for Plasma 6"
+]
+
+[metadata]
+keywords = ["dolphin", "file-manager", "kde", "files", "browser"]
+categories = ["system", "utilities", "kde"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
