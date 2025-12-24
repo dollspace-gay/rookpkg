@@ -314,12 +314,20 @@ configure_live_system() {
 
     # Create essential directories
     # Note: /home/live is NOT created here - it's created by rookery-live.service at boot
-    mkdir -p "$rootfs"/{etc/systemd/system,run/dbus,var/run,var/lib/sddm}
+    mkdir -p "$rootfs"/{etc/systemd/system,run/dbus,var/run,var/lib/sddm,var/lib/polkit-1,var/lib/libuuid,var/run/avahi-daemon,var/run/pulse}
     chmod 1777 "$rootfs/tmp"
 
-    # Set proper ownership for sddm directory (UID 995, GID 995)
-    chown 995:995 "$rootfs/var/lib/sddm"
+    # Set proper ownership for service directories
+    chown 995:995 "$rootfs/var/lib/sddm"      # sddm:sddm
     chmod 750 "$rootfs/var/lib/sddm"
+    chown 27:27 "$rootfs/var/lib/polkit-1"    # polkitd:polkitd
+    chmod 750 "$rootfs/var/lib/polkit-1"
+    chown 68:68 "$rootfs/var/lib/libuuid"     # uuidd:uuidd
+    chmod 755 "$rootfs/var/lib/libuuid"
+    chown 84:84 "$rootfs/var/run/avahi-daemon" # avahi:avahi
+    chmod 755 "$rootfs/var/run/avahi-daemon"
+    chown 58:58 "$rootfs/var/run/pulse"       # pulse:pulse
+    chmod 755 "$rootfs/var/run/pulse"
 
     # Create passwd - use /usr/bin/bash since /bin may not have bash
     # Note: NO live user here - live user is created at boot by rookery-live.service
@@ -331,8 +339,15 @@ nobody:x:65534:65534:Nobody:/:/usr/sbin/nologin
 messagebus:x:18:18:D-Bus Message Daemon:/run/dbus:/usr/sbin/nologin
 systemd-journal:x:990:990:systemd Journal:/:/usr/sbin/nologin
 systemd-network:x:991:991:systemd Network Management:/:/usr/sbin/nologin
+systemd-resolve:x:992:992:systemd Resolver:/:/usr/sbin/nologin
+systemd-timesync:x:993:993:systemd Time Sync:/:/usr/sbin/nologin
+systemd-oom:x:994:994:systemd OOM Killer:/:/usr/sbin/nologin
 polkitd:x:27:27:PolicyKit Daemon:/var/lib/polkit-1:/usr/sbin/nologin
 sddm:x:995:995:SDDM Display Manager:/var/lib/sddm:/usr/sbin/nologin
+avahi:x:84:84:Avahi mDNS/DNS-SD:/var/run/avahi-daemon:/usr/sbin/nologin
+uuidd:x:68:68:UUID Generator:/var/lib/libuuid:/usr/sbin/nologin
+pulse:x:58:58:PulseAudio:/var/run/pulse:/usr/sbin/nologin
+rtkit:x:133:133:RealtimeKit:/proc:/usr/sbin/nologin
 EOF
 
     # Create /bin and /sbin symlinks to /usr/bin and /usr/sbin for compatibility
@@ -369,30 +384,56 @@ sys:x:3:
 adm:x:4:
 tty:x:5:sddm
 disk:x:6:
+lp:x:7:
+mem:x:8:
+kmem:x:9:
 wheel:x:10:
 cdrom:x:11:
-shadow:x:15:
+dialout:x:12:
 utmp:x:13:
-video:x:22:sddm
-audio:x:25:
-users:x:100:
-nobody:x:65534:
+shadow:x:15:
+tape:x:16:
 messagebus:x:18:
+video:x:22:sddm
+audio:x:25:pulse
+polkitd:x:27:
+pulse:x:58:
+pulse-access:x:59:
+uuidd:x:68:
+avahi:x:84:
+users:x:100:
+netdev:x:101:
+fuse:x:106:
+lpadmin:x:120:
+rtkit:x:133:
 systemd-journal:x:990:
+systemd-network:x:991:
+systemd-resolve:x:992:
+systemd-timesync:x:993:
+systemd-oom:x:994:
+sddm:x:995:
 input:x:996:sddm
 kvm:x:997:
 render:x:998:sddm
-polkitd:x:27:
-sddm:x:995:
 autologin:x:1001:sddm
+nobody:x:65534:
 EOF
 
     # Create shadow - NO live user (added at boot by rookery-live.service)
     cat > "$rootfs/etc/shadow" << 'EOF'
 root:!:19722:0:99999:7:::
 messagebus:!:19722:0:99999:7:::
+systemd-journal:!:19722:0:99999:7:::
+systemd-network:!:19722:0:99999:7:::
+systemd-resolve:!:19722:0:99999:7:::
+systemd-timesync:!:19722:0:99999:7:::
+systemd-oom:!:19722:0:99999:7:::
 polkitd:!:19722:0:99999:7:::
 sddm:!:19722:0:99999:7:::
+avahi:!:19722:0:99999:7:::
+uuidd:!:19722:0:99999:7:::
+pulse:!:19722:0:99999:7:::
+rtkit:!:19722:0:99999:7:::
 EOF
     chmod 640 "$rootfs/etc/shadow"
     chown root:15 "$rootfs/etc/shadow"  # 15 = shadow group
@@ -468,6 +509,26 @@ export LC_ALL=en_US.UTF-8
 EOF
     chmod 644 "$rootfs/etc/profile.d/locale.sh"
 
+    # Configure systemd to use UTF-8 locale for all D-Bus activated services
+    # Without this, system services like powerdevil helpers run with LANG=C
+    mkdir -p "$rootfs/etc/systemd/system.conf.d"
+    cat > "$rootfs/etc/systemd/system.conf.d/locale.conf" << 'EOF'
+[Manager]
+# Set default locale for all system services
+DefaultEnvironment=LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+EOF
+    chmod 644 "$rootfs/etc/systemd/system.conf.d/locale.conf"
+
+    mkdir -p "$rootfs/etc/systemd/user.conf.d"
+    cat > "$rootfs/etc/systemd/user.conf.d/locale.conf" << 'EOF'
+[Manager]
+# Set default locale for all user services
+DefaultEnvironment=LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+EOF
+    chmod 644 "$rootfs/etc/systemd/user.conf.d/locale.conf"
+
+    log_info "Configured systemd default locale for D-Bus services"
+
     # Note: /etc/environment settings are configured later in the script
     # to ensure they're not overwritten by other configuration steps
 
@@ -491,6 +552,37 @@ EOF
     chmod 644 "$rootfs/etc/profile.d/desktop-vm.sh"
 
     log_info "UTF-8 locale configured"
+
+    # Configure grsecurity sysctl settings (optional - may not exist in all kernels)
+    # The '-' prefix tells sysctl to ignore errors if the setting doesn't exist
+    mkdir -p "$rootfs/etc/sysctl.d"
+    cat > "$rootfs/etc/sysctl.d/99-rookery-grsec.conf" << 'EOF'
+# Rookery OS grsecurity settings
+# Settings prefixed with - are optional (won't fail if kernel doesn't support them)
+
+# Allow unprivileged FUSE (needed for xdg-document-portal, flatpak, etc.)
+-kernel.grsecurity.deny_fuse = 0
+
+# Allow unprivileged user namespaces (needed for sandboxing in browsers, etc.)
+-kernel.grsecurity.unprivileged_userns_allowed = 1
+
+# Standard kernel user namespace setting (fallback for non-grsec kernels)
+-kernel.unprivileged_userns_clone = 1
+EOF
+    chmod 644 "$rootfs/etc/sysctl.d/99-rookery-grsec.conf"
+    log_info "Configured grsecurity sysctl settings"
+
+    # Enable PipeWire user services globally via systemd preset
+    # This is more reliable than /etc/skel symlinks
+    mkdir -p "$rootfs/usr/lib/systemd/user-preset"
+    cat > "$rootfs/usr/lib/systemd/user-preset/90-rookery-pipewire.preset" << 'EOF'
+# Rookery OS: Enable PipeWire audio by default
+enable pipewire.socket
+enable pipewire-pulse.socket
+enable wireplumber.service
+EOF
+    chmod 644 "$rootfs/usr/lib/systemd/user-preset/90-rookery-pipewire.preset"
+    log_info "Configured PipeWire user service preset"
 
     # Create machine-id (empty for live boot, systemd will generate)
     touch "$rootfs/etc/machine-id"
@@ -542,6 +634,31 @@ EOF
 # Begin /etc/pam.d/system-password
 password  required    pam_unix.so sha512 shadow try_first_pass
 # End /etc/pam.d/system-password
+EOF
+
+    # system-login (common login stack for display managers)
+    cat > "$rootfs/etc/pam.d/system-login" << 'EOF'
+# Begin /etc/pam.d/system-login
+auth      required    pam_env.so
+auth      required    pam_faillock.so preauth
+auth      include     system-auth
+auth      optional    pam_faillock.so authfail
+account   include     system-account
+password  include     system-password
+session   required    pam_limits.so
+session   include     system-session
+-session  optional    pam_systemd.so
+# End /etc/pam.d/system-login
+EOF
+
+    # system-local-login (same as system-login, for local sessions)
+    cat > "$rootfs/etc/pam.d/system-local-login" << 'EOF'
+# Begin /etc/pam.d/system-local-login
+auth      include     system-login
+account   include     system-login
+password  include     system-login
+session   include     system-login
+# End /etc/pam.d/system-local-login
 EOF
 
     # Fix sddm-autologin PAM - pam_systemd is REQUIRED for XDG_RUNTIME_DIR
@@ -697,6 +814,28 @@ EOF
 EOF
     chmod 644 "$rootfs/etc/skel/.bashrc" "$rootfs/etc/skel/.bash_profile"
 
+    # Create /etc/os-release (required by systemd and many tools)
+    mkdir -p "$rootfs/usr/lib"
+    cat > "$rootfs/usr/lib/os-release" << 'EOF'
+NAME="Rookery OS"
+PRETTY_NAME="Rookery OS 1.0"
+ID=rookery
+ID_LIKE=lfs
+VERSION="1.0"
+VERSION_ID="1.0"
+VERSION_CODENAME="corvid"
+BUILD_ID=rolling
+HOME_URL="https://rookeryos.dev"
+DOCUMENTATION_URL="https://rookeryos.dev/docs"
+SUPPORT_URL="https://rookeryos.dev/support"
+BUG_REPORT_URL="https://github.com/rookeryos/rookery/issues"
+LOGO=rookery-logo
+ANSI_COLOR="0;36"
+EOF
+    # Symlink /etc/os-release to /usr/lib/os-release
+    ln -sf ../usr/lib/os-release "$rootfs/etc/os-release"
+    log_info "Created /etc/os-release"
+
     # Create /etc/issue for login prompt
     cat > "$rootfs/etc/issue" << 'EOF'
 Rookery OS 1.0 - Live Desktop
@@ -753,6 +892,9 @@ LC_ALL=en_US.UTF-8
 QT_PLUGIN_PATH=/usr/plugins:/usr/lib/plugins
 QML_IMPORT_PATH=/usr/lib/qml
 QML2_IMPORT_PATH=/usr/lib/qml
+
+# Cursor size - prevent giant cursor in VMs
+XCURSOR_SIZE=24
 
 # Software rendering fallback - helps in VMs without proper GPU acceleration
 KWIN_COMPOSE=O2
@@ -1073,7 +1215,7 @@ session  optional       pam_limits.so
 session  required       pam_unix.so
 session  optional       pam_loginuid.so
 session  optional       pam_systemd.so
-session  optional       pam_lastlog.so
+# Note: pam_lastlog.so removed - module not available in linux-pam build
 EOF
 
     log_info "PAM configured for systemd/Wayland"
@@ -1325,11 +1467,11 @@ EOF
 [main]
 # Use internal DHCP client (or dhcpcd if installed)
 dhcp=internal
-
-# Enable automatic connection for wired networks
-[connection]
-# Auto-connect to wired networks
-connection.autoconnect=true
+# Use default DNS handling (writes to /etc/resolv.conf directly)
+# Set to 'none' to let resolvconf/systemd-resolved handle it
+dns=default
+# Disable resolvconf integration (we don't have resolvconf installed)
+rc-manager=unmanaged
 
 [device]
 # Manage all ethernet devices
@@ -1371,6 +1513,14 @@ EOF
     mkdir -p "$rootfs/etc/skel/.config"
     mkdir -p "$rootfs/etc/skel/.config/Kvantum"
     mkdir -p "$rootfs/etc/skel/.local/share/konsole"
+
+    # Enable PipeWire user services (audio/video streaming)
+    mkdir -p "$rootfs/etc/skel/.config/systemd/user/default.target.wants"
+    mkdir -p "$rootfs/etc/skel/.config/systemd/user/sockets.target.wants"
+    ln -sf /usr/lib/systemd/user/pipewire.socket "$rootfs/etc/skel/.config/systemd/user/sockets.target.wants/"
+    ln -sf /usr/lib/systemd/user/pipewire-pulse.socket "$rootfs/etc/skel/.config/systemd/user/sockets.target.wants/"
+    ln -sf /usr/lib/systemd/user/wireplumber.service "$rootfs/etc/skel/.config/systemd/user/default.target.wants/"
+    log_info "Enabled PipeWire user services in /etc/skel"
 
     # ==========================================================================
     # Install Rookery OS Wallpaper (Corvid Seal)
@@ -1419,6 +1569,7 @@ EOF
 [Theme]
 Current=breeze
 CursorTheme=breeze_cursors
+CursorSize=24
 
 [General]
 Background=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
@@ -1472,6 +1623,7 @@ Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
 
 [kcminputrc][Mouse]
 cursorTheme=breeze_cursors
+cursorSize=24
 
 [kwinrc][org.kde.kdecoration2]
 library=org.kde.breeze
@@ -2168,9 +2320,15 @@ EOF
     mkdir -p "$rootfs/etc/calamares/modules"
     mkdir -p "$rootfs/etc/calamares/branding/rookeryos"
 
-    # NOTE: We do NOT overwrite unpackfs.conf here - the calamares package
-    # already has the correct config pointing to rootfs.sfs (the clean base system).
-    # The package config is correct; we must not overwrite it with rootfs.img.
+    # Create unpackfs.conf - point to the ISO's rootfs.sfs (the clean base system)
+    # The ISO is mounted at /run/iso by the initramfs, so rootfs.sfs is at /run/iso/LiveOS/rootfs.sfs
+    cat > "$rootfs/etc/calamares/modules/unpackfs.conf" << 'EOF'
+---
+unpack:
+    - source: "/run/iso/LiveOS/rootfs.sfs"
+      sourcefs: "squashfs"
+      destination: ""
+EOF
 
     # Create settings.conf matching Manjaro's EXACTLY - no instances, no shellprocess
     # Manjaro uses modules directly without custom instances
@@ -2331,6 +2489,8 @@ defaultGroups:
     - network
     - lp
     - scanner
+    - fuse
+    - lpadmin
 autologinGroup: autologin
 sudoersGroup: wheel
 setRootPassword: true
@@ -2639,7 +2799,7 @@ set -e
 
 LIVE_USER="live"
 LIVE_PASSWORD="live"
-LIVE_GROUPS="wheel,audio,video,input,render,kvm,cdrom,adm,autologin,users"
+LIVE_GROUPS="wheel,audio,video,input,render,kvm,cdrom,adm,autologin,users,pulse-access,dialout,netdev,fuse,lpadmin"
 
 log() {
     echo "[rookery-live] $1" | tee -a /var/log/rookery-live.log
@@ -3001,6 +3161,24 @@ EOF
         log_info "Library cache created: $cache_size ($lib_count libraries)"
     else
         log_warn "Library cache may not have been created properly"
+    fi
+
+    # Compile GSettings schemas (required for GTK apps like Firefox)
+    log_info "Compiling GSettings schemas..."
+    if [ -d "$rootfs/usr/share/glib-2.0/schemas" ]; then
+        if [ -x "$rootfs/usr/bin/glib-compile-schemas" ]; then
+            chroot "$rootfs" /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas
+            if [ -f "$rootfs/usr/share/glib-2.0/schemas/gschemas.compiled" ]; then
+                local schema_size=$(du -h "$rootfs/usr/share/glib-2.0/schemas/gschemas.compiled" | cut -f1)
+                log_info "GSettings schemas compiled: $schema_size"
+            else
+                log_warn "GSettings schema compilation may have failed"
+            fi
+        else
+            log_warn "glib-compile-schemas not found in rootfs"
+        fi
+    else
+        log_warn "No GSettings schemas directory found"
     fi
 }
 
@@ -3893,8 +4071,11 @@ mount --move /sys /newroot/sys
 mount --move /dev /newroot/dev
 mount --move /run /newroot/run
 
-# Keep ISO mounted for Calamares to access
-mount --move "$MOUNT_POINT" /newroot/run/rootfsbase 2>/dev/null || true
+# Keep ISO mounted at /run/iso for Calamares to access rootfs.sfs
+# Note: /run/rootfsbase already has the squashfs content mounted (the live root)
+# Calamares needs access to /run/iso/LiveOS/rootfs.sfs (the clean base system)
+mkdir -p /newroot/run/iso
+mount --move "$MOUNT_POINT" /newroot/run/iso 2>/dev/null || true
 
 echo ""
 echo "Switching to live desktop..."

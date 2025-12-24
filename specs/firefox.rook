@@ -165,11 +165,9 @@ Name=Open a New Private Window
 Exec=firefox --private-window
 DESKTOP
 
-# Create symlink in /usr/bin if not exists
+# Ensure symlink in /usr/bin exists (mach install may have already created it)
 mkdir -p $ROOKPKG_DESTDIR/usr/bin
-if [ ! -e $ROOKPKG_DESTDIR/usr/bin/firefox ]; then
-    ln -s /usr/lib/firefox/firefox $ROOKPKG_DESTDIR/usr/bin/firefox
-fi
+ln -sf /usr/lib/firefox/firefox $ROOKPKG_DESTDIR/usr/bin/firefox
 
 # Install icons from branding
 for size in 16 32 48 64 128; do

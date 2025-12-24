@@ -80,11 +80,12 @@ make test || true
 
 install = """
 cd $ROOKPKG_BUILD/lua-*
-make INSTALL_TOP=/usr \
+# Note: Lua's Makefile does NOT support DESTDIR, so we must include it in INSTALL_TOP
+make INSTALL_TOP=$ROOKPKG_DESTDIR/usr \
      INSTALL_DATA="cp -d" \
-     INSTALL_MAN=/usr/share/man/man1 \
+     INSTALL_MAN=$ROOKPKG_DESTDIR/usr/share/man/man1 \
      TO_LIB="liblua.so liblua.so.5.4 liblua.so.5.4.8" \
-     DESTDIR=$ROOKPKG_DESTDIR install
+     install
 
 mkdir -pv $ROOKPKG_DESTDIR/usr/share/doc/lua-5.4.8
 cp -v doc/*.{html,css,gif,png} $ROOKPKG_DESTDIR/usr/share/doc/lua-5.4.8 2>/dev/null || true

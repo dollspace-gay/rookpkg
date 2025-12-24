@@ -1,0 +1,116 @@
+[package]
+name = "rtkit"
+version = "0.14"
+release = 1
+summary = "Realtime Policy and Watchdog Daemon"
+description = """
+RealtimeKit is a D-Bus system service that allows user processes to gain
+realtime scheduling (SCHED_RR) on request. It is intended as a secure
+mechanism to allow applications like PulseAudio and PipeWire to acquire
+realtime priority without running as root or having CAP_SYS_NICE.
+"""
+homepage = "https://gitlab.freedesktop.org/pipewire/rtkit"
+license = "GPL-3.0-or-later AND MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://gitlab.freedesktop.org/pipewire/rtkit/-/archive/v0.14/rtkit-v0.14.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+meson = ">= 0.60"
+ninja = ">= 1.8"
+systemd = ">= 254"
+vim = ">= 9.0"
+
+[depends]
+glibc = ">= 2.39"
+dbus = ">= 1.14"
+libcap = ">= 2.69"
+polkit = ">= 124"
+systemd = ">= 254"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf rtkit-*
+tar xf $ROOKPKG_SOURCES/rtkit-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/rtkit-*
+meson setup build \
+      --prefix=/usr \
+      --buildtype=release \
+      -Dinstalled_tests=false
+"""
+
+build = """
+cd $ROOKPKG_BUILD/rtkit-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require D-Bus session
+"""
+
+install = """
+cd $ROOKPKG_BUILD/rtkit-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/libexec/rtkit-daemon" = { mode = 755 }
+"usr/bin/rtkitctl" = { mode = 755 }
+"usr/lib/systemd/system/rtkit-daemon.service" = {}
+"usr/share/dbus-1/system-services/org.freedesktop.RealtimeKit1.service" = {}
+"usr/share/dbus-1/system.d/org.freedesktop.RealtimeKit1.conf" = {}
+"usr/share/polkit-1/actions/org.freedesktop.RealtimeKit1.policy" = {}
+"usr/share/man/man8/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+# Create rtkit user and group if they don't exist
+if ! getent group rtkit >/dev/null; then
+    groupadd -g 133 rtkit
+fi
+if ! getent passwd rtkit >/dev/null; then
+    useradd -c "RealtimeKit" -d /proc -g 133 -u 133 -s /usr/sbin/nologin rtkit
+fi
+# Reload systemd
+systemctl daemon-reload 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = """
+systemctl daemon-reload 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "0.14"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Provides realtime scheduling support for PipeWire and PulseAudio"
+]
+
+[metadata]
+keywords = ["rtkit", "realtime", "audio", "pipewire", "scheduling"]
+categories = ["audio", "system"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

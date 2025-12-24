@@ -1,0 +1,165 @@
+[package]
+name = "vim"
+version = "9.1.1934"
+release = 1
+summary = "Vi IMproved - a highly configurable text editor"
+description = """
+Vim is a highly configurable text editor built to make creating and changing
+any kind of text very efficient. It is included as "vi" with most UNIX systems
+and with Apple OS X. Vim is rock stable and is continuously being developed to
+become even better. Among its features are: persistent, multi-level undo tree;
+extensive plugin system; support for hundreds of programming languages and file
+formats; powerful search and replace; integrates with many tools.
+"""
+homepage = "https://www.vim.org/"
+license = "Vim"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/vim/vim/archive/v9.1.1934/vim-9.1.1934.tar.gz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+ncurses = ">= 6.4"
+
+[depends]
+glibc = ">= 2.39"
+ncurses = ">= 6.4"
+
+[optional_depends]
+gtk3 = ">= 3.24"
+lua = ">= 5.4"
+python = ">= 3.12"
+ruby = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf vim-*
+tar xf $ROOKPKG_SOURCES/vim-*.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/vim-*
+
+# Define system-wide vimrc location
+echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
+
+./configure --prefix=/usr \
+            --with-features=huge \
+            --with-tlib=ncursesw \
+            --enable-multibyte \
+            --disable-gui \
+            --without-x
+"""
+
+build = """
+cd $ROOKPKG_BUILD/vim-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/vim-*
+# Tests are slow and may require display
+# make -j1 test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/vim-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Create vi symlink
+ln -sf vim $ROOKPKG_DESTDIR/usr/bin/vi
+
+# Create default vimrc
+mkdir -p $ROOKPKG_DESTDIR/etc
+cat > $ROOKPKG_DESTDIR/etc/vimrc << 'VIMRC'
+" /etc/vimrc - System-wide vim configuration
+
+" Enable syntax highlighting
+syntax on
+
+" Use UTF-8
+set encoding=utf-8
+
+" Enable file type detection
+filetype plugin indent on
+
+" Show line numbers
+set number
+
+" Use spaces instead of tabs
+set expandtab
+set tabstop=4
+set shiftwidth=4
+
+" Enable mouse support
+set mouse=a
+
+" Show matching brackets
+set showmatch
+
+" Enable incremental search
+set incsearch
+set hlsearch
+
+" Disable vi compatibility
+set nocompatible
+
+" Enable backspace over everything
+set backspace=indent,eol,start
+VIMRC
+
+# Create documentation symlink for consistency
+ln -sf vim $ROOKPKG_DESTDIR/usr/share/doc/vim-9.1.1934 2>/dev/null || true
+"""
+
+[files]
+"usr/bin/vim" = { mode = 755 }
+"usr/bin/vi" = {}
+"usr/bin/vimdiff" = { mode = 755 }
+"usr/bin/vimtutor" = { mode = 755 }
+"usr/bin/xxd" = { mode = 755 }
+"usr/bin/rvim" = { mode = 755 }
+"usr/bin/rview" = { mode = 755 }
+"usr/bin/view" = { mode = 755 }
+"usr/bin/ex" = { mode = 755 }
+"usr/share/vim/" = {}
+"usr/share/man/man1/" = {}
+
+[config_files]
+"etc/vimrc" = {}
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "9.1.1934"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Console-only build (no GUI)",
+    "Includes xxd utility"
+]
+
+[metadata]
+keywords = ["vim", "vi", "editor", "text", "xxd"]
+categories = ["editors", "utilities"]
+
+[security]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"

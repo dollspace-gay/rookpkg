@@ -200,7 +200,7 @@ SETTINGS
 cat > $ROOKPKG_DESTDIR/etc/calamares/modules/unpackfs.conf << 'UNPACKFS'
 ---
 unpack:
-    - source: "/run/rootfsbase/LiveOS/rootfs.sfs"
+    - source: "/run/iso/LiveOS/rootfs.sfs"
       sourcefs: "squashfs"
       destination: ""
 UNPACKFS
@@ -259,6 +259,10 @@ defaultGroups:
     - network
     - lp
     - scanner
+    - fuse
+    - render
+    - kvm
+    - lpadmin
 autologinGroup: autologin
 sudoersGroup: wheel
 setRootPassword: true
