@@ -203,6 +203,7 @@ mkdir -p build
 cd build
 cmake .. \
       -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_INSTALL_LIBEXECDIR=libexec \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_TESTING=OFF \
       -DGLIBC_LOCALE_PREGENERATED=ON \
@@ -236,6 +237,11 @@ DESTDIR=$ROOKPKG_DESTDIR ninja install
 "usr/share/plasma/" = {}
 "usr/share/xsessions/plasmax11.desktop" = {}
 "usr/share/wayland-sessions/plasma.desktop" = {}
+"usr/libexec/plasma-dbus-run-session-if-needed" = { mode = 755 }
+"usr/libexec/plasma-sourceenv.sh" = { mode = 755 }
+"usr/libexec/plasma-fallback-session-save" = { mode = 755 }
+"usr/libexec/plasma-fallback-session-restore" = { mode = 755 }
+"usr/libexec/plasma-changeicons" = { mode = 755 }
 
 [config_files]
 
