@@ -1308,6 +1308,7 @@ EOF
     done
 
     # Create SDDM debug script for troubleshooting
+    mkdir -p "$rootfs/usr/local/bin"
     cat > "$rootfs/usr/local/bin/debug-sddm" << 'EOF'
 #!/bin/bash
 echo "=== SDDM Debug Info ==="
