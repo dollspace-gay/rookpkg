@@ -1,0 +1,113 @@
+[package]
+name = "github-cli"
+version = "2.83.2"
+release = 1
+summary = "GitHub's official command line tool"
+description = """
+gh is GitHub's official command line tool. It brings pull requests, issues,
+GitHub Actions, and other GitHub features to your terminal. Work seamlessly
+with GitHub from the command line - create PRs, review code, manage issues,
+and interact with GitHub Actions without leaving your terminal.
+"""
+homepage = "https://cli.github.com/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/cli/cli/releases/download/v2.83.2/gh_2.83.2_linux_amd64.tar.gz", sha256 = "ca6e7641214fbd0e21429cec4b64a7ba626fd946d8f9d6d191467545b092015e" }
+
+[patches]
+
+[build_depends]
+tar = ">= 1.35"
+
+[depends]
+glibc = ">= 2.28"
+git = ">= 2.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf gh_*
+tar xf $ROOKPKG_SOURCES/gh_2.83.2_linux_amd64.tar.gz
+"""
+
+configure = """
+# Pre-built binary - no configuration needed
+"""
+
+build = """
+# Pre-built binary - no build needed
+"""
+
+check = """
+# Pre-built binary - no tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gh_2.83.2_linux_amd64
+
+# Install binary
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+cp bin/gh $ROOKPKG_DESTDIR/usr/bin/
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/gh
+
+# Install man pages
+if [ -d share/man ]; then
+    mkdir -p $ROOKPKG_DESTDIR/usr/share/man
+    cp -r share/man/* $ROOKPKG_DESTDIR/usr/share/man/
+fi
+
+# Generate shell completions
+mkdir -p $ROOKPKG_DESTDIR/usr/share/bash-completion/completions
+mkdir -p $ROOKPKG_DESTDIR/usr/share/zsh/site-functions
+mkdir -p $ROOKPKG_DESTDIR/usr/share/fish/vendor_completions.d
+
+# Generate completions using gh itself
+./bin/gh completion -s bash > $ROOKPKG_DESTDIR/usr/share/bash-completion/completions/gh
+./bin/gh completion -s zsh > $ROOKPKG_DESTDIR/usr/share/zsh/site-functions/_gh
+./bin/gh completion -s fish > $ROOKPKG_DESTDIR/usr/share/fish/vendor_completions.d/gh.fish
+"""
+
+[files]
+"usr/bin/gh" = { mode = 755 }
+"usr/share/man/" = {}
+"usr/share/bash-completion/completions/gh" = {}
+"usr/share/zsh/site-functions/_gh" = {}
+"usr/share/fish/vendor_completions.d/gh.fish" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.83.2"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Pre-built binary from GitHub",
+    "Includes bash, zsh, and fish completions",
+    "Includes man pages"
+]
+
+[metadata]
+keywords = ["github", "gh", "cli", "git", "vcs", "development"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1197,12 +1197,8 @@ XORGINPUT
         log_info "Created sulogin symlink from /usr/bin"
     fi
 
-    # Create /etc/resolv.conf to prevent DNS lookup hangs
-    cat > "$rootfs/etc/resolv.conf" << 'EOF'
-# Localhost resolver (systemd-resolved or fallback)
-nameserver 127.0.0.53
-options edns0 trust-ad
-EOF
+    # Note: /etc/resolv.conf is created later in the NetworkManager section
+    # with proper fallback DNS servers
 
     # Create /etc/host.conf
     cat > "$rootfs/etc/host.conf" << 'EOF'
@@ -1366,6 +1362,35 @@ session  required       pam_unix.so
 session  optional       pam_loginuid.so
 session  optional       pam_systemd.so
 # Note: pam_lastlog.so removed - module not available in linux-pam build
+EOF
+
+    # Configure kde PAM for kscreenlocker
+    # CRITICAL: Without this, kscreenlocker cannot authenticate users to unlock the screen
+    # This causes phantom keyboard input issues (endless PAM loop when no auth service exists)
+    cat > "$rootfs/etc/pam.d/kde" << 'EOF'
+# KDE PAM configuration (used by kscreenlocker)
+# Only auth entries are used by kscreenlocker
+auth     optional       pam_env.so
+auth     required       pam_unix.so try_first_pass
+
+account  required       pam_unix.so
+
+password required       pam_unix.so
+
+session  optional       pam_env.so
+session  required       pam_unix.so
+session  optional       pam_systemd.so
+EOF
+
+    # Also create kde-fingerprint for future fingerprint unlock support
+    cat > "$rootfs/etc/pam.d/kde-fingerprint" << 'EOF'
+# KDE Fingerprint PAM configuration
+auth     sufficient     pam_unix.so try_first_pass
+auth     required       pam_deny.so
+
+account  required       pam_unix.so
+
+session  optional       pam_systemd.so
 EOF
 
     log_info "PAM configured for systemd/Wayland"
@@ -1645,18 +1670,36 @@ EOF
     mkdir -p "$rootfs/etc/NetworkManager/conf.d"
     cat > "$rootfs/etc/NetworkManager/conf.d/00-dhcp.conf" << 'EOF'
 [main]
-# Use internal DHCP client (or dhcpcd if installed)
+# Use internal DHCP client
 dhcp=internal
-# Use default DNS handling (writes to /etc/resolv.conf directly)
-# Set to 'none' to let resolvconf/systemd-resolved handle it
+# Write DNS directly to /etc/resolv.conf
 dns=default
 # Disable resolvconf integration (we don't have resolvconf installed)
 rc-manager=unmanaged
+# Don't require any special plugins
+plugins=keyfile
+
+[connection]
+# Enable IPv4 and IPv6 by default
+ipv4.method=auto
+ipv6.method=auto
 
 [device]
-# Manage all ethernet devices
+# Manage all ethernet devices automatically
 wifi.scan-rand-mac-address=yes
+
+[logging]
+level=INFO
 EOF
+
+    # Ensure resolv.conf is a regular file, not a symlink
+    rm -f "$rootfs/etc/resolv.conf" 2>/dev/null || true
+    cat > "$rootfs/etc/resolv.conf" << 'EOF'
+# Fallback DNS - NetworkManager will update this
+nameserver 1.1.1.1
+nameserver 8.8.8.8
+EOF
+    chmod 644 "$rootfs/etc/resolv.conf"
 
     # Create a default connection profile for wired networks (DHCP)
     mkdir -p "$rootfs/etc/NetworkManager/system-connections"
@@ -2119,13 +2162,13 @@ EOF
 name=default
 EOF
 
-    # Configure KDE lock screen - disable auto-lock for live ISO
-    # Lock screen has issues with phantom keyboard input in VMs
+    # Configure KDE lock screen with reasonable defaults
+    # Note: /etc/pam.d/kde must exist for kscreenlocker to authenticate
     cat > "$rootfs/etc/skel/.config/kscreenlockerrc" << 'EOF'
 [Daemon]
-Autolock=false
-LockOnResume=false
-Timeout=0
+Autolock=true
+LockOnResume=true
+Timeout=5
 
 [Greeter][Wallpaper][org.kde.image][General]
 Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
@@ -3445,6 +3488,77 @@ EOF
 }
 
 # =============================================================================
+# Setup CA Certificates (SSL/TLS trust store)
+# =============================================================================
+setup_ca_certificates() {
+    log_step "Setting up CA certificates for SSL/TLS..."
+
+    local rootfs="$BUILD/rootfs"
+
+    # First, force regenerate CA certificates on the host to ensure they're fresh
+    if [ -x "/usr/sbin/make-ca" ]; then
+        log_info "Regenerating CA certificates on host with make-ca -f -g..."
+        /usr/sbin/make-ca -f -g 2>&1 | tail -3 || true
+    fi
+
+    # Copy CA certificates from host system
+    log_info "Copying CA certificates from host system..."
+
+    # Copy individual certificate files from /etc/ssl/certs
+    if [ -d "/etc/ssl/certs" ]; then
+        mkdir -p "$rootfs/etc/ssl/certs"
+        # Copy all .pem files (actual certificates)
+        cp -a /etc/ssl/certs/*.pem "$rootfs/etc/ssl/certs/" 2>/dev/null || true
+        # Copy hash symlinks
+        cp -a /etc/ssl/certs/*.0 "$rootfs/etc/ssl/certs/" 2>/dev/null || true
+        log_info "Copied certificates from /etc/ssl/certs"
+    fi
+
+    # Copy the PKI structure
+    if [ -d "/etc/pki/tls/certs" ]; then
+        mkdir -p "$rootfs/etc/pki/tls/certs"
+        cp -a /etc/pki/tls/certs/* "$rootfs/etc/pki/tls/certs/" 2>/dev/null || true
+        log_info "Copied certificates from /etc/pki/tls/certs"
+    fi
+
+    # Copy the main CA bundle and create standard symlinks
+    if [ -f "/etc/pki/tls/certs/ca-bundle.crt" ]; then
+        mkdir -p "$rootfs/etc/pki/tls/certs"
+        cp /etc/pki/tls/certs/ca-bundle.crt "$rootfs/etc/pki/tls/certs/"
+        # Create standard OpenSSL symlink
+        mkdir -p "$rootfs/etc/ssl"
+        ln -sf /etc/pki/tls/certs/ca-bundle.crt "$rootfs/etc/ssl/cert.pem"
+        ln -sf /etc/pki/tls/certs/ca-bundle.crt "$rootfs/etc/ssl/certs/ca-certificates.crt"
+        log_info "Created CA bundle symlinks"
+    fi
+
+    # Copy p11-kit trust anchors
+    if [ -d "/etc/pki/ca-trust" ]; then
+        mkdir -p "$rootfs/etc/pki"
+        cp -a /etc/pki/ca-trust "$rootfs/etc/pki/" 2>/dev/null || true
+        log_info "Copied p11-kit trust anchors"
+    fi
+
+    # Copy p11-kit extracted certificates
+    if [ -d "/etc/pki/tls" ]; then
+        mkdir -p "$rootfs/etc/pki"
+        cp -a /etc/pki/tls "$rootfs/etc/pki/" 2>/dev/null || true
+    fi
+
+    # Verify certificates are installed
+    local cert_count=$(find "$rootfs/etc/ssl/certs" -name "*.pem" 2>/dev/null | wc -l)
+    local bundle_size=$(stat -c%s "$rootfs/etc/pki/tls/certs/ca-bundle.crt" 2>/dev/null || echo 0)
+
+    if [ "$cert_count" -gt 0 ] && [ "$bundle_size" -gt 0 ]; then
+        log_info "CA certificates installed: $cert_count certs, bundle size: $((bundle_size/1024))KB"
+    elif [ "$bundle_size" -gt 0 ]; then
+        log_info "CA bundle installed: $((bundle_size/1024))KB"
+    else
+        log_warn "No CA certificates found - HTTPS may not work!"
+    fi
+}
+
+# =============================================================================
 # Step 3d: Create initramfs for installed system
 # =============================================================================
 # This creates an Arch-style initramfs with proper udev support.
@@ -4639,6 +4753,7 @@ main() {
     configure_live_overlay  # Create live-specific overlay (not installed to target)
     set_pax_flags
     rebuild_library_cache
+    setup_ca_certificates
     create_installed_initramfs
     create_squashfs
     build_initramfs

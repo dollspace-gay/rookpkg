@@ -1,0 +1,132 @@
+[package]
+name = "typescript"
+version = "5.9.3"
+release = 1
+summary = "TypeScript language compiler and tools"
+description = """
+TypeScript is a strongly typed programming language that builds on JavaScript,
+giving you better tooling at any scale. TypeScript adds optional static typing
+and class-based object-oriented programming to the language. The compiler (tsc)
+compiles TypeScript code into JavaScript.
+"""
+homepage = "https://www.typescriptlang.org/"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "noarch"
+
+[sources]
+# TypeScript is distributed via npm - we download the tarball directly
+source0 = { url = "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz", sha256 = "10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3" }
+
+[patches]
+
+[build_depends]
+nodejs = ">= 20.0"
+tar = ">= 1.35"
+
+[depends]
+nodejs = ">= 20.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf typescript-* package
+tar xf $ROOKPKG_SOURCES/typescript-5.9.3.tgz
+# npm tarballs extract to a directory called 'package'
+mv package typescript-5.9.3
+"""
+
+configure = """
+# Pre-built package - no configuration needed
+"""
+
+build = """
+# Pre-built package - no build needed
+"""
+
+check = """
+# Pre-built package - verify tsc works
+cd $ROOKPKG_BUILD/typescript-5.9.3
+node bin/tsc --version
+"""
+
+install = """
+cd $ROOKPKG_BUILD/typescript-5.9.3
+
+# Install TypeScript to /usr/lib/node_modules/typescript
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/node_modules/typescript
+cp -r . $ROOKPKG_DESTDIR/usr/lib/node_modules/typescript/
+
+# Create symlinks in /usr/bin for the CLI tools
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+
+# tsc - TypeScript compiler
+cat > $ROOKPKG_DESTDIR/usr/bin/tsc << 'WRAPPER'
+#!/bin/bash
+exec node /usr/lib/node_modules/typescript/bin/tsc "$@"
+WRAPPER
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/tsc
+
+# tsserver - TypeScript language server (for editors/IDEs)
+cat > $ROOKPKG_DESTDIR/usr/bin/tsserver << 'WRAPPER'
+#!/bin/bash
+exec node /usr/lib/node_modules/typescript/bin/tsserver "$@"
+WRAPPER
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/tsserver
+
+# Create bash completion
+mkdir -p $ROOKPKG_DESTDIR/usr/share/bash-completion/completions
+cat > $ROOKPKG_DESTDIR/usr/share/bash-completion/completions/tsc << 'BASH'
+# bash completion for tsc (TypeScript compiler)
+_tsc() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local opts="--help --version --all --init --build --project --watch --showConfig --pretty --listFiles --listEmittedFiles --explainFiles --declaration --declarationMap --emitDeclarationOnly --sourceMap --outFile --outDir --rootDir --composite --incremental --tsBuildInfoFile --removeComments --noEmit --strictNullChecks --strict --noImplicitAny --noImplicitThis --alwaysStrict --noUnusedLocals --noUnusedParameters --skipLibCheck --lib --target --module --moduleResolution --esModuleInterop --allowSyntheticDefaultImports --resolveJsonModule --jsx --jsxFactory --jsxFragmentFactory --jsxImportSource --noEmitOnError --preserveConstEnums --isolatedModules"
+    if [[ "$cur" == -* ]]; then
+        COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+    else
+        COMPREPLY=($(compgen -f -X '!*.ts' -- "$cur") $(compgen -f -X '!*.tsx' -- "$cur") $(compgen -d -- "$cur"))
+    fi
+}
+complete -F _tsc -o default tsc
+BASH
+"""
+
+[files]
+"usr/bin/tsc" = { mode = 755 }
+"usr/bin/tsserver" = { mode = 755 }
+"usr/lib/node_modules/typescript/" = {}
+"usr/share/bash-completion/completions/tsc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "5.9.3"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Includes tsc compiler and tsserver language server",
+    "Includes bash completion"
+]
+
+[metadata]
+keywords = ["typescript", "tsc", "javascript", "compiler", "development", "microsoft"]
+categories = ["development", "languages"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -1,0 +1,172 @@
+[package]
+name = "microsoft-edge"
+version = "143.0.3650.96"
+release = 1
+summary = "Microsoft Edge web browser"
+description = """
+Microsoft Edge is a fast, secure, and modern web browser built on Chromium.
+Features include Collections, vertical tabs, sleeping tabs, and integration
+with Microsoft services. Includes built-in PDF reader and developer tools.
+"""
+homepage = "https://www.microsoft.com/edge"
+license = "Proprietary"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+# Microsoft provides pre-built binaries via their package repository
+source0 = { url = "https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_143.0.3650.96-1_amd64.deb", sha256 = "c1a394bb565d7132785c4dabaf50a1333021997c5350370f2a2927cb897a396a" }
+
+[patches]
+
+[build_depends]
+binutils = ">= 2.40"
+tar = ">= 1.35"
+zstd = ">= 1.5"
+
+[depends]
+glibc = ">= 2.28"
+gtk3 = ">= 3.24"
+libx11 = ">= 1.8"
+libxkbfile = ">= 1.1"
+nss = ">= 3.80"
+alsa-lib = ">= 1.2"
+at-spi2-core = ">= 2.40"
+libdrm = ">= 2.4"
+mesa = ">= 23.0"
+libxcomposite = ">= 0.4"
+libxdamage = ">= 1.1"
+libxrandr = ">= 1.5"
+libxscrnsaver = ">= 1.2"
+cups = ">= 2.4"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf microsoft-edge-*
+mkdir -p edge-extract
+cd edge-extract
+# Extract the .deb file (it's an ar archive)
+ar x $ROOKPKG_SOURCES/microsoft-edge-stable_*.deb
+# The data is in data.tar.xz or data.tar.zst
+if [ -f data.tar.zst ]; then
+    zstd -d data.tar.zst
+    tar xf data.tar
+elif [ -f data.tar.xz ]; then
+    tar xf data.tar.xz
+fi
+"""
+
+configure = """
+# Pre-built binary - no configuration needed
+"""
+
+build = """
+# Pre-built binary - no build needed
+"""
+
+check = """
+# Pre-built binary - no tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/edge-extract
+
+# Copy the extracted files to destdir
+# Edge installs to /opt/microsoft/msedge
+if [ -d opt ]; then
+    mkdir -p $ROOKPKG_DESTDIR/opt
+    cp -r opt/* $ROOKPKG_DESTDIR/opt/
+fi
+
+if [ -d usr ]; then
+    mkdir -p $ROOKPKG_DESTDIR/usr
+    cp -r usr/* $ROOKPKG_DESTDIR/usr/
+fi
+
+# Create wrapper script in /usr/bin
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+cat > $ROOKPKG_DESTDIR/usr/bin/microsoft-edge << 'WRAPPER'
+#!/bin/bash
+# Microsoft Edge wrapper script
+EDGE_PATH="/opt/microsoft/msedge"
+
+# Handle Wayland if running under it
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    ELECTRON_OZONE_PLATFORM_HINT="${ELECTRON_OZONE_PLATFORM_HINT:-auto}"
+    export ELECTRON_OZONE_PLATFORM_HINT
+fi
+
+exec "$EDGE_PATH/msedge" "$@"
+WRAPPER
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/microsoft-edge
+
+# Also create 'edge' symlink for convenience
+ln -sf microsoft-edge $ROOKPKG_DESTDIR/usr/bin/edge
+
+# Ensure desktop file uses our wrapper
+if [ -f $ROOKPKG_DESTDIR/usr/share/applications/microsoft-edge.desktop ]; then
+    sed -i 's|Exec=/opt/microsoft/msedge/|Exec=/usr/bin/microsoft-edge |g' \
+        $ROOKPKG_DESTDIR/usr/share/applications/microsoft-edge.desktop
+fi
+
+# Fix chrome-sandbox permissions (must be setuid root for Chromium sandboxing)
+if [ -f $ROOKPKG_DESTDIR/opt/microsoft/msedge/msedge-sandbox ]; then
+    chown root:root $ROOKPKG_DESTDIR/opt/microsoft/msedge/msedge-sandbox
+    chmod 4755 $ROOKPKG_DESTDIR/opt/microsoft/msedge/msedge-sandbox
+fi
+"""
+
+[files]
+"usr/bin/microsoft-edge" = { mode = 755 }
+"usr/bin/edge" = { mode = 755 }
+"opt/microsoft/msedge/" = {}
+"opt/microsoft/msedge/msedge-sandbox" = { mode = 4755 }
+"usr/share/applications/microsoft-edge.desktop" = {}
+"usr/share/icons/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+# Update icon cache
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+# Update desktop database
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = """
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+pre_upgrade = ""
+post_upgrade = """
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "143.0.3650.96"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Pre-built binary from Microsoft",
+    "Includes Wayland support wrapper",
+    "Desktop integration"
+]
+
+[metadata]
+keywords = ["edge", "browser", "web", "microsoft", "chromium"]
+categories = ["network", "web"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

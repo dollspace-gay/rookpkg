@@ -1,0 +1,250 @@
+[package]
+name = "vscode"
+version = "1.107.1"
+release = 2
+summary = "Visual Studio Code - Code editor from Microsoft"
+description = """
+Visual Studio Code is a lightweight but powerful source code editor which runs
+on your desktop. It comes with built-in support for JavaScript, TypeScript and
+Node.js and has a rich ecosystem of extensions for other languages and runtimes.
+"""
+homepage = "https://code.visualstudio.com/"
+license = "MIT"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+# Microsoft provides pre-built binaries - no compilation needed
+source0 = { url = "https://update.code.visualstudio.com/1.107.1/linux-x64/stable", sha256 = "a9a19e20dd09c61ec1af7d67d9dec2455004d0fbd35120fe1d24588c123f9474" }
+# Claude Code extension from Anthropic (official VS Code extension)
+source1 = { url = "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/anthropic/vsextensions/claude-code/2.0.75/vspackage", sha256 = "b121a0190e1502e142c6aaa7a0ff15703e035b720587d853a53295caea78b898" }
+
+[patches]
+
+[build_depends]
+unzip = ">= 6.0"
+gzip = ">= 1.10"
+
+[depends]
+glibc = ">= 2.28"
+gtk3 = ">= 3.24"
+libx11 = ">= 1.8"
+libxkbfile = ">= 1.1"
+libsecret = ">= 0.20"
+nss = ">= 3.80"
+alsa-lib = ">= 1.2"
+at-spi2-core = ">= 2.40"
+
+[optional_depends]
+git = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf VSCode-linux-x64
+# The tarball is downloaded as 'stable' due to the URL path
+# It extracts to VSCode-linux-x64/
+tar xf $ROOKPKG_SOURCES/stable
+"""
+
+configure = """
+# Pre-built binary - no configuration needed
+"""
+
+build = """
+# Pre-built binary - no build needed
+"""
+
+check = """
+# Pre-built binary - no tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/VSCode-linux-x64
+
+# Install to /usr/lib/vscode
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/vscode
+cp -r . $ROOKPKG_DESTDIR/usr/lib/vscode/
+
+# Fix chrome-sandbox permissions (must be setuid root for Electron sandboxing)
+# The sandbox helper needs to be owned by root with mode 4755
+if [ -f $ROOKPKG_DESTDIR/usr/lib/vscode/chrome-sandbox ]; then
+    chown root:root $ROOKPKG_DESTDIR/usr/lib/vscode/chrome-sandbox
+    chmod 4755 $ROOKPKG_DESTDIR/usr/lib/vscode/chrome-sandbox
+fi
+
+# Create wrapper script in /usr/bin
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+cat > $ROOKPKG_DESTDIR/usr/bin/code << 'WRAPPER'
+#!/bin/bash
+# VS Code wrapper script
+VSCODE_PATH="/usr/lib/vscode"
+
+# Handle Wayland if running under it
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    # Enable Wayland support with Ozone
+    ELECTRON_OZONE_PLATFORM_HINT="${ELECTRON_OZONE_PLATFORM_HINT:-auto}"
+    export ELECTRON_OZONE_PLATFORM_HINT
+fi
+
+exec "$VSCODE_PATH/code" "$@"
+WRAPPER
+chmod 755 $ROOKPKG_DESTDIR/usr/bin/code
+
+# Also create 'vscode' symlink
+ln -sf code $ROOKPKG_DESTDIR/usr/bin/vscode
+
+# Create desktop entry
+mkdir -p $ROOKPKG_DESTDIR/usr/share/applications
+cat > $ROOKPKG_DESTDIR/usr/share/applications/code.desktop << 'DESKTOP'
+[Desktop Entry]
+Version=1.0
+Name=Visual Studio Code
+GenericName=Text Editor
+Comment=Code Editing. Redefined.
+Exec=/usr/bin/code --unity-launch %F
+Icon=vscode
+Terminal=false
+Type=Application
+MimeType=text/plain;inode/directory;application/x-code-workspace;
+Categories=TextEditor;Development;IDE;
+Keywords=vscode;code;editor;development;programming;
+StartupNotify=true
+StartupWMClass=Code
+Actions=new-empty-window;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=/usr/bin/code --new-window %F
+Icon=vscode
+DESKTOP
+
+# Install icons
+mkdir -p $ROOKPKG_DESTDIR/usr/share/icons/hicolor/512x512/apps
+cp resources/app/resources/linux/code.png $ROOKPKG_DESTDIR/usr/share/icons/hicolor/512x512/apps/vscode.png
+
+# Create smaller icon sizes from the 512x512
+for size in 16 24 32 48 64 128 256; do
+    mkdir -p $ROOKPKG_DESTDIR/usr/share/icons/hicolor/${size}x${size}/apps
+    # If convert (ImageMagick) is available, resize; otherwise copy the large one
+    if command -v convert &>/dev/null; then
+        convert resources/app/resources/linux/code.png -resize ${size}x${size} \
+            $ROOKPKG_DESTDIR/usr/share/icons/hicolor/${size}x${size}/apps/vscode.png
+    else
+        cp resources/app/resources/linux/code.png \
+            $ROOKPKG_DESTDIR/usr/share/icons/hicolor/${size}x${size}/apps/vscode.png
+    fi
+done
+
+# Install mime types for .code-workspace files
+mkdir -p $ROOKPKG_DESTDIR/usr/share/mime/packages
+cat > $ROOKPKG_DESTDIR/usr/share/mime/packages/vscode-workspace.xml << 'MIME'
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-code-workspace">
+    <comment>VS Code Workspace</comment>
+    <glob pattern="*.code-workspace"/>
+    <icon name="vscode"/>
+  </mime-type>
+</mime-info>
+MIME
+
+# Install shell completions if available
+mkdir -p $ROOKPKG_DESTDIR/usr/share/bash-completion/completions
+cat > $ROOKPKG_DESTDIR/usr/share/bash-completion/completions/code << 'BASH'
+# bash completion for code (VS Code)
+_code() {
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local opts="--help --version --new-window --reuse-window --goto --diff --merge --wait --locale --user-data-dir --extensions-dir --list-extensions --install-extension --uninstall-extension --enable-proposed-api --verbose --log --status --prof-startup --disable-extensions --disable-extension --sync --inspect-extensions --inspect-brk-extensions --disable-gpu --max-memory --telemetry"
+    COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+}
+complete -F _code -o default code
+BASH
+
+# ==========================================================================
+# Install bundled extensions to VS Code's built-in extensions location
+# ==========================================================================
+# Extensions are installed to resources/app/extensions within VS Code's install dir
+# This makes them available as built-in extensions to all users
+
+EXTENSIONS_DIR="$ROOKPKG_DESTDIR/usr/lib/vscode/resources/app/extensions"
+mkdir -p "$EXTENSIONS_DIR"
+
+# Install Claude Code extension (Anthropic)
+# The marketplace serves VSIX files gzip-compressed
+CLAUDE_VSIX="$ROOKPKG_SOURCES/vspackage"
+if [ -f "$CLAUDE_VSIX" ]; then
+    echo "Installing Claude Code extension..."
+    mkdir -p "$EXTENSIONS_DIR/anthropic.claude-code"
+
+    # Decompress gzip first, then extract the VSIX (which is a zip)
+    gunzip -c "$CLAUDE_VSIX" > /tmp/claude-code-$$.vsix
+    unzip -q /tmp/claude-code-$$.vsix -d /tmp/claude-ext-$$
+
+    if [ -d "/tmp/claude-ext-$$/extension" ]; then
+        cp -r /tmp/claude-ext-$$/extension/* "$EXTENSIONS_DIR/anthropic.claude-code/"
+        echo "Claude Code extension installed to $EXTENSIONS_DIR/anthropic.claude-code"
+    fi
+
+    rm -rf /tmp/claude-ext-$$ /tmp/claude-code-$$.vsix
+fi
+"""
+
+[files]
+"usr/bin/code" = { mode = 755 }
+"usr/bin/vscode" = { mode = 755 }
+"usr/lib/vscode/" = {}
+"usr/lib/vscode/chrome-sandbox" = { mode = 4755 }
+"usr/share/applications/code.desktop" = {}
+"usr/share/icons/hicolor/*/apps/vscode.png" = {}
+"usr/share/mime/packages/vscode-workspace.xml" = {}
+"usr/share/bash-completion/completions/code" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+# Update icon cache
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+# Update mime database
+update-mime-database /usr/share/mime 2>/dev/null || true
+# Update desktop database
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+pre_remove = ""
+post_remove = """
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+update-mime-database /usr/share/mime 2>/dev/null || true
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+pre_upgrade = ""
+post_upgrade = """
+gtk-update-icon-cache -f /usr/share/icons/hicolor 2>/dev/null || true
+update-mime-database /usr/share/mime 2>/dev/null || true
+update-desktop-database /usr/share/applications 2>/dev/null || true
+"""
+
+[[changelog]]
+version = "1.107.1"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Pre-built binary from Microsoft",
+    "Includes Wayland support via Ozone",
+    "Desktop integration with icons and mime types",
+    "Bundled with Claude Code extension (anthropic.claude-code v2.0.75)"
+]
+
+[metadata]
+keywords = ["vscode", "code", "editor", "ide", "development", "microsoft", "electron"]
+categories = ["development", "editors"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
