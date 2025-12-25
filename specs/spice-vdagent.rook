@@ -1,0 +1,107 @@
+[package]
+name = "spice-vdagent"
+version = "0.22.1"
+release = 1
+summary = "SPICE agent for Linux guests"
+description = """
+spice-vdagent is the SPICE agent for Linux guests. It provides seamless
+mouse integration, copy-paste between host and guest, automatic display
+resizing, and file transfer capabilities for virtual machines using SPICE.
+"""
+homepage = "https://www.spice-space.org/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.spice-space.org/download/releases/spice-vdagent-0.22.1.tar.bz2", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+pkg-config = ">= 0.29"
+
+[depends]
+glibc = ">= 2.39"
+spice-protocol = ">= 0.14.3"
+glib2 = ">= 2.78"
+libdrm = ">= 2.4"
+libxfixes = ">= 6.0"
+libxrandr = ">= 1.5"
+libxinerama = ">= 1.1"
+alsa-lib = ">= 1.2"
+systemd = ">= 254"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf spice-vdagent-*
+tar xf $ROOKPKG_SOURCES/spice-vdagent-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/spice-vdagent-*
+./configure --prefix=/usr          \
+            --sysconfdir=/etc      \
+            --localstatedir=/var   \
+            --with-session-info=systemd
+"""
+
+build = """
+cd $ROOKPKG_BUILD/spice-vdagent-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/spice-vdagent-*
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/spice-vdagent-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/spice-vdagent" = { mode = 755 }
+"usr/sbin/spice-vdagentd" = { mode = 755 }
+"usr/lib/systemd/system/spice-vdagentd.service" = {}
+"usr/lib/systemd/system/spice-vdagentd.socket" = {}
+"usr/lib/udev/rules.d/" = {}
+"usr/share/gdm/autostart/" = {}
+"etc/xdg/autostart/spice-vdagent.desktop" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.22.1"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Provides SPICE guest agent for VM integration"
+]
+
+[metadata]
+keywords = ["spice", "vdagent", "virtualization", "guest", "vm"]
+categories = ["virtualization", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

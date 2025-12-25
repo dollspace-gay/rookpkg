@@ -1,0 +1,131 @@
+[package]
+name = "qemu-guest-agent"
+version = "9.2.0"
+release = 1
+summary = "QEMU guest agent for Linux guests"
+description = """
+The QEMU Guest Agent is a daemon that runs inside the guest and allows
+the host to issue commands to the guest OS. It provides features like
+guest filesystem freeze/thaw for consistent snapshots, guest shutdown,
+and time synchronization.
+"""
+homepage = "https://www.qemu.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://download.qemu.org/qemu-9.2.0.tar.xz", sha256 = "FIXME" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+meson = ">= 0.60"
+ninja = ">= 1.8"
+python = ">= 3.12"
+
+[depends]
+glibc = ">= 2.39"
+glib2 = ">= 2.78"
+systemd = ">= 254"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf qemu-*
+tar xf $ROOKPKG_SOURCES/qemu-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/qemu-*
+# Only build the guest agent, not the full QEMU
+./configure --prefix=/usr              \
+            --sysconfdir=/etc          \
+            --localstatedir=/var       \
+            --enable-guest-agent       \
+            --disable-system           \
+            --disable-user             \
+            --disable-linux-user       \
+            --disable-bsd-user         \
+            --disable-tools            \
+            --disable-docs
+"""
+
+build = """
+cd $ROOKPKG_BUILD/qemu-*
+make qemu-ga -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests for guest agent only build
+"""
+
+install = """
+cd $ROOKPKG_BUILD/qemu-*
+
+# Install the guest agent binary (built in build/ subdirectory)
+install -D -m755 build/qga/qemu-ga $ROOKPKG_DESTDIR/usr/bin/qemu-ga
+
+# Create systemd service
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/systemd/system
+cat > $ROOKPKG_DESTDIR/usr/lib/systemd/system/qemu-guest-agent.service << 'EOF'
+[Unit]
+Description=QEMU Guest Agent
+BindsTo=dev-virtio\\x2dports-org.qemu.guest_agent.0.device
+After=dev-virtio\\x2dports-org.qemu.guest_agent.0.device
+
+[Service]
+ExecStart=/usr/bin/qemu-ga --method=virtio-serial --path=/dev/virtio-ports/org.qemu.guest_agent.0 --statedir=/var/run
+Restart=always
+RestartSec=0
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Create udev rules for virtio-ports
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/udev/rules.d
+cat > $ROOKPKG_DESTDIR/usr/lib/udev/rules.d/99-qemu-guest-agent.rules << 'EOF'
+SUBSYSTEM=="virtio-ports", ATTR{name}=="org.qemu.guest_agent.0", TAG+="systemd" ENV{SYSTEMD_WANTS}="qemu-guest-agent.service"
+EOF
+"""
+
+[files]
+"usr/bin/qemu-ga" = { mode = 755 }
+"usr/lib/systemd/system/qemu-guest-agent.service" = {}
+"usr/lib/udev/rules.d/99-qemu-guest-agent.rules" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "9.2.0"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Provides QEMU guest agent for VM integration"
+]
+
+[metadata]
+keywords = ["qemu", "guest-agent", "virtualization", "vm"]
+categories = ["virtualization", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

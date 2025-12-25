@@ -1,0 +1,90 @@
+[package]
+name = "spice-protocol"
+version = "0.14.4"
+release = 1
+summary = "SPICE protocol headers"
+description = """
+spice-protocol contains the SPICE protocol header files needed for
+building SPICE server and client components. This is a header-only
+package with no runtime libraries.
+"""
+homepage = "https://www.spice-space.org/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.spice-space.org/download/releases/spice-protocol-0.14.4.tar.xz", sha256 = "04ffba610d9fd441cfc47dfaa135d70096e60b1046d2119d8db2f8ea0efb47f5" }
+
+[patches]
+
+[build_depends]
+meson = ">= 0.60"
+ninja = ">= 1.8"
+
+[depends]
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf spice-protocol-*
+tar xf $ROOKPKG_SOURCES/spice-protocol-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/spice-protocol-*
+mkdir -p build
+cd build
+meson setup .. --prefix=/usr
+"""
+
+build = """
+cd $ROOKPKG_BUILD/spice-protocol-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Header-only package, no tests
+"""
+
+install = """
+cd $ROOKPKG_BUILD/spice-protocol-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/include/spice-1/" = {}
+"usr/share/pkgconfig/spice-protocol.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "0.14.4"
+date = "2025-12-24"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Header-only SPICE protocol definitions"
+]
+
+[metadata]
+keywords = ["spice", "protocol", "headers", "virtualization"]
+categories = ["virtualization", "development"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

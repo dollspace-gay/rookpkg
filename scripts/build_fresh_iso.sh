@@ -506,10 +506,16 @@ EOF
             mkdir -p "$rootfs/usr/lib/locale"
             cp -a /usr/lib/locale/en_US.utf8 "$rootfs/usr/lib/locale/" 2>/dev/null || true
             log_info "Copied en_US.UTF-8 locale from host"
-        elif [ -d "/usr/lib/locale/locale-archive" ]; then
+        elif [ -f "/usr/lib/locale/locale-archive" ]; then
             mkdir -p "$rootfs/usr/lib/locale"
             cp /usr/lib/locale/locale-archive "$rootfs/usr/lib/locale/" 2>/dev/null || true
             log_info "Copied locale-archive from host"
+        fi
+        # Always try to generate the locale using localedef in rootfs if available
+        if [ -x "$rootfs/usr/bin/localedef" ]; then
+            mkdir -p "$rootfs/usr/lib/locale"
+            chroot "$rootfs" /usr/bin/localedef -i en_US -f UTF-8 en_US.UTF-8 2>/dev/null || true
+            log_info "Generated en_US.UTF-8 locale with localedef"
         fi
     fi
 
@@ -583,6 +589,40 @@ EOF
 EOF
     chmod 644 "$rootfs/etc/sysctl.d/99-rookery-grsec.conf"
     log_info "Configured grsecurity sysctl settings"
+
+    # Create udev rule to set proper permissions on /dev/fuse
+    # This allows users in the 'fuse' group to access FUSE
+    mkdir -p "$rootfs/usr/lib/udev/rules.d"
+    cat > "$rootfs/usr/lib/udev/rules.d/99-fuse.rules" << 'EOF'
+# Allow users in fuse group to access /dev/fuse
+KERNEL=="fuse", MODE="0660", GROUP="fuse"
+EOF
+    chmod 644 "$rootfs/usr/lib/udev/rules.d/99-fuse.rules"
+    log_info "Created udev rule for /dev/fuse permissions"
+
+    # Create a systemd service to apply grsec sysctl settings early
+    # This runs before user services like xdg-document-portal
+    cat > "$rootfs/usr/lib/systemd/system/grsec-sysctl.service" << 'EOF'
+[Unit]
+Description=Apply grsecurity sysctl settings
+DefaultDependencies=no
+Before=sysinit.target systemd-sysctl.service
+After=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/sysctl -p /etc/sysctl.d/99-rookery-grsec.conf
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
+EOF
+    chmod 644 "$rootfs/usr/lib/systemd/system/grsec-sysctl.service"
+
+    # Enable the grsec-sysctl service
+    mkdir -p "$rootfs/etc/systemd/system/sysinit.target.wants"
+    ln -sf /usr/lib/systemd/system/grsec-sysctl.service "$rootfs/etc/systemd/system/sysinit.target.wants/"
+    log_info "Enabled grsec-sysctl.service for early sysctl application"
 
     # Enable PipeWire user services globally via systemd preset
     # This is more reliable than /etc/skel symlinks
@@ -688,15 +728,18 @@ session  required       pam_systemd.so
 EOF
 
     # SDDM main PAM config (for password login)
+    # Includes KWallet auto-unlock for seamless password wallet integration
     cat > "$rootfs/etc/pam.d/sddm" << 'EOF'
 auth     required       pam_env.so
 auth     required       pam_unix.so
+-auth    optional       pam_kwallet5.so
 account  include        system-account
 password include        system-password
 session  required       pam_limits.so
 session  required       pam_unix.so
 session  optional       pam_loginuid.so
 session  optional       pam_keyinit.so force revoke
+-session optional       pam_kwallet5.so auto_start
 session  required       pam_systemd.so
 EOF
 
@@ -710,8 +753,8 @@ session  required       pam_unix.so
 -session optional       pam_systemd.so
 EOF
 
-    # Mask problematic systemd units
-    for unit in dev-hugepages.mount dev-mqueue.mount tmp.mount systemd-timesyncd.service; do
+    # Mask problematic systemd units (but NOT timesyncd - we want time sync!)
+    for unit in dev-hugepages.mount dev-mqueue.mount tmp.mount; do
         ln -sf /dev/null "$rootfs/etc/systemd/system/$unit"
     done
 
@@ -907,8 +950,9 @@ QML2_IMPORT_PATH=/usr/lib/qml
 # Cursor settings
 XCURSOR_SIZE=24
 XCURSOR_THEME=breeze_cursors
-# Note: Software cursor is handled by Xorg config (10-virtio-cursor.conf)
-# Do NOT set KWIN_FORCE_SW_CURSOR here - it causes double cursor with Xorg SWcursor
+
+# Qt accessibility - required for screen readers and accessibility tools
+QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1
 EOF
 
     # Fix /etc/pam.d/login - remove pam_nologin for live ISO (blocks login until boot complete)
@@ -1066,6 +1110,17 @@ Section "InputClass"
     MatchIsKeyboard "on"
     MatchDevicePath "/dev/input/event*"
     Driver "libinput"
+EndSection
+
+Section "InputClass"
+    Identifier "libinput touchpad catchall"
+    MatchIsTouchpad "on"
+    MatchDevicePath "/dev/input/event*"
+    Driver "libinput"
+    Option "Tapping" "on"
+    Option "TappingDrag" "on"
+    Option "NaturalScrolling" "on"
+    Option "ClickMethod" "clickfinger"
 EndSection
 XORGINPUT
 
@@ -1350,10 +1405,40 @@ EOF
         log_info "Enabled accounts-daemon.service"
     fi
 
-    # Enable CUPS printing service (socket activation)
+    # Enable CUPS printing service (both socket and service for full functionality)
     if [ -f "$rootfs/usr/lib/systemd/system/cups.socket" ]; then
         ln -sf /usr/lib/systemd/system/cups.socket "$rootfs/etc/systemd/system/sockets.target.wants/"
         log_info "Enabled cups.socket"
+    fi
+    if [ -f "$rootfs/usr/lib/systemd/system/cups.service" ]; then
+        ln -sf /usr/lib/systemd/system/cups.service "$rootfs/etc/systemd/system/multi-user.target.wants/"
+        log_info "Enabled cups.service"
+    fi
+
+    # Enable systemd-timesyncd for NTP time synchronization
+    mkdir -p "$rootfs/etc/systemd/system/sysinit.target.wants"
+    if [ -f "$rootfs/usr/lib/systemd/system/systemd-timesyncd.service" ]; then
+        ln -sf /usr/lib/systemd/system/systemd-timesyncd.service "$rootfs/etc/systemd/system/sysinit.target.wants/"
+        log_info "Enabled systemd-timesyncd.service"
+    fi
+
+    # Enable fstrim.timer for SSD maintenance (weekly TRIM)
+    mkdir -p "$rootfs/etc/systemd/system/timers.target.wants"
+    if [ -f "$rootfs/usr/lib/systemd/system/fstrim.timer" ]; then
+        ln -sf /usr/lib/systemd/system/fstrim.timer "$rootfs/etc/systemd/system/timers.target.wants/"
+        log_info "Enabled fstrim.timer for SSD maintenance"
+    fi
+
+    # Enable SPICE vdagent for VM guest integration (if installed)
+    if [ -f "$rootfs/usr/lib/systemd/system/spice-vdagentd.socket" ]; then
+        ln -sf /usr/lib/systemd/system/spice-vdagentd.socket "$rootfs/etc/systemd/system/sockets.target.wants/"
+        log_info "Enabled spice-vdagentd.socket"
+    fi
+
+    # Enable QEMU guest agent for VM integration (if installed)
+    # Note: qemu-guest-agent.service is auto-started by udev when virtio-port is available
+    if [ -f "$rootfs/usr/lib/systemd/system/qemu-guest-agent.service" ]; then
+        log_info "QEMU guest agent installed (auto-started by udev)"
     fi
 
     # Enable UDisks2 - CRITICAL for Calamares/KPMcore disk management
@@ -1805,6 +1890,10 @@ AnimationSpeed=3
 [Input]
 TabletMode=off
 
+[Cursor]
+# Force hardware cursor to prevent double cursor in VMs
+HardwareCursor=true
+
 [Plugins]
 blurEnabled=true
 contrastEnabled=true
@@ -1855,6 +1944,9 @@ Backend=OpenGL
 GLCore=true
 LatencyPolicy=Low
 OpenGLIsUnsafe=false
+
+[Cursor]
+HardwareCursor=true
 
 [Effect-blur]
 BlurStrength=10
@@ -2288,10 +2380,17 @@ APPLY_THEME
     # Set graphical target as default
     ln -sf /usr/lib/systemd/system/graphical.target "$rootfs/etc/systemd/system/default.target" 2>/dev/null || true
 
-    # Mask problematic systemd units for live boot
-    for unit in systemd-timesyncd.service; do
-        ln -sf /dev/null "$rootfs/etc/systemd/system/$unit"
-    done
+    # Note: We do NOT mask any units here - timesyncd is enabled for time sync
+    # All problematic units are handled earlier in the script
+
+    # Remove pulseaudio autostart to prevent conflict with PipeWire
+    # PipeWire provides pipewire-pulse which replaces PulseAudio
+    rm -f "$rootfs/etc/xdg/autostart/pulseaudio.desktop"
+    log_info "Removed pulseaudio autostart (using PipeWire instead)"
+
+    # Create polkit rules directories that some services expect
+    mkdir -p "$rootfs/run/polkit-1/rules.d"
+    mkdir -p "$rootfs/usr/local/share/polkit-1/rules.d"
 
     # Create SDDM debug script for troubleshooting
     mkdir -p "$rootfs/usr/local/bin"
