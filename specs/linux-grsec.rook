@@ -57,6 +57,71 @@ make mrproper
 make defconfig
 
 # =========================================================================
+# Desktop Responsiveness - CRITICAL for input latency
+# Based on Manjaro linux66 kernel config with improvements
+# =========================================================================
+
+# Timer frequency: 1000 Hz for responsive desktop (Manjaro uses 300, we use 1000)
+scripts/config --disable CONFIG_HZ_100
+scripts/config --disable CONFIG_HZ_250
+scripts/config --disable CONFIG_HZ_300
+scripts/config --enable CONFIG_HZ_1000
+scripts/config --set-val CONFIG_HZ 1000
+
+# Full preemption for low-latency desktop
+scripts/config --disable CONFIG_PREEMPT_NONE
+scripts/config --disable CONFIG_PREEMPT_VOLUNTARY
+scripts/config --enable CONFIG_PREEMPT
+scripts/config --enable CONFIG_PREEMPT_COUNT
+scripts/config --enable CONFIG_PREEMPTION
+# Dynamic preemption - allows runtime switching between preemption modes
+scripts/config --enable CONFIG_PREEMPT_DYNAMIC
+
+# Tickless operation - reduces timer interrupts on idle CPUs
+scripts/config --enable CONFIG_NO_HZ
+scripts/config --enable CONFIG_NO_HZ_COMMON
+scripts/config --enable CONFIG_NO_HZ_FULL
+scripts/config --enable CONFIG_NO_HZ_IDLE
+scripts/config --enable CONFIG_TICK_ONESHOT
+
+# High-resolution scheduler ticks - finer scheduling granularity
+scripts/config --enable CONFIG_SCHED_HRTICK
+scripts/config --enable CONFIG_HIGH_RES_TIMERS
+
+# =========================================================================
+# Input devices - built-in for immediate responsiveness at boot
+# =========================================================================
+scripts/config --enable CONFIG_INPUT_EVDEV
+scripts/config --enable CONFIG_INPUT_KEYBOARD
+scripts/config --enable CONFIG_INPUT_MOUSE
+
+# =========================================================================
+# Memory Management - MGLRU for reduced stuttering
+# Multi-Generational LRU significantly improves responsiveness under memory pressure
+# =========================================================================
+scripts/config --enable CONFIG_LRU_GEN
+scripts/config --enable CONFIG_LRU_GEN_ENABLED
+scripts/config --set-val CONFIG_LRU_GEN_MIN_TTL 0
+
+# Per-VMA locking - reduces lock contention for better multi-threaded performance
+scripts/config --enable CONFIG_PER_VMA_LOCK
+
+# =========================================================================
+# CPU Frequency Scaling - schedutil governor for responsive frequency scaling
+# =========================================================================
+scripts/config --enable CONFIG_CPU_FREQ
+scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+scripts/config --enable CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL
+
+# =========================================================================
+# Scheduler enhancements
+# =========================================================================
+scripts/config --enable CONFIG_SCHED_CORE
+scripts/config --enable CONFIG_SCHED_SMT
+scripts/config --enable CONFIG_SCHED_MC
+scripts/config --enable CONFIG_SCHED_CLUSTER
+
+# =========================================================================
 # Grsecurity CUSTOM Configuration for Desktop
 # Using manual config instead of auto to avoid desktop-breaking defaults
 # =========================================================================

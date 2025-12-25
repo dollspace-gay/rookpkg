@@ -143,9 +143,21 @@ install_packages() {
     local tmp_extract="/tmp/pkg-extract-$$"
     mkdir -p "$tmp_extract"
 
+    # Packages that should only be in live ISO, not installed to disk
+    # These will be installed to livefs overlay instead
+    local live_only_pkgs="calamares"
+
     for pkg in "$SPECS_DIR"/*.x86_64.rookpkg; do
         pkg_count=$((pkg_count + 1))
         local pkg_name=$(basename "$pkg" .x86_64.rookpkg)
+        # Strip version-release suffix to get base package name
+        local base_name=$(echo "$pkg_name" | sed 's/-[0-9].*//')
+
+        # Skip live-only packages - they'll be installed to livefs later
+        if echo "$live_only_pkgs" | grep -qw "$base_name"; then
+            log_info "Skipping $base_name (live-only package)"
+            continue
+        fi
 
         if [ $((pkg_count % 50)) -eq 0 ] || [ "$pkg_count" -eq "$total_pkgs" ]; then
             log_info "Installing package $pkg_count/$total_pkgs: $pkg_name"
@@ -883,21 +895,20 @@ EOF
     cat > "$rootfs/etc/environment" << 'EOF'
 PATH="/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin"
 
-# Rookery OS Live settings
+# Rookery OS settings
 LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
-# Qt/KDE plugin paths - CRITICAL for Plasma Wayland
-# Qt plugins are installed at /usr/plugins (not /usr/lib/qt6/plugins)
+# Qt/KDE plugin paths - CRITICAL for Plasma
 QT_PLUGIN_PATH=/usr/plugins:/usr/lib/plugins
 QML_IMPORT_PATH=/usr/lib/qml
 QML2_IMPORT_PATH=/usr/lib/qml
 
-# Cursor size - prevent giant cursor in VMs
+# Cursor settings
 XCURSOR_SIZE=24
-
-# Software rendering fallback - helps in VMs without proper GPU acceleration
-KWIN_COMPOSE=O2
+XCURSOR_THEME=breeze_cursors
+# Note: Software cursor is handled by Xorg config (10-virtio-cursor.conf)
+# Do NOT set KWIN_FORCE_SW_CURSOR here - it causes double cursor with Xorg SWcursor
 EOF
 
     # Fix /etc/pam.d/login - remove pam_nologin for live ISO (blocks login until boot complete)
@@ -1033,6 +1044,32 @@ MaximumUid=60000
 EOF
 
     log_info "Base SDDM configured (no autologin - added at boot for live session)"
+
+    # ==========================================================================
+    # Create Xorg configuration for input handling
+    # ==========================================================================
+    mkdir -p "$rootfs/etc/X11/xorg.conf.d"
+
+    # Configure libinput (no software cursor - let hardware cursor work normally)
+    cat > "$rootfs/etc/X11/xorg.conf.d/40-libinput.conf" << 'XORGINPUT'
+# Libinput configuration
+
+Section "InputClass"
+    Identifier "libinput pointer catchall"
+    MatchIsPointer "on"
+    MatchDevicePath "/dev/input/event*"
+    Driver "libinput"
+EndSection
+
+Section "InputClass"
+    Identifier "libinput keyboard catchall"
+    MatchIsKeyboard "on"
+    MatchDevicePath "/dev/input/event*"
+    Driver "libinput"
+EndSection
+XORGINPUT
+
+    log_info "Xorg input configuration created"
 
     # ==========================================================================
     # Create sulogin symlink for emergency/recovery shell
@@ -1758,6 +1795,15 @@ KDEGLOBALS
 [Compositing]
 Backend=OpenGL
 GLCore=true
+OpenGLIsUnsafe=false
+# Low latency for responsive input
+LatencyPolicy=ExtremelyLow
+GLPreferBufferSwap=a
+HiddenPreviews=5
+AnimationSpeed=3
+
+[Input]
+TabletMode=off
 
 [Plugins]
 blurEnabled=true
@@ -1765,6 +1811,9 @@ contrastEnabled=true
 magiclampEnabled=true
 slideEnabled=true
 kwin4_effect_fadeEnabled=true
+wobblywindowsEnabled=true
+desktopgridEnabled=true
+presentwindowsEnabled=true
 
 [Effect-blur]
 BlurStrength=10
@@ -1779,6 +1828,9 @@ theme=Breeze
 
 [Windows]
 Placement=Smart
+
+[Xwayland]
+Scale=1
 KWINRC
 
     # Configure Kvantum system-wide
@@ -2785,6 +2837,26 @@ configure_live_overlay() {
     mkdir -p "$livefs"/{etc/sddm.conf.d,etc/sudoers.d,etc/polkit-1/rules.d}
     mkdir -p "$livefs"/{etc/systemd/system/multi-user.target.wants,etc/profile.d}
     mkdir -p "$livefs"/{home/live,usr/bin,usr/lib/systemd/system}
+
+    # =========================================================================
+    # Install live-only packages to livefs (not installed to target system)
+    # =========================================================================
+    log_info "Installing live-only packages to overlay..."
+    local tmp_extract="/tmp/pkg-extract-live-$$"
+    mkdir -p "$tmp_extract"
+
+    for pkg in "$SPECS_DIR"/calamares-*.x86_64.rookpkg; do
+        if [ -f "$pkg" ]; then
+            local pkg_name=$(basename "$pkg")
+            log_info "Installing to livefs: $pkg_name"
+            tar -xf "$pkg" -C "$tmp_extract" data.tar.zst 2>/dev/null || continue
+            if [ -f "$tmp_extract/data.tar.zst" ]; then
+                zstd -d -c "$tmp_extract/data.tar.zst" 2>/dev/null | tar -xf - -C "$livefs" 2>/dev/null || true
+                rm -f "$tmp_extract/data.tar.zst"
+            fi
+        fi
+    done
+    rm -rf "$tmp_extract"
 
     # =========================================================================
     # Create rookery-live script (runs at boot to configure live session)
