@@ -574,9 +574,9 @@ EOF
     mkdir -p "$rootfs/etc/xdg/plasma-workspace/env"
     cat > "$rootfs/etc/xdg/plasma-workspace/env/kwin-vm-cursor.sh" << 'EOF'
 #!/bin/sh
-# Force KWin software cursor in VMs (QEMU hardware cursor planes don't work)
-# This prevents double cursor by letting KWin handle all cursor drawing
-export KWIN_FORCE_SW_CURSOR=1
+# Force KWin to use Atomic Mode Setting even in VMs
+# Without this, KWin disables AMS causing double cursor issues
+export KWIN_DRM_NO_AMS=0
 EOF
     chmod 755 "$rootfs/etc/xdg/plasma-workspace/env/kwin-vm-cursor.sh"
     log_info "Created plasma-workspace env script for Wayland cursor fix"
@@ -1005,9 +1005,9 @@ QML2_IMPORT_PATH=/usr/lib/qml
 XCURSOR_SIZE=24
 XCURSOR_THEME=breeze_cursors
 
-# Force KWin software cursor in VMs (QEMU hardware cursor planes don't work)
-# This prevents double cursor by letting KWin handle all cursor drawing
-KWIN_FORCE_SW_CURSOR=1
+# Force KWin to use Atomic Mode Setting even in VMs
+# Without this, KWin disables AMS causing double cursor issues
+KWIN_DRM_NO_AMS=0
 
 # Qt accessibility - required for screen readers and accessibility tools
 QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1
@@ -1743,6 +1743,31 @@ EOF
         log_warn "Wallpaper not found - checked /mnt/c/Users/texas/rookpkg/branding/ and /home/rookery/branding/"
     fi
 
+    # Install Rookery start menu icon
+    log_info "Installing Rookery start menu icon..."
+    local icon_src=""
+    if [ -d "/mnt/c/Users/texas/rookpkg/branding/icons" ]; then
+        icon_src="/mnt/c/Users/texas/rookpkg/branding/icons"
+    elif [ -d "/home/rookery/branding/icons" ]; then
+        icon_src="/home/rookery/branding/icons"
+    fi
+
+    if [ -n "$icon_src" ] && [ -d "$icon_src" ]; then
+        for size in 16x16 22x22 32x32 48x48 64x64 128x128 256x256; do
+            if [ -f "$icon_src/$size/start-here-rookery.png" ]; then
+                mkdir -p "$rootfs/usr/share/icons/hicolor/$size/apps"
+                cp "$icon_src/$size/start-here-rookery.png" "$rootfs/usr/share/icons/hicolor/$size/apps/"
+            fi
+        done
+        # Update icon cache so KDE can find the icons
+        if [ -x "$rootfs/usr/bin/gtk-update-icon-cache" ]; then
+            chroot "$rootfs" /usr/bin/gtk-update-icon-cache -f /usr/share/icons/hicolor/ 2>/dev/null || true
+        fi
+        log_info "Rookery start menu icon installed"
+    else
+        log_warn "Rookery icons not found - using default KDE icon"
+    fi
+
     # Configure SDDM to use Rookery wallpaper as background
     mkdir -p "$rootfs/etc/sddm.conf.d"
     cat > "$rootfs/etc/sddm.conf.d/10-background.conf" << 'EOF'
@@ -2094,8 +2119,14 @@ EOF
 name=default
 EOF
 
-    # Configure KDE lock screen wallpaper
+    # Configure KDE lock screen - disable auto-lock for live ISO
+    # Lock screen has issues with phantom keyboard input in VMs
     cat > "$rootfs/etc/skel/.config/kscreenlockerrc" << 'EOF'
+[Daemon]
+Autolock=false
+LockOnResume=false
+Timeout=0
+
 [Greeter][Wallpaper][org.kde.image][General]
 Image=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
 PreviewImage=/usr/share/wallpapers/Rookery/contents/images/wallpaper.jpg
@@ -2144,12 +2175,21 @@ plugin=org.kde.panel
 
 [Containments][2][Applets][3]
 immutability=1
-plugin=org.kde.plasma.appmenu
+plugin=org.kde.plasma.kickoff
 
 [Containments][2][Applets][3][Configuration][General]
-compactView=true
+icon=/usr/share/icons/hicolor/256x256/apps/start-here-rookery.png
+primaryActions=3
+showActionButtonCaptions=true
 
 [Containments][2][Applets][4]
+immutability=1
+plugin=org.kde.plasma.appmenu
+
+[Containments][2][Applets][4][Configuration][General]
+compactView=true
+
+[Containments][2][Applets][10]
 immutability=1
 plugin=org.kde.plasma.panelspacer
 
@@ -2174,7 +2214,7 @@ plugin=org.kde.plasma.systemtray
 extraItems=org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.plasma.battery,org.kde.plasma.notifications
 
 [Containments][2][General]
-AppletOrder=3;4;5;6;7
+AppletOrder=3;4;10;5;6;7
 
 [Containments][8]
 activityId=
