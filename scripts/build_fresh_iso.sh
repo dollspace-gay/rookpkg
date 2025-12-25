@@ -569,22 +569,32 @@ fi
 EOF
     chmod 644 "$rootfs/etc/profile.d/desktop-vm.sh"
 
+    # Create plasma-workspace env script for Wayland session
+    # These scripts are sourced by startplasma-wayland before KWin starts
+    mkdir -p "$rootfs/etc/xdg/plasma-workspace/env"
+    cat > "$rootfs/etc/xdg/plasma-workspace/env/kwin-vm-cursor.sh" << 'EOF'
+#!/bin/sh
+# Force KWin software cursor in VMs (QEMU hardware cursor planes don't work)
+# This prevents double cursor by letting KWin handle all cursor drawing
+export KWIN_FORCE_SW_CURSOR=1
+EOF
+    chmod 755 "$rootfs/etc/xdg/plasma-workspace/env/kwin-vm-cursor.sh"
+    log_info "Created plasma-workspace env script for Wayland cursor fix"
+
     log_info "UTF-8 locale configured"
 
-    # Configure grsecurity sysctl settings (optional - may not exist in all kernels)
-    # The '-' prefix tells sysctl to ignore errors if the setting doesn't exist
+    # Configure grsecurity runtime sysctl settings
+    # These work if CONFIG_GRKERNSEC_SYSCTL=y (which it is in our kernel)
     mkdir -p "$rootfs/etc/sysctl.d"
     cat > "$rootfs/etc/sysctl.d/99-rookery-grsec.conf" << 'EOF'
-# Rookery OS grsecurity settings
-# Settings prefixed with - are optional (won't fail if kernel doesn't support them)
+# Rookery OS grsecurity runtime settings
+# Settings prefixed with - are optional (won't fail if setting doesn't exist)
 
-# Allow unprivileged FUSE (needed for xdg-document-portal, flatpak, etc.)
--kernel.grsecurity.deny_fuse = 0
+# Allow unprivileged FUSE (needed for xdg-document-portal, flatpak, SSHFS, etc.)
+# 0 = allow unprivileged FUSE, 1 = deny (default if CONFIG_GRKERNSEC_FUSE_RESTRICT=y)
+-kernel.grsecurity.fuse_restrict = 0
 
-# Allow unprivileged user namespaces (needed for sandboxing in browsers, etc.)
--kernel.grsecurity.unprivileged_userns_allowed = 1
-
-# Standard kernel user namespace setting (fallback for non-grsec kernels)
+# Allow unprivileged user namespaces (needed for sandboxing in browsers, Flatpak, etc.)
 -kernel.unprivileged_userns_clone = 1
 EOF
     chmod 644 "$rootfs/etc/sysctl.d/99-rookery-grsec.conf"
@@ -600,29 +610,73 @@ EOF
     chmod 644 "$rootfs/usr/lib/udev/rules.d/99-fuse.rules"
     log_info "Created udev rule for /dev/fuse permissions"
 
-    # Create a systemd service to apply grsec sysctl settings early
-    # This runs before user services like xdg-document-portal
-    cat > "$rootfs/usr/lib/systemd/system/grsec-sysctl.service" << 'EOF'
-[Unit]
-Description=Apply grsecurity sysctl settings
-DefaultDependencies=no
-Before=sysinit.target systemd-sysctl.service
-After=systemd-modules-load.service
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/sysctl -p /etc/sysctl.d/99-rookery-grsec.conf
-RemainAfterExit=yes
-
-[Install]
-WantedBy=sysinit.target
+    # DRM udev rules for GPU device symlinks
+    cat > "$rootfs/usr/lib/udev/rules.d/60-drm.rules" << 'EOF'
+# DRM device symlinks by path
+ACTION!="remove", SUBSYSTEM=="drm", SUBSYSTEMS=="pci|usb|platform", IMPORT{builtin}="path_id"
+KERNEL=="card*",     ENV{ID_PATH}=="?*", SYMLINK+="dri/by-path/$env{ID_PATH}-card"
+KERNEL=="renderD*",  ENV{ID_PATH}=="?*", SYMLINK+="dri/by-path/$env{ID_PATH}-render"
 EOF
-    chmod 644 "$rootfs/usr/lib/systemd/system/grsec-sysctl.service"
+    chmod 644 "$rootfs/usr/lib/udev/rules.d/60-drm.rules"
+    log_info "Created DRM udev rules"
 
-    # Enable the grsec-sysctl service
-    mkdir -p "$rootfs/etc/systemd/system/sysinit.target.wants"
-    ln -sf /usr/lib/systemd/system/grsec-sysctl.service "$rootfs/etc/systemd/system/sysinit.target.wants/"
-    log_info "Enabled grsec-sysctl.service for early sysctl application"
+    # GTK4 cursor size fix (GTK 4.16 bug - fixed in 4.18)
+    mkdir -p "$rootfs/etc/gtk-4.0"
+    cat > "$rootfs/etc/gtk-4.0/settings.ini" << 'EOF'
+[Settings]
+gtk-cursor-theme-name=breeze_cursors
+gtk-cursor-theme-size=24
+EOF
+    chmod 644 "$rootfs/etc/gtk-4.0/settings.ini"
+    log_info "Created GTK4 cursor size fix"
+
+    # systemd-sysctl.service applies /etc/sysctl.d/*.conf early in boot
+
+    # Pre-load kernel modules at boot that users would normally autoload
+    # This is needed because grsecurity MODHARDEN prevents unprivileged module autoload
+    mkdir -p "$rootfs/etc/modules-load.d"
+    cat > "$rootfs/etc/modules-load.d/rookery-desktop.conf" << 'EOF'
+# Rookery OS: Pre-load modules that grsecurity MODHARDEN would block from user autoload
+
+# Sound modules
+snd
+snd_seq
+snd_seq_dummy
+snd_hrtimer
+snd_hda_intel
+snd_hda_codec
+snd_hda_core
+snd_pcm
+snd_timer
+
+# FUSE for xdg-document-portal, flatpak, etc.
+fuse
+
+# Input devices
+uinput
+
+# Virtio for VM guest support
+virtio_pci
+virtio_blk
+virtio_net
+virtio_console
+virtio_balloon
+virtio_gpu
+virtio_input
+
+# DRM/GPU modules - CRITICAL for grsec MODHARDEN
+# Without these, KDE falls back to software rendering
+drm
+drm_kms_helper
+
+# GPU drivers - load all, kernel uses matching one
+nouveau
+i915
+amdgpu
+radeon
+EOF
+    chmod 644 "$rootfs/etc/modules-load.d/rookery-desktop.conf"
+    log_info "Created modules-load.d config for grsecurity compatibility"
 
     # Enable PipeWire user services globally via systemd preset
     # This is more reliable than /etc/skel symlinks
@@ -950,6 +1004,10 @@ QML2_IMPORT_PATH=/usr/lib/qml
 # Cursor settings
 XCURSOR_SIZE=24
 XCURSOR_THEME=breeze_cursors
+
+# Force KWin software cursor in VMs (QEMU hardware cursor planes don't work)
+# This prevents double cursor by letting KWin handle all cursor drawing
+KWIN_FORCE_SW_CURSOR=1
 
 # Qt accessibility - required for screen readers and accessibility tools
 QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1
@@ -1890,10 +1948,6 @@ AnimationSpeed=3
 [Input]
 TabletMode=off
 
-[Cursor]
-# Force hardware cursor to prevent double cursor in VMs
-HardwareCursor=true
-
 [Plugins]
 blurEnabled=true
 contrastEnabled=true
@@ -1944,9 +1998,6 @@ Backend=OpenGL
 GLCore=true
 LatencyPolicy=Low
 OpenGLIsUnsafe=false
-
-[Cursor]
-HardwareCursor=true
 
 [Effect-blur]
 BlurStrength=10

@@ -1,6 +1,6 @@
 [package]
 name = "spirv-headers"
-version = "1.4.321"
+version = "1.4.335"
 release = 1
 summary = "SPIR-V header files"
 description = """
@@ -14,7 +14,7 @@ maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
 arch = "noarch"
 
 [sources]
-source0 = { url = "http://corvidae.social/RookerySource/SPIRV-Headers-vulkan-sdk-1.4.321.0.tar.gz", sha256 = "5bbea925663d4cd2bab23efad53874f2718248a73dcaf9dd21dff8cb48e602fc" }
+source0 = { url = "https://github.com/KhronosGroup/SPIRV-Headers/archive/refs/tags/vulkan-sdk-1.4.335.0.tar.gz", sha256 = "FIXME" }
 
 [patches]
 

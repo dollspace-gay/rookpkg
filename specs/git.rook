@@ -1,0 +1,116 @@
+[package]
+name = "git"
+version = "2.50.1"
+release = 1
+summary = "Distributed version control system"
+description = """
+Git is a free and open source, distributed version control system designed
+to handle everything from small to very large projects with speed and
+efficiency. Every Git clone is a full-fledged repository with complete
+history and full revision tracking capabilities.
+"""
+homepage = "https://git-scm.com/"
+license = "GPL-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://www.kernel.org/pub/software/scm/git/git-2.50.1.tar.xz", sha256 = "7e3e6c36decbd8f1eedd14d42db6674be03671c2204864befa2a41756c5c8fc4" }
+source1 = { url = "https://www.kernel.org/pub/software/scm/git/git-manpages-2.50.1.tar.xz", sha256 = "7dd86882bbc22bef8852924de96b9cb378aad8532089e301c82093da3e7c5478" }
+
+[patches]
+
+[build_depends]
+curl = ">= 8.0"
+openssl = ">= 3.0"
+zlib = ">= 1.3"
+expat = ">= 2.5"
+perl = ">= 5.38"
+python = ">= 3.12"
+
+[depends]
+curl = ">= 8.0"
+openssl = ">= 3.0"
+zlib = ">= 1.3"
+expat = ">= 2.5"
+perl = ">= 5.38"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf git-*
+tar xf $ROOKPKG_SOURCES/git-2.50.1.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/git-2.50.1
+./configure --prefix=/usr \
+            --with-gitconfig=/etc/gitconfig \
+            --with-python=python3
+"""
+
+build = """
+cd $ROOKPKG_BUILD/git-2.50.1
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests take a long time, skip for now
+# GIT_UNZIP=nonexist make test -k
+"""
+
+install = """
+cd $ROOKPKG_BUILD/git-2.50.1
+make perllibdir=/usr/lib/perl5/5.42/site_perl DESTDIR=$ROOKPKG_DESTDIR install
+
+# Install man pages from downloaded tarball
+mkdir -p $ROOKPKG_DESTDIR/usr/share/man
+tar -xf $ROOKPKG_SOURCES/git-manpages-2.50.1.tar.xz \
+    -C $ROOKPKG_DESTDIR/usr/share/man --no-same-owner --no-overwrite-dir
+"""
+
+[files]
+"usr/bin/git" = { mode = 755 }
+"usr/bin/git-*" = { mode = 755 }
+"usr/bin/gitk" = { mode = 755 }
+"usr/bin/scalar" = { mode = 755 }
+"usr/libexec/git-core/" = {}
+"usr/lib/perl5/" = {}
+"usr/share/man/" = {}
+"usr/share/git-core/" = {}
+"usr/share/git-gui/" = {}
+"usr/share/gitk/" = {}
+"usr/share/gitweb/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.50.1"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Based on BLFS 12.4 stable build instructions"
+]
+
+[metadata]
+keywords = ["git", "version-control", "vcs", "scm"]
+categories = ["development", "tools"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

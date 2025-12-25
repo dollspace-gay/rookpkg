@@ -159,12 +159,14 @@ scripts/config --disable CONFIG_GRKERNSEC_DMESG || true
 # I/O port restrictions - DISABLE (Xorg needs raw I/O for video cards)
 scripts/config --disable CONFIG_GRKERNSEC_IO || true
 
-# UDEREF - DISABLE (incompatible with Nvidia proprietary drivers)
-scripts/config --disable CONFIG_PAX_UDEREF || true
+# FUSE restriction - DISABLE (needed for xdg-document-portal, flatpak, SSHFS, etc.)
+# Without this, unprivileged users cannot use FUSE even with module loaded
+scripts/config --disable CONFIG_GRKERNSEC_FUSE_RESTRICT || true
 
 # =========================================================================
-# PaX Configuration - Disable entirely for desktop compatibility
-# PaX breaks JIT compilers (browsers), and requires at least one feature enabled
+# PaX Configuration - DISABLED for desktop compatibility
+# PaX breaks too many things (Calamares, Qt apps, JIT compilers, etc.)
+# Even with paxctl flags, it's too much hassle for a desktop OS
 # =========================================================================
 scripts/config --disable CONFIG_PAX || true
 

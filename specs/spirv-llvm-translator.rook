@@ -1,0 +1,101 @@
+[package]
+name = "spirv-llvm-translator"
+version = "20.1.8"
+release = 1
+summary = "SPIR-V to LLVM IR bi-directional translator"
+description = """
+SPIRV-LLVM-Translator is a tool and library for bi-directional translation
+between SPIR-V and LLVM IR. It is used by Mesa for OpenCL and Vulkan support.
+"""
+homepage = "https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
+license = "Apache-2.0"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/KhronosGroup/SPIRV-LLVM-Translator/archive/v20.1.8/SPIRV-LLVM-Translator-20.1.8.tar.gz", sha256 = "7b2f24440cb8b24f20d88e838c12fed486c5a00956a368b17b12b2c0431639c0" }
+
+[patches]
+
+[build_depends]
+llvm = ">= 20.0"
+cmake = ">= 4.0"
+ninja = ">= 1.8"
+spirv-tools = ">= 1.3"
+git = ">= 2.0"
+
+[depends]
+llvm = ">= 20.0"
+spirv-tools = ">= 1.3"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf SPIRV-LLVM-Translator-*
+tar xf $ROOKPKG_SOURCES/SPIRV-LLVM-Translator-20.1.8.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/SPIRV-LLVM-Translator-20.1.8
+mkdir -p build
+cd build
+# Let cmake fetch the exact spirv-headers version it needs from spirv-headers-tag.conf
+# The project requires Intel-specific extensions not in standard Khronos releases
+cmake -D CMAKE_INSTALL_PREFIX=/usr           \
+      -D CMAKE_BUILD_TYPE=Release            \
+      -D BUILD_SHARED_LIBS=ON                \
+      -G Ninja ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/SPIRV-LLVM-Translator-20.1.8/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# Tests require lit which may not be available
+"""
+
+install = """
+cd $ROOKPKG_BUILD/SPIRV-LLVM-Translator-20.1.8/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/bin/llvm-spirv" = { mode = 755 }
+"usr/lib/libLLVMSPIRVLib.so*" = { mode = 755 }
+"usr/lib/pkgconfig/LLVMSPIRVLib.pc" = {}
+"usr/include/LLVMSPIRVLib/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = "/sbin/ldconfig"
+pre_remove = ""
+post_remove = "/sbin/ldconfig"
+pre_upgrade = ""
+post_upgrade = "/sbin/ldconfig"
+
+[[changelog]]
+version = "20.1.8"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required by Mesa for Vulkan/OpenCL support"
+]
+
+[metadata]
+keywords = ["spirv", "llvm", "translator", "opencl", "vulkan"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

@@ -7,3 +7,4 @@ test_pax_flags.py
 /mozbuild/
 .gitignore
 log.txt
+grsec-6.6.102.patch

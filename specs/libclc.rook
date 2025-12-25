@@ -1,0 +1,102 @@
+[package]
+name = "libclc"
+version = "20.1.8"
+release = 1
+summary = "OpenCL C library implementation for LLVM"
+description = """
+libclc is an open source implementation of the library requirements of the
+OpenCL C programming language. It is designed to be portable and extensible,
+and is used by Mesa for OpenCL support in GPU drivers.
+"""
+homepage = "https://libclc.llvm.org/"
+license = "Apache-2.0 WITH LLVM-exception"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.8/libclc-20.1.8.src.tar.xz", sha256 = "FIXME" }
+source1 = { url = "http://corvidae.social/RookerySource/llvm-cmake-20.1.8.src.tar.xz", sha256 = "3319203cfd1172bbac50f06fa68e318af84dcb5d65353310c0586354069d6634" }
+
+[patches]
+
+[build_depends]
+llvm = ">= 20.0"
+cmake = ">= 4.0"
+ninja = ">= 1.8"
+python = ">= 3.12"
+
+[depends]
+llvm = ">= 20.0"
+
+[optional_depends]
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf libclc-*
+tar xf $ROOKPKG_SOURCES/libclc-20.1.8.src.tar.xz
+cd libclc-20.1.8.src
+
+# Extract cmake modules (needed for build)
+tar xf $ROOKPKG_SOURCES/llvm-cmake-20.1.8.src.tar.xz
+mv cmake-20.1.8.src cmake
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/libclc-20.1.8.src
+mkdir -p build
+cd build
+cmake -D CMAKE_INSTALL_PREFIX=/usr          \
+      -D CMAKE_BUILD_TYPE=Release            \
+      -G Ninja ..
+"""
+
+build = """
+cd $ROOKPKG_BUILD/libclc-20.1.8.src/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+# No tests for libclc
+"""
+
+install = """
+cd $ROOKPKG_BUILD/libclc-20.1.8.src/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+"""
+
+[files]
+"usr/share/clc/" = {}
+"usr/include/clc/" = {}
+"usr/lib/pkgconfig/libclc.pc" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "20.1.8"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Required by Mesa for OpenCL support"
+]
+
+[metadata]
+keywords = ["opencl", "llvm", "gpu", "compute"]
+categories = ["development", "libraries"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
