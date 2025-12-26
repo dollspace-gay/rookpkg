@@ -1,0 +1,240 @@
+[package]
+name = "go"
+version = "1.25.5"
+release = 1
+summary = "The Go programming language"
+description = """
+Go is an open source programming language that makes it simple to build secure,
+scalable systems. Go is expressive, concise, clean, and efficient. Its concurrency
+mechanisms make it easy to write programs that get the most out of multicore and
+networked machines, while its novel type system enables flexible and modular
+program construction.
+"""
+homepage = "https://go.dev/"
+license = "BSD-3-Clause"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://go.dev/dl/go1.25.5.linux-amd64.tar.gz", sha256 = "9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b" }
+
+[patches]
+
+[build_depends]
+tar = ">= 1.35"
+
+[depends]
+glibc = ">= 2.28"
+
+[optional_depends]
+git = ">= 2.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf go
+tar xf $ROOKPKG_SOURCES/go1.25.5.linux-amd64.tar.gz
+"""
+
+configure = """
+# Pre-built binary - no configuration needed
+"""
+
+build = """
+# Pre-built binary - no build needed
+"""
+
+check = """
+# Verify go works
+cd $ROOKPKG_BUILD/go
+./bin/go version
+"""
+
+install = """
+cd $ROOKPKG_BUILD
+
+# Install Go to /usr/lib/go
+mkdir -p $ROOKPKG_DESTDIR/usr/lib/go
+cp -r go/* $ROOKPKG_DESTDIR/usr/lib/go/
+
+# Create symlinks in /usr/bin
+mkdir -p $ROOKPKG_DESTDIR/usr/bin
+ln -sf /usr/lib/go/bin/go $ROOKPKG_DESTDIR/usr/bin/go
+ln -sf /usr/lib/go/bin/gofmt $ROOKPKG_DESTDIR/usr/bin/gofmt
+
+# Create environment setup for GOROOT
+mkdir -p $ROOKPKG_DESTDIR/etc/profile.d
+cat > $ROOKPKG_DESTDIR/etc/profile.d/go.sh << 'PROFILE'
+# Go programming language environment
+export GOROOT=/usr/lib/go
+export PATH=$PATH:$GOROOT/bin
+
+# Default GOPATH for user (can be overridden)
+if [ -z "$GOPATH" ]; then
+    export GOPATH=$HOME/go
+    export PATH=$PATH:$GOPATH/bin
+fi
+PROFILE
+
+# Create bash completion
+mkdir -p $ROOKPKG_DESTDIR/usr/share/bash-completion/completions
+cat > $ROOKPKG_DESTDIR/usr/share/bash-completion/completions/go << 'BASH'
+# bash completion for go
+_go() {
+    local cur prev words cword
+    _init_completion || return
+
+    local commands="bug build clean doc env fix fmt generate get install list mod run test tool version vet work"
+
+    if [[ $cword -eq 1 ]]; then
+        COMPREPLY=($(compgen -W "$commands help" -- "$cur"))
+        return
+    fi
+
+    case "${words[1]}" in
+        build|install|run|test)
+            local opts="-a -n -p -race -msan -asan -cover -covermode -coverpkg -v -work -x -asmflags -buildmode -buildvcs -compiler -gccgoflags -gcflags -installsuffix -ldflags -linkshared -mod -modcacherw -modfile -overlay -pgo -pkgdir -tags -trimpath -toolexec"
+            COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+            ;;
+        get)
+            local opts="-d -f -t -u -v -insecure"
+            COMPREPLY=($(compgen -W "$opts" -- "$cur"))
+            ;;
+        mod)
+            local subcommands="download edit graph init tidy vendor verify why"
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY=($(compgen -W "$subcommands" -- "$cur"))
+            fi
+            ;;
+        env)
+            local vars="GOARCH GOBIN GOCACHE GOENV GOFLAGS GOHOSTARCH GOHOSTOS GOINSECURE GOMODCACHE GONOPROXY GONOSUMDB GOOS GOPATH GOPRIVATE GOPROXY GOROOT GOSUMDB GOTMPDIR GOTOOLCHAIN GOTOOLDIR GOVCS GOWORK"
+            COMPREPLY=($(compgen -W "$vars -json -u -w" -- "$cur"))
+            ;;
+        tool)
+            if [[ $cword -eq 2 ]]; then
+                local tools=$(go tool 2>/dev/null)
+                COMPREPLY=($(compgen -W "$tools" -- "$cur"))
+            fi
+            ;;
+        help)
+            COMPREPLY=($(compgen -W "$commands buildconstraint buildmode c cache environment filetype go.mod gopath gopath-get goproxy importpath modules module-get module-auth packages private testflag testfunc vcs" -- "$cur"))
+            ;;
+        *)
+            _filedir
+            ;;
+    esac
+}
+complete -F _go go
+BASH
+
+# Create zsh completion
+mkdir -p $ROOKPKG_DESTDIR/usr/share/zsh/site-functions
+cat > $ROOKPKG_DESTDIR/usr/share/zsh/site-functions/_go << 'ZSH'
+#compdef go
+
+_go() {
+    local -a commands
+    commands=(
+        'bug:start a bug report'
+        'build:compile packages and dependencies'
+        'clean:remove object files and cached files'
+        'doc:show documentation for package or symbol'
+        'env:print Go environment information'
+        'fix:update packages to use new APIs'
+        'fmt:gofmt (reformat) package sources'
+        'generate:generate Go files by processing source'
+        'get:add dependencies to current module and install them'
+        'install:compile and install packages and dependencies'
+        'list:list packages or modules'
+        'mod:module maintenance'
+        'work:workspace maintenance'
+        'run:compile and run Go program'
+        'test:test packages'
+        'tool:run specified go tool'
+        'version:print Go version'
+        'vet:report likely mistakes in packages'
+        'help:get help on a topic'
+    )
+
+    if (( CURRENT == 2 )); then
+        _describe -t commands 'go command' commands
+    else
+        case "$words[2]" in
+            mod)
+                local -a mod_commands
+                mod_commands=(
+                    'download:download modules to local cache'
+                    'edit:edit go.mod from tools or scripts'
+                    'graph:print module requirement graph'
+                    'init:initialize new module in current directory'
+                    'tidy:add missing and remove unused modules'
+                    'vendor:make vendored copy of dependencies'
+                    'verify:verify dependencies have expected content'
+                    'why:explain why packages or modules are needed'
+                )
+                if (( CURRENT == 3 )); then
+                    _describe -t commands 'go mod command' mod_commands
+                fi
+                ;;
+            *)
+                _files
+                ;;
+        esac
+    fi
+}
+
+_go "$@"
+ZSH
+
+# Install man pages if they exist in the distribution
+if [ -d $ROOKPKG_BUILD/go/doc ]; then
+    mkdir -p $ROOKPKG_DESTDIR/usr/share/doc/go
+    cp -r $ROOKPKG_BUILD/go/doc/* $ROOKPKG_DESTDIR/usr/share/doc/go/
+fi
+"""
+
+[files]
+"usr/bin/go" = { mode = 755 }
+"usr/bin/gofmt" = { mode = 755 }
+"usr/lib/go/" = {}
+"etc/profile.d/go.sh" = { mode = 644 }
+"usr/share/bash-completion/completions/go" = {}
+"usr/share/zsh/site-functions/_go" = {}
+"usr/share/doc/go/" = {}
+
+[config_files]
+"etc/profile.d/go.sh" = {}
+
+[scripts]
+pre_install = ""
+post_install = """
+echo "Go installed. Run 'source /etc/profile.d/go.sh' or start a new shell to set up environment."
+echo "Default GOPATH is ~/go - you can change this by setting GOPATH in your shell profile."
+"""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "1.25.5"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Pre-built binary from go.dev",
+    "Includes bash and zsh completions",
+    "Environment setup via /etc/profile.d/go.sh"
+]
+
+[metadata]
+keywords = ["go", "golang", "programming", "language", "compiler", "google"]
+categories = ["development", "languages"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

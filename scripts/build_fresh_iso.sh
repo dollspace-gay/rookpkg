@@ -2040,6 +2040,16 @@ theme=Breeze
 [Windows]
 Placement=Smart
 
+[ElectricBorders]
+TopLeft=None
+Top=None
+TopRight=None
+Left=None
+Right=None
+BottomLeft=None
+Bottom=None
+BottomRight=None
+
 [Xwayland]
 Scale=1
 KWINRC
@@ -2085,6 +2095,16 @@ kwin4_effect_translucencyEnabled=true
 [Windows]
 BorderlessMaximizedWindows=false
 Placement=Smart
+
+[ElectricBorders]
+TopLeft=None
+Top=None
+TopRight=None
+Left=None
+Right=None
+BottomLeft=None
+Bottom=None
+BottomRight=None
 
 [org.kde.kdecoration2]
 BorderSize=Normal
@@ -3545,14 +3565,43 @@ setup_ca_certificates() {
         cp -a /etc/pki/tls "$rootfs/etc/pki/" 2>/dev/null || true
     fi
 
+    # Copy NSS database (used by browsers like Firefox, Chrome, Edge)
+    if [ -d "/etc/pki/nssdb" ]; then
+        mkdir -p "$rootfs/etc/pki"
+        cp -a /etc/pki/nssdb "$rootfs/etc/pki/" 2>/dev/null || true
+        log_info "Copied NSS certificate database"
+    fi
+
+    # Run make-ca inside the rootfs via chroot to properly initialize the trust store
+    # This ensures browsers and other apps that use p11-kit/NSS work correctly
+    if [ -x "$rootfs/usr/sbin/make-ca" ]; then
+        log_info "Running make-ca inside rootfs to initialize trust store..."
+        # Bind mount necessary filesystems for chroot
+        mount --bind /dev "$rootfs/dev" 2>/dev/null || true
+        mount --bind /proc "$rootfs/proc" 2>/dev/null || true
+        mount --bind /sys "$rootfs/sys" 2>/dev/null || true
+
+        # Run make-ca with force and get flags to download fresh certs and build all stores
+        chroot "$rootfs" /usr/sbin/make-ca -f -g 2>&1 | tail -5 || true
+
+        # Unmount
+        umount "$rootfs/sys" 2>/dev/null || true
+        umount "$rootfs/proc" 2>/dev/null || true
+        umount "$rootfs/dev" 2>/dev/null || true
+
+        log_info "Trust store initialized via make-ca"
+    fi
+
     # Verify certificates are installed
     local cert_count=$(find "$rootfs/etc/ssl/certs" -name "*.pem" 2>/dev/null | wc -l)
     local bundle_size=$(stat -c%s "$rootfs/etc/pki/tls/certs/ca-bundle.crt" 2>/dev/null || echo 0)
+    local nssdb_exists="no"
+    [ -d "$rootfs/etc/pki/nssdb" ] && nssdb_exists="yes"
 
     if [ "$cert_count" -gt 0 ] && [ "$bundle_size" -gt 0 ]; then
-        log_info "CA certificates installed: $cert_count certs, bundle size: $((bundle_size/1024))KB"
+        log_info "CA certificates installed: $cert_count certs, bundle size: $((bundle_size/1024))KB, NSS DB: $nssdb_exists"
     elif [ "$bundle_size" -gt 0 ]; then
-        log_info "CA bundle installed: $((bundle_size/1024))KB"
+        log_info "CA bundle installed: $((bundle_size/1024))KB, NSS DB: $nssdb_exists"
     else
         log_warn "No CA certificates found - HTTPS may not work!"
     fi
