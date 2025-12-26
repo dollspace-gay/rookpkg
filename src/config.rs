@@ -387,7 +387,7 @@ fn glob_match(pattern: &str, path: &str) -> bool {
             let suffix_matches = if suffix.is_empty() {
                 true
             } else {
-                path.ends_with(suffix) || path.split('/').last().map(|s| glob_match_simple(suffix, s)).unwrap_or(false)
+                path.ends_with(suffix) || path.split('/').next_back().map(|s| glob_match_simple(suffix, s)).unwrap_or(false)
             };
 
             return prefix_matches && suffix_matches;

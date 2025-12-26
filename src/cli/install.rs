@@ -15,9 +15,9 @@ use crate::database::Database;
 use crate::hooks::HookResult;
 use crate::package::InstallReason;
 use crate::repository::{PackageEntry, RepoManager, SignatureStatus, VerifiedPackage};
-use crate::resolver::{parse_constraint, Package, RookeryDependencyProvider};
+use crate::resolver::{needs_upgrade, parse_constraint, Package, RookeryDependencyProvider};
 use crate::signing::TrustLevel;
-use crate::transaction::{ConflictType, Transaction};
+use crate::transaction::{ConflictType, Transaction, TransactionBuilder};
 
 pub fn run(packages: &[String], local: bool, dry_run: bool, download_only: bool, config: &Config) -> Result<()> {
     if dry_run {
@@ -592,12 +592,16 @@ fn expand_groups(packages: &[String], manager: &RepoManager) -> Result<Vec<Strin
 }
 
 /// Install local .rookpkg files
+///
+/// This function handles both fresh installations and upgrades.
+/// If a package is already installed, it will be upgraded if the
+/// local package is newer.
 fn run_local(packages: &[String], dry_run: bool, config: &Config) -> Result<()> {
     println!("{}", "Installing local package(s)...".cyan());
     println!();
 
     // Verify all files exist and are valid packages
-    let mut to_install: Vec<(PathBuf, crate::archive::PackageInfo)> = Vec::new();
+    let mut to_process: Vec<(PathBuf, crate::archive::PackageInfo)> = Vec::new();
 
     for pkg_path in packages {
         let path = PathBuf::from(pkg_path);
@@ -618,12 +622,12 @@ fn run_local(packages: &[String], dry_run: bool, config: &Config) -> Result<()> 
             format_size(std::fs::metadata(&path)?.len())
         );
 
-        to_install.push((path, info));
+        to_process.push((path, info));
     }
 
     println!();
 
-    if to_install.is_empty() {
+    if to_process.is_empty() {
         println!("{}", "Nothing to install.".yellow());
         return Ok(());
     }
@@ -637,116 +641,158 @@ fn run_local(packages: &[String], dry_run: bool, config: &Config) -> Result<()> 
     let db_path = &config.database.path;
     let db = Database::open(db_path)?;
 
-    // Check for already installed packages
-    let mut already_installed = Vec::new();
-    for (_, info) in &to_install {
+    // Categorize packages: fresh installs vs upgrades vs same version vs downgrades
+    let mut fresh_installs: Vec<(PathBuf, crate::archive::PackageInfo)> = Vec::new();
+    let mut upgrades: Vec<(PathBuf, crate::archive::PackageInfo, String, u32)> = Vec::new();
+    let mut same_version: Vec<(String, String)> = Vec::new();
+    let mut downgrades: Vec<(String, String, String)> = Vec::new();
+
+    for (path, info) in to_process {
         if let Ok(Some(existing)) = db.get_package(&info.name) {
-            already_installed.push((info.name.clone(), existing.version.clone()));
+            // Package is already installed - check if this is an upgrade
+            if needs_upgrade(&existing.version, existing.release, &info.version, info.release) {
+                // This is an upgrade
+                upgrades.push((path, info, existing.version.clone(), existing.release));
+            } else if existing.version == info.version && existing.release == info.release {
+                // Same version - skip
+                same_version.push((info.name, format!("{}-{}", info.version, info.release)));
+            } else {
+                // This would be a downgrade
+                downgrades.push((
+                    info.name,
+                    format!("{}-{}", existing.version, existing.release),
+                    format!("{}-{}", info.version, info.release),
+                ));
+            }
+        } else {
+            // Fresh install
+            fresh_installs.push((path, info));
         }
     }
 
-    // Filter out already installed packages
-    let packages_to_install: Vec<_> = to_install
-        .into_iter()
-        .filter(|(_, info)| !already_installed.iter().any(|(n, _)| n == &info.name))
-        .collect();
-
-    if !already_installed.is_empty() {
-        println!("{}", "Some packages are already installed:".yellow());
-        for (name, version) in &already_installed {
-            println!("  {} {} ({})", "!".yellow(), name.bold(), version);
+    // Report same version packages
+    if !same_version.is_empty() {
+        println!("{}", "Already at requested version:".dimmed());
+        for (name, version) in &same_version {
+            println!("  {} {} ({})", "=".dimmed(), name, version.dimmed());
         }
-        println!();
-        println!("Use {} to update existing packages.", "rookpkg upgrade".bold());
         println!();
     }
 
-    if packages_to_install.is_empty() {
-        println!("{}", "Nothing new to install.".yellow());
+    // Report downgrades (but don't process them)
+    if !downgrades.is_empty() {
+        println!("{}", "Skipping downgrades (use --force to override):".yellow());
+        for (name, installed, requested) in &downgrades {
+            println!(
+                "  {} {} ({} → {})",
+                "↓".yellow(),
+                name.bold(),
+                installed.cyan(),
+                requested.dimmed()
+            );
+        }
+        println!();
+    }
+
+    // Report what will be installed/upgraded
+    if !fresh_installs.is_empty() {
+        println!("{}", "New installations:".green());
+        for (_, info) in &fresh_installs {
+            println!(
+                "  {} {}-{}-{}",
+                "+".green(),
+                info.name.bold(),
+                info.version,
+                info.release
+            );
+        }
+        println!();
+    }
+
+    if !upgrades.is_empty() {
+        println!("{}", "Upgrades:".cyan());
+        for (_, info, old_version, old_release) in &upgrades {
+            println!(
+                "  {} {} {}-{} → {}-{}",
+                "↑".cyan(),
+                info.name.bold(),
+                old_version.dimmed(),
+                old_release.to_string().dimmed(),
+                info.version.green(),
+                info.release.to_string().green()
+            );
+        }
+        println!();
+    }
+
+    if fresh_installs.is_empty() && upgrades.is_empty() {
+        println!("{}", "Nothing to do.".yellow());
         return Ok(());
     }
 
-    // Install using transaction
-    println!("{}", "Installing packages...".cyan());
-    println!();
-
+    // Build and execute transaction
     let root = Path::new("/");
+    let mut builder = TransactionBuilder::new(root);
+
+    // Add fresh installs
+    for (path, info) in &fresh_installs {
+        let version = format!("{}-{}", info.version, info.release);
+        builder = builder.install(&info.name, &version, path, InstallReason::Explicit);
+    }
+
+    // Add upgrades
+    for (path, info, old_version, old_release) in &upgrades {
+        let old_ver = format!("{}-{}", old_version, old_release);
+        let new_ver = format!("{}-{}", info.version, info.release);
+        builder = builder.upgrade(&info.name, &old_ver, &new_ver, path);
+    }
+
+    // Execute the transaction
+    println!("{}", "Processing packages...".cyan());
+    println!();
 
     // Re-open database for transaction
     let db = Database::open(db_path)?;
-    let mut tx = Transaction::with_options(root, db, config.options.clone())?;
 
-    for (path, info) in &packages_to_install {
-        let version = format!("{}-{}", info.version, info.release);
-        // Local installs are always explicit
-        tx.install(&info.name, &version, path, InstallReason::Explicit);
-    }
-
-    // Check for file conflicts before executing
-    println!("{}", "Checking for file conflicts...".cyan());
-    let conflicts = tx.check_conflicts(false)?;
-
-    if !conflicts.is_empty() {
-        println!();
-        println!("{}", "File conflicts detected:".red().bold());
-        println!();
-
-        for conflict in &conflicts {
-            let conflict_desc = match &conflict.conflict_with {
-                ConflictType::InstalledPackage(pkg) => {
-                    format!("owned by '{}'", pkg.cyan())
-                }
-                ConflictType::TransactionPackage(pkg) => {
-                    format!("also installed by '{}'", pkg.cyan())
-                }
-                ConflictType::UnownedFile => {
-                    "unowned file on filesystem".to_string()
-                }
-            };
-            println!(
-                "  {} {} ({})",
-                "✗".red(),
-                conflict.path.bold(),
-                conflict_desc
-            );
-        }
-
-        println!();
-        bail!(
-            "Cannot install: {} file conflict(s) detected. \
-            Remove conflicting package(s) first.",
-            conflicts.len()
-        );
-    }
-
-    println!("  {} No conflicts found", "✓".green());
-    println!();
-
-    // Execute transaction with hooks
-    match tx.execute_with_hooks(&config.hooks) {
+    match builder.execute_with_hooks(db, &config.hooks) {
         Ok((pre_results, post_results)) => {
             print_hook_results("pre-transaction", &pre_results);
 
-            println!(
-                "{} {} package(s) installed successfully",
-                "✓".green().bold(),
-                packages_to_install.len()
-            );
+            if !fresh_installs.is_empty() && !upgrades.is_empty() {
+                println!(
+                    "{} {} package(s) installed, {} upgraded",
+                    "✓".green().bold(),
+                    fresh_installs.len(),
+                    upgrades.len()
+                );
+            } else if !fresh_installs.is_empty() {
+                println!(
+                    "{} {} package(s) installed successfully",
+                    "✓".green().bold(),
+                    fresh_installs.len()
+                );
+            } else {
+                println!(
+                    "{} {} package(s) upgraded successfully",
+                    "✓".green().bold(),
+                    upgrades.len()
+                );
+            }
 
             print_hook_results("post-transaction", &post_results);
         }
         Err(e) => {
             println!(
-                "{} Installation failed: {}",
+                "{} Operation failed: {}",
                 "✗".red().bold(),
                 e
             );
-            bail!("Installation transaction failed: {}", e);
+            bail!("Transaction failed: {}", e);
         }
     }
 
     println!();
-    println!("{}", "Installation complete!".green());
+    println!("{}", "Done!".green());
 
     Ok(())
 }

@@ -39,6 +39,7 @@ fn require_root(operation: &str, dry_run: bool) -> Result<()> {
     );
 }
 
+mod audit;
 mod autoremove;
 mod build;
 mod buildall;
@@ -158,6 +159,10 @@ pub enum Commands {
         /// Number of parallel jobs for compilation
         #[arg(short, long)]
         jobs: Option<usize>,
+
+        /// Automatically extract source archives (skip manual prep phase extraction)
+        #[arg(long)]
+        auto_extract: bool,
     },
 
     /// Build all .rook spec files in a directory
@@ -259,6 +264,29 @@ pub enum Commands {
         /// Don't actually upgrade, just show what would happen
         #[arg(long)]
         dry_run: bool,
+    },
+
+    /// Audit installed packages for security vulnerabilities (CVE)
+    Audit {
+        /// Automatically fetch patches and update spec files
+        #[arg(long)]
+        fix: bool,
+
+        /// Output results as JSON
+        #[arg(long)]
+        json: bool,
+
+        /// Audit only a specific package
+        #[arg(short, long)]
+        package: Option<String>,
+
+        /// Look up a specific CVE by ID (e.g., CVE-2024-1234)
+        #[arg(long)]
+        cve: Option<String>,
+
+        /// Clear the CVE database cache before running
+        #[arg(long)]
+        clear_cache: bool,
     },
 
     /// Show dependency tree for a package
@@ -516,8 +544,8 @@ pub fn execute(command: Commands, config: &Config) -> Result<()> {
         Commands::Search { query } => {
             search::run(&query, config)
         }
-        Commands::Build { spec, install, output, batch, index, delta_from, jobs } => {
-            build::run(&spec, install, output.as_deref(), batch, index, delta_from.as_deref(), jobs, config)
+        Commands::Build { spec, install, output, batch, index, delta_from, jobs, auto_extract } => {
+            build::run(&spec, install, output.as_deref(), batch, index, delta_from.as_deref(), jobs, auto_extract, config)
         }
         Commands::Buildall { spec_dir, output, continue_on_error, jobs, skip_built, stream } => {
             buildall::run(&spec_dir, output.as_deref(), continue_on_error, jobs, skip_built, stream, config)
@@ -557,6 +585,13 @@ pub fn execute(command: Commands, config: &Config) -> Result<()> {
         Commands::Upgrade { dry_run } => {
             require_root("upgrade", dry_run)?;
             upgrade::run(dry_run, config)
+        }
+        Commands::Audit { fix, json, package, cve, clear_cache } => {
+            // fix mode needs root to modify spec files and rebuild
+            if fix {
+                require_root("audit --fix", false)?;
+            }
+            audit::run(fix, json, package.as_deref(), cve.as_deref(), clear_cache, config)
         }
         Commands::Depends { package, reverse } => {
             depends::run(&package, reverse, config)

@@ -1,0 +1,110 @@
+[package]
+name = "cppcheck"
+version = "2.16.0"
+release = 1
+summary = "Static analysis tool for C/C++ code"
+description = """
+Cppcheck is a static analysis tool for C/C++ code. It provides unique code
+analysis to detect bugs and focuses on detecting undefined behaviour and
+dangerous coding constructs. The goal is to have very few false positives.
+Cppcheck is designed to be able to analyze your C/C++ code even if it has
+non-standard syntax (common in embedded projects).
+"""
+homepage = "https://cppcheck.sourceforge.io/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/danmar/cppcheck/archive/refs/tags/2.16.0.tar.gz", sha256 = "f1a97c8cef5ee9d0abb57e9244549d4fe18d4ecac80cf82e250d1fc5f38b1501" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+cmake = ">= 3.20"
+ninja = ">= 1.10"
+
+[depends]
+glibc = ">= 2.39"
+pcre = ">= 8.45"
+
+[optional_depends]
+python = ">= 3.11"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf cppcheck-*
+tar xf $ROOKPKG_SOURCES/2.16.0.tar.gz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/cppcheck-*
+mkdir -p build && cd build
+cmake .. -G Ninja \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DHAVE_RULES=ON \
+    -DUSE_MATCHCOMPILER=ON \
+    -DBUILD_GUI=OFF \
+    -DBUILD_TESTS=OFF \
+    -DFILESDIR=/usr/share/cppcheck
+"""
+
+build = """
+cd $ROOKPKG_BUILD/cppcheck-*/build
+ninja -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/cppcheck-*/build
+# Tests require building with BUILD_TESTS=ON
+# ninja test || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/cppcheck-*/build
+DESTDIR=$ROOKPKG_DESTDIR ninja install
+
+# Install additional scripts
+cd $ROOKPKG_BUILD/cppcheck-*
+install -Dm755 htmlreport/cppcheck-htmlreport $ROOKPKG_DESTDIR/usr/bin/cppcheck-htmlreport
+"""
+
+[files]
+"usr/bin/cppcheck" = { mode = 755 }
+"usr/bin/cppcheck-htmlreport" = { mode = 755 }
+"usr/share/cppcheck/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "2.16.0"
+date = "2025-12-26"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "HAVE_RULES enabled with legacy pcre",
+    "Includes htmlreport script for HTML output"
+]
+
+[metadata]
+keywords = ["cppcheck", "static-analysis", "c", "c++", "linter"]
+categories = ["development", "static-analysis"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

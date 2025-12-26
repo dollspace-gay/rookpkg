@@ -83,7 +83,7 @@ pub fn run(
     let mut spec_files: Vec<_> = std::fs::read_dir(spec_dir)?
         .filter_map(|entry| entry.ok())
         .filter(|entry| {
-            entry.path().extension().map_or(false, |ext| ext == "rook")
+            entry.path().extension().is_some_and(|ext| ext == "rook")
         })
         .map(|entry| entry.path())
         .collect();
@@ -315,7 +315,7 @@ pub fn run(
         println!(
             "Total: {} succeeded, {} failed{}, {:.1}s elapsed",
             success_count.to_string().green(),
-            fail_count.to_string(),
+            fail_count,
             skipped_str,
             total_duration
         );

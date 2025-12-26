@@ -1,6 +1,6 @@
 [package]
 name = "rookpkg"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Friendly Society of Corvids"]
 description = "Rookery OS Package Manager"
@@ -41,7 +41,7 @@ rand = "0.8"
 zeroize = { version = "1", features = ["derive"] }
 
 # HTTP downloads
-reqwest = { version = "0.12", features = ["blocking", "rustls-tls"], default-features = false }
+reqwest = { version = "0.12", features = ["blocking", "rustls-tls", "json"], default-features = false }
 
 # Logging
 tracing = "0.1"
@@ -66,6 +66,9 @@ semver = "1"
 
 # Regex for pattern matching
 regex = "1"
+
+# URL encoding for API queries
+urlencoding = "2"
 
 # Path handling
 directories = "5"

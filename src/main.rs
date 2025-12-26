@@ -11,6 +11,7 @@ mod archive;
 mod build;
 mod cli;
 mod config;
+mod cve;
 mod database;
 mod delta;
 mod download;

@@ -170,7 +170,7 @@ pub fn run_all(
     let mut spec_files: Vec<_> = fs::read_dir(spec_dir)?
         .filter_map(|entry| entry.ok())
         .filter(|entry| {
-            entry.path().extension().map_or(false, |ext| ext == "rook")
+            entry.path().extension().is_some_and(|ext| ext == "rook")
         })
         .map(|entry| entry.path())
         .collect();

@@ -19,6 +19,7 @@ use crate::signing::{self, sign_file};
 use crate::spec::PackageSpec;
 use crate::transaction::Transaction;
 
+#[allow(clippy::too_many_arguments)]
 pub fn run(
     spec_path: &Path,
     install: bool,
@@ -27,6 +28,7 @@ pub fn run(
     update_index: bool,
     delta_from: Option<&Path>,
     jobs: Option<usize>,
+    auto_extract: bool,
     config: &Config,
 ) -> Result<()> {
     // CRITICAL: Check for signing key FIRST
@@ -139,9 +141,15 @@ pub fn run(
     } else {
         // Standard mode: manual control over each phase
         // Download and verify sources
-        println!("{}", "Downloading sources...".cyan());
-        build_env.fetch_sources()?;
-        println!("  {} Sources downloaded", "✓".green());
+        if auto_extract {
+            println!("{}", "Downloading and extracting sources...".cyan());
+            let extracted = build_env.fetch_and_extract_sources()?;
+            println!("  {} Sources downloaded and extracted ({} archives)", "✓".green(), extracted.len());
+        } else {
+            println!("{}", "Downloading sources...".cyan());
+            build_env.fetch_sources()?;
+            println!("  {} Sources downloaded", "✓".green());
+        }
 
         // Apply patches
         println!("{}", "Applying patches...".cyan());

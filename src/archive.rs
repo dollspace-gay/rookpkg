@@ -347,6 +347,7 @@ impl PackageArchiveBuilder {
     }
 
     /// Recursively add directory contents to tar, properly handling symlinks
+    #[allow(clippy::only_used_in_recursion)]
     fn add_dir_recursive(&self, builder: &mut Builder<File>, dir: &Path, prefix: &Path) -> Result<()> {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
