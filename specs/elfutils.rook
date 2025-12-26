@@ -1,7 +1,7 @@
 [package]
 name = "elfutils"
 version = "0.193"
-release = 1
+release = 2
 summary = "Collection of utilities and libraries for handling ELF files"
 description = """
 Elfutils is a collection of utilities and libraries to read, create and modify
@@ -68,23 +68,31 @@ make check || true
 
 install = """
 cd $ROOKPKG_BUILD/elfutils-*
-# Install only libelf for now (full package would include all utilities)
-make -C libelf DESTDIR=$ROOKPKG_DESTDIR install
-mkdir -p $ROOKPKG_DESTDIR/usr/lib/pkgconfig
-install -vm644 config/libelf.pc $ROOKPKG_DESTDIR/usr/lib/pkgconfig/libelf.pc
-# Remove static library
-rm -f $ROOKPKG_DESTDIR/usr/lib/libelf.a
+# Install full package including libelf, libdw, libasm
+make DESTDIR=$ROOKPKG_DESTDIR install
+# Remove static libraries
+rm -f $ROOKPKG_DESTDIR/usr/lib/lib*.a
 """
 
 [files]
-"usr/lib/libelf.so" = { mode = 755 }
-"usr/lib/libelf-0.193.so" = { mode = 755 }
+# Libraries
+"usr/lib/libelf*.so*" = { mode = 755 }
+"usr/lib/libdw*.so*" = { mode = 755 }
+"usr/lib/libasm*.so*" = { mode = 755 }
+# Headers
 "usr/include/libelf.h" = {}
 "usr/include/gelf.h" = {}
 "usr/include/nlist.h" = {}
-"usr/include/elfutils/elf-knowledge.h" = {}
-"usr/include/elfutils/version.h" = {}
+"usr/include/dwarf.h" = {}
+"usr/include/elfutils/" = {}
+# pkg-config
 "usr/lib/pkgconfig/libelf.pc" = {}
+"usr/lib/pkgconfig/libdw.pc" = {}
+# Binaries (elfutils utilities)
+"usr/bin/eu-*" = { mode = 755 }
+# Man pages
+"usr/share/man/man1/eu-*.1" = {}
+"usr/share/man/man3/" = {}
 
 [config_files]
 

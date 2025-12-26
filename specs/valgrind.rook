@@ -1,0 +1,129 @@
+[package]
+name = "valgrind"
+version = "3.24.0"
+release = 1
+summary = "Instrumentation framework for building dynamic analysis tools"
+description = """
+Valgrind is an instrumentation framework for building dynamic analysis tools.
+It includes a suite of tools for debugging and profiling:
+- Memcheck: memory error detector (use-after-free, leaks, uninitialized reads)
+- Cachegrind: cache and branch-prediction profiler
+- Callgrind: call-graph generating cache profiler
+- Helgrind: thread error detector (data races, deadlocks)
+- DRD: thread error detector (alternative to Helgrind)
+- Massif: heap profiler
+- DHAT: dynamic heap analysis tool
+"""
+homepage = "https://valgrind.org/"
+license = "GPL-2.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://sourceware.org/pub/valgrind/valgrind-3.24.0.tar.bz2", sha256 = "71aee202bdef1ae73898ccf7e9c315134fa7db6c246063afc503aef702ec03bd" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+perl = ">= 5.38"
+
+[optional_depends]
+gdb = ">= 13.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf valgrind-*
+tar xf $ROOKPKG_SOURCES/valgrind-*.tar.bz2
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/valgrind-*
+
+# Fix for glibc 2.39+ if needed
+sed -i 's|/doc/valgrind||' docs/Makefile.in
+
+./configure --prefix=/usr \
+    --datadir=/usr/share/doc/valgrind-3.24.0 \
+    --enable-lto=yes
+"""
+
+build = """
+cd $ROOKPKG_BUILD/valgrind-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/valgrind-*
+# Valgrind tests require a lot of time and specific conditions
+# make regtest || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/valgrind-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/valgrind" = { mode = 755 }
+"usr/bin/valgrind-listener" = { mode = 755 }
+"usr/bin/valgrind-di-server" = { mode = 755 }
+"usr/bin/vgdb" = { mode = 755 }
+"usr/bin/cg_annotate" = { mode = 755 }
+"usr/bin/cg_diff" = { mode = 755 }
+"usr/bin/cg_merge" = { mode = 755 }
+"usr/bin/callgrind_annotate" = { mode = 755 }
+"usr/bin/callgrind_control" = { mode = 755 }
+"usr/bin/ms_print" = { mode = 755 }
+"usr/libexec/valgrind/" = {}
+"usr/lib/valgrind/" = {}
+"usr/include/valgrind/" = {}
+"usr/lib/pkgconfig/valgrind.pc" = {}
+"usr/share/doc/valgrind-3.24.0/" = {}
+"usr/share/man/man1/valgrind.1" = {}
+"usr/share/man/man1/vgdb.1" = {}
+"usr/share/man/man1/callgrind_annotate.1" = {}
+"usr/share/man/man1/callgrind_control.1" = {}
+"usr/share/man/man1/cg_annotate.1" = {}
+"usr/share/man/man1/cg_diff.1" = {}
+"usr/share/man/man1/cg_merge.1" = {}
+"usr/share/man/man1/ms_print.1" = {}
+"usr/share/man/man1/valgrind-listener.1" = {}
+"usr/share/man/man1/valgrind-di-server.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "3.24.0"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "Valgrind 3.24.0 with LTO enabled",
+    "Includes all standard tools: Memcheck, Cachegrind, Callgrind, Helgrind, DRD, Massif, DHAT"
+]
+
+[metadata]
+keywords = ["valgrind", "memcheck", "memory", "debugging", "profiling", "development"]
+categories = ["development", "debugging", "profiling"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

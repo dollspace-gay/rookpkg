@@ -1,0 +1,100 @@
+[package]
+name = "strace"
+version = "6.12"
+release = 1
+summary = "System call tracer for Linux"
+description = """
+strace is a diagnostic, debugging and instructional userspace utility for
+Linux. It is used to monitor and tamper with interactions between processes
+and the Linux kernel, which include system calls, signal deliveries, and
+changes of process state. strace can print a record of each system call,
+its arguments, and return value.
+"""
+homepage = "https://strace.io/"
+license = "LGPL-2.1-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://github.com/strace/strace/releases/download/v6.12/strace-6.12.tar.xz", sha256 = "c47da93be45b6055f4dc741d7f20efaf50ca10160a5b100c109b294fd9c0bdfe" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+
+[depends]
+glibc = ">= 2.39"
+elfutils = ">= 0.189"
+
+[optional_depends]
+libunwind = ">= 1.6"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf strace-*
+tar xf $ROOKPKG_SOURCES/strace-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/strace-*
+./configure --prefix=/usr \
+    --enable-mpers=check \
+    --with-libdw
+"""
+
+build = """
+cd $ROOKPKG_BUILD/strace-*
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/strace-*
+# Some tests require root or specific kernel features
+make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/strace-*
+make DESTDIR=$ROOKPKG_DESTDIR install
+"""
+
+[files]
+"usr/bin/strace" = { mode = 755 }
+"usr/bin/strace-log-merge" = { mode = 755 }
+"usr/share/man/man1/strace.1" = {}
+"usr/share/man/man1/strace-log-merge.1" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = ""
+pre_remove = ""
+post_remove = ""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "6.12"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "strace 6.12 with libdw support for stack traces",
+    "Includes strace-log-merge utility"
+]
+
+[metadata]
+keywords = ["strace", "syscall", "tracer", "debugging", "development"]
+categories = ["development", "debugging", "system"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]

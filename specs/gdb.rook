@@ -1,0 +1,149 @@
+[package]
+name = "gdb"
+version = "17.1"
+release = 1
+summary = "The GNU Project Debugger"
+description = """
+GDB, the GNU Project debugger, allows you to see what is going on inside
+another program while it executes -- or what another program was doing at
+the moment it crashed. GDB can do four main kinds of things: start your
+program, make it stop on specified conditions, examine what has happened
+when it stopped, and change things in your program.
+"""
+homepage = "https://www.gnu.org/software/gdb/"
+license = "GPL-3.0-or-later"
+maintainer = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+arch = "x86_64"
+
+[sources]
+source0 = { url = "https://ftp.gnu.org/gnu/gdb/gdb-17.1.tar.xz", sha256 = "14996f5f74c9f68f5a543fdc45bca7800207f91f92aeea6c2e791822c7c6d876" }
+
+[patches]
+
+[build_depends]
+gcc = ">= 10.0"
+make = ">= 4.0"
+texinfo = ">= 6.0"
+
+[depends]
+glibc = ">= 2.39"
+gmp = ">= 6.0"
+expat = ">= 2.5"
+python = ">= 3.11"
+readline = ">= 8.0"
+zlib = ">= 1.3"
+xz = ">= 5.4"
+ncurses = ">= 6.0"
+mpfr = ">= 4.0"
+
+[optional_depends]
+guile = ">= 3.0"
+source-highlight = ">= 3.0"
+
+[environment]
+
+[build]
+prep = """
+cd $ROOKPKG_BUILD
+rm -rf gdb-*
+tar xf $ROOKPKG_SOURCES/gdb-*.tar.xz
+"""
+
+configure = """
+cd $ROOKPKG_BUILD/gdb-*
+mkdir -p build && cd build
+../configure --prefix=/usr \
+    --with-system-readline \
+    --with-system-zlib \
+    --with-python=/usr/bin/python3 \
+    --enable-targets=x86_64-linux-gnu \
+    --with-expat \
+    --with-lzma \
+    --enable-tui \
+    --disable-werror
+"""
+
+build = """
+cd $ROOKPKG_BUILD/gdb-*/build
+make -j$ROOKPKG_JOBS
+"""
+
+check = """
+cd $ROOKPKG_BUILD/gdb-*/build
+# GDB tests require dejagnu and take a long time
+# make check || true
+"""
+
+install = """
+cd $ROOKPKG_BUILD/gdb-*/build
+make DESTDIR=$ROOKPKG_DESTDIR install
+
+# Remove info files that conflict with binutils
+rm -f $ROOKPKG_DESTDIR/usr/share/info/bfd.info*
+rm -f $ROOKPKG_DESTDIR/usr/share/info/ctf-spec.info*
+rm -f $ROOKPKG_DESTDIR/usr/share/info/sframe-spec.info*
+
+# Remove libraries that conflict with binutils
+rm -f $ROOKPKG_DESTDIR/usr/lib/libbfd*
+rm -f $ROOKPKG_DESTDIR/usr/lib/libopcodes*
+rm -f $ROOKPKG_DESTDIR/usr/lib/libctf*
+rm -f $ROOKPKG_DESTDIR/usr/lib/libsframe*
+rm -f $ROOKPKG_DESTDIR/usr/include/bfd*.h
+rm -f $ROOKPKG_DESTDIR/usr/include/dis-asm.h
+rm -f $ROOKPKG_DESTDIR/usr/include/plugin-api.h
+rm -f $ROOKPKG_DESTDIR/usr/include/symcat.h
+rm -f $ROOKPKG_DESTDIR/usr/include/ctf*.h
+rm -f $ROOKPKG_DESTDIR/usr/include/sframe*.h
+"""
+
+[files]
+"usr/bin/gdb" = { mode = 755 }
+"usr/bin/gdbserver" = { mode = 755 }
+"usr/bin/gcore" = { mode = 755 }
+"usr/bin/gdb-add-index" = { mode = 755 }
+"usr/share/gdb/" = {}
+"usr/share/man/man1/gdb.1" = {}
+"usr/share/man/man1/gdbserver.1" = {}
+"usr/share/man/man1/gcore.1" = {}
+"usr/share/man/man5/gdbinit.5" = {}
+"usr/share/info/gdb*.info*" = {}
+"usr/include/gdb/" = {}
+
+[config_files]
+
+[scripts]
+pre_install = ""
+post_install = """
+if [ -x /usr/bin/install-info ]; then
+    install-info /usr/share/info/gdb.info /usr/share/info/dir 2>/dev/null || true
+fi
+"""
+pre_remove = ""
+post_remove = """
+if [ -x /usr/bin/install-info ]; then
+    install-info --delete /usr/share/info/gdb.info /usr/share/info/dir 2>/dev/null || true
+fi
+"""
+pre_upgrade = ""
+post_upgrade = ""
+
+[[changelog]]
+version = "17.1"
+date = "2025-12-25"
+author = "Friendly Society of Corvids <corvids@rookeryos.dev>"
+changes = [
+    "Initial Rookery OS package",
+    "GDB 17.1 with Python 3 scripting support",
+    "TUI mode enabled",
+    "Built with system readline and zlib"
+]
+
+[metadata]
+keywords = ["gdb", "debugger", "debugging", "development"]
+categories = ["development", "debugging"]
+
+[signing]
+master_keys_dir = "/etc/rookpkg/keys/master"
+packager_keys_dir = "/etc/rookpkg/keys/packager"
+
+[security]
